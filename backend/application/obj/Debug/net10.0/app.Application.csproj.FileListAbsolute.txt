@@ -1,0 +1,15 @@
+C:\server\backend\application\bin\Debug\net10.0\app.Application.deps.json
+C:\server\backend\application\bin\Debug\net10.0\app.Application.dll
+C:\server\backend\application\bin\Debug\net10.0\app.Application.pdb
+C:\server\backend\application\bin\Debug\net10.0\app.Domain.dll
+C:\server\backend\application\bin\Debug\net10.0\app.Domain.pdb
+C:\server\backend\application\obj\Debug\net10.0\app.Application.csproj.AssemblyReference.cache
+C:\server\backend\application\obj\Debug\net10.0\app.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\server\backend\application\obj\Debug\net10.0\app.Application.AssemblyInfoInputs.cache
+C:\server\backend\application\obj\Debug\net10.0\app.Application.AssemblyInfo.cs
+C:\server\backend\application\obj\Debug\net10.0\app.Application.csproj.CoreCompileInputs.cache
+C:\server\backend\application\obj\Debug\net10.0\app.Appl.F624CB60.Up2Date
+C:\server\backend\application\obj\Debug\net10.0\app.Application.dll
+C:\server\backend\application\obj\Debug\net10.0\refint\app.Application.dll
+C:\server\backend\application\obj\Debug\net10.0\app.Application.pdb
+C:\server\backend\application\obj\Debug\net10.0\ref\app.Application.dll

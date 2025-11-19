@@ -1,0 +1,67 @@
+<div class="video-call-container">
+  <div class="video-call-header">
+    <h2>Videochamada app</h2>
+    <div class="room-info">
+      <span class="room-name">Sala: {{ roomName }}</span>
+      <button class="btn-copy" (click)="copyRoomLink()" title="Copiar link da sala">
+        📋 Copiar Link
+      </button>
+    </div>
+  </div>
+
+  <div class="video-call-content">
+    <div *ngIf="isLoading" class="loading-container">
+      <div class="spinner"></div>
+      <p>Inicializando videochamada...</p>
+    </div>
+
+    <div *ngIf="errorMessage" class="error-container">
+      <div class="error-message">
+        <span class="error-icon">⚠️</span>
+        <p>{{ errorMessage }}</p>
+        <button class="btn-retry" (click)="initializeJitsi()">Tentar Novamente</button>
+      </div>
+    </div>
+
+    <div *ngIf="!isLoading && !errorMessage" class="jitsi-container">
+      <div #jitsiContainer class="jitsi-meet"></div>
+    </div>
+  </div>
+
+  <div class="video-call-controls" *ngIf="!isLoading && !errorMessage">
+    <div class="control-buttons">
+      <button class="btn-control" (click)="toggleAudio()" title="Alternar Áudio">
+        🎤
+      </button>
+      <button class="btn-control" (click)="toggleVideo()" title="Alternar Vídeo">
+        📹
+      </button>
+      <button class="btn-control btn-hangup" (click)="leaveRoom()" title="Sair da Chamada">
+        📞
+      </button>
+    </div>
+  </div>
+
+  <div class="video-call-info">
+    <div class="info-card">
+      <h3>Como usar:</h3>
+      <ul>
+        <li>Permita o acesso à câmera e microfone quando solicitado</li>
+        <li>Compartilhe o link da sala com outras pessoas</li>
+        <li>Use os controles para gerenciar áudio e vídeo</li>
+        <li>A sala é exclusiva e segura</li>
+      </ul>
+    </div>
+    
+    <div class="info-card">
+      <h3>Recursos disponíveis:</h3>
+      <ul>
+        <li>✅ Áudio e vídeo em alta qualidade</li>
+        <li>✅ Compartilhamento de tela</li>
+        <li>✅ Chat em tempo real</li>
+        <li>✅ Gravação de chamadas</li>
+        <li>✅ Modo tile (vídeo em mosaic)</li>
+      </ul>
+    </div>
+  </div>
+</div>
