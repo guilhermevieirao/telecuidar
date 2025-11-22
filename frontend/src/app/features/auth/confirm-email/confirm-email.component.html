@@ -1,0 +1,32 @@
+<div class="confirm-email-page">
+  <div class="confirm-container">
+    <div class="confirm-card">
+      <!-- Loading State -->
+      <div *ngIf="loading" class="state-container">
+        <div class="spinner"></div>
+        <h1>Confirmando seu email...</h1>
+        <p>Aguarde um momento</p>
+      </div>
+
+      <!-- Success State -->
+      <div *ngIf="!loading && success" class="state-container success">
+        <div class="icon-success">✓</div>
+        <h1>Email Confirmado!</h1>
+        <p>Sua conta foi ativada com sucesso.</p>
+        <p class="redirect-message">Você será redirecionado para o login em instantes...</p>
+        <a routerLink="/login" class="btn btn-primary">Ir para Login</a>
+      </div>
+
+      <!-- Error State -->
+      <div *ngIf="!loading && !success" class="state-container error">
+        <div class="icon-error">✗</div>
+        <h1>Erro na Confirmação</h1>
+        <p class="error-text">{{ errorMessage }}</p>
+        <div class="actions">
+          <a routerLink="/login" class="btn btn-secondary">Voltar ao Login</a>
+          <a routerLink="/register" class="btn btn-primary">Criar Nova Conta</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

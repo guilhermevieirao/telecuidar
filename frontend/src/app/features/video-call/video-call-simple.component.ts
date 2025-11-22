@@ -43,7 +43,41 @@ export class VideoCallSimpleComponent implements OnInit, OnDestroy {
   errorMessage = '';
   showControls = false;
   showMedicalRecord = true;
-  activeTab: 'patient' | 'anamnesis' | 'exam' | 'diagnosis' = 'patient';
+  activeTab: 'specialty' | 'patient' | 'anamnesis' | 'exam' | 'diagnosis' = 'specialty';
+  selectedSpecialty: string = '';
+  specialtyData: { [key: string]: any } = {};
+
+  specialties = [
+    { id: 'cardiology', name: 'Cardiologia', icon: '❤️', description: 'Avaliação cardiovascular' },
+    { id: 'dermatology', name: 'Dermatologia', icon: '🩹', description: 'Análise de pele' },
+    { id: 'pediatrics', name: 'Pediatria', icon: '👶', description: 'Atendimento infantil' },
+    { id: 'orthopedics', name: 'Ortopedia', icon: '🦴', description: 'Sistema músculo-esquelético' },
+    { id: 'general', name: 'Clínico Geral', icon: '🏥', description: 'Atendimento geral' }
+  ];
+
+  specialtyFields: any = {
+    cardiology: [
+      { key: 'chestPain', label: 'Dor no peito', type: 'text' },
+      { key: 'palpitations', label: 'Palpitações', type: 'text' },
+      { key: 'ecgNotes', label: 'Notas do ECG', type: 'textarea' }
+    ],
+    dermatology: [
+      { key: 'lesionType', label: 'Tipo de lesão', type: 'text' },
+      { key: 'lesionLocation', label: 'Localização da lesão', type: 'text' },
+      { key: 'skinPhotos', label: 'Fotos anexadas', type: 'text' }
+    ],
+    pediatrics: [
+      { key: 'birthDate', label: 'Data de nascimento', type: 'date' },
+      { key: 'vaccinations', label: 'Vacinações', type: 'textarea' },
+      { key: 'developmentNotes', label: 'Desenvolvimento', type: 'textarea' }
+    ],
+    orthopedics: [
+      { key: 'injuryType', label: 'Tipo de lesão', type: 'text' },
+      { key: 'mobilityNotes', label: 'Mobilidade', type: 'textarea' },
+      { key: 'xrayNotes', label: 'Notas do Raio-X', type: 'textarea' }
+    ],
+    general: []
+  };
 
   medicalRecord: MedicalRecord = {
     patientName: '',
@@ -228,8 +262,22 @@ export class VideoCallSimpleComponent implements OnInit, OnDestroy {
     this.showMedicalRecord = !this.showMedicalRecord;
   }
 
-  setActiveTab(tab: 'patient' | 'anamnesis' | 'exam' | 'diagnosis'): void {
+  setActiveTab(tab: 'specialty' | 'patient' | 'anamnesis' | 'exam' | 'diagnosis'): void {
     this.activeTab = tab;
+  }
+
+  selectSpecialty(specialtyId: string): void {
+    this.selectedSpecialty = specialtyId;
+    this.activeTab = 'patient';
+  }
+
+  getSpecialtyFields(): any[] {
+    return this.specialtyFields[this.selectedSpecialty] || [];
+  }
+
+  getSpecialtyName(): string {
+    const specialty = this.specialties.find(s => s.id === this.selectedSpecialty);
+    return specialty ? specialty.name : '';
   }
 
   saveMedicalRecord(): void {

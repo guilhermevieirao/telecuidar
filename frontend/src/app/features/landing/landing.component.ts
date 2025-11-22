@@ -1,0 +1,129 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
+
+@Component({
+  selector: 'app-landing',
+  standalone: true,
+  imports: [CommonModule, RouterLink],
+  templateUrl: './landing.component.html',
+  styleUrls: ['./landing.component.scss']
+})
+export class LandingComponent implements OnInit {
+  isLoggedIn = false;
+  userName = '';
+
+  ngOnInit(): void {
+    const token = localStorage.getItem('token');
+    const userStr = localStorage.getItem('user');
+    
+    if (token && userStr) {
+      this.isLoggedIn = true;
+      const user = JSON.parse(userStr);
+      this.userName = user.firstName || 'Usuário';
+    }
+  }
+  features = [
+    {
+      icon: '🏥',
+      title: 'Telemedicina Híbrida',
+      description: 'Consultas especializadas com suporte de IA, dispositivos IoT e profissionais qualificados.'
+    },
+    {
+      icon: '🤖',
+      title: 'Inteligência Artificial',
+      description: 'Análise de dados em tempo real, detecção de padrões e sugestões de diagnóstico diferencial.'
+    },
+    {
+      icon: '📱',
+      title: 'App Pessoal de Saúde',
+      description: 'Histórico médico completo, agendamentos e acompanhamento na palma da sua mão.'
+    },
+    {
+      icon: '🔒',
+      title: 'Segurança Total',
+      description: 'Conformidade com LGPD, criptografia de ponta e assinatura digital certificada.'
+    },
+    {
+      icon: '⚡',
+      title: 'Sem Filas',
+      description: 'Agendamento inteligente que reduz drasticamente o tempo de espera para consultas.'
+    },
+    {
+      icon: '🌍',
+      title: 'Acesso Universal',
+      description: 'Atendimento especializado para áreas remotas, quebrando barreiras geográficas.'
+    }
+  ];
+
+  technologies = [
+    {
+      icon: '💉',
+      title: 'Dispositivos Biométricos',
+      items: [
+        'Estetoscópios digitais de alta precisão',
+        'Monitores de pressão arterial conectados',
+        'Oxímetros e termômetros inteligentes',
+        'Dispositivos de ECG portáteis'
+      ]
+    },
+    {
+      icon: '💻',
+      title: 'Plataforma de Teleconsulta',
+      items: [
+        'Videochamada HD com baixa latência',
+        'Prontuário eletrônico integrado',
+        'Painel de dados vitais em tempo real',
+        'Transcrição automática de consultas'
+      ]
+    },
+    {
+      icon: '🧠',
+      title: 'Análise Inteligente por IA',
+      items: [
+        'Análise de séries históricas de saúde',
+        'Detecção de padrões anômalos',
+        'Sugestões de diagnóstico diferencial',
+        'Alertas de risco automatizados'
+      ]
+    }
+  ];
+
+  benefits = {
+    citizens: [
+      'Acesso a especialidades médicas sem deslocamentos longos',
+      'Redução significativa no tempo de espera',
+      'Atendimento de qualidade com tecnologia de ponta',
+      'Histórico médico sempre acessível',
+      'Economia em deslocamentos e custos'
+    ],
+    municipalities: [
+      'Otimização dos recursos de saúde pública',
+      'Redução de custos operacionais',
+      'Melhoria nos indicadores de saúde',
+      'Facilidade na prestação de contas',
+      'Atração de profissionais especialistas'
+    ],
+    professionals: [
+      'Flexibilidade para atender de qualquer localização',
+      'Suporte de IA para diagnósticos mais precisos',
+      'Acesso a dados completos do paciente',
+      'Oportunidade de impactar mais vidas',
+      'Ambiente tecnológico avançado de trabalho'
+    ]
+  };
+
+  stats = [
+    { value: '100%', label: 'Digital' },
+    { value: '24/7', label: 'Disponível' },
+    { value: 'IA', label: 'Powered' },
+    { value: 'LGPD', label: 'Compliant' }
+  ];
+
+  scrollToSection(sectionId: string): void {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+}

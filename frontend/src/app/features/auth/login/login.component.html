@@ -1,0 +1,109 @@
+<div class="auth-page">
+  <div class="auth-container">
+    <!-- Left Side - Branding -->
+    <div class="auth-branding">
+      <div class="brand-content">
+        <div class="logo">
+          <span class="logo-icon">🏥</span>
+          <span class="logo-text">TeleCuidar</span>
+        </div>
+        <h1>Bem-vindo de volta!</h1>
+        <p>Acesse sua conta e continue cuidando da sua saúde com tecnologia de ponta.</p>
+        
+        <div class="features">
+          <div class="feature-item">
+            <span class="icon">✓</span>
+            <span>Consultas especializadas online</span>
+          </div>
+          <div class="feature-item">
+            <span class="icon">✓</span>
+            <span>Histórico médico completo</span>
+          </div>
+          <div class="feature-item">
+            <span class="icon">✓</span>
+            <span>Agendamento inteligente</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Side - Login Form -->
+    <div class="auth-form-container">
+      <div class="auth-form-content">
+        <div class="form-header">
+          <h2>Entrar na sua conta</h2>
+          <p>Não tem uma conta? <a routerLink="/register" class="link">Cadastre-se</a></p>
+        </div>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-form">
+          <div class="form-group">
+            <label for="email">E-mail</label>
+            <input
+              type="email"
+              id="email"
+              formControlName="email"
+              placeholder="seu@email.com"
+              [class.error]="email?.invalid && email?.touched"
+            />
+            <span class="error-message" *ngIf="email?.invalid && email?.touched">
+              <span *ngIf="email?.errors?.['required']">E-mail é obrigatório</span>
+              <span *ngIf="email?.errors?.['email']">E-mail inválido</span>
+            </span>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Senha</label>
+            <div class="password-input">
+              <input
+                [type]="showPassword ? 'text' : 'password'"
+                id="password"
+                formControlName="password"
+                placeholder="••••••••"
+                [class.error]="password?.invalid && password?.touched"
+              />
+              <button type="button" class="toggle-password" (click)="togglePassword()">
+                {{ showPassword ? '👁️' : '👁️‍🗨️' }}
+              </button>
+            </div>
+            <span class="error-message" *ngIf="password?.invalid && password?.touched">
+              <span *ngIf="password?.errors?.['required']">Senha é obrigatória</span>
+              <span *ngIf="password?.errors?.['minlength']">Senha deve ter no mínimo 6 caracteres</span>
+            </span>
+          </div>
+
+          <div class="form-options">
+            <label class="checkbox-label">
+              <input type="checkbox" />
+              <span>Lembrar-me</span>
+            </label>
+            <a routerLink="/forgot-password" class="link">Esqueceu a senha?</a>
+          </div>
+
+          <div class="error-alert" *ngIf="errorMessage">
+            {{ errorMessage }}
+          </div>
+
+          <button type="submit" class="btn-submit" [disabled]="loading || loginForm.invalid">
+            <span *ngIf="!loading">Entrar</span>
+            <span *ngIf="loading" class="loading-spinner">Entrando...</span>
+          </button>
+        </form>
+
+        <div class="divider">
+          <span>ou</span>
+        </div>
+
+        <div class="social-login">
+          <button type="button" class="btn-social btn-google">
+            <span class="icon">G</span>
+            Continuar com Google
+          </button>
+        </div>
+
+        <div class="back-home">
+          <a routerLink="/" class="link">← Voltar para página inicial</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

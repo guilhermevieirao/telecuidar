@@ -2,9 +2,11 @@
 
 .telemedicine-container {
   display: flex;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #0f172a 0%, #581c87 50%, #0f172a 100%);
-  color: white;
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+  background: #f8fafc;
+  color: #1a202c;
 }
 
 /* Painel de Vídeo */
@@ -20,23 +22,20 @@
 }
 
 .video-call-header {
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid #374151;
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
   padding: 1.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
   gap: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 
   h2 {
     font-size: 1.5rem;
-    font-weight: bold;
-    background: linear-gradient(135deg, #60a5fa, #a78bfa);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    font-weight: 800;
+    color: #1a202c;
   }
 }
 
@@ -48,11 +47,12 @@
 
 .room-name {
   font-size: 0.875rem;
-  color: #d1d5db;
+  color: #4b5563;
   font-family: monospace;
-  background: #1f2937;
+  background: #f3f4f6;
   padding: 0.5rem 0.75rem;
   border-radius: 0.5rem;
+  font-weight: 500;
 }
 
 .btn-copy, .btn-toggle {
@@ -61,21 +61,22 @@
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 600;
   border: none;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 
   &:hover {
     background: #1d4ed8;
-    transform: scale(1.05);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
   }
 }
 
 .btn-toggle {
-  background: #7c3aed;
+  background: #2563eb;
   &:hover {
-    background: #6d28d9;
+    background: #1d4ed8;
   }
 }
 
@@ -111,7 +112,7 @@
 
 .loading-container p {
   font-size: 1.125rem;
-  color: #d1d5db;
+  color: #6b7280;
 }
 
 .error-container {
@@ -120,28 +121,29 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.5);
 }
 
 .error-message {
-  background: rgba(127, 29, 29, 0.8);
-  backdrop-filter: blur(10px);
+  background: white;
   border-radius: 1rem;
   padding: 2rem;
   text-align: center;
   max-width: 28rem;
   margin: 1rem;
-  border: 1px solid rgba(239, 68, 68, 0.5);
+  border: 2px solid #ef4444;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 
   .error-icon {
     font-size: 2.25rem;
     margin-bottom: 1rem;
     display: block;
+    color: #ef4444;
   }
 
   p {
     font-size: 1.125rem;
-    color: #fecaca;
+    color: #6b7280;
   }
 }
 
@@ -159,10 +161,10 @@
 }
 
 .video-call-controls {
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(10px);
-  border-top: 1px solid #374151;
+  background: white;
+  border-top: 1px solid #e5e7eb;
   padding: 1.5rem;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .control-buttons {
@@ -178,46 +180,56 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #374151;
-  color: white;
-  border: 2px solid #4b5563;
+  background: #f3f4f6;
+  color: #374151;
+  border: 2px solid #e5e7eb;
   font-size: 1.25rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 
   &:hover {
-    background: #4b5563;
-    transform: scale(1.1);
+    background: #2563eb;
+    color: white;
+    border-color: #2563eb;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
   }
 
   &.btn-refresh {
     background: #059669;
     border-color: #10b981;
-    &:hover { background: #047857; }
+    color: white;
+    &:hover { 
+      background: #047857;
+      transform: translateY(-2px);
+    }
   }
 }
 
 /* Painel de Prontuário Médico */
 .medical-record-panel {
   flex: 0 0 450px;
-  background: rgba(17, 24, 39, 0.95);
-  backdrop-filter: blur(10px);
-  border-left: 2px solid #374151;
+  background: white;
+  border-left: 1px solid #e5e7eb;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  max-height: 100vh;
+  height: 100vh;
+  box-shadow: -4px 0 16px rgba(0, 0, 0, 0.05);
 }
 
 .medical-header {
-  background: rgba(0, 0, 0, 0.5);
+  background: #f9fafb;
   padding: 1.5rem;
-  border-bottom: 2px solid #374151;
+  border-bottom: 1px solid #e5e7eb;
+  flex-shrink: 0;
 
   h2 {
     font-size: 1.25rem;
-    font-weight: 600;
+    font-weight: 700;
     margin-bottom: 1rem;
-    color: #a78bfa;
+    color: #1a202c;
   }
 }
 
@@ -259,8 +271,9 @@
 
 .medical-tabs {
   display: flex;
-  background: rgba(0, 0, 0, 0.3);
-  border-bottom: 2px solid #374151;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  flex-shrink: 0;
 }
 
 .tab-btn {
@@ -268,42 +281,45 @@
   padding: 0.75rem 0.5rem;
   background: transparent;
   border: none;
-  color: #9ca3af;
+  color: #6b7280;
   font-size: 0.75rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   border-bottom: 3px solid transparent;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.05);
-    color: #d1d5db;
+    background: #f3f4f6;
+    color: #374151;
   }
 
   &.active {
-    color: #a78bfa;
-    border-bottom-color: #a78bfa;
-    background: rgba(167, 139, 250, 0.1);
+    color: #2563eb;
+    border-bottom-color: #2563eb;
+    background: white;
   }
 }
 
 .medical-content {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 1.5rem;
+  min-height: 0;
+  background: white;
 
   &::-webkit-scrollbar {
     width: 8px;
   }
 
   &::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.3);
+    background: #f3f4f6;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: #4b5563;
+    background: #d1d5db;
     border-radius: 4px;
-    &:hover { background: #6b7280; }
+    &:hover { background: #9ca3af; }
   }
 }
 
@@ -325,11 +341,11 @@
 .form-section {
   h3 {
     font-size: 1rem;
-    font-weight: 600;
-    color: #60a5fa;
+    font-weight: 700;
+    color: #1a202c;
     margin-bottom: 1rem;
     padding-bottom: 0.5rem;
-    border-bottom: 1px solid #374151;
+    border-bottom: 2px solid #e5e7eb;
   }
 }
 
@@ -339,8 +355,8 @@
   label {
     display: block;
     font-size: 0.875rem;
-    font-weight: 500;
-    color: #d1d5db;
+    font-weight: 600;
+    color: #374151;
     margin-bottom: 0.5rem;
   }
 }
@@ -348,18 +364,17 @@
 .form-control {
   width: 100%;
   padding: 0.625rem;
-  background: rgba(31, 41, 55, 0.8);
-  border: 1px solid #374151;
+  background: white;
+  border: 1px solid #d1d5db;
   border-radius: 0.5rem;
-  color: white;
+  color: #1a202c;
   font-size: 0.875rem;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 
   &:focus {
     outline: none;
-    border-color: #7c3aed;
-    background: rgba(31, 41, 55, 1);
-    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
   }
 
   &::placeholder {
@@ -412,7 +427,7 @@ select.form-control {
     flex: 0 0 auto;
     height: 60vh;
     border-left: none;
-    border-top: 2px solid #374151;
+    border-top: 2px solid #e5e7eb;
   }
 }
 
@@ -432,6 +447,128 @@ select.form-control {
 
   .medical-content {
     padding: 1rem;
+  }
+}
+
+/* Seleção de Especialidade */
+.specialty-selection {
+  h3 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1a202c;
+    margin-bottom: 0.5rem;
+  }
+
+  .specialty-subtitle {
+    color: #6b7280;
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
+  }
+}
+
+.specialty-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.specialty-card {
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    background: #f9fafb;
+    border-color: #93c5fd;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+  }
+
+  &.selected {
+    background: #eff6ff;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  }
+
+  .specialty-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  .specialty-info {
+    h4 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1a202c;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      color: #6b7280;
+      font-size: 0.875rem;
+    }
+  }
+
+  .specialty-check {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 30px;
+    height: 30px;
+    background: #2563eb;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+    font-size: 1.2rem;
+  }
+}
+
+.specialty-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+
+  .badge-label {
+    color: #6b7280;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .badge-value {
+    color: #2563eb;
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
+  .btn-change-specialty {
+    margin-left: auto;
+    background: white;
+    border: 1px solid #d1d5db;
+    color: #374151;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+
+    &:hover {
+      background: #f9fafb;
+      border-color: #2563eb;
+      color: #2563eb;
+    }
   }
 }
 

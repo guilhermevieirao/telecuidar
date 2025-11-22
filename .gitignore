@@ -1,0 +1,235 @@
+# ==========================
+# TeleCuidar - .gitignore
+# ==========================
+
+# ===========================
+# .NET / C# Backend
+# ===========================
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio cache/options
+.vs/
+.vscode/settings.json
+.vscode/launch.json
+.vscode/tasks.json
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build Results
+*_i.c
+*_p.c
+*_h.h
+*.ilk
+*.meta
+*.obj
+*.iobj
+*.pch
+*.pdb
+*.ipdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.tmp_proj
+*_wpftmp.csproj
+*.log
+*.tlog
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.svclog
+*.scc
+
+# NuGet Packages
+*.nupkg
+*.snupkg
+**/packages/*
+!**/packages/build/
+*.nuget.props
+*.nuget.targets
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Entity Framework
+*.mdf
+*.ldf
+*.ndf
+
+# SQL Server files
+*.mdf
+*.ldf
+
+# ===========================
+# Angular / Frontend
+# ===========================
+
+# Compiled output
+/frontend/dist
+/frontend/tmp
+/frontend/out-tsc
+/frontend/bazel-out
+
+# Node modules
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# IDEs and editors
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# Visual Studio Code
+.vscode/*
+!.vscode/extensions.json
+!.vscode/tasks.json
+!.vscode/launch.json
+.history/*
+
+# Miscellaneous
+/.angular/cache
+.sass-cache/
+/connect.lock
+/coverage
+/libpeerconnection.log
+testem.log
+/typings
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Angular cache
+.angular/
+
+# ===========================
+# Environment Variables
+# ===========================
+.env
+.env.local
+.env.production
+.env.development
+*.env
+
+# Except example files
+!.env.example
+
+# ===========================
+# Database
+# ===========================
+*.db
+*.sqlite
+*.sqlite3
+
+# ===========================
+# Logs
+# ===========================
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# ===========================
+# OS Files
+# ===========================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# ===========================
+# Temporary Files
+# ===========================
+*.swp
+*.swo
+*~
+.tmp/
+temp/
+
+# ===========================
+# Documentation Build
+# ===========================
+docs/_build/
+docs/.doctrees/
+
+# ===========================
+# Testing
+# ===========================
+coverage/
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# ===========================
+# Rider
+# ===========================
+.idea/
+*.sln.iml
+
+# ===========================
+# User-uploaded content
+# ===========================
+/wwwroot/uploads/
+/backend/api/wwwroot/uploads/
+
+# ===========================
+# Certificates & Keys
+# ===========================
+*.pfx
+*.key
+*.crt
+*.pem
+
+# ===========================
+# Other
+# ===========================
+*.bak
+*.cache
+*.class
+*.dll
+*.exe
+*.o
+*.so
+*.zip
+*.tar.gz
+*.rar

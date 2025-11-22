@@ -55,6 +55,19 @@
           }
         }
       },
+      "BCrypt.Net-Next/4.0.3": {
+        "type": "package",
+        "compile": {
+          "lib/net6.0/BCrypt.Net-Next.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/BCrypt.Net-Next.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "FluentValidation/11.11.0": {
         "type": "package",
         "compile": {
@@ -1298,6 +1311,8 @@
           "AutoMapper": "13.0.1",
           "FluentValidation": "11.11.0",
           "MediatR": "12.4.1",
+          "Microsoft.EntityFrameworkCore": "9.0.0",
+          "Microsoft.Extensions.Logging.Abstractions": "9.0.0",
           "app.Domain": "1.0.0"
         },
         "compile": {
@@ -1371,6 +1386,37 @@
         "azureicon.png",
         "lib/netstandard2.0/Azure.Identity.dll",
         "lib/netstandard2.0/Azure.Identity.xml"
+      ]
+    },
+    "BCrypt.Net-Next/4.0.3": {
+      "sha512": "W+U9WvmZQgi5cX6FS5GDtDoPzUCV4LkBLkywq/kRZhuDwcbavOzcDAr3LXJFqHUi952Yj3LEYoWW0jbEUQChsA==",
+      "type": "package",
+      "path": "bcrypt.net-next/4.0.3",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "bcrypt.net-next.4.0.3.nupkg.sha512",
+        "bcrypt.net-next.nuspec",
+        "ico.png",
+        "lib/net20/BCrypt.Net-Next.dll",
+        "lib/net20/BCrypt.Net-Next.xml",
+        "lib/net35/BCrypt.Net-Next.dll",
+        "lib/net35/BCrypt.Net-Next.xml",
+        "lib/net462/BCrypt.Net-Next.dll",
+        "lib/net462/BCrypt.Net-Next.xml",
+        "lib/net472/BCrypt.Net-Next.dll",
+        "lib/net472/BCrypt.Net-Next.xml",
+        "lib/net48/BCrypt.Net-Next.dll",
+        "lib/net48/BCrypt.Net-Next.xml",
+        "lib/net5.0/BCrypt.Net-Next.dll",
+        "lib/net5.0/BCrypt.Net-Next.xml",
+        "lib/net6.0/BCrypt.Net-Next.dll",
+        "lib/net6.0/BCrypt.Net-Next.xml",
+        "lib/netstandard2.0/BCrypt.Net-Next.dll",
+        "lib/netstandard2.0/BCrypt.Net-Next.xml",
+        "lib/netstandard2.1/BCrypt.Net-Next.dll",
+        "lib/netstandard2.1/BCrypt.Net-Next.xml",
+        "readme.md"
       ]
     },
     "FluentValidation/11.11.0": {
@@ -3622,6 +3668,7 @@
   },
   "projectFileDependencyGroups": {
     "net10.0": [
+      "BCrypt.Net-Next >= 4.0.3",
       "Microsoft.EntityFrameworkCore >= 9.0.0",
       "Microsoft.EntityFrameworkCore.Design >= 9.0.0",
       "Microsoft.EntityFrameworkCore.SqlServer >= 9.0.0",
@@ -3630,35 +3677,43 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\GUILHERME\\.nuget\\packages\\": {}
+    "C:\\Users\\alexa\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\server\\backend\\infrastructure\\app.Infrastructure.csproj",
+      "projectUniqueName": "C:\\Users\\alexa\\Downloads\\telecuidar\\backend\\infrastructure\\app.Infrastructure.csproj",
       "projectName": "app.Infrastructure",
-      "projectPath": "C:\\server\\backend\\infrastructure\\app.Infrastructure.csproj",
-      "packagesPath": "C:\\Users\\GUILHERME\\.nuget\\packages\\",
-      "outputPath": "C:\\server\\backend\\infrastructure\\obj\\",
+      "projectPath": "C:\\Users\\alexa\\Downloads\\telecuidar\\backend\\infrastructure\\app.Infrastructure.csproj",
+      "packagesPath": "C:\\Users\\alexa\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\alexa\\Downloads\\telecuidar\\backend\\infrastructure\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "C:\\Users\\GUILHERME\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\alexa\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net10.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net10.0": {
           "targetAlias": "net10.0",
           "projectReferences": {
-            "C:\\server\\backend\\application\\app.Application.csproj": {
-              "projectPath": "C:\\server\\backend\\application\\app.Application.csproj"
+            "C:\\Users\\alexa\\Downloads\\telecuidar\\backend\\application\\app.Application.csproj": {
+              "projectPath": "C:\\Users\\alexa\\Downloads\\telecuidar\\backend\\application\\app.Application.csproj"
             },
-            "C:\\server\\backend\\domain\\app.Domain.csproj": {
-              "projectPath": "C:\\server\\backend\\domain\\app.Domain.csproj"
+            "C:\\Users\\alexa\\Downloads\\telecuidar\\backend\\domain\\app.Domain.csproj": {
+              "projectPath": "C:\\Users\\alexa\\Downloads\\telecuidar\\backend\\domain\\app.Domain.csproj"
             }
           }
         }
@@ -3679,6 +3734,10 @@
       "net10.0": {
         "targetAlias": "net10.0",
         "dependencies": {
+          "BCrypt.Net-Next": {
+            "target": "Package",
+            "version": "[4.0.3, )"
+          },
           "Microsoft.EntityFrameworkCore": {
             "target": "Package",
             "version": "[9.0.0, )"

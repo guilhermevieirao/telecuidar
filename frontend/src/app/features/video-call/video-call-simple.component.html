@@ -72,7 +72,7 @@
       </div>
     </div>
 
-    <div class="medical-tabs">
+    <div class="medical-tabs" *ngIf="selectedSpecialty">
       <button 
         class="tab-btn" 
         [class.active]="activeTab === 'patient'"
@@ -100,8 +100,38 @@
     </div>
 
     <div class="medical-content">
+      <!-- Tab: Seleção de Especialidade -->
+      <div class="tab-content" *ngIf="activeTab === 'specialty'">
+        <div class="specialty-selection">
+          <h3>Selecione a Especialidade</h3>
+          <p class="specialty-subtitle">Escolha a área médica para personalizar o atendimento</p>
+          
+          <div class="specialty-grid">
+            <div 
+              *ngFor="let specialty of specialties"
+              class="specialty-card"
+              (click)="selectSpecialty(specialty.id)"
+              [class.selected]="selectedSpecialty === specialty.id">
+              <div class="specialty-icon">{{ specialty.icon }}</div>
+              <div class="specialty-info">
+                <h4>{{ specialty.name }}</h4>
+                <p>{{ specialty.description }}</p>
+              </div>
+              <div class="specialty-check" *ngIf="selectedSpecialty === specialty.id">✓</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Tab: Dados do Paciente -->
       <div class="tab-content" *ngIf="activeTab === 'patient'">
+        <div class="specialty-badge" *ngIf="selectedSpecialty">
+          <span class="badge-label">Especialidade:</span>
+          <span class="badge-value">{{ getSpecialtyName() }}</span>
+          <button class="btn-change-specialty" (click)="setActiveTab('specialty')" title="Trocar especialidade">
+            🔄
+          </button>
+        </div>
         <div class="form-section">
           <h3>Identificação do Paciente</h3>
           
@@ -290,6 +320,28 @@
 
       <!-- Tab: Diagnóstico e Tratamento -->
       <div class="tab-content" *ngIf="activeTab === 'diagnosis'">
+        <div class="form-section" *ngIf="getSpecialtyFields().length > 0">
+          <h3>🔬 Campos Específicos - {{ getSpecialtyName() }}</h3>
+          
+          <div *ngFor="let field of getSpecialtyFields()" class="form-group">
+            <label [for]="field.key">{{ field.label }}</label>
+            <input 
+              *ngIf="field.type === 'text' || field.type === 'date'"
+              [id]="field.key"
+              [type]="field.type"
+              [(ngModel)]="specialtyData[field.key]"
+              [placeholder]="field.label"
+              class="form-control">
+            <textarea 
+              *ngIf="field.type === 'textarea'"
+              [id]="field.key"
+              [(ngModel)]="specialtyData[field.key]"
+              [placeholder]="field.label"
+              rows="3"
+              class="form-control"></textarea>
+          </div>
+        </div>
+
         <div class="form-section">
           <h3>Diagnóstico e Conduta</h3>
 

@@ -1,0 +1,31 @@
+@use '../login/login.component.scss' as *;
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+
+  .form-group {
+    min-width: 0;
+    
+    input {
+      width: 100%;
+      box-sizing: border-box;
+    }
+  }
+}
+
+.success-alert {
+  background: #f0fdf4;
+  color: #16a34a;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #86efac;
+  font-size: 0.875rem;
+}
+
+@media (max-width: 640px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}

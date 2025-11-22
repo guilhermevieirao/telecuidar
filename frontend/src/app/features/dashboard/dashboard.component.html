@@ -1,0 +1,138 @@
+<div class="dashboard-page">
+  <app-breadcrumb></app-breadcrumb>
+  
+  <nav class="navbar">
+    <div class="navbar-content">
+      <div class="logo">
+        <span class="logo-icon">🏥</span>
+        <span class="logo-text">TeleCuidar</span>
+      </div>
+      
+      <div class="nav-right">
+        <div class="user-profile-section">
+          <div class="user-avatar" routerLink="/profile" title="Editar perfil">
+            <img *ngIf="user?.profilePhotoUrl" [src]="user.profilePhotoUrl" [alt]="user.fullName">
+            <span *ngIf="!user?.profilePhotoUrl" class="avatar-initials">{{ getUserInitials() }}</span>
+          </div>
+          <div class="user-info">
+            <span class="user-name">{{ user?.fullName }}</span>
+            <span class="user-role">{{ getUserRoleName() }}</span>
+          </div>
+        </div>
+        <a routerLink="/admin" class="btn-admin" *ngIf="user?.role === 3">
+          ⚙️ Admin
+        </a>
+        <button class="btn-logout" (click)="logout()">
+          Sair
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="dashboard-container">
+    <div class="welcome-section">
+      <h1>Bem-vindo, {{ user?.firstName }}! 👋</h1>
+      <p>Seu acesso foi realizado com sucesso.</p>
+    </div>
+
+    <div class="cards-grid">
+      <div class="dashboard-card">
+        <div class="card-icon blue">📅</div>
+        <div class="card-content">
+          <h3>Próximas Consultas</h3>
+          <p class="card-value">0</p>
+          <p class="card-description">Nenhuma consulta agendada</p>
+        </div>
+      </div>
+
+      <div class="dashboard-card">
+        <div class="card-icon red">📋</div>
+        <div class="card-content">
+          <h3>Prontuário</h3>
+          <p class="card-value">Em breve</p>
+          <p class="card-description">Histórico médico completo</p>
+        </div>
+      </div>
+
+      <div class="dashboard-card">
+        <div class="card-icon green">💊</div>
+        <div class="card-content">
+          <h3>Prescrições</h3>
+          <p class="card-value">0</p>
+          <p class="card-description">Nenhuma prescrição ativa</p>
+        </div>
+      </div>
+
+      <div class="dashboard-card">
+        <div class="card-icon blue">📱</div>
+        <div class="card-content">
+          <h3>Mensagens</h3>
+          <p class="card-value">0</p>
+          <p class="card-description">Nenhuma mensagem nova</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-section">
+      <h2>Informações da Conta</h2>
+      <div class="info-grid">
+        <div class="info-item">
+          <label>Nome Completo:</label>
+          <span>{{ user?.fullName }}</span>
+        </div>
+        <div class="info-item">
+          <label>E-mail:</label>
+          <span>{{ user?.email }}</span>
+        </div>
+        <div class="info-item">
+          <label>Telefone:</label>
+          <span>{{ user?.phoneNumber || 'Não informado' }}</span>
+        </div>
+        <div class="info-item">
+          <label>Tipo de Conta:</label>
+          <span>{{ getUserRoleName() }}</span>
+        </div>
+        <div class="info-item">
+          <label>E-mail Confirmado:</label>
+          <span [class.confirmed]="user?.emailConfirmed" [class.pending]="!user?.emailConfirmed">
+            {{ user?.emailConfirmed ? '✓ Confirmado' : '⚠ Pendente' }}
+          </span>
+        </div>
+        <div class="info-item">
+          <label>Último Acesso:</label>
+          <span>{{ user?.lastLoginAt | date:'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="quick-actions">
+      <h2>Ações Rápidas</h2>
+      <div class="actions-grid">
+        <a routerLink="/teste" class="action-btn primary">
+          <span class="action-icon">🎥</span>
+          <span>Iniciar Consulta Online</span>
+        </a>
+        <button class="action-btn">
+          <span class="action-icon">📅</span>
+          <span>Agendar Consulta</span>
+        </button>
+        <a routerLink="/profile" class="action-btn">
+          <span class="action-icon">👤</span>
+          <span>Editar Perfil</span>
+        </a>
+        <a routerLink="/audit-logs" class="action-btn" *ngIf="user?.role === 3">
+          <span class="action-icon">📊</span>
+          <span>Logs de Auditoria</span>
+        </a>
+        <button class="action-btn">
+          <span class="action-icon">💬</span>
+          <span>Mensagens</span>
+        </button>
+        <button class="action-btn">
+          <span class="action-icon">⚙️</span>
+          <span>Configurações</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

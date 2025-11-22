@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using app.Domain.Entities;
+using System.Reflection;
 
 namespace app.Infrastructure.Persistence;
 
@@ -10,19 +11,15 @@ public class ApplicationDbContext : DbContext
     }
 
     public DbSet<User> Users { get; set; }
+    public DbSet<AuditLog> AuditLogs { get; set; }
+    public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
+    public DbSet<EmailConfirmationToken> EmailConfirmationTokens { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<User>(entity =>
-        {
-            entity.HasKey(e => e.Id);
-            entity.Property(e => e.Email).IsRequired().HasMaxLength(255);
-            entity.Property(e => e.FirstName).IsRequired().HasMaxLength(100);
-            entity.Property(e => e.LastName).IsRequired().HasMaxLength(100);
-            entity.Property(e => e.PasswordHash).IsRequired();
-            entity.HasIndex(e => e.Email).IsUnique();
-        });
+        // Aplicar todas as configurações do assembly
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
 }

@@ -1,0 +1,399 @@
+<div class="landing-page">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-background">
+      <div class="hero-gradient"></div>
+      <div class="hero-pattern"></div>
+    </div>
+    
+    <nav class="navbar">
+      <div class="container navbar-content">
+        <div class="logo">
+          <span class="logo-icon">🏥</span>
+          <span class="logo-text">TeleCuidar</span>
+        </div>
+        
+        <div class="nav-links">
+          <a (click)="scrollToSection('sobre')" class="nav-link">Sobre</a>
+          <a (click)="scrollToSection('tecnologia')" class="nav-link">Tecnologia</a>
+          <a (click)="scrollToSection('solucao')" class="nav-link">Solução</a>
+          <a (click)="scrollToSection('impacto')" class="nav-link">Impacto</a>
+          
+          <ng-container *ngIf="!isLoggedIn">
+            <a routerLink="/login" class="btn-secondary">Entrar</a>
+            <a routerLink="/register" class="btn-primary">Cadastrar</a>
+          </ng-container>
+          
+          <ng-container *ngIf="isLoggedIn">
+            <span class="user-greeting">Olá, {{ userName }}!</span>
+            <a routerLink="/dashboard" class="btn-primary">Acessar Plataforma</a>
+          </ng-container>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container hero-content">
+      <div class="hero-text">
+        <h1 class="hero-title">
+          Revolucionando o Atendimento de Saúde com
+          <span class="gradient-text">Tecnologia e Humanização</span>
+        </h1>
+        <p class="hero-description">
+          Plataforma moderna de telesaúde pública que combina IA, IoT e cuidado humano 
+          para levar atendimento médico especializado a todos os cantos do Brasil.
+        </p>
+        
+        <div class="hero-stats">
+          <div class="stat-item" *ngFor="let stat of stats">
+            <div class="stat-value">{{ stat.value }}</div>
+            <div class="stat-label">{{ stat.label }}</div>
+          </div>
+        </div>
+
+        <div class="hero-actions">
+          <button (click)="scrollToSection('solucao')" class="btn-hero-primary">
+            Conheça Nossa Solução
+          </button>
+          <button (click)="scrollToSection('contato')" class="btn-hero-secondary">
+            Fale Conosco
+          </button>
+        </div>
+      </div>
+
+      <div class="hero-image">
+        <div class="floating-card card-1">
+          <div class="card-icon">📊</div>
+          <div class="card-text">Dados em Tempo Real</div>
+        </div>
+        <div class="floating-card card-2">
+          <div class="card-icon">🤖</div>
+          <div class="card-text">IA Diagnóstica</div>
+        </div>
+        <div class="floating-card card-3">
+          <div class="card-icon">💊</div>
+          <div class="card-text">Prescrição Digital</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="sobre" class="section section-about">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Por que existimos?</h2>
+        <p class="section-subtitle">
+          A atual estrutura de saúde pública enfrenta desafios que podem ser superados 
+          com tecnologia e humanização
+        </p>
+      </div>
+
+      <div class="challenges-grid">
+        <div class="challenge-card">
+          <div class="challenge-icon">🗺️</div>
+          <h3>Dimensões Continentais</h3>
+          <p>
+            O Brasil possui dimensões continentais que dificultam o acesso à saúde 
+            especializada em regiões remotas, onde a retenção de profissionais é desafiadora.
+          </p>
+        </div>
+
+        <div class="challenge-card">
+          <div class="challenge-icon">⏰</div>
+          <h3>Longas Filas de Espera</h3>
+          <p>
+            A população SUS dependente enfrenta longas filas para atendimento especializado, 
+            comprometendo a qualidade do cuidado de saúde.
+          </p>
+        </div>
+
+        <div class="challenge-card">
+          <div class="challenge-icon">👨‍⚕️</div>
+          <h3>Escassez de Especialistas</h3>
+          <p>
+            Dificuldades econômicas, de segurança e acesso limitam a presença de 
+            especialistas em diversas regiões do país.
+          </p>
+        </div>
+      </div>
+
+      <div class="solution-banner">
+        <h3>Nossa Resposta Tecnológica</h3>
+        <p>
+          O TeleCuidar surge como uma solução inovadora que aproveita o amadurecimento 
+          das tecnologias de IA, IoT e Big Data para criar uma ponte entre o conhecimento 
+          médico especializado e as comunidades que mais precisam de cuidados de qualidade.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="section section-features">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Funcionalidades Principais</h2>
+        <p class="section-subtitle">
+          Tudo que você precisa para um atendimento de saúde moderno e eficiente
+        </p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card" *ngFor="let feature of features">
+          <div class="feature-icon">{{ feature.icon }}</div>
+          <h3 class="feature-title">{{ feature.title }}</h3>
+          <p class="feature-description">{{ feature.description }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Technology Section -->
+  <section id="tecnologia" class="section section-technology">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Tecnologia de Ponta a Serviço da Vida</h2>
+        <p class="section-subtitle">
+          Combinamos as mais avançadas tecnologias para criar uma experiência de cuidado único e eficaz
+        </p>
+      </div>
+
+      <div class="technology-grid">
+        <div class="tech-card" *ngFor="let tech of technologies">
+          <div class="tech-header">
+            <span class="tech-icon">{{ tech.icon }}</span>
+            <h3 class="tech-title">{{ tech.title }}</h3>
+          </div>
+          <ul class="tech-list">
+            <li *ngFor="let item of tech.items">
+              <span class="check-icon">✓</span>
+              {{ item }}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Solution Section -->
+  <section id="solucao" class="section section-solution">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Nossa Solução: Polos Assistenciais Tecnológicos</h2>
+        <p class="section-subtitle">
+          Levamos o conhecimento médico especializado para perto do paciente através de estruturas híbridas inovadoras
+        </p>
+      </div>
+
+      <div class="solution-flow">
+        <div class="flow-step">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h3>Cadastro e Agendamento</h3>
+            <p>App intuitivo para cadastro e agendamento com múltiplas especialidades disponíveis.</p>
+            <div class="step-tags">
+              <span class="tag">App intuitivo</span>
+              <span class="tag">Múltiplas especialidades</span>
+              <span class="tag">Agendamento fácil</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h3>Pré-consulta Inteligente</h3>
+            <p>Formulário completo com histórico, upload de imagens e análise por IA.</p>
+            <div class="step-tags">
+              <span class="tag">Histórico digital</span>
+              <span class="tag">Upload de imagens</span>
+              <span class="tag">Análise por IA</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h3>Atendimento no Polo</h3>
+            <p>Acolhimento humanizado em consultórios equipados com tecnologia IoT de ponta.</p>
+            <div class="step-tags">
+              <span class="tag">Acolhimento humanizado</span>
+              <span class="tag">Equipamentos IoT</span>
+              <span class="tag">Suporte profissional</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="step-number">4</div>
+          <div class="step-content">
+            <h3>Consulta Especializada</h3>
+            <p>Teleconsulta híbrida com dados biométricos em tempo real e insights de IA.</p>
+            <div class="step-tags">
+              <span class="tag">Especialista remoto</span>
+              <span class="tag">Dados em tempo real</span>
+              <span class="tag">Insights de IA</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="step-number">5</div>
+          <div class="step-content">
+            <h3>Acompanhamento Contínuo</h3>
+            <p>Prescrição digital, histórico completo e acompanhamento via app pessoal.</p>
+            <div class="step-tags">
+              <span class="tag">Prescrição digital</span>
+              <span class="tag">Histórico completo</span>
+              <span class="tag">Acompanhamento contínuo</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Impact Section -->
+  <section id="impacto" class="section section-impact">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Transformando Vidas e Comunidades</h2>
+        <p class="section-subtitle">
+          Nosso impacto vai além dos números - estamos construindo um futuro mais saudável e acessível para todos
+        </p>
+      </div>
+
+      <div class="benefits-grid">
+        <div class="benefit-card">
+          <div class="benefit-header">
+            <span class="benefit-icon">👥</span>
+            <h3>Para os Cidadãos</h3>
+          </div>
+          <ul class="benefit-list">
+            <li *ngFor="let benefit of benefits.citizens">
+              <span class="arrow">→</span>
+              {{ benefit }}
+            </li>
+          </ul>
+        </div>
+
+        <div class="benefit-card">
+          <div class="benefit-header">
+            <span class="benefit-icon">🏛️</span>
+            <h3>Para os Municípios</h3>
+          </div>
+          <ul class="benefit-list">
+            <li *ngFor="let benefit of benefits.municipalities">
+              <span class="arrow">→</span>
+              {{ benefit }}
+            </li>
+          </ul>
+        </div>
+
+        <div class="benefit-card">
+          <div class="benefit-header">
+            <span class="benefit-icon">⚕️</span>
+            <h3>Para os Profissionais</h3>
+          </div>
+          <ul class="benefit-list">
+            <li *ngFor="let benefit of benefits.professionals">
+              <span class="arrow">→</span>
+              {{ benefit }}
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="vision-card">
+        <h3>Nossa Visão de Futuro</h3>
+        <p>
+          Acreditamos em um Brasil onde a tecnologia não substitui o cuidado humano, mas o potencializa. 
+          Onde cada cidadão, independente de onde more, tenha acesso a cuidados de saúde de qualidade. 
+          Onde a inovação serve à vida e à dignidade humana.
+        </p>
+        <blockquote>
+          "O TeleCuidar representa mais que uma evolução tecnológica na saúde - é uma revolução 
+          na forma como cuidamos uns dos outros, unindo o melhor da ciência com o calor humano 
+          que todo paciente merece."
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section id="contato" class="section section-cta">
+    <div class="container">
+      <div class="cta-content">
+        <h2 class="cta-title">Faça Parte da Revolução da Saúde</h2>
+        <p class="cta-description">
+          Junte-se a nós na missão de democratizar o acesso à saúde de qualidade, 
+          combinando tecnologia de ponta com o cuidado humano que cada pessoa merece.
+        </p>
+        <div class="cta-buttons">
+          <button class="btn-cta-primary">Implementar em Seu Município</button>
+          <button class="btn-cta-secondary">Entre em Contato</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <div class="footer-logo">
+            <span class="logo-icon">🏥</span>
+            <span class="logo-text">TeleCuidar</span>
+          </div>
+          <p class="footer-tagline">
+            Revolucionando o atendimento de saúde pública através da união entre 
+            tecnologia de ponta e cuidado humano.
+          </p>
+          <div class="footer-tech">
+            <span class="tech-badge">.NET 10</span>
+            <span class="tech-badge">Angular 20</span>
+            <span class="tech-badge">IA Powered</span>
+          </div>
+        </div>
+
+        <div class="footer-section">
+          <h4>Links Importantes</h4>
+          <ul class="footer-links">
+            <li><a (click)="scrollToSection('sobre')">Nossa Missão</a></li>
+            <li><a (click)="scrollToSection('tecnologia')">Tecnologia</a></li>
+            <li><a (click)="scrollToSection('solucao')">Nossa Solução</a></li>
+            <li><a (click)="scrollToSection('impacto')">Impacto Social</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h4>Compliance e Segurança</h4>
+          <ul class="footer-links">
+            <li><a href="#">Política de Privacidade</a></li>
+            <li><a href="#">Termos de Uso</a></li>
+            <li><a href="#">Conformidade LGPD</a></li>
+            <li><a href="#">Certificações</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h4>Contato</h4>
+          <ul class="footer-contact">
+            <li>📧 contato@telecuidar.com.br</li>
+            <li>📱 +55 (11) 0000-0000</li>
+            <li>📍 São Paulo, SP - Brasil</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>
+          © 2025 TeleCuidar. Todos os direitos reservados. 
+          Desenvolvido com ❤️ para transformar a saúde pública no Brasil.
+        </p>
+      </div>
+    </div>
+  </footer>
+</div>
