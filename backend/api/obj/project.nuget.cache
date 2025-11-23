@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Xshs12UZAUE=",
+  "dgSpecHash": "CvSFUgca9zY=",
   "success": true,
-  "projectFilePath": "C:\\Users\\alexa\\Downloads\\telecuidar\\backend\\api\\app.Api.csproj",
+  "projectFilePath": "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\api\\app.Api.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\alexa\\.nuget\\packages\\automapper\\13.0.1\\automapper.13.0.1.nupkg.sha512",
     "C:\\Users\\alexa\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",

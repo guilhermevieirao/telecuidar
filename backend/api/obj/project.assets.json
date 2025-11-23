@@ -3241,11 +3241,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\alexa\\Downloads\\telecuidar\\backend\\api\\app.Api.csproj",
+      "projectUniqueName": "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\api\\app.Api.csproj",
       "projectName": "app.Api",
-      "projectPath": "C:\\Users\\alexa\\Downloads\\telecuidar\\backend\\api\\app.Api.csproj",
+      "projectPath": "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\api\\app.Api.csproj",
       "packagesPath": "C:\\Users\\alexa\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\alexa\\Downloads\\telecuidar\\backend\\api\\obj\\",
+      "outputPath": "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\api\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -3267,14 +3267,14 @@
         "net10.0": {
           "targetAlias": "net10.0",
           "projectReferences": {
-            "C:\\Users\\alexa\\Downloads\\telecuidar\\backend\\application\\app.Application.csproj": {
-              "projectPath": "C:\\Users\\alexa\\Downloads\\telecuidar\\backend\\application\\app.Application.csproj"
+            "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\application\\app.Application.csproj": {
+              "projectPath": "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\application\\app.Application.csproj"
             },
-            "C:\\Users\\alexa\\Downloads\\telecuidar\\backend\\domain\\app.Domain.csproj": {
-              "projectPath": "C:\\Users\\alexa\\Downloads\\telecuidar\\backend\\domain\\app.Domain.csproj"
+            "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\domain\\app.Domain.csproj": {
+              "projectPath": "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\domain\\app.Domain.csproj"
             },
-            "C:\\Users\\alexa\\Downloads\\telecuidar\\backend\\infrastructure\\app.Infrastructure.csproj": {
-              "projectPath": "C:\\Users\\alexa\\Downloads\\telecuidar\\backend\\infrastructure\\app.Infrastructure.csproj"
+            "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\infrastructure\\app.Infrastructure.csproj": {
+              "projectPath": "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\infrastructure\\app.Infrastructure.csproj"
             }
           }
         }
