@@ -6,11 +6,12 @@ import { HttpClient } from '@angular/common/http';
 import { ToastService } from '../../core/services/toast.service';
 import { NgxMaskDirective } from 'ngx-mask';
 import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcrumb.component';
+import { ImageCropModalComponent } from '../../shared/components/image-crop-modal/image-crop-modal.component';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, NgxMaskDirective, BreadcrumbComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, NgxMaskDirective, BreadcrumbComponent, ImageCropModalComponent],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss']
 })
@@ -20,6 +21,8 @@ export class ProfileComponent implements OnInit {
   user: any = null;
   profilePhotoUrl: string | null = null;
   profilePhotoPreview: string | null = null;
+  showCropModal = false;
+  tempImageForCrop: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -42,7 +45,7 @@ export class ProfileComponent implements OnInit {
   loadUserData() {
     const userString = localStorage.getItem('user');
     if (!userString) {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/entrar']);
       return;
     }
 
@@ -88,9 +91,9 @@ export class ProfileComponent implements OnInit {
     if (input.files && input.files[0]) {
       const file = input.files[0];
       
-      // Validar tamanho (máx 2MB)
-      if (file.size > 2 * 1024 * 1024) {
-        this.toastService.error('A imagem deve ter no máximo 2MB');
+      // Validar tamanho (máx 5MB para permitir crop)
+      if (file.size > 5 * 1024 * 1024) {
+        this.toastService.error('A imagem deve ter no máximo 5MB');
         return;
       }
 
@@ -102,11 +105,26 @@ export class ProfileComponent implements OnInit {
 
       const reader = new FileReader();
       reader.onload = () => {
-        this.profilePhotoPreview = reader.result as string;
-        this.profilePhotoUrl = reader.result as string;
+        this.tempImageForCrop = reader.result as string;
+        this.showCropModal = true;
       };
       reader.readAsDataURL(file);
     }
+    
+    // Reset input para permitir selecionar a mesma imagem novamente
+    input.value = '';
+  }
+
+  onCropComplete(croppedImage: string) {
+    this.profilePhotoPreview = croppedImage;
+    this.profilePhotoUrl = croppedImage;
+    this.showCropModal = false;
+    this.toastService.success('Imagem recortada com sucesso!');
+  }
+
+  onCropCancel() {
+    this.showCropModal = false;
+    this.tempImageForCrop = '';
   }
 
   removeProfilePhoto() {
@@ -124,6 +142,7 @@ export class ProfileComponent implements OnInit {
     const formData = this.profileForm.value;
     
     const updateData = {
+      id: this.user.id,
       ...formData,
       phoneNumber: formData.phoneNumber.replace(/[^\d]/g, ''),
       profilePhotoUrl: this.profilePhotoUrl

@@ -20,13 +20,13 @@ export class BreadcrumbComponent implements OnInit {
 
   private routeLabels: { [key: string]: string } = {
     '': 'Início',
-    'dashboard': 'Dashboard',
-    'login': 'Login',
-    'register': 'Cadastro',
-    'forgot-password': 'Recuperar Senha',
-    'profile': 'Meu Perfil',
-    'admin': 'Administração',
-    'audit-logs': 'Logs de Auditoria',
+    'painel': 'Painel',
+    'entrar': 'Entrar',
+    'cadastrar': 'Cadastro',
+    'recuperar-senha': 'Recuperar Senha',
+    'perfil': 'Meu Perfil',
+    'administracao': 'Administração',
+    'logs-auditoria': 'Logs de Auditoria',
     'teste': 'Videochamada'
   };
 
@@ -60,6 +60,15 @@ export class BreadcrumbComponent implements OnInit {
       
       if (routeURL !== '') {
         url += `/${routeURL}`;
+        
+        // Check if route has a parent breadcrumb
+        const breadcrumbParent = child.snapshot.data['breadcrumbParent'];
+        if (breadcrumbParent && !breadcrumbs.some(b => b.url === breadcrumbParent)) {
+          // Add parent breadcrumb if not already present
+          const parentRoute = breadcrumbParent.substring(1); // Remove leading slash
+          const parentLabel = this.routeLabels[parentRoute] || parentRoute;
+          breadcrumbs.push({ label: parentLabel, url: breadcrumbParent });
+        }
         
         // Get label from route data or use default
         const label = child.snapshot.data['breadcrumb'] || this.routeLabels[routeURL] || routeURL;

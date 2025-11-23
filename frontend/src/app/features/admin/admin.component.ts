@@ -56,7 +56,7 @@ export class AdminComponent implements OnInit {
   checkAdmin() {
     const user = localStorage.getItem('user');
     if (!user) {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/entrar']);
       return;
     }
 

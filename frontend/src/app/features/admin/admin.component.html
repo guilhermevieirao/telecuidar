@@ -1,5 +1,4 @@
 <div class="admin-page">
-  <app-breadcrumb></app-breadcrumb>
   <app-spinner [show]="loading" message="Carregando..."></app-spinner>
 
   <!-- Header -->
@@ -10,11 +9,11 @@
         <p>Painel de Administração</p>
       </div>
       <div class="header-right">
-        <button routerLink="/audit-logs" class="btn btn-secondary">
+        <button routerLink="/logs-auditoria" class="btn btn-secondary">
           📋 Logs de Auditoria
         </button>
-        <button routerLink="/dashboard" class="btn btn-secondary">
-          ← Voltar ao Dashboard
+        <button routerLink="/painel" class="btn btn-secondary">
+          ← Voltar ao Painel
         </button>
         <button (click)="logout()" class="btn btn-danger">
           Sair
@@ -22,6 +21,8 @@
       </div>
     </div>
   </header>
+  
+  <app-breadcrumb></app-breadcrumb>
 
   <!-- Main Content -->
   <main class="admin-content">

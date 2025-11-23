@@ -32,7 +32,7 @@
       <div class="auth-form-content">
         <div class="form-header">
           <h2>Entrar na sua conta</h2>
-          <p>Não tem uma conta? <a routerLink="/register" class="link">Cadastre-se</a></p>
+          <p>Não tem uma conta? <a routerLink="/cadastrar" class="link">Cadastre-se</a></p>
         </div>
 
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-form">
@@ -76,7 +76,7 @@
               <input type="checkbox" />
               <span>Lembrar-me</span>
             </label>
-            <a routerLink="/forgot-password" class="link">Esqueceu a senha?</a>
+            <a routerLink="/recuperar-senha" class="link">Esqueceu a senha?</a>
           </div>
 
           <div class="error-alert" *ngIf="errorMessage">

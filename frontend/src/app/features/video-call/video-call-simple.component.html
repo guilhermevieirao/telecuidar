@@ -15,7 +15,7 @@
     </div>
 
     <div class="video-call-content">
-      <div *ngIf="isLoading" class="loading-container">
+      <div *ngIf="isLoading && !errorMessage" class="loading-container">
         <div class="spinner"></div>
         <p>Inicializando videochamada...</p>
       </div>
@@ -27,16 +27,8 @@
         </div>
       </div>
 
-      <div *ngIf="!isLoading && !errorMessage" class="video-container">
-        <iframe 
-          [src]="getSafeUrl()" 
-          width="100%" 
-          height="100%" 
-          frameborder="0"
-          allow="camera; microphone; display-capture"
-          title="Jitsi Meet Videochamada"
-          class="jitsi-iframe">
-        </iframe>
+      <div class="video-container" [style.display]="errorMessage ? 'none' : 'block'">
+        <div id="jitsi-meet-container" class="jitsi-container"></div>
       </div>
     </div>
 

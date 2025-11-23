@@ -20,13 +20,13 @@
           <a (click)="scrollToSection('impacto')" class="nav-link">Impacto</a>
           
           <ng-container *ngIf="!isLoggedIn">
-            <a routerLink="/login" class="btn-secondary">Entrar</a>
-            <a routerLink="/register" class="btn-primary">Cadastrar</a>
+            <a routerLink="/entrar" class="btn-secondary">Entrar</a>
+            <a routerLink="/cadastrar" class="btn-primary">Cadastrar</a>
           </ng-container>
           
           <ng-container *ngIf="isLoggedIn">
             <span class="user-greeting">Olá, {{ userName }}!</span>
-            <a routerLink="/dashboard" class="btn-primary">Acessar Plataforma</a>
+            <a routerLink="/painel" class="btn-primary">Acessar Plataforma</a>
           </ng-container>
         </div>
       </div>

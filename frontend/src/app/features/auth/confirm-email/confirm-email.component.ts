@@ -42,7 +42,7 @@ export class ConfirmEmailComponent implements OnInit {
           if (response.isSuccess) {
             this.success = true;
             setTimeout(() => {
-              this.router.navigate(['/login']);
+              this.router.navigate(['/entrar']);
             }, 3000);
           } else {
             this.errorMessage = response.message || 'Erro ao confirmar email';

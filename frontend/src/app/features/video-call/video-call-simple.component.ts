@@ -1,7 +1,9 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+
+declare var JitsiMeetExternalAPI: any;
 
 interface MedicalRecord {
   patientName: string;
@@ -36,7 +38,7 @@ interface MedicalRecord {
   templateUrl: './video-call-simple.component.html',
   styleUrls: ['./video-call-simple.component.scss']
 })
-export class VideoCallSimpleComponent implements OnInit, OnDestroy {
+export class VideoCallSimpleComponent implements OnInit, OnDestroy, AfterViewInit {
   roomName: string = 'app-Room-' + Math.random().toString(36).substr(2, 9);
   jitsiUrl: SafeResourceUrl = '';
   isLoading = true;
@@ -46,6 +48,7 @@ export class VideoCallSimpleComponent implements OnInit, OnDestroy {
   activeTab: 'specialty' | 'patient' | 'anamnesis' | 'exam' | 'diagnosis' = 'specialty';
   selectedSpecialty: string = '';
   specialtyData: { [key: string]: any } = {};
+  private jitsiApi: any = null;
 
   specialties = [
     { id: 'cardiology', name: 'Cardiologia', icon: '❤️', description: 'Avaliação cardiovascular' },
@@ -108,58 +111,181 @@ export class VideoCallSimpleComponent implements OnInit, OnDestroy {
   constructor(private sanitizer: DomSanitizer) {}
 
   ngOnInit(): void {
-    this.generateRoomUrl();
     this.checkBrowserSupport();
   }
 
-  ngOnDestroy(): void {
-    // Limpar recursos se necessário
+  ngAfterViewInit(): void {
+    // Aguardar o container estar pronto antes de carregar o Jitsi
+    setTimeout(() => {
+      this.loadJitsiScript();
+    }, 100);
   }
 
-  private generateRoomUrl(): void {
-    // Configuração do Jitsi com toolbar personalizada
-    const configOverwrite = {
-      toolbarButtons: [
-        'camera', 'chat', 'desktop', 'download', 'embedmeeting', 'etherpad', 
-        'feedback', 'filmstrip', 'fullscreen', 'hangup', 'invite', 'livestreaming',
-        'microphone', 'mute-everyone', 'mute-video-everyone', 'participants-pane',
-        'profile', 'raisehand', 'recording', 'security', 'select-background',
-        'settings', 'shareaudio', 'sharedvideo', 'shortcuts', 'stats', 'tileview',
-        'toggle-camera', 'videoquality', '__end'
-      ],
-      toolbarConfig: {
-        alwaysVisible: false
+  ngOnDestroy(): void {
+    if (this.jitsiApi) {
+      this.jitsiApi.dispose();
+      this.jitsiApi = null;
+    }
+  }
+
+  private loadJitsiScript(): void {
+    // Verificar se o script já está carregado
+    if (typeof JitsiMeetExternalAPI !== 'undefined') {
+      this.initializeJitsi();
+      return;
+    }
+
+    // Carregar o script da API do Jitsi
+    const script = document.createElement('script');
+    script.src = 'https://jitsi.riot.im/external_api.js';
+    script.async = true;
+    script.onload = () => {
+      this.initializeJitsi();
+    };
+    script.onerror = () => {
+      this.errorMessage = 'Erro ao carregar o Jitsi Meet. Verifique sua conexão.';
+      this.isLoading = false;
+    };
+    document.head.appendChild(script);
+  }
+
+  private initializeJitsi(): void {
+    const container = document.getElementById('jitsi-meet-container');
+    
+    if (!container) {
+      console.error('Container jitsi-meet-container não encontrado');
+      this.errorMessage = 'Erro: Container de vídeo não encontrado.';
+      this.isLoading = false;
+      return;
+    }
+
+    if (typeof JitsiMeetExternalAPI === 'undefined') {
+      console.error('JitsiMeetExternalAPI não está definido');
+      this.errorMessage = 'Erro: API do Jitsi não carregada.';
+      this.isLoading = false;
+      return;
+    }
+
+    const domain = 'jitsi.riot.im';
+    const options = {
+      roomName: this.roomName,
+      width: '100%',
+      height: '100%',
+      parentNode: container,
+      lang: 'pt',
+      configOverwrite: {
+        prejoinPageEnabled: true,
+        defaultLanguage: 'pt',
+        // Configurações de transcrição/legendas
+        transcription: {
+          enabled: true,
+          preferredLanguage: 'pt',
+          translationLanguages: ['pt'],
+          useAppLanguage: true
+        },
+        transcribingEnabled: true,
+        // Habilitar chat
+        disableChat: false,
+        // Outras configurações
+        startWithAudioMuted: false,
+        startWithVideoMuted: false,
+        disableDeepLinking: true,
+        enableClosedCaptions: true,
+        // Botões adicionais
+        toolbarButtons: [
+          'camera',
+          'chat',
+          'closedcaptions',
+          'desktop',
+          'download',
+          'embedmeeting',
+          'filmstrip',
+          'fullscreen',
+          'hangup',
+          'invite',
+          'microphone',
+          'participants-pane',
+          'profile',
+          'raisehand',
+          'recording',
+          'security',
+          'select-background',
+          'settings',
+          'shareaudio',
+          'sharedvideo',
+          'shortcuts',
+          'stats',
+          'tileview',
+          'videoquality'
+        ]
       },
-      disableDeepLinking: true,
-      disableInviteFunctions: false,
-      enableWelcomePage: false,
-      prejoinPageEnabled: true,
-      prejoinConfig: {
-        enabled: true
+      interfaceConfigOverwrite: {
+        TOOLBAR_BUTTONS: [
+          'camera',
+          'chat',
+          'closedcaptions',
+          'desktop',
+          'download',
+          'embedmeeting',
+          'filmstrip',
+          'fullscreen',
+          'hangup',
+          'invite',
+          'microphone',
+          'participants-pane',
+          'profile',
+          'raisehand',
+          'recording',
+          'security',
+          'select-background',
+          'settings',
+          'shareaudio',
+          'sharedvideo',
+          'shortcuts',
+          'stats',
+          'tileview',
+          'videoquality'
+        ],
+        SHOW_JITSI_WATERMARK: false,
+        SHOW_WATERMARK_FOR_GUESTS: false,
+        HIDE_INVITE_MORE_HEADER: false,
+        DISABLE_VIDEO_BACKGROUND: false
       }
     };
 
-    // Gerar URL com configurações para o servidor jitsi.riot.im
-    const configParams = new URLSearchParams({
-      'config.prejoinPageEnabled': 'true',
-      'config.toolbarButtons': JSON.stringify(configOverwrite.toolbarButtons),
-      'config.toolbarConfig.alwaysVisible': 'false',
-      'interfaceConfig.TOOLBAR_BUTTONS': JSON.stringify(configOverwrite.toolbarButtons),
-      'interfaceConfig.SHOW_JITSI_WATERMARK': 'false',
-      'interfaceConfig.SHOW_WATERMARK_FOR_GUESTS': 'false'
-    });
+    try {
+      console.log('Inicializando Jitsi com sala:', this.roomName);
+      this.jitsiApi = new JitsiMeetExternalAPI(domain, options);
+      
+      this.jitsiApi.addEventListener('videoConferenceJoined', () => {
+        console.log('Usuário entrou na conferência');
+        this.isLoading = false;
+        this.showControls = true;
+      });
 
-    const roomUrl = `https://jitsi.riot.im/${this.roomName}#config.prejoinPageEnabled=true&${configParams.toString()}`;
-    this.jitsiUrl = this.sanitizer.bypassSecurityTrustResourceUrl(roomUrl);
-    
-    console.log('URL Jitsi gerada com configurações:', roomUrl);
-    
-    // Simular carregamento
-    setTimeout(() => {
+      this.jitsiApi.addEventListener('readyToClose', () => {
+        console.log('Conferência encerrada');
+      });
+
+      this.jitsiApi.addEventListener('videoConferenceLeft', () => {
+        console.log('Usuário saiu da conferência');
+      });
+
+      // Simular fim do loading após 3 segundos se não houver evento
+      setTimeout(() => {
+        if (this.isLoading) {
+          this.isLoading = false;
+          this.showControls = true;
+        }
+      }, 3000);
+    } catch (error) {
+      console.error('Erro ao inicializar Jitsi:', error);
+      this.errorMessage = 'Erro ao inicializar videochamada: ' + (error as Error).message;
       this.isLoading = false;
-      this.showControls = true;
-    }, 1500);
+    }
   }
+
+
 
   private checkBrowserSupport(): void {
     const hasGetUserMedia = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
@@ -172,25 +298,7 @@ export class VideoCallSimpleComponent implements OnInit, OnDestroy {
   }
 
   copyRoomLink(): void {
-    const configOverwrite = {
-      toolbarButtons: [
-        'camera', 'chat', 'desktop', 'download', 'embedmeeting', 'etherpad', 
-        'feedback', 'filmstrip', 'fullscreen', 'hangup', 'invite', 'livestreaming',
-        'microphone', 'mute-everyone', 'mute-video-everyone', 'participants-pane',
-        'profile', 'raisehand', 'recording', 'security', 'select-background',
-        'settings', 'shareaudio', 'sharedvideo', 'shortcuts', 'stats', 'tileview',
-        'toggle-camera', 'videoquality', '__end'
-      ]
-    };
-
-    const configParams = new URLSearchParams({
-      'config.prejoinPageEnabled': 'true',
-      'config.toolbarButtons': JSON.stringify(configOverwrite.toolbarButtons),
-      'config.toolbarConfig.alwaysVisible': 'false',
-      'interfaceConfig.TOOLBAR_BUTTONS': JSON.stringify(configOverwrite.toolbarButtons)
-    });
-
-    const roomLink = `https://jitsi.riot.im/${this.roomName}#config.prejoinPageEnabled=true&${configParams.toString()}`;
+    const roomLink = `https://jitsi.riot.im/${this.roomName}`;
     
     navigator.clipboard.writeText(roomLink).then(() => {
       alert('Link da sala copiado para a área de transferência!');
@@ -208,31 +316,17 @@ export class VideoCallSimpleComponent implements OnInit, OnDestroy {
   }
 
   openInNewTab(): void {
-    const configOverwrite = {
-      toolbarButtons: [
-        'camera', 'chat', 'desktop', 'download', 'embedmeeting', 'etherpad', 
-        'feedback', 'filmstrip', 'fullscreen', 'hangup', 'invite', 'livestreaming',
-        'microphone', 'mute-everyone', 'mute-video-everyone', 'participants-pane',
-        'profile', 'raisehand', 'recording', 'security', 'select-background',
-        'settings', 'shareaudio', 'sharedvideo', 'shortcuts', 'stats', 'tileview',
-        'toggle-camera', 'videoquality', '__end'
-      ]
-    };
-
-    const configParams = new URLSearchParams({
-      'config.prejoinPageEnabled': 'true',
-      'config.toolbarButtons': JSON.stringify(configOverwrite.toolbarButtons),
-      'config.toolbarConfig.alwaysVisible': 'false',
-      'interfaceConfig.TOOLBAR_BUTTONS': JSON.stringify(configOverwrite.toolbarButtons)
-    });
-
-    const roomUrl = `https://jitsi.riot.im/${this.roomName}#config.prejoinPageEnabled=true&${configParams.toString()}`;
+    const roomUrl = `https://jitsi.riot.im/${this.roomName}`;
     window.open(roomUrl, '_blank');
   }
 
   refreshRoom(): void {
     this.roomName = 'app-Room-' + Math.random().toString(36).substr(2, 9);
-    this.generateRoomUrl();
+    if (this.jitsiApi) {
+      this.jitsiApi.dispose();
+    }
+    this.isLoading = true;
+    setTimeout(() => this.initializeJitsi(), 500);
   }
 
   getSafeUrl() {

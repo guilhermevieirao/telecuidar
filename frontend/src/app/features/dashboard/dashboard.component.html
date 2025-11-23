@@ -1,6 +1,4 @@
 <div class="dashboard-page">
-  <app-breadcrumb></app-breadcrumb>
-  
   <nav class="navbar">
     <div class="navbar-content">
       <div class="logo">
@@ -10,7 +8,7 @@
       
       <div class="nav-right">
         <div class="user-profile-section">
-          <div class="user-avatar" routerLink="/profile" title="Editar perfil">
+          <div class="user-avatar" routerLink="/perfil" title="Editar perfil">
             <img *ngIf="user?.profilePhotoUrl" [src]="user.profilePhotoUrl" [alt]="user.fullName">
             <span *ngIf="!user?.profilePhotoUrl" class="avatar-initials">{{ getUserInitials() }}</span>
           </div>
@@ -19,7 +17,7 @@
             <span class="user-role">{{ getUserRoleName() }}</span>
           </div>
         </div>
-        <a routerLink="/admin" class="btn-admin" *ngIf="user?.role === 3">
+        <a routerLink="/administracao" class="btn-admin" *ngIf="user?.role === 3">
           ⚙️ Admin
         </a>
         <button class="btn-logout" (click)="logout()">
@@ -28,11 +26,21 @@
       </div>
     </div>
   </nav>
+  
+  <app-breadcrumb></app-breadcrumb>
 
   <div class="dashboard-container">
     <div class="welcome-section">
-      <h1>Bem-vindo, {{ user?.firstName }}! 👋</h1>
-      <p>Seu acesso foi realizado com sucesso.</p>
+      <div class="welcome-content">
+        <h1>Bem-vindo, {{ user?.firstName }}! 👋</h1>
+        <p>Seu acesso foi realizado com sucesso.</p>
+      </div>
+      <div class="welcome-avatar">
+        <img *ngIf="user?.profilePhotoUrl" [src]="user.profilePhotoUrl" [alt]="user.fullName">
+        <div *ngIf="!user?.profilePhotoUrl" class="avatar-placeholder">
+          <span>{{ getUserInitials() }}</span>
+        </div>
+      </div>
     </div>
 
     <div class="cards-grid">

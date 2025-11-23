@@ -8,7 +8,7 @@ export const authGuard: CanActivateFn = (route, state) => {
   const user = localStorage.getItem('user');
   
   if (!token || !user) {
-    router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
+    router.navigate(['/entrar'], { queryParams: { returnUrl: state.url } });
     return false;
   }
   
@@ -19,7 +19,7 @@ export const authGuard: CanActivateFn = (route, state) => {
     const userRole = userData.role as number;
     
     if (!requiredRoles.includes(userRole)) {
-      router.navigate(['/dashboard']);
+      router.navigate(['/painel']);
       return false;
     }
   }

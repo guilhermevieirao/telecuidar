@@ -20,7 +20,7 @@ export class DashboardComponent implements OnInit {
     const userStr = localStorage.getItem('user');
 
     if (!token || !userStr) {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/entrar']);
       return;
     }
 
@@ -30,7 +30,7 @@ export class DashboardComponent implements OnInit {
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    this.router.navigate(['/login']);
+    this.router.navigate(['/entrar']);
   }
 
   getUserRoleName(): string {

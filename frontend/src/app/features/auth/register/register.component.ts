@@ -66,7 +66,7 @@ export class RegisterComponent {
               this.toastService.success('Cadastro realizado! Verifique seu email para confirmar a conta.');
               this.successMessage = 'Cadastro realizado! Verifique seu email para confirmar sua conta.';
               setTimeout(() => {
-                this.router.navigate(['/login']);
+                this.router.navigate(['/entrar']);
               }, 3000);
             } else {
               this.errorMessage = response.message || 'Erro ao cadastrar';

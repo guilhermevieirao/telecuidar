@@ -1,5 +1,4 @@
 <div class="audit-page">
-  <app-breadcrumb></app-breadcrumb>
   <app-spinner [show]="loading" message="Carregando logs..."></app-spinner>
 
   <header class="audit-header">
@@ -9,12 +8,14 @@
         <p>Histórico de ações do sistema</p>
       </div>
       <div class="header-right">
-        <button routerLink="/admin" class="btn btn-secondary">
+        <button routerLink="/administracao" class="btn btn-secondary">
           ← Voltar ao Admin
         </button>
       </div>
     </div>
   </header>
+  
+  <app-breadcrumb></app-breadcrumb>
 
   <main class="audit-content">
     <!-- Statistics -->

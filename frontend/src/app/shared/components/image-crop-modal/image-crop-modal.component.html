@@ -1,0 +1,43 @@
+<div class="modal-overlay" (click)="onCancel()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Ajustar Foto de Perfil</h2>
+      <button class="btn-close" (click)="onCancel()" title="Fechar">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="crop-container">
+        <div class="canvas-wrapper">
+          <canvas
+            #mainCanvas
+            (mousedown)="onMouseDown($event)"
+            (mousemove)="onMouseMove($event)"
+            (mouseup)="onMouseUp()"
+            (mouseleave)="onMouseUp()"
+          ></canvas>
+        </div>
+        
+        <div class="preview-section">
+          <h3>Preview</h3>
+          <div class="preview-wrapper">
+            <canvas #previewCanvas></canvas>
+          </div>
+          <p class="preview-hint">Esta será sua foto de perfil</p>
+        </div>
+      </div>
+
+      <div class="instructions">
+        <p>💡 <strong>Dica:</strong> Arraste a área de seleção para mover. Use os cantos para redimensionar.</p>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="onCancel()">
+        Cancelar
+      </button>
+      <button class="btn btn-primary" (click)="onConfirm()">
+        Confirmar Recorte
+      </button>
+    </div>
+  </div>
+</div>

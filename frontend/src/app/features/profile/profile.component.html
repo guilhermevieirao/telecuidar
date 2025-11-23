@@ -1,6 +1,4 @@
 <div class="profile-page">
-  <app-breadcrumb></app-breadcrumb>
-  
   <nav class="navbar">
     <div class="navbar-content">
       <div class="logo">
@@ -9,10 +7,12 @@
       </div>
       
       <div class="nav-right">
-        <a routerLink="/dashboard" class="btn-back">← Voltar</a>
+        <a routerLink="/painel" class="btn-back">← Voltar</a>
       </div>
     </div>
   </nav>
+  
+  <app-breadcrumb></app-breadcrumb>
 
   <div class="profile-container">
     <div class="profile-header">
@@ -88,8 +88,10 @@
         <div class="form-group">
           <label>Foto de Perfil</label>
           <div class="photo-upload-container">
-            <div class="photo-preview" *ngIf="profilePhotoPreview">
-              <img [src]="profilePhotoPreview" alt="Foto de perfil">
+            <div class="photo-preview-wrapper" *ngIf="profilePhotoPreview">
+              <div class="photo-preview">
+                <img [src]="profilePhotoPreview" alt="Foto de perfil">
+              </div>
               <button type="button" class="btn-remove-photo" (click)="removeProfilePhoto()" title="Remover foto">
                 ✕
               </button>
@@ -112,7 +114,7 @@
         </div>
 
         <div class="form-actions">
-          <button type="button" routerLink="/dashboard" class="btn btn-secondary">
+          <button type="button" routerLink="/painel" class="btn btn-secondary">
             Cancelar
           </button>
           <button type="submit" class="btn btn-primary" [disabled]="loading || profileForm.invalid">
@@ -122,17 +124,6 @@
       </form>
 
       <div class="info-sidebar">
-        <div class="quick-access-card">
-          <div class="card-header">
-            <span class="card-icon">🎥</span>
-            <h3>Consulta Online</h3>
-          </div>
-          <p>Inicie uma videochamada com um profissional de saúde agora mesmo</p>
-          <a routerLink="/teste" class="btn-access">
-            Iniciar Consulta →
-          </a>
-        </div>
-
         <div class="info-box">
           <h3>ℹ️ Informações</h3>
           <ul>
@@ -144,4 +135,12 @@
       </div>
     </div>
   </div>
+
+  <!-- Modal de Crop -->
+  <app-image-crop-modal
+    *ngIf="showCropModal"
+    [imageSource]="tempImageForCrop"
+    (close)="onCropCancel()"
+    (cropComplete)="onCropComplete($event)"
+  ></app-image-crop-modal>
 </div>

@@ -41,7 +41,7 @@ export class LoginComponent {
             if (response.isSuccess) {
               localStorage.setItem('token', response.data.token);
               localStorage.setItem('user', JSON.stringify(response.data.user));
-              this.router.navigate(['/dashboard']);
+              this.router.navigate(['/painel']);
             } else {
               this.errorMessage = response.message || 'Erro ao fazer login';
             }
