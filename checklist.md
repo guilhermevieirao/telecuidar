@@ -1,12 +1,10 @@
-# Checklist Desenvolvimento de Sistemas - app
-
 ## FUNCIONALIDADES ESSENCIAIS
 - [x] 1. Cadastro de usuários
 - [x] 2. Login com autenticação segura
 - [x] 3. Recuperação de senha
 - [x] 4. Validação de campos obrigatórios
 - [x] 5. Logout funcional
-- [x] 6. Perfis ou tipos de usuário (Paciente, Profissional, Administrador)
+- [ ] 6. Perfis ou tipos de usuário (Paciente, Profissional, Administrador)
 - [ ] 7. Painel administrativo (AdminComponent completo com filtros, busca)
 - [x] 8. CRUD completo para as entidades principais (Users: Create, Read, Update, Delete)
 - [x] 9. Sistema de permissões e acesso (authGuard com roles)
@@ -116,10 +114,4 @@
 - [ ] 99. Indicação de direitos autorais (código, imagens, etc.)
 - [ ] 100. Inclusão de créditos se usados recursos de terceiros
 
----
-
 **Status Atual do Projeto:**
-- Backend: ✅ Estrutura Clean Architecture criada com .NET
-- Frontend: ✅ Angular configurado com TypeScript e Tailwind CSS
-- Landing Page: ✅ Página inicial moderna criada e servida
-- Próximos passos: Implementar funcionalidades conforme solicitado

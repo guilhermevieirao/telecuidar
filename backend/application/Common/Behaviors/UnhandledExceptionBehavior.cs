@@ -1,10 +1,21 @@
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace app.Application.Common.Behaviors;
 
+/// <summary>
+/// Behavior para capturar e registrar exceções não tratadas nas requisições MediatR.
+/// </summary>
 public class UnhandledExceptionBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
 {
+    private readonly ILogger<UnhandledExceptionBehavior<TRequest, TResponse>> _logger;
+
+    public UnhandledExceptionBehavior(ILogger<UnhandledExceptionBehavior<TRequest, TResponse>> logger)
+    {
+        _logger = logger;
+    }
+
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
         try
@@ -15,8 +26,8 @@ public class UnhandledExceptionBehavior<TRequest, TResponse> : IPipelineBehavior
         {
             var requestName = typeof(TRequest).Name;
             
-            // TODO: Adicionar logging estruturado
-            Console.WriteLine($"Exceção não tratada na requisição {requestName}: {ex.Message}");
+            _logger.LogError(ex, "🔥 Exceção não tratada na requisição {RequestName}: {ErrorMessage}", 
+                requestName, ex.Message);
             
             throw;
         }
