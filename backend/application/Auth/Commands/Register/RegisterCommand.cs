@@ -13,4 +13,5 @@ public class RegisterCommand : IRequest<Result<UserDto>>
     public string Password { get; set; } = string.Empty;
     public string? PhoneNumber { get; set; }
     public UserRole Role { get; set; } = UserRole.Paciente;
+    public string? InvitationToken { get; set; }
 }

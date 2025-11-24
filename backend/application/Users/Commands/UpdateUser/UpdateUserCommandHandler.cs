@@ -32,6 +32,13 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Resul
             user.FirstName = request.FirstName;
             user.LastName = request.LastName;
             user.Email = request.Email;
+            user.PhoneNumber = request.PhoneNumber;
+            
+            if (request.Role.HasValue)
+            {
+                user.Role = request.Role.Value;
+            }
+            
             user.AvatarUrl = request.AvatarUrl;
             user.ProfilePhotoUrl = request.ProfilePhotoUrl;
             user.UpdatedAt = DateTime.UtcNow;
@@ -46,9 +53,13 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Resul
                 LastName = user.LastName,
                 Email = user.Email,
                 FullName = user.FullName,
+                PhoneNumber = user.PhoneNumber,
+                Role = user.Role,
                 AvatarUrl = user.AvatarUrl,
                 ProfilePhotoUrl = user.ProfilePhotoUrl,
-                LastLoginAt = user.LastLoginAt
+                LastLoginAt = user.LastLoginAt,
+                EmailConfirmed = user.EmailConfirmed,
+                CreatedAt = user.CreatedAt
             };
 
             return Result<UserDto>.Success(userDto, "Usuário atualizado com sucesso");

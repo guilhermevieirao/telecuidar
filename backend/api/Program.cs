@@ -2,9 +2,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using app.Api.Behaviors;
 using app.Application.Common.Behaviors;
 using app.Application.Common.Interfaces;
 using app.Domain.Entities;
+using app.Domain.Enums;
 using app.Domain.Interfaces;
 using app.Infrastructure.Persistence;
 using app.Infrastructure.Repositories;
@@ -32,6 +34,7 @@ builder.Services.AddScoped<IDateTimeService, DateTimeService>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddHttpContextAccessor();
 
 // Register MediatR with Behaviors
 var applicationAssembly = AppDomain.CurrentDomain.Load("app.Application");
@@ -40,6 +43,7 @@ builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(applicationAssembly);
     cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehavior<,>));
     cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+    cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(AuditBehavior<,>));
 });
 
 // Configure JWT Authentication
@@ -78,6 +82,52 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+// Seed admin user
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        var passwordHasher = services.GetRequiredService<IPasswordHasher>();
+        
+        // Aplicar migrations pendentes
+        context.Database.Migrate();
+        
+        // Verificar se já existe usuário admin
+        var adminEmail = "adm@adm.com";
+        var adminExists = context.Users.Any(u => u.Email == adminEmail);
+        
+        if (!adminExists)
+        {
+            var adminUser = new User
+            {
+                FirstName = "Administrador",
+                LastName = "Sistema",
+                Email = adminEmail,
+                PasswordHash = passwordHasher.HashPassword("admadm"),
+                Role = UserRole.Administrador,
+                EmailConfirmed = true,
+                IsActive = true
+            };
+            
+            context.Users.Add(adminUser);
+            context.SaveChanges();
+            
+            Console.WriteLine("========================================");
+            Console.WriteLine("✅ Usuário administrador criado:");
+            Console.WriteLine($"   Email: {adminEmail}");
+            Console.WriteLine($"   Senha: admadm");
+            Console.WriteLine("========================================");
+        }
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Erro ao criar usuário administrador");
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

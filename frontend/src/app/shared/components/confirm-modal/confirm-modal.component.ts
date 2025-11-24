@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="modal-overlay" *ngIf="show" (click)="onCancel()">
+    <div class="modal-overlay" (click)="onCancel()">
       <div class="modal-content" (click)="$event.stopPropagation()">
         <div class="modal-header">
           <h3>{{ title }}</h3>
@@ -28,23 +28,20 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./confirm-modal.component.scss']
 })
 export class ConfirmModalComponent {
-  @Input() show: boolean = false;
   @Input() title: string = 'Confirmar ação';
   @Input() message: string = 'Tem certeza que deseja continuar?';
   @Input() confirmText: string = 'Confirmar';
   @Input() cancelText: string = 'Cancelar';
   @Input() confirmType: 'primary' | 'danger' = 'primary';
   
-  @Output() confirmed = new EventEmitter<void>();
-  @Output() cancelled = new EventEmitter<void>();
+  @Output() confirm = new EventEmitter<void>();
+  @Output() cancel = new EventEmitter<void>();
 
   onConfirm() {
-    this.confirmed.emit();
-    this.show = false;
+    this.confirm.emit();
   }
 
   onCancel() {
-    this.cancelled.emit();
-    this.show = false;
+    this.cancel.emit();
   }
 }

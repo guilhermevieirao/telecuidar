@@ -4,6 +4,7 @@ using app.Application.Common.Models;
 using app.Application.Users.DTOs;
 using app.Domain.Entities;
 using app.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace app.Application.Auth.Commands.Register;
 
@@ -11,6 +12,7 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Result<Us
 {
     private readonly IRepository<User> _userRepository;
     private readonly IRepository<EmailConfirmationToken> _confirmationTokenRepository;
+    private readonly IRepository<InvitationToken> _invitationRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IPasswordHasher _passwordHasher;
     private readonly IEmailService _emailService;
@@ -18,12 +20,14 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Result<Us
     public RegisterCommandHandler(
         IRepository<User> userRepository,
         IRepository<EmailConfirmationToken> confirmationTokenRepository,
+        IRepository<InvitationToken> invitationRepository,
         IUnitOfWork unitOfWork,
         IPasswordHasher passwordHasher,
         IEmailService emailService)
     {
         _userRepository = userRepository;
         _confirmationTokenRepository = confirmationTokenRepository;
+        _invitationRepository = invitationRepository;
         _unitOfWork = unitOfWork;
         _passwordHasher = passwordHasher;
         _emailService = emailService;
@@ -33,6 +37,37 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Result<Us
     {
         try
         {
+            // Se houver token de convite, validar
+            InvitationToken? invitation = null;
+            if (!string.IsNullOrEmpty(request.InvitationToken))
+            {
+                Console.WriteLine($"[REGISTER] Token de convite recebido: {request.InvitationToken}");
+                var invitations = await _invitationRepository.GetAllAsync();
+                invitation = invitations.FirstOrDefault(i => i.Token == request.InvitationToken);
+
+                if (invitation == null)
+                {
+                    Console.WriteLine($"[REGISTER] Convite não encontrado para token: {request.InvitationToken}");
+                    return Result<UserDto>.Failure("Convite não encontrado");
+                }
+
+                Console.WriteLine($"[REGISTER] Convite encontrado - ID: {invitation.Id}, IsUsed: {invitation.IsUsed}");
+
+                if (invitation.IsUsed)
+                {
+                    return Result<UserDto>.Failure("Este convite já foi utilizado");
+                }
+
+                if (invitation.ExpiresAt <= DateTime.UtcNow)
+                {
+                    return Result<UserDto>.Failure("Este convite expirou");
+                }
+            }
+            else
+            {
+                Console.WriteLine("[REGISTER] Nenhum token de convite fornecido");
+            }
+
             // Verificar se email já existe
             var users = await _userRepository.GetAllAsync();
             if (users.Any(u => u.Email.ToLower() == request.Email.ToLower()))
@@ -53,6 +88,16 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Result<Us
 
             await _userRepository.AddAsync(user);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            // Marcar convite como usado, se houver
+            if (invitation != null)
+            {
+                Console.WriteLine($"[REGISTER] Marcando convite {invitation.Id} como usado");
+                invitation.IsUsed = true;
+                await _invitationRepository.UpdateAsync(invitation);
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+                Console.WriteLine($"[REGISTER] Convite {invitation.Id} marcado como usado com sucesso");
+            }
 
             // Gerar token de confirmação
             var confirmationToken = new EmailConfirmationToken

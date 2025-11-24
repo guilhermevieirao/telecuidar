@@ -12,6 +12,11 @@ public class UnitOfWork : IUnitOfWork
         _context = context;
     }
 
+    public void SetAuditInfo(int? userId, string? ipAddress = null, string? userAgent = null)
+    {
+        _context.SetAuditInfo(userId, ipAddress, userAgent);
+    }
+
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         return await _context.SaveChangesAsync(cancellationToken);

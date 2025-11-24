@@ -43,8 +43,8 @@ public class UsersController : ControllerBase
     /// <summary>
     /// Obtém um usuário por ID
     /// </summary>
-    [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetById(Guid id)
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetById(int id)
     {
         var result = await _mediator.Send(new GetUserByIdQuery(id));
         
@@ -75,8 +75,8 @@ public class UsersController : ControllerBase
     /// <summary>
     /// Atualiza um usuário existente
     /// </summary>
-    [HttpPut("{id:guid}")]
-    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateUserCommand command)
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> Update(int id, [FromBody] UpdateUserCommand command)
     {
         if (id != command.Id)
         {
@@ -96,8 +96,8 @@ public class UsersController : ControllerBase
     /// <summary>
     /// Deleta um usuário
     /// </summary>
-    [HttpDelete("{id:guid}")]
-    public async Task<IActionResult> Delete(Guid id)
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id)
     {
         var result = await _mediator.Send(new DeleteUserCommand(id));
         

@@ -25,6 +25,12 @@ export class DashboardComponent implements OnInit {
     }
 
     this.user = JSON.parse(userStr);
+    
+    // Redirecionar admin para painel administrativo
+    if (this.user?.role === 3) {
+      this.router.navigate(['/admin']);
+      return;
+    }
   }
 
   logout(): void {

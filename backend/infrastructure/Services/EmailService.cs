@@ -32,4 +32,16 @@ public class EmailService : IEmailService
         
         return Task.CompletedTask;
     }
+
+    public Task SendInvitationEmailAsync(string email, string roleName, string invitationLink)
+    {
+        Console.WriteLine($"========================================");
+        Console.WriteLine($"[EMAIL] Convite para Cadastro");
+        Console.WriteLine($"Para: {email}");
+        Console.WriteLine($"Perfil: {roleName}");
+        Console.WriteLine($"Link de convite: {invitationLink}");
+        Console.WriteLine($"========================================");
+        
+        return Task.CompletedTask;
+    }
 }

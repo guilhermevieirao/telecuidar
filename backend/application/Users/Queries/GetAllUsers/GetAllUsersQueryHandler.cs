@@ -46,13 +46,15 @@ public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, Result<
                 Id = user.Id,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
+                FullName = user.FullName,
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
                 Role = (int)user.Role,
                 RoleName = user.Role.ToString(),
                 CreatedAt = user.CreatedAt,
                 LastLoginAt = user.LastLoginAt,
-                EmailConfirmed = user.EmailConfirmed
+                EmailConfirmed = user.EmailConfirmed,
+                IsActive = user.IsActive
             }).ToList();
 
             return Result<List<UserListDto>>.Success(userDtos);

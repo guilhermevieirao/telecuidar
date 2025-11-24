@@ -5,9 +5,9 @@ namespace app.Application.Users.Commands.DeleteUser;
 
 public class DeleteUserCommand : IRequest<Result<bool>>
 {
-    public Guid Id { get; set; }
+    public int Id { get; set; }
 
-    public DeleteUserCommand(Guid id)
+    public DeleteUserCommand(int id)
     {
         Id = id;
     }

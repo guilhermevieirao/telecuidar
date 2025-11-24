@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { NgxMaskDirective } from 'ngx-mask';
 import { ToastService } from '../../../core/services/toast.service';
@@ -13,18 +13,21 @@ import { ToastService } from '../../../core/services/toast.service';
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnInit {
   registerForm: FormGroup;
   loading = false;
   errorMessage = '';
   successMessage = '';
   showPassword = false;
   showConfirmPassword = false;
+  invitationToken: string | null = null;
+  isFromInvitation = false;
 
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
     private router: Router,
+    private route: ActivatedRoute,
     private toastService: ToastService
   ) {
     this.registerForm = this.fb.group({
@@ -37,6 +40,50 @@ export class RegisterComponent {
       role: [1], // 1 = Paciente (default)
       acceptTerms: [false, [Validators.requiredTrue]]
     }, { validators: this.passwordMatchValidator });
+  }
+
+  ngOnInit(): void {
+    // Verificar se há token de convite na URL
+    this.route.queryParams.subscribe(params => {
+      this.invitationToken = params['token'];
+      if (this.invitationToken) {
+        this.loadInvitationData(this.invitationToken);
+      }
+    });
+  }
+
+  loadInvitationData(token: string): void {
+    this.loading = true;
+    this.http.get<any>(`http://localhost:5058/api/admin/invitations/${token}`)
+      .subscribe({
+        next: (response) => {
+          if (response.isSuccess && response.data) {
+            this.isFromInvitation = true;
+            const invitation = response.data;
+            
+            // Pré-preencher campos (mantendo-os editáveis)
+            this.registerForm.patchValue({
+              email: invitation.email || '',
+              firstName: invitation.firstName || '',
+              lastName: invitation.lastName || '',
+              phoneNumber: invitation.phoneNumber || '',
+              role: invitation.role || 1
+            });
+
+            this.toastService.success('Convite válido! Preencha os dados para completar o cadastro.');
+          } else {
+            this.toastService.error(response.message || 'Convite inválido ou expirado');
+            this.router.navigate(['/cadastrar']);
+          }
+          this.loading = false;
+        },
+        error: (error) => {
+          console.error('Erro ao buscar convite:', error);
+          this.toastService.error('Convite inválido ou expirado');
+          this.router.navigate(['/cadastrar']);
+          this.loading = false;
+        }
+      });
   }
 
   passwordMatchValidator(group: FormGroup) {
@@ -54,10 +101,16 @@ export class RegisterComponent {
       const { confirmPassword, acceptTerms, ...formData } = this.registerForm.value;
       
       // Remove máscara do telefone antes de enviar
-      const data = {
+      const data: any = {
         ...formData,
         phoneNumber: formData.phoneNumber.replace(/[^\d]/g, '')
       };
+
+      // Adicionar token de convite apenas se existir
+      if (this.invitationToken) {
+        data.invitationToken = this.invitationToken;
+        console.log('Enviando com token de convite:', this.invitationToken);
+      }
 
       this.http.post<any>('http://localhost:5058/api/auth/register', data)
         .subscribe({
