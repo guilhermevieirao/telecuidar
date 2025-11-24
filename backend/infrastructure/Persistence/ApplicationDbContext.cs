@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using app.Domain.Entities;
+using app.Domain.Enums;
 using System.Reflection;
 
 namespace app.Infrastructure.Persistence;
@@ -11,7 +12,6 @@ public class ApplicationDbContext : DbContext
     }
 
     public DbSet<User> Users { get; set; }
-    public DbSet<AuditLog> AuditLogs { get; set; }
     public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
     public DbSet<EmailConfirmationToken> EmailConfirmationTokens { get; set; }
 

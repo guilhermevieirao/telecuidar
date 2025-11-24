@@ -7,13 +7,13 @@
 - [x] 4. Validação de campos obrigatórios
 - [x] 5. Logout funcional
 - [x] 6. Perfis ou tipos de usuário (Paciente, Profissional, Administrador)
-- [x] 7. Painel administrativo (AdminComponent completo com filtros, busca)
+- [ ] 7. Painel administrativo (AdminComponent completo com filtros, busca)
 - [x] 8. CRUD completo para as entidades principais (Users: Create, Read, Update, Delete)
 - [x] 9. Sistema de permissões e acesso (authGuard com roles)
 - [ ] 10. Upload de arquivos
 - [x] 11. Edição de perfil de usuário (ProfileComponent + UpdateUserByAdmin)
-- [x] 12. Histórico de ações realizadas (AuditLogsComponent + backend completo)
-- [x] 13. Filtros e buscas nos dados (Admin + AuditLogs com filtros)
+- [ ] 12. Histórico de ações realizadas (AuditLogsComponent + backend completo)
+- [ ] 13. Filtros e buscas nos dados (Admin + AuditLogs com filtros)
 - [ ] 14. Paginação de resultados
 - [ ] 15. Geração de relatórios
 - [ ] 16. Exportação para PDF

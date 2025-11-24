@@ -37,7 +37,6 @@ export class DashboardComponent implements OnInit {
     switch (this.user?.role) {
       case 1: return 'Paciente';
       case 2: return 'Profissional';
-      case 3: return 'Administrador';
       default: return 'Usuário';
     }
   }

@@ -53,16 +53,6 @@ export const routes: Routes = [
     redirectTo: 'perfil',
     pathMatch: 'full'
   },
-  {
-    path: 'admin',
-    redirectTo: 'administracao',
-    pathMatch: 'full'
-  },
-  {
-    path: 'audit-logs',
-    redirectTo: 'logs-auditoria',
-    pathMatch: 'full'
-  },
   // Rotas protegidas
   {
     path: 'painel',
@@ -74,18 +64,6 @@ export const routes: Routes = [
     loadComponent: () => import('./features/profile/profile.component').then(m => m.ProfileComponent),
     canActivate: [authGuard],
     data: { breadcrumbParent: '/painel' }
-  },
-  {
-    path: 'administracao',
-    loadComponent: () => import('./features/admin/admin.component').then(m => m.AdminComponent),
-    canActivate: [authGuard],
-    data: { roles: [3], breadcrumbParent: '/painel' } // Apenas Administrador
-  },
-  {
-    path: 'logs-auditoria',
-    loadComponent: () => import('./features/audit-logs/audit-logs.component').then(m => m.AuditLogsComponent),
-    canActivate: [authGuard],
-    data: { roles: [3], breadcrumbParent: '/administracao' } // Apenas Administrador
   },
   {
     path: 'teste',

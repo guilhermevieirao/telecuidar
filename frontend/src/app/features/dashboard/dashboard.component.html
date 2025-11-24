@@ -17,9 +17,6 @@
             <span class="user-role">{{ getUserRoleName() }}</span>
           </div>
         </div>
-        <a routerLink="/administracao" class="btn-admin" *ngIf="user?.role === 3">
-          ⚙️ Admin
-        </a>
         <button class="btn-logout" (click)="logout()">
           Sair
         </button>
@@ -127,10 +124,6 @@
         <a routerLink="/profile" class="action-btn">
           <span class="action-icon">👤</span>
           <span>Editar Perfil</span>
-        </a>
-        <a routerLink="/audit-logs" class="action-btn" *ngIf="user?.role === 3">
-          <span class="action-icon">📊</span>
-          <span>Logs de Auditoria</span>
         </a>
         <button class="action-btn">
           <span class="action-icon">💬</span>

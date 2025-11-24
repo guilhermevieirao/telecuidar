@@ -18,6 +18,5 @@ public class User : BaseEntity
     public string FullName => $"{FirstName} {LastName}";
     
     // Navigation properties
-    public ICollection<AuditLog> AuditLogs { get; set; } = new List<AuditLog>();
     public ICollection<PasswordResetToken> PasswordResetTokens { get; set; } = new List<PasswordResetToken>();
 }

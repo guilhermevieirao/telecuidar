@@ -3,6 +3,7 @@ using app.Application.Common.Interfaces;
 using app.Application.Common.Models;
 using app.Application.Users.DTOs;
 using app.Domain.Entities;
+using app.Domain.Enums;
 using app.Domain.Interfaces;
 
 namespace app.Application.Auth.Commands.Login;

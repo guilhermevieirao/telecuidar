@@ -25,8 +25,6 @@ export class BreadcrumbComponent implements OnInit {
     'cadastrar': 'Cadastro',
     'recuperar-senha': 'Recuperar Senha',
     'perfil': 'Meu Perfil',
-    'administracao': 'Administração',
-    'logs-auditoria': 'Logs de Auditoria',
     'teste': 'Videochamada'
   };
 

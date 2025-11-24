@@ -35,6 +35,9 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginCommand command)
     {
+        command.IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+        command.UserAgent = HttpContext.Request.Headers["User-Agent"].ToString();
+        
         var result = await _mediator.Send(command);
         
         if (!result.IsSuccess)

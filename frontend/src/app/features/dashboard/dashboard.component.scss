@@ -94,26 +94,6 @@
   }
 }
 
-.btn-admin {
-  padding: 0.5rem 1.5rem;
-  background: #2563eb;
-  color: white;
-  border: none;
-  border-radius: 0.5rem;
-  font-weight: 600;
-  cursor: pointer;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: all 0.3s;
-
-  &:hover {
-    background: #1d4ed8;
-    transform: translateY(-2px);
-  }
-}
-
 .btn-logout {
   padding: 0.5rem 1.5rem;
   background: #dc2626;

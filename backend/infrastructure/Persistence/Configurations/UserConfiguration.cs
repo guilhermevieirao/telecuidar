@@ -67,11 +67,6 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Ignore(e => e.FullName);
 
         // Relacionamentos
-        builder.HasMany(e => e.AuditLogs)
-            .WithOne(a => a.User)
-            .HasForeignKey(a => a.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
-
         builder.HasMany(e => e.PasswordResetTokens)
             .WithOne(p => p.User)
             .HasForeignKey(p => p.UserId)
