@@ -82,6 +82,12 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'relatorios',
+    loadComponent: () => import('./features/reports/reports.component').then(m => m.ReportsComponent),
+    canActivate: [authGuard],
+    data: { roles: [3], breadcrumbParent: '/admin' }
+  },
+  {
     path: 'teste',
     loadComponent: () => import('./features/video-call/video-call-simple.component').then(m => m.VideoCallSimpleComponent)
   },

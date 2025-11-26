@@ -1,0 +1,177 @@
+<div class="min-h-screen bg-gray-50">
+  <!-- Header -->
+  <header class="bg-white shadow-sm border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="flex justify-between items-center">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-900">📊 Relatórios e Exportações</h1>
+          <p class="text-sm text-gray-600 mt-1">Gere relatórios detalhados e exporte em PDF ou Excel</p>
+        </div>
+        <div class="flex items-center gap-4">
+          <app-notifications></app-notifications>
+          <a routerLink="/admin" class="text-blue-600 hover:text-blue-700 font-medium">Voltar ao Admin</a>
+          <button 
+            (click)="logout()"
+            class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+            Sair
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <app-breadcrumb></app-breadcrumb>
+
+  <!-- Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Seletor de Tipo de Relatório -->
+    <div class="report-type-selector">
+      @for (type of reportTypes; track type.id) {
+        <button
+          type="button"
+          class="report-type-button"
+          [class.active]="activeReport() === type.id"
+          [attr.data-color]="type.color"
+          (click)="setActiveReport(type.id)">
+          <span class="report-icon">{{ type.icon }}</span>
+          <span class="report-name">{{ type.name }}</span>
+        </button>
+      }
+    </div>
+
+    <!-- Filtros de Data -->
+    <div class="date-filters">
+      <div class="filter-group">
+        <label for="startDate">Data Inicial:</label>
+        <input
+          type="date"
+          id="startDate"
+          [(ngModel)]="startDate"
+          class="date-input">
+      </div>
+      <div class="filter-group">
+        <label for="endDate">Data Final:</label>
+        <input
+          type="date"
+          id="endDate"
+          [(ngModel)]="endDate"
+          class="date-input">
+      </div>
+      <button
+        type="button"
+        class="btn-apply-filter"
+        (click)="loadReport()"
+        [disabled]="isLoading()">
+        @if (isLoading()) {
+          <span class="spinner"></span>
+        }
+        Aplicar Filtro
+      </button>
+    </div>
+
+    <!-- Resumo do Relatório -->
+    <div class="report-summary">
+      @if (isLoading()) {
+        <div class="loading-state">
+          <div class="spinner-large"></div>
+          <p>Carregando relatório...</p>
+        </div>
+      } @else {
+        <div class="summary-header">
+          <span class="summary-icon">{{ getActiveReportInfo()?.icon }}</span>
+          <h2>Relatório de {{ getActiveReportInfo()?.name }}</h2>
+        </div>
+
+        @switch (activeReport()) {
+          @case ('users') {
+            <div class="summary-stats">
+              <div class="stat-card blue">
+                <div class="stat-value">{{ reportData().totalUsers || 0 }}</div>
+                <div class="stat-label">Total de Usuários</div>
+              </div>
+              <div class="stat-card green">
+                <div class="stat-value">{{ reportData().activeUsers || 0 }}</div>
+                <div class="stat-label">Ativos</div>
+              </div>
+              <div class="stat-card red">
+                <div class="stat-value">{{ reportData().inactiveUsers || 0 }}</div>
+                <div class="stat-label">Inativos</div>
+              </div>
+            </div>
+          }
+          @case ('audit-logs') {
+            <div class="summary-stats">
+              <div class="stat-card orange">
+                <div class="stat-value">{{ reportData().totalLogs || 0 }}</div>
+                <div class="stat-label">Total de Logs</div>
+              </div>
+            </div>
+          }
+          @case ('files') {
+            <div class="summary-stats">
+              <div class="stat-card purple">
+                <div class="stat-value">{{ reportData().totalFiles || 0 }}</div>
+                <div class="stat-label">Arquivos</div>
+              </div>
+              <div class="stat-card blue">
+                <div class="stat-value">{{ reportData().totalSizeFormatted || '0 B' }}</div>
+                <div class="stat-label">Tamanho Total</div>
+              </div>
+            </div>
+          }
+          @case ('notifications') {
+            <div class="summary-stats">
+              <div class="stat-card green">
+                <div class="stat-value">{{ reportData().totalNotifications || 0 }}</div>
+                <div class="stat-label">Total</div>
+              </div>
+              <div class="stat-card blue">
+                <div class="stat-value">{{ reportData().readPercentage || 0 }}%</div>
+                <div class="stat-label">Taxa de Leitura</div>
+              </div>
+            </div>
+          }
+        }
+      }
+    </div>
+
+    <!-- Botões de Exportação -->
+    <div class="export-actions">
+      <h3>Exportar Relatório</h3>
+      <div class="export-buttons">
+        <button
+          type="button"
+          class="btn-export pdf"
+          (click)="downloadPdf()"
+          [disabled]="isLoading()">
+          <svg class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <span>Baixar PDF</span>
+        </button>
+        <button
+          type="button"
+          class="btn-export excel"
+          (click)="downloadExcel()"
+          [disabled]="isLoading()">
+          <svg class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+          </svg>
+          <span>Baixar Excel</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Informação adicional -->
+    <div class="info-box">
+      <svg class="info-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <div>
+        <p><strong>Dica:</strong> Os relatórios são gerados com base no período selecionado. Se nenhuma data for especificada, será considerado o último mês.</p>
+        <p><strong>PDF:</strong> Ideal para visualização e impressão com formatação profissional.</p>
+        <p><strong>Excel:</strong> Ideal para análise de dados, gráficos e manipulação avançada.</p>
+      </div>
+    </div>
+  </main>
+</div>

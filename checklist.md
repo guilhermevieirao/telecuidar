@@ -14,10 +14,10 @@
 - [x] 13. Filtros e buscas nos dados (Admin + AuditLogs com filtros)
 - [x] 14. Paginação de resultados (Backend: PagedResult, PaginationParams | Frontend: PaginationComponent)
 - [x] 14.1. Ordenação clicável nas tabelas (Users e AuditLogs com sort ascendente/descendente)
-- [ ] 15. Geração de relatórios
+- [x] 15. Geração de relatórios ✅ (4 tipos: Usuários, Audit Logs, Arquivos, Notificações | Exportação PDF e Excel com QuestPDF e ClosedXML)
 - [ ] 16. Exportação para PDF
 - [ ] 17. Exportação para Excel
-- [ ] 18. Sistema de notificações (Backend 100%: Entity, Commands, Queries, Controller | Frontend: pendente)
+- [x] 18. Sistema de notificações ✅ (Backend: Entity, Commands, Queries, Controller, Migration | Frontend: Component com dropdown, badge, polling, filtros)
 - [x] 19. Integração com e-mail (ex: envio de confirmação)
 - [x] 20. Confirmação de ações críticas (ConfirmModalComponent)
 

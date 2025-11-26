@@ -10,6 +10,7 @@ import { PaginationComponent, PageInfo } from '../../shared/components/paginatio
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
 import { PagedResult } from '../../core/models/paged-result.model';
+import { NotificationsComponent } from '../notifications/notifications.component';
 
 interface User {
   id: number;
@@ -66,7 +67,7 @@ interface Statistics {
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, ConfirmModalComponent, NgxMaskDirective, BaseChartDirective, PaginationComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, ConfirmModalComponent, NgxMaskDirective, BaseChartDirective, PaginationComponent, NotificationsComponent],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss']
 })

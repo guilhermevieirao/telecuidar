@@ -5,6 +5,7 @@ using System.Text;
 using app.Api.Behaviors;
 using app.Application.Common.Behaviors;
 using app.Application.Common.Interfaces;
+using app.Application.Reports.Services;
 using app.Domain.Entities;
 using app.Domain.Enums;
 using app.Domain.Interfaces;
@@ -34,6 +35,8 @@ builder.Services.AddScoped<IDateTimeService, DateTimeService>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IPdfExportService, PdfExportService>();
+builder.Services.AddScoped<IExcelExportService, ExcelExportService>();
 builder.Services.AddHttpContextAccessor();
 
 // Register MediatR with Behaviors

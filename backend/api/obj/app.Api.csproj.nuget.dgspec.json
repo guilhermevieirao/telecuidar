@@ -562,6 +562,10 @@
               "target": "Package",
               "version": "[13.0.1, )"
             },
+            "ClosedXML": {
+              "target": "Package",
+              "version": "[0.104.1, )"
+            },
             "FluentValidation": {
               "target": "Package",
               "version": "[11.11.0, )"
@@ -581,6 +585,10 @@
             "Microsoft.Extensions.Logging.Abstractions": {
               "target": "Package",
               "version": "[9.0.0, )"
+            },
+            "QuestPDF": {
+              "target": "Package",
+              "version": "[2024.10.3, )"
             }
           },
           "imports": [
