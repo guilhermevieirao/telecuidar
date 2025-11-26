@@ -7,26 +7,34 @@
 # ===========================
 
 # Build results
-[Dd]ebug/
-[Dd]ebugPublic/
-[Rr]elease/
-[Rr]eleases/
-x64/
-x86/
-[Ww][Ii][Nn]32/
-[Aa][Rr][Mm]/
-[Aa][Rr][Mm]64/
-bld/
-[Bb]in/
-[Oo]bj/
-[Ll]og/
-[Ll]ogs/
+**/Debug/
+**/debug/
+**/DebugPublic/
+**/debugPublic/
+**/Release/
+**/release/
+**/Releases/
+**/releases/
+**/x64/
+**/x86/
+**/Win32/
+**/win32/
+**/ARM/
+**/arm/
+**/ARM64/
+**/arm64/
+**/bld/
+**/Bin/
+**/bin/
+**/Obj/
+**/obj/
+**/Log/
+**/log/
+**/Logs/
+**/logs/
 
 # Visual Studio cache/options
 .vs/
-.vscode/settings.json
-.vscode/launch.json
-.vscode/tasks.json
 *.suo
 *.user
 *.userosscache
@@ -74,8 +82,6 @@ bld/
 *.snupkg
 **/packages/*
 !**/packages/build/
-*.nuget.props
-*.nuget.targets
 project.lock.json
 project.fragment.lock.json
 artifacts/
@@ -118,6 +124,7 @@ yarn-error.log
 !.vscode/extensions.json
 !.vscode/tasks.json
 !.vscode/launch.json
+!.vscode/settings.json
 .history/*
 
 # Miscellaneous
@@ -144,9 +151,13 @@ Thumbs.db
 .env.production
 .env.development
 *.env
+appsettings.Development.json
+appsettings.Production.json
 
 # Except example files
 !.env.example
+!appsettings.json
+!appsettings.Example.json
 
 # ===========================
 # Database
