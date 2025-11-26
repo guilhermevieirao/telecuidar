@@ -43,7 +43,8 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.Property(e => e.Role)
             .IsRequired()
-            .HasDefaultValue(app.Domain.Enums.UserRole.Paciente);
+            .HasDefaultValue(app.Domain.Enums.UserRole.Paciente)
+            .HasSentinel(0);
 
         builder.Property(e => e.PhoneNumber)
             .HasMaxLength(15);

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
@@ -12,6 +12,9 @@ import { RouterLink } from '@angular/router';
 export class LandingComponent implements OnInit {
   isLoggedIn = false;
   userName = '';
+  showNavbar = true;
+  lastScrollTop = 0;
+  scrollThreshold = 100;
 
   ngOnInit(): void {
     const token = localStorage.getItem('token');
@@ -125,5 +128,28 @@ export class LandingComponent implements OnInit {
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+  }
+
+  @HostListener('window:scroll', [])
+  onWindowScroll(): void {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    
+    // Se estiver no topo, sempre mostrar
+    if (scrollTop <= this.scrollThreshold) {
+      this.showNavbar = true;
+      this.lastScrollTop = scrollTop;
+      return;
+    }
+    
+    // Mostrar navbar ao scrollar para cima, ocultar ao scrollar para baixo
+    if (scrollTop < this.lastScrollTop) {
+      // Scrolling up
+      this.showNavbar = true;
+    } else {
+      // Scrolling down
+      this.showNavbar = false;
+    }
+    
+    this.lastScrollTop = scrollTop;
   }
 }

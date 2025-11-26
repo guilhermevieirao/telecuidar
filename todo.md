@@ -1,4 +1,4 @@
-dotnet ef database drop --force; dotnet ef database update; dotnet run --seed
+cd
 
 Náo permitir usar o mesmo numero ou cpf
 

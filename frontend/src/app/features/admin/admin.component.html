@@ -27,7 +27,7 @@
           (click)="setActiveTab('dashboard')"
           [class]="activeTab === 'dashboard' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
           class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
-          📊 Dashboard
+          📊 Painel
         </button>
         <button
           (click)="setActiveTab('users')"
@@ -133,6 +133,45 @@
           <p class="text-3xl font-bold text-purple-600">{{ statistics?.usersThisMonth || 0 }}</p>
         </div>
       </div>
+
+      <!-- Charts Section -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- User Roles Distribution Chart -->
+        <div class="bg-white rounded-lg shadow p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">📊 Distribuição por Perfil</h3>
+          <div class="h-64 flex items-center justify-center">
+            <canvas baseChart
+              [data]="userRolesChartData"
+              [options]="userRolesChartOptions"
+              [type]="userRolesChartType">
+            </canvas>
+          </div>
+        </div>
+
+        <!-- Active vs Inactive Users Chart -->
+        <div class="bg-white rounded-lg shadow p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">👤 Usuários Ativos vs Inativos</h3>
+          <div class="h-64 flex items-center justify-center">
+            <canvas baseChart
+              [data]="activeUsersChartData"
+              [options]="activeUsersChartOptions"
+              [type]="activeUsersChartType">
+            </canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- User Activity Chart -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">📈 Cadastros - Últimos 7 Dias</h3>
+        <div class="h-64">
+          <canvas baseChart
+            [data]="userActivityChartData"
+            [options]="userActivityChartOptions"
+            [type]="userActivityChartType">
+          </canvas>
+        </div>
+      </div>
     </div>
 
     <!-- Users Tab -->
@@ -171,11 +210,46 @@
         <table class="min-w-full divide-y divide-gray-200">
           <thead class="bg-gray-50">
             <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuário</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Perfil</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+              <th 
+                (click)="sortBy('id')"
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors select-none">
+                <div class="flex items-center gap-2">
+                  <span>ID</span>
+                  <span class="text-sm">{{ getSortIcon('id') }}</span>
+                </div>
+              </th>
+              <th 
+                (click)="sortBy('fullName')"
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors select-none">
+                <div class="flex items-center gap-2">
+                  <span>Usuário</span>
+                  <span class="text-sm">{{ getSortIcon('fullName') }}</span>
+                </div>
+              </th>
+              <th 
+                (click)="sortBy('email')"
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors select-none">
+                <div class="flex items-center gap-2">
+                  <span>Email</span>
+                  <span class="text-sm">{{ getSortIcon('email') }}</span>
+                </div>
+              </th>
+              <th 
+                (click)="sortBy('role')"
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors select-none">
+                <div class="flex items-center gap-2">
+                  <span>Perfil</span>
+                  <span class="text-sm">{{ getSortIcon('role') }}</span>
+                </div>
+              </th>
+              <th 
+                (click)="sortBy('isActive')"
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors select-none">
+                <div class="flex items-center gap-2">
+                  <span>Status</span>
+                  <span class="text-sm">{{ getSortIcon('isActive') }}</span>
+                </div>
+              </th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
             </tr>
           </thead>

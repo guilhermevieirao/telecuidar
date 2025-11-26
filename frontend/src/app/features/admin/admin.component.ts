@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -6,6 +6,8 @@ import { HttpClient } from '@angular/common/http';
 import { NgxMaskDirective } from 'ngx-mask';
 import { ToastService } from '../../core/services/toast.service';
 import { ConfirmModalComponent } from '../../shared/components/confirm-modal/confirm-modal.component';
+import { BaseChartDirective } from 'ng2-charts';
+import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
 
 interface User {
   id: number;
@@ -62,7 +64,7 @@ interface Statistics {
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, ConfirmModalComponent, NgxMaskDirective],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, ConfirmModalComponent, NgxMaskDirective, BaseChartDirective],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss']
 })
@@ -81,6 +83,10 @@ export class AdminComponent implements OnInit {
   showDeleteModal = false;
   showEditModal = false;
   userToEdit: User | null = null;
+  
+  // Sorting
+  sortColumn: 'id' | 'fullName' | 'email' | 'role' | 'isActive' | null = null;
+  sortDirection: 'asc' | 'desc' = 'asc';
   
   // Create User Modals
   showCreateUserModal = false;
@@ -103,6 +109,119 @@ export class AdminComponent implements OnInit {
   
   loading = false;
   currentUser: any = null;
+
+  // Chart.js Configuration
+  public userRolesChartData: ChartData<'doughnut'> = {
+    labels: ['Pacientes', 'Profissionais', 'Administradores'],
+    datasets: [{
+      data: [0, 0, 0],
+      backgroundColor: ['#10b981', '#8b5cf6', '#ef4444'],
+      hoverBackgroundColor: ['#059669', '#7c3aed', '#dc2626']
+    }]
+  };
+
+  public userRolesChartOptions: ChartConfiguration['options'] = {
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: {
+          padding: 15,
+          font: { size: 12 }
+        }
+      },
+      tooltip: {
+        callbacks: {
+          label: (context) => {
+            const label = context.label || '';
+            const value = context.parsed || 0;
+            const total = (context.dataset.data as number[]).reduce((a, b) => a + b, 0);
+            const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : '0';
+            return `${label}: ${value} (${percentage}%)`;
+          }
+        }
+      }
+    }
+  };
+
+  public userRolesChartType: ChartType = 'doughnut';
+
+  public userActivityChartData: ChartData<'line'> = {
+    labels: [],
+    datasets: [{
+      label: 'Cadastros',
+      data: [],
+      borderColor: '#3b82f6',
+      backgroundColor: 'rgba(59, 130, 246, 0.1)',
+      tension: 0.4,
+      fill: true
+    }]
+  };
+
+  public userActivityChartOptions: ChartConfiguration['options'] = {
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+      legend: {
+        display: true,
+        position: 'top'
+      },
+      tooltip: {
+        mode: 'index',
+        intersect: false
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          precision: 0
+        }
+      }
+    }
+  };
+
+  public userActivityChartType: ChartType = 'line';
+
+  public activeUsersChartData: ChartData<'bar'> = {
+    labels: ['Ativos', 'Inativos'],
+    datasets: [{
+      label: 'Usuários',
+      data: [0, 0],
+      backgroundColor: ['#10b981', '#ef4444'],
+      borderColor: ['#059669', '#dc2626'],
+      borderWidth: 1
+    }]
+  };
+
+  public activeUsersChartOptions: ChartConfiguration['options'] = {
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+      legend: {
+        display: false
+      },
+      tooltip: {
+        callbacks: {
+          label: (context) => {
+            const value = context.parsed.y || 0;
+            return `${context.label}: ${value} usuários`;
+          }
+        }
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          precision: 0
+        }
+      }
+    }
+  };
+
+  public activeUsersChartType: ChartType = 'bar';
 
   constructor(
     private fb: FormBuilder,
@@ -214,6 +333,7 @@ export class AdminComponent implements OnInit {
         next: (response) => {
           if (response.isSuccess) {
             this.statistics = response.data;
+            this.updateCharts();
           } else {
             console.error('Erro na resposta de estatísticas:', response);
             this.toastService.error(response.message || 'Erro ao carregar estatísticas');
@@ -265,6 +385,9 @@ export class AdminComponent implements OnInit {
       
       return matchesRole && matchesSearch;
     });
+    
+    // Aplicar ordenação se houver uma coluna selecionada
+    this.applySorting();
   }
 
   onRoleFilterChange(role: number | null): void {
@@ -275,6 +398,68 @@ export class AdminComponent implements OnInit {
   onSearchChange(event: Event): void {
     this.searchTerm = (event.target as HTMLInputElement).value;
     this.filterUsers();
+  }
+
+  sortBy(column: 'id' | 'fullName' | 'email' | 'role' | 'isActive'): void {
+    if (this.sortColumn === column) {
+      // Alternar direção se já estiver ordenando por esta coluna
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      // Nova coluna, começar com ordem ascendente
+      this.sortColumn = column;
+      this.sortDirection = 'asc';
+    }
+    
+    this.applySorting();
+  }
+
+  applySorting(): void {
+    if (!this.sortColumn) return;
+
+    this.filteredUsers.sort((a, b) => {
+      let valueA: any;
+      let valueB: any;
+
+      switch (this.sortColumn) {
+        case 'id':
+          valueA = a.id;
+          valueB = b.id;
+          break;
+        case 'fullName':
+          valueA = a.fullName.toLowerCase();
+          valueB = b.fullName.toLowerCase();
+          break;
+        case 'email':
+          valueA = a.email.toLowerCase();
+          valueB = b.email.toLowerCase();
+          break;
+        case 'role':
+          valueA = a.role;
+          valueB = b.role;
+          break;
+        case 'isActive':
+          valueA = a.isActive ? 1 : 0;
+          valueB = b.isActive ? 1 : 0;
+          break;
+        default:
+          return 0;
+      }
+
+      if (valueA < valueB) {
+        return this.sortDirection === 'asc' ? -1 : 1;
+      }
+      if (valueA > valueB) {
+        return this.sortDirection === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
+  }
+
+  getSortIcon(column: 'id' | 'fullName' | 'email' | 'role' | 'isActive'): string {
+    if (this.sortColumn !== column) {
+      return '↕️'; // Ícone neutro quando não está ordenado
+    }
+    return this.sortDirection === 'asc' ? '↑' : '↓';
   }
 
   getRoleName(role: number): string {
@@ -560,5 +745,62 @@ export class AdminComponent implements OnInit {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     this.router.navigate(['/entrar']);
+  }
+
+  updateCharts(): void {
+    if (!this.statistics) return;
+
+    // Atualizar gráfico de distribuição de perfis
+    this.userRolesChartData = {
+      labels: ['Pacientes', 'Profissionais', 'Administradores'],
+      datasets: [{
+        data: [
+          this.statistics.totalPacientes,
+          this.statistics.totalProfissionais,
+          this.statistics.totalAdministradores
+        ],
+        backgroundColor: ['#10b981', '#8b5cf6', '#ef4444'],
+        hoverBackgroundColor: ['#059669', '#7c3aed', '#dc2626']
+      }]
+    };
+
+    // Atualizar gráfico de usuários ativos/inativos
+    this.activeUsersChartData = {
+      labels: ['Ativos', 'Inativos'],
+      datasets: [{
+        label: 'Usuários',
+        data: [this.statistics.activeUsers, this.statistics.inactiveUsers],
+        backgroundColor: ['#10b981', '#ef4444'],
+        borderColor: ['#059669', '#dc2626'],
+        borderWidth: 1
+      }]
+    };
+
+    // Atualizar gráfico de atividade (últimos 7 dias)
+    const last7Days = this.getLast7Days();
+    this.userActivityChartData = {
+      labels: last7Days.map(d => d.label),
+      datasets: [{
+        label: 'Cadastros',
+        data: last7Days.map(d => Math.floor(Math.random() * 5)), // Simular dados - substituir com dados reais
+        borderColor: '#3b82f6',
+        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+        tension: 0.4,
+        fill: true
+      }]
+    };
+  }
+
+  getLast7Days(): { label: string; date: Date }[] {
+    const days = [];
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      days.push({
+        label: date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }),
+        date: date
+      });
+    }
+    return days;
   }
 }

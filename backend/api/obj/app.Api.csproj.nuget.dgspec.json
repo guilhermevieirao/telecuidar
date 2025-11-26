@@ -1,46 +1,39 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\api\\app.Api.csproj": {}
+    "C:\\Users\\GUILHERME\\Documents\\GitHub\\telecuidar\\backend\\api\\app.Api.csproj": {}
   },
   "projects": {
-    "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\api\\app.Api.csproj": {
+    "C:\\Users\\GUILHERME\\Documents\\GitHub\\telecuidar\\backend\\api\\app.Api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\api\\app.Api.csproj",
+        "projectUniqueName": "C:\\Users\\GUILHERME\\Documents\\GitHub\\telecuidar\\backend\\api\\app.Api.csproj",
         "projectName": "app.Api",
-        "projectPath": "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\api\\app.Api.csproj",
-        "packagesPath": "C:\\Users\\alexa\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\api\\obj\\",
+        "projectPath": "C:\\Users\\GUILHERME\\Documents\\GitHub\\telecuidar\\backend\\api\\app.Api.csproj",
+        "packagesPath": "C:\\Users\\GUILHERME\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\GUILHERME\\Documents\\GitHub\\telecuidar\\backend\\api\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\alexa\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\GUILHERME\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net10.0": {
             "targetAlias": "net10.0",
             "projectReferences": {
-              "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\application\\app.Application.csproj": {
-                "projectPath": "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\application\\app.Application.csproj"
+              "C:\\Users\\GUILHERME\\Documents\\GitHub\\telecuidar\\backend\\application\\app.Application.csproj": {
+                "projectPath": "C:\\Users\\GUILHERME\\Documents\\GitHub\\telecuidar\\backend\\application\\app.Application.csproj"
               },
-              "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\domain\\app.Domain.csproj": {
-                "projectPath": "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\domain\\app.Domain.csproj"
+              "C:\\Users\\GUILHERME\\Documents\\GitHub\\telecuidar\\backend\\domain\\app.Domain.csproj": {
+                "projectPath": "C:\\Users\\GUILHERME\\Documents\\GitHub\\telecuidar\\backend\\domain\\app.Domain.csproj"
               },
-              "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\infrastructure\\app.Infrastructure.csproj": {
-                "projectPath": "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\infrastructure\\app.Infrastructure.csproj"
+              "C:\\Users\\GUILHERME\\Documents\\GitHub\\telecuidar\\backend\\infrastructure\\app.Infrastructure.csproj": {
+                "projectPath": "C:\\Users\\GUILHERME\\Documents\\GitHub\\telecuidar\\backend\\infrastructure\\app.Infrastructure.csproj"
               }
             }
           }
@@ -521,37 +514,30 @@
         }
       }
     },
-    "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\application\\app.Application.csproj": {
+    "C:\\Users\\GUILHERME\\Documents\\GitHub\\telecuidar\\backend\\application\\app.Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\application\\app.Application.csproj",
+        "projectUniqueName": "C:\\Users\\GUILHERME\\Documents\\GitHub\\telecuidar\\backend\\application\\app.Application.csproj",
         "projectName": "app.Application",
-        "projectPath": "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\application\\app.Application.csproj",
-        "packagesPath": "C:\\Users\\alexa\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\application\\obj\\",
+        "projectPath": "C:\\Users\\GUILHERME\\Documents\\GitHub\\telecuidar\\backend\\application\\app.Application.csproj",
+        "packagesPath": "C:\\Users\\GUILHERME\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\GUILHERME\\Documents\\GitHub\\telecuidar\\backend\\application\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\alexa\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\GUILHERME\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net10.0": {
             "targetAlias": "net10.0",
             "projectReferences": {
-              "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\domain\\app.Domain.csproj": {
-                "projectPath": "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\domain\\app.Domain.csproj"
+              "C:\\Users\\GUILHERME\\Documents\\GitHub\\telecuidar\\backend\\domain\\app.Domain.csproj": {
+                "projectPath": "C:\\Users\\GUILHERME\\Documents\\GitHub\\telecuidar\\backend\\domain\\app.Domain.csproj"
               }
             }
           }
@@ -887,29 +873,22 @@
         }
       }
     },
-    "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\domain\\app.Domain.csproj": {
+    "C:\\Users\\GUILHERME\\Documents\\GitHub\\telecuidar\\backend\\domain\\app.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\domain\\app.Domain.csproj",
+        "projectUniqueName": "C:\\Users\\GUILHERME\\Documents\\GitHub\\telecuidar\\backend\\domain\\app.Domain.csproj",
         "projectName": "app.Domain",
-        "projectPath": "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\domain\\app.Domain.csproj",
-        "packagesPath": "C:\\Users\\alexa\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\domain\\obj\\",
+        "projectPath": "C:\\Users\\GUILHERME\\Documents\\GitHub\\telecuidar\\backend\\domain\\app.Domain.csproj",
+        "packagesPath": "C:\\Users\\GUILHERME\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\GUILHERME\\Documents\\GitHub\\telecuidar\\backend\\domain\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\alexa\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\GUILHERME\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -1227,40 +1206,33 @@
         }
       }
     },
-    "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\infrastructure\\app.Infrastructure.csproj": {
+    "C:\\Users\\GUILHERME\\Documents\\GitHub\\telecuidar\\backend\\infrastructure\\app.Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\infrastructure\\app.Infrastructure.csproj",
+        "projectUniqueName": "C:\\Users\\GUILHERME\\Documents\\GitHub\\telecuidar\\backend\\infrastructure\\app.Infrastructure.csproj",
         "projectName": "app.Infrastructure",
-        "projectPath": "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\infrastructure\\app.Infrastructure.csproj",
-        "packagesPath": "C:\\Users\\alexa\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\infrastructure\\obj\\",
+        "projectPath": "C:\\Users\\GUILHERME\\Documents\\GitHub\\telecuidar\\backend\\infrastructure\\app.Infrastructure.csproj",
+        "packagesPath": "C:\\Users\\GUILHERME\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\GUILHERME\\Documents\\GitHub\\telecuidar\\backend\\infrastructure\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\alexa\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\GUILHERME\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net10.0": {
             "targetAlias": "net10.0",
             "projectReferences": {
-              "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\application\\app.Application.csproj": {
-                "projectPath": "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\application\\app.Application.csproj"
+              "C:\\Users\\GUILHERME\\Documents\\GitHub\\telecuidar\\backend\\application\\app.Application.csproj": {
+                "projectPath": "C:\\Users\\GUILHERME\\Documents\\GitHub\\telecuidar\\backend\\application\\app.Application.csproj"
               },
-              "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\domain\\app.Domain.csproj": {
-                "projectPath": "C:\\Users\\alexa\\OneDrive\\Documentos\\GitHub\\telecuidar\\backend\\domain\\app.Domain.csproj"
+              "C:\\Users\\GUILHERME\\Documents\\GitHub\\telecuidar\\backend\\domain\\app.Domain.csproj": {
+                "projectPath": "C:\\Users\\GUILHERME\\Documents\\GitHub\\telecuidar\\backend\\domain\\app.Domain.csproj"
               }
             }
           }
@@ -1285,6 +1257,10 @@
               "target": "Package",
               "version": "[4.0.3, )"
             },
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
               "version": "[9.0.0, )"
@@ -1293,13 +1269,17 @@
               "target": "Package",
               "version": "[9.0.0, )"
             },
-            "Microsoft.EntityFrameworkCore.SqlServer": {
+            "Microsoft.EntityFrameworkCore.Sqlite": {
               "target": "Package",
               "version": "[9.0.0, )"
             },
             "Microsoft.Extensions.Hosting.Abstractions": {
               "target": "Package",
               "version": "[9.0.0, )"
+            },
+            "System.IdentityModel.Tokens.Jwt": {
+              "target": "Package",
+              "version": "[8.2.1, )"
             }
           },
           "imports": [
