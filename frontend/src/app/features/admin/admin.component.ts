@@ -12,6 +12,7 @@ import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
 import { PagedResult } from '../../core/models/paged-result.model';
 import { NotificationsComponent } from '../notifications/notifications.component';
 import { ThemeToggleComponent } from '../../shared/components/theme-toggle/theme-toggle.component';
+import { MobileMenu, MenuItem } from '../../shared/components/mobile-menu/mobile-menu';
 import { environment } from '../../../environments/environment';
 
 interface User {
@@ -69,12 +70,14 @@ interface Statistics {
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, ConfirmModalComponent, NgxMaskDirective, BaseChartDirective, PaginationComponent, NotificationsComponent, ThemeToggleComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, ConfirmModalComponent, NgxMaskDirective, BaseChartDirective, PaginationComponent, NotificationsComponent, ThemeToggleComponent, MobileMenu],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss']
 })
 export class AdminComponent implements OnInit {
   activeTab: 'dashboard' | 'users' | 'audit-logs' | 'invitations' = 'dashboard';
+  menuItems: MenuItem[] = [];
+  adminUser: any = null;
   
   // Dashboard
   statistics: Statistics | null = null;
@@ -318,6 +321,7 @@ export class AdminComponent implements OnInit {
     const userStr = localStorage.getItem('user');
     if (userStr) {
       this.currentUser = JSON.parse(userStr);
+      this.adminUser = this.currentUser;
       
       // Verificar se é admin
       if (this.currentUser.role !== 3) {
@@ -326,9 +330,24 @@ export class AdminComponent implements OnInit {
       }
     }
 
+    this.setupMenu();
     this.loadStatistics();
     this.loadUsers();
     this.loadAuditLogs();
+  }
+
+  setupMenu(): void {
+    this.menuItems = [
+      { label: 'Dashboard', icon: '📊', action: () => this.setActiveTab('dashboard') },
+      { label: 'Usuários', icon: '👥', action: () => this.setActiveTab('users') },
+      { label: 'Auditoria', icon: '📋', action: () => this.setActiveTab('audit-logs') },
+      { label: 'Convites', icon: '✉️', action: () => this.setActiveTab('invitations') },
+      { divider: true },
+      { label: 'Arquivos', icon: '📁', route: '/arquivos' },
+      { label: 'Relatórios', icon: '📈', route: '/relatorios' },
+      { divider: true },
+      { label: 'Sair', icon: '🚪', action: () => this.logout() }
+    ];
   }
 
   setActiveTab(tab: 'dashboard' | 'users' | 'audit-logs' | 'invitations'): void {

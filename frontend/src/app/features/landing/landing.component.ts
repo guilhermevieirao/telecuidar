@@ -1,12 +1,13 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { ThemeToggleComponent } from '../../shared/components/theme-toggle/theme-toggle.component';
+import { MobileMenu, MenuItem } from '../../shared/components/mobile-menu/mobile-menu';
 
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [CommonModule, RouterLink, ThemeToggleComponent],
+  imports: [CommonModule, RouterLink, ThemeToggleComponent, MobileMenu],
   templateUrl: './landing.component.html',
   styleUrls: ['./landing.component.scss']
 })
@@ -17,6 +18,9 @@ export class LandingComponent implements OnInit {
   isInHeroSection = true;
   lastScrollTop = 0;
   scrollThreshold = 100;
+  menuItems: MenuItem[] = [];
+
+  constructor(private router: Router) {}
 
   ngOnInit(): void {
     const token = localStorage.getItem('token');
@@ -26,6 +30,37 @@ export class LandingComponent implements OnInit {
       this.isLoggedIn = true;
       const user = JSON.parse(userStr);
       this.userName = user.firstName || 'Usuário';
+    }
+
+    this.setupMenu();
+  }
+
+  scrollToTop(): void {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  setupMenu(): void {
+    if (this.isLoggedIn) {
+      this.menuItems = [
+        { label: 'Início', icon: '🏠', action: () => this.scrollToTop() },
+        { label: 'Nossa Missão', icon: '🎯', action: () => this.scrollToSection('sobre') },
+        { label: 'Tecnologia', icon: '💻', action: () => this.scrollToSection('tecnologia') },
+        { label: 'Solução', icon: '💡', action: () => this.scrollToSection('solucao') },
+        { label: 'Impacto', icon: '📈', action: () => this.scrollToSection('impacto') },
+        { divider: true },
+        { label: 'Acessar Painel', icon: '📊', route: '/painel' }
+      ];
+    } else {
+      this.menuItems = [
+        { label: 'Início', icon: '🏠', action: () => this.scrollToTop() },
+        { label: 'Nossa Missão', icon: '🎯', action: () => this.scrollToSection('sobre') },
+        { label: 'Tecnologia', icon: '💻', action: () => this.scrollToSection('tecnologia') },
+        { label: 'Solução', icon: '💡', action: () => this.scrollToSection('solucao') },
+        { label: 'Impacto', icon: '📈', action: () => this.scrollToSection('impacto') },
+        { divider: true },
+        { label: 'Entrar', icon: '🔐', route: '/entrar' },
+        { label: 'Criar Conta', icon: '✨', route: '/cadastro' }
+      ];
     }
   }
   features = [

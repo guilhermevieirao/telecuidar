@@ -7,7 +7,8 @@
           <h1 class="text-2xl font-bold text-gray-900">Painel Administrativo</h1>
           <p class="text-sm text-gray-600 mt-1">Bem-vindo, {{ currentUser?.firstName }}</p>
         </div>
-        <div class="flex items-center gap-4">
+        <!-- Desktop Navigation -->
+        <div class="flex items-center gap-4 desktop-only">
           <app-theme-toggle></app-theme-toggle>
           <app-notifications></app-notifications>
           <a routerLink="/perfil" class="profile-button" title="Meu Perfil">
@@ -21,6 +22,18 @@
             Sair
           </button>
         </div>
+
+        <!-- Mobile Navigation -->
+        <div class="mobile-nav-section">
+          <app-theme-toggle></app-theme-toggle>
+          <app-notifications></app-notifications>
+          <app-mobile-menu 
+            [items]="menuItems"
+            [userName]="adminUser?.fullName"
+            [userRole]="'Administrador'"
+            [userAvatar]="adminUser?.profilePhotoUrl">
+          </app-mobile-menu>
+        </div>
       </div>
     </div>
   </header>
@@ -28,7 +41,7 @@
   <!-- Navigation Tabs -->
   <div class="bg-white border-b border-gray-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <nav class="flex space-x-8" aria-label="Tabs">
+      <nav class="flex space-x-8 desktop-only" aria-label="Tabs">
         <button
           (click)="setActiveTab('dashboard')"
           [class]="activeTab === 'dashboard' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
@@ -54,9 +67,19 @@
           ✉️ Convites
         </button>
         <a
+          routerLink="/arquivos"
+          class="whitespace-nowrap py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm transition-colors">
+          📁 Arquivos
+        </a>
+        <a
           routerLink="/relatorios"
           class="whitespace-nowrap py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm transition-colors">
-          📊 Relatórios
+          📈 Relatórios
+        </a>
+        <a
+          routerLink="/perfil"
+          class="whitespace-nowrap py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm transition-colors">
+          👤 Perfil
         </a>
       </nav>
     </div>

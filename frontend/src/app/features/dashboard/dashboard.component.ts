@@ -4,16 +4,18 @@ import { Router, RouterLink } from '@angular/router';
 import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcrumb.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
 import { ThemeToggleComponent } from '../../shared/components/theme-toggle/theme-toggle.component';
+import { MobileMenu, MenuItem } from '../../shared/components/mobile-menu/mobile-menu';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, BreadcrumbComponent, NotificationsComponent, ThemeToggleComponent],
+  imports: [CommonModule, RouterLink, BreadcrumbComponent, NotificationsComponent, ThemeToggleComponent, MobileMenu],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
   user: any = null;
+  menuItems: MenuItem[] = [];
 
   constructor(private router: Router) {}
 
@@ -33,6 +35,19 @@ export class DashboardComponent implements OnInit {
       this.router.navigate(['/admin']);
       return;
     }
+
+    this.setupMenu();
+  }
+
+  setupMenu(): void {
+    this.menuItems = [
+      { label: 'Dashboard', icon: '🏠', route: '/painel' },
+      { label: 'Meu Perfil', icon: '👤', route: '/perfil' },
+      { label: 'Arquivos', icon: '📁', route: '/arquivos' },
+      { label: 'Relatórios', icon: '📊', route: '/relatorios' },
+      { divider: true },
+      { label: 'Sair', icon: '🚪', action: () => this.logout() }
+    ];
   }
 
   logout(): void {

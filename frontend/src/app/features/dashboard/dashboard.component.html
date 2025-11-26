@@ -9,7 +9,9 @@
       <div class="nav-right">
         <app-theme-toggle></app-theme-toggle>
         <app-notifications></app-notifications>
-        <div class="user-profile-section">
+        
+        <!-- Desktop User Section -->
+        <div class="user-profile-section desktop-only">
           <div class="user-avatar" routerLink="/perfil" title="Editar perfil">
             <img *ngIf="user?.profilePhotoUrl" [src]="user.profilePhotoUrl" [alt]="user.fullName">
             <span *ngIf="!user?.profilePhotoUrl" class="avatar-initials">{{ getUserInitials() }}</span>
@@ -19,9 +21,17 @@
             <span class="user-role">{{ getUserRoleName() }}</span>
           </div>
         </div>
-        <button class="btn-logout" (click)="logout()">
+        <button class="btn-logout desktop-only" (click)="logout()">
           Sair
         </button>
+
+        <!-- Mobile Menu -->
+        <app-mobile-menu
+          [items]="menuItems"
+          [userName]="user?.fullName"
+          [userRole]="getUserRoleName()"
+          [userAvatar]="user?.profilePhotoUrl"
+        ></app-mobile-menu>
       </div>
     </div>
   </nav>

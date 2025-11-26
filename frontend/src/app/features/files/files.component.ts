@@ -2,10 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpEventType } from '@angular/common/http';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { ToastService } from '../../core/services/toast.service';
 import { PaginationComponent, PageInfo } from '../../shared/components/pagination/pagination.component';
 import { ThemeToggleComponent } from '../../shared/components/theme-toggle/theme-toggle.component';
+import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcrumb.component';
+import { MobileMenu, MenuItem } from '../../shared/components/mobile-menu/mobile-menu';
+import { NotificationsComponent } from '../../features/notifications/notifications.component';
 import { environment } from '../../../environments/environment';
 
 interface FileUpload {
@@ -29,7 +32,15 @@ interface FileUpload {
 @Component({
   selector: 'app-files',
   standalone: true,
-  imports: [CommonModule, FormsModule, PaginationComponent, ThemeToggleComponent],
+  imports: [
+    CommonModule, 
+    FormsModule, 
+    PaginationComponent, 
+    ThemeToggleComponent,
+    BreadcrumbComponent,
+    MobileMenu,
+    NotificationsComponent
+  ],
   templateUrl: './files.component.html',
   styleUrls: ['./files.component.scss']
 })
@@ -51,13 +62,68 @@ export class FilesComponent implements OnInit {
   
   showUploadModal = false;
 
+  // Mobile Menu
+  menuItems: MenuItem[] = [];
+  currentUser: any = null;
+
   constructor(
     private http: HttpClient,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
+    this.loadCurrentUser();
+    this.setupMenu();
     this.loadFiles();
+  }
+
+  loadCurrentUser(): void {
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      this.currentUser = JSON.parse(userStr);
+    }
+  }
+
+  getUserRole(): string {
+    if (!this.currentUser) return 'Usuário';
+    switch(this.currentUser.role) {
+      case 'Admin': return 'Administrador';
+      case 'ProfissionalSaude': return 'Profissional';
+      case 'Paciente': return 'Paciente';
+      default: return 'Usuário';
+    }
+  }
+
+  setupMenu(): void {
+    const role = this.currentUser?.role;
+    
+    if (role === 'Admin') {
+      this.menuItems = [
+        { label: 'Painel Admin', icon: '⚙️', route: '/admin' },
+        { divider: true },
+        { label: 'Arquivos', icon: '📁', route: '/arquivos' },
+        { label: 'Relatórios', icon: '📈', route: '/relatorios' },
+        { divider: true },
+        { label: 'Perfil', icon: '👤', route: '/perfil' },
+        { label: 'Sair', icon: '🚪', action: () => this.logout() }
+      ];
+    } else {
+      this.menuItems = [
+        { label: 'Dashboard', icon: '📊', route: '/dashboard' },
+        { label: 'Arquivos', icon: '📁', route: '/arquivos' },
+        { label: 'Relatórios', icon: '📈', route: '/relatorios' },
+        { divider: true },
+        { label: 'Perfil', icon: '👤', route: '/perfil' },
+        { label: 'Sair', icon: '🚪', action: () => this.logout() }
+      ];
+    }
+  }
+
+  logout(): void {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    this.router.navigate(['/auth/login']);
   }
 
   loadFiles(): void {

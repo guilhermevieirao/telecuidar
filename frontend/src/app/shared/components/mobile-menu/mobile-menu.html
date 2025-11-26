@@ -1,0 +1,65 @@
+<div class="mobile-menu-wrapper">
+  <!-- Hamburger Button -->
+  <button 
+    class="hamburger-btn" 
+    (click)="toggle()"
+    [class.active]="isOpen()"
+    aria-label="Menu"
+    type="button"
+  >
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+  </button>
+
+  <!-- Mobile Menu Overlay -->
+  <div 
+    class="mobile-overlay" 
+    *ngIf="isOpen()" 
+    (click)="close()"
+  ></div>
+
+  <!-- Mobile Menu Drawer -->
+  <nav class="mobile-drawer" [class.open]="isOpen()">
+    <!-- User Info Section -->
+    <div class="mobile-user-section" *ngIf="userName">
+      <div class="mobile-avatar">
+        <img *ngIf="userAvatar" [src]="userAvatar" [alt]="userName" />
+        <div *ngIf="!userAvatar" class="avatar-placeholder">
+          {{ userName.charAt(0).toUpperCase() }}
+        </div>
+      </div>
+      <div class="mobile-user-info">
+        <div class="mobile-user-name">{{ userName }}</div>
+        <div class="mobile-user-role" *ngIf="userRole">{{ userRole }}</div>
+      </div>
+    </div>
+
+    <!-- Menu Items -->
+    <div class="mobile-menu-items">
+      <div *ngFor="let item of items" class="mobile-menu-item-wrapper">
+        <hr *ngIf="item.divider" class="menu-divider" />
+        
+        <a 
+          *ngIf="item.route && !item.divider" 
+          [routerLink]="item.route"
+          class="mobile-menu-item"
+          (click)="handleItemClick(item)"
+        >
+          <span class="item-icon" *ngIf="item.icon">{{ item.icon }}</span>
+          <span class="item-label">{{ item.label }}</span>
+        </a>
+
+        <button 
+          *ngIf="item.action && !item.route && !item.divider" 
+          class="mobile-menu-item"
+          (click)="handleItemClick(item)"
+          type="button"
+        >
+          <span class="item-icon" *ngIf="item.icon">{{ item.icon }}</span>
+          <span class="item-label">{{ item.label }}</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+</div>

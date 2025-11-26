@@ -39,6 +39,23 @@
   }
 }
 
+/* Responsive Utilities */
+.desktop-only {
+  @media (max-width: 768px) {
+    display: none !important;
+  }
+}
+
+.mobile-nav-section {
+  display: none;
+  
+  @media (max-width: 768px) {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+}
+
 /* Dark Mode */
 :host-context(html[data-theme="dark"]),
 :host-context(html.dark) {

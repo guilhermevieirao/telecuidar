@@ -79,7 +79,8 @@ export const routes: Routes = [
   {
     path: 'arquivos',
     loadComponent: () => import('./features/files/files.component').then(m => m.FilesComponent),
-    canActivate: [authGuard]
+    canActivate: [authGuard],
+    data: { breadcrumbParent: '/painel' }
   },
   {
     path: 'relatorios',

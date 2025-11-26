@@ -10,6 +10,12 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  padding-top: 90px; // Compensar navbar fixed
+
+  @media (max-width: 768px) {
+    padding-top: 80px; // Ajuste para mobile
+    min-height: calc(100vh - 60px);
+  }
 }
 
 .hero-background {
@@ -43,12 +49,16 @@
   top: 0;
   left: 0;
   right: 0;
-  z-index: 1000;
-  padding: 1.5rem 0;
+  z-index: 100; // Z-index menor que o menu mobile
+  padding: 1rem 0;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   transition: transform 0.3s ease-in-out, background-color 0.3s ease;
+
+  @media (max-width: 768px) {
+    padding: 0.75rem 0;
+  }
 
   &.navbar-hidden {
     transform: translateY(-100%);
@@ -77,10 +87,7 @@
   }
 }
 
-// Adicionar padding ao hero para compensar navbar fixed
-.hero-section {
-  padding-top: 80px; // Altura aproximada da navbar
-}
+// Adicionar padding ao hero para compensar navbar fixed (já aplicado acima)
 
 .navbar-content {
   display: flex;
@@ -172,6 +179,12 @@
   align-items: center;
   gap: 4rem;
   padding: 4rem 0;
+  margin-top: 2rem; // Espaço adicional para evitar sobreposição
+
+  @media (max-width: 768px) {
+    padding: 2rem 0;
+    margin-top: 1rem;
+  }
 }
 
 .hero-text {
@@ -1058,6 +1071,16 @@
 
 // Responsive
 @media (max-width: 768px) {
+  .desktop-only {
+    display: none !important;
+  }
+
+  .mobile-nav-section {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
   .hero-content {
     grid-template-columns: 1fr;
   }
@@ -1100,6 +1123,12 @@
     button {
       width: 100%;
     }
+  }
+}
+
+@media (min-width: 769px) {
+  .mobile-nav-section {
+    display: none !important;
   }
 }
 

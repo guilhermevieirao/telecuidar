@@ -13,7 +13,8 @@
           <span class="logo-text">TeleCuidar</span>
         </div>
         
-        <div class="nav-links">
+        <!-- Desktop Navigation -->
+        <div class="nav-links desktop-only">
           <a (click)="scrollToSection('sobre')" class="nav-link">Sobre</a>
           <a (click)="scrollToSection('tecnologia')" class="nav-link">Tecnologia</a>
           <a (click)="scrollToSection('solucao')" class="nav-link">Solução</a>
@@ -30,6 +31,15 @@
             <span class="user-greeting">Olá, {{ userName }}!</span>
             <a routerLink="/painel" class="btn-primary">Acessar Plataforma</a>
           </ng-container>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div class="mobile-nav-section">
+          <app-theme-toggle></app-theme-toggle>
+          <app-mobile-menu
+            [items]="menuItems"
+            [userName]="isLoggedIn ? userName : undefined"
+          ></app-mobile-menu>
         </div>
       </div>
     </nav>

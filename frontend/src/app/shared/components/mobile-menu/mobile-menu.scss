@@ -1,0 +1,249 @@
+.mobile-menu-wrapper {
+  position: relative;
+}
+
+// Hamburger Button
+.hamburger-btn {
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 2.5rem;
+  height: 2.5rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  z-index: 10001; // Acima do drawer
+  border-radius: 0.5rem;
+  transition: background 0.2s;
+  position: relative;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  @media (max-width: 768px) {
+    display: flex;
+  }
+
+  .hamburger-line {
+    width: 100%;
+    height: 3px;
+    background: #1a202c;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+    transform-origin: center;
+  }
+
+  &.active {
+    .hamburger-line {
+      &:nth-child(1) {
+        transform: translateY(7px) rotate(45deg);
+      }
+
+      &:nth-child(2) {
+        opacity: 0;
+        transform: translateX(-100%);
+      }
+
+      &:nth-child(3) {
+        transform: translateY(-7px) rotate(-45deg);
+      }
+    }
+  }
+}
+
+// Overlay
+.mobile-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999; // Logo abaixo do drawer
+  animation: fadeIn 0.3s ease;
+
+  @media (max-width: 768px) {
+    display: block;
+  }
+}
+
+// Mobile Drawer
+.mobile-drawer {
+  display: none;
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 280px;
+  max-width: 85vw;
+  height: 100vh; // Altura total da viewport
+  max-height: 100vh;
+  background: white;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 10000; // Z-index muito alto para ficar acima de tudo
+  transition: right 0.3s ease;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  @media (max-width: 768px) {
+    display: block;
+  }
+
+  &.open {
+    right: 0;
+  }
+}
+
+// User Section
+.mobile-user-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: white;
+
+  .mobile-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid white;
+    flex-shrink: 0;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .avatar-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.2);
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+  }
+
+  .mobile-user-info {
+    flex: 1;
+    min-width: 0;
+
+    .mobile-user-name {
+      font-weight: 700;
+      font-size: 1rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .mobile-user-role {
+      font-size: 0.875rem;
+      opacity: 0.9;
+      margin-top: 0.25rem;
+    }
+  }
+}
+
+// Menu Items
+.mobile-menu-items {
+  padding: 0.5rem 0;
+
+  .menu-divider {
+    margin: 0.5rem 0;
+    border: none;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  .mobile-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    padding: 1rem 1.5rem;
+    background: transparent;
+    border: none;
+    text-align: left;
+    font-size: 1rem;
+    color: #1a202c;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+
+    &:hover {
+      background: #f3f4f6;
+    }
+
+    &:active {
+      background: #e5e7eb;
+    }
+
+    .item-icon {
+      font-size: 1.25rem;
+      width: 1.5rem;
+      text-align: center;
+    }
+
+    .item-label {
+      font-weight: 500;
+    }
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// Dark Mode
+:host-context(html[data-theme="dark"]),
+:host-context(html.dark) {
+  .hamburger-btn {
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .hamburger-line {
+      background: #f9fafb;
+    }
+  }
+
+  .mobile-drawer {
+    background: #1f2937;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.5);
+  }
+
+  .mobile-user-section {
+    border-color: #374151;
+  }
+
+  .mobile-menu-items {
+    .menu-divider {
+      border-color: #374151;
+    }
+
+    .mobile-menu-item {
+      color: #f9fafb;
+
+      &:hover {
+        background: #374151;
+      }
+
+      &:active {
+        background: #4b5563;
+      }
+    }
+  }
+}
