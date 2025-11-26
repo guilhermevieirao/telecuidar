@@ -7,6 +7,7 @@ import { environment } from '../../../environments/environment';
 import { ToastService } from '../../core/services/toast.service';
 import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcrumb.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
+import { ThemeToggleComponent } from '../../shared/components/theme-toggle/theme-toggle.component';
 
 interface ReportSummary {
   totalUsers?: number;
@@ -22,7 +23,7 @@ interface ReportSummary {
 @Component({
   selector: 'app-reports',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, BreadcrumbComponent, NotificationsComponent],
+  imports: [CommonModule, FormsModule, RouterLink, BreadcrumbComponent, NotificationsComponent, ThemeToggleComponent],
   templateUrl: './reports.component.html',
   styleUrls: ['./reports.component.scss']
 })

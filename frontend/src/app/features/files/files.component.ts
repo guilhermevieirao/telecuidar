@@ -5,6 +5,7 @@ import { HttpClient, HttpEventType } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { ToastService } from '../../core/services/toast.service';
 import { PaginationComponent, PageInfo } from '../../shared/components/pagination/pagination.component';
+import { ThemeToggleComponent } from '../../shared/components/theme-toggle/theme-toggle.component';
 
 interface FileUpload {
   id: number;
@@ -27,7 +28,7 @@ interface FileUpload {
 @Component({
   selector: 'app-files',
   standalone: true,
-  imports: [CommonModule, FormsModule, PaginationComponent],
+  imports: [CommonModule, FormsModule, PaginationComponent, ThemeToggleComponent],
   templateUrl: './files.component.html',
   styleUrls: ['./files.component.scss']
 })

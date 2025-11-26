@@ -19,6 +19,8 @@
           <a (click)="scrollToSection('solucao')" class="nav-link">Solução</a>
           <a (click)="scrollToSection('impacto')" class="nav-link">Impacto</a>
           
+          <app-theme-toggle></app-theme-toggle>
+          
           <ng-container *ngIf="!isLoggedIn">
             <a routerLink="/entrar" class="btn-secondary">Entrar</a>
             <a routerLink="/cadastrar" class="btn-primary">Cadastrar</a>

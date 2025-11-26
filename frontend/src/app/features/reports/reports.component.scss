@@ -370,6 +370,108 @@
   }
 }
 
+/* Dark Mode Styles */
+:host-context(html[data-theme="dark"]),
+:host-context(html.dark) {
+  .reports-title {
+    color: #f9fafb;
+  }
+
+  .reports-subtitle {
+    color: #9ca3af;
+  }
+
+  .report-type-button {
+    background: #374151;
+    border-color: #4b5563;
+    color: #d1d5db;
+
+    &:hover {
+      border-color: #6b7280;
+    }
+
+    &.active[data-color="blue"] {
+      background: #1e3a8a;
+      border-color: #3b82f6;
+      color: #93c5fd;
+    }
+
+    &.active[data-color="orange"] {
+      background: #7c2d12;
+      border-color: #f97316;
+      color: #fdba74;
+    }
+
+    &.active[data-color="purple"] {
+      background: #581c87;
+      border-color: #a855f7;
+      color: #d8b4fe;
+    }
+
+    &.active[data-color="green"] {
+      background: #14532d;
+      border-color: #22c55e;
+      color: #86efac;
+    }
+  }
+
+  .date-filters {
+    background: #1f2937;
+  }
+
+  .filter-group label {
+    color: #d1d5db;
+  }
+
+  .date-input,
+  .btn-apply-filter {
+    background: #374151;
+    border-color: #4b5563;
+    color: #f9fafb;
+
+    &:hover {
+      background: #4b5563;
+    }
+  }
+
+  .report-summary {
+    background: #1f2937;
+    border-color: #374151;
+  }
+
+  .summary-header h2 {
+    color: #f9fafb;
+  }
+
+  .stat-card {
+    background: #374151;
+    border-color: #4b5563;
+
+    .stat-label {
+      color: #9ca3af;
+    }
+  }
+
+  .export-actions {
+    background: #1f2937;
+    border-color: #374151;
+
+    h3 {
+      color: #f9fafb;
+    }
+  }
+
+  .info-box {
+    background: #1f2937;
+    border-color: #374151;
+    color: #d1d5db;
+
+    .info-icon {
+      color: #60a5fa;
+    }
+  }
+}
+
 @media (max-width: 768px) {
   .reports-container {
     padding: 1rem;

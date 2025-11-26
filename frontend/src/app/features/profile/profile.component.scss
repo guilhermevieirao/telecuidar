@@ -385,3 +385,83 @@
     flex-direction: column;
   }
 }
+
+/* Dark Mode Styles */
+:host-context(html[data-theme="dark"]),
+:host-context(html.dark) {
+  .profile-page {
+    background: #111827;
+  }
+
+  .navbar {
+    background: #1f2937;
+    border-color: #374151;
+
+    .logo-text {
+      color: #f9fafb;
+    }
+
+    .btn-back {
+      color: #60a5fa;
+
+      &:hover {
+        background: #374151;
+      }
+    }
+  }
+
+  .profile-header {
+    h1 {
+      color: #f9fafb;
+    }
+
+    p {
+      color: #9ca3af;
+    }
+  }
+
+  .profile-form,
+  .photo-section {
+    background: #1f2937;
+    border-color: #374151;
+  }
+
+  .form-group label {
+    color: #d1d5db;
+  }
+
+  .form-group input {
+    background: #374151;
+    border-color: #4b5563;
+    color: #f9fafb;
+
+    &:focus {
+      border-color: #3b82f6;
+    }
+
+    &::placeholder {
+      color: #6b7280;
+    }
+  }
+
+  .btn-secondary {
+    background: #374151;
+    color: #d1d5db;
+
+    &:hover {
+      background: #4b5563;
+    }
+  }
+
+  .photo-preview-placeholder {
+    background: #374151;
+
+    p {
+      color: #9ca3af;
+    }
+  }
+
+  .upload-hint {
+    color: #9ca3af;
+  }
+}

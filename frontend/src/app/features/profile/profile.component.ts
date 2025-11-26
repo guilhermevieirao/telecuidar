@@ -7,11 +7,12 @@ import { ToastService } from '../../core/services/toast.service';
 import { NgxMaskDirective } from 'ngx-mask';
 import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcrumb.component';
 import { ImageCropModalComponent } from '../../shared/components/image-crop-modal/image-crop-modal.component';
+import { ThemeToggleComponent } from '../../shared/components/theme-toggle/theme-toggle.component';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, NgxMaskDirective, BreadcrumbComponent, ImageCropModalComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, NgxMaskDirective, BreadcrumbComponent, ImageCropModalComponent, ThemeToggleComponent],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss']
 })

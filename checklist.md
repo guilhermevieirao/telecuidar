@@ -42,7 +42,7 @@
 - [x] 36. Ícones e imagens otimizadas
 - [x] 37. Componentes reutilizáveis
 - [x] 38. Animações suaves (sem exageros)
-- [ ] 39. Suporte a modo escuro
+- [x] 39. Suporte a modo escuro ✅ (ThemeService + CSS variables + toggle em todas páginas principais)
 - [x] 40. Tamanhos de fonte acessíveis
 
 ## ACESSIBILIDADE

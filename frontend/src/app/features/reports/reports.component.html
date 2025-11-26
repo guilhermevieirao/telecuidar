@@ -8,8 +8,8 @@
           <p class="text-sm text-gray-600 mt-1">Gere relatórios detalhados e exporte em PDF ou Excel</p>
         </div>
         <div class="flex items-center gap-4">
+          <app-theme-toggle></app-theme-toggle>
           <app-notifications></app-notifications>
-          <a routerLink="/admin" class="text-blue-600 hover:text-blue-700 font-medium">Voltar ao Admin</a>
           <button 
             (click)="logout()"
             class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
