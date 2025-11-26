@@ -2,7 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { ToastService } from '../../core/services/toast.service';
 import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcrumb.component';
@@ -23,7 +23,7 @@ interface ReportSummary {
 @Component({
   selector: 'app-reports',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, BreadcrumbComponent, NotificationsComponent, ThemeToggleComponent],
+  imports: [CommonModule, FormsModule, BreadcrumbComponent, NotificationsComponent, ThemeToggleComponent],
   templateUrl: './reports.component.html',
   styleUrls: ['./reports.component.scss']
 })

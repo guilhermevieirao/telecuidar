@@ -24,6 +24,7 @@ export class ProfileComponent implements OnInit {
   profilePhotoPreview: string | null = null;
   showCropModal = false;
   tempImageForCrop: string = '';
+  showDeleteModal = false;
 
   constructor(
     private fb: FormBuilder,
@@ -180,4 +181,35 @@ export class ProfileComponent implements OnInit {
   get lastName() { return this.profileForm.get('lastName'); }
   get email() { return this.profileForm.get('email'); }
   get phoneNumber() { return this.profileForm.get('phoneNumber'); }
+
+  openDeleteAccountModal() {
+    this.showDeleteModal = true;
+  }
+
+  closeDeleteModal() {
+    this.showDeleteModal = false;
+  }
+
+  confirmDeleteAccount() {
+    if (!this.user?.id) return;
+
+    this.loading = true;
+    this.http.delete(`http://localhost:5058/api/users/account`, {
+      body: { userId: this.user.id }
+    }).subscribe({
+      next: () => {
+        this.toastService.success('Conta excluída com sucesso. Seus dados foram anonimizados conforme a LGPD.');
+        localStorage.clear();
+        setTimeout(() => {
+          this.router.navigate(['/']);
+        }, 2000);
+      },
+      error: (error) => {
+        console.error('Erro ao excluir conta:', error);
+        this.toastService.error('Erro ao excluir conta. Tente novamente.');
+        this.loading = false;
+        this.closeDeleteModal();
+      }
+    });
+  }
 }

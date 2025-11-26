@@ -91,6 +91,15 @@ export const routes: Routes = [
     path: 'teste',
     loadComponent: () => import('./features/video-call/video-call-simple.component').then(m => m.VideoCallSimpleComponent)
   },
+  // Rotas legais
+  {
+    path: 'privacidade',
+    loadComponent: () => import('./features/legal/privacy-policy/privacy-policy').then(m => m.PrivacyPolicy)
+  },
+  {
+    path: 'termos',
+    loadComponent: () => import('./features/legal/terms-of-service/terms-of-service').then(m => m.TermsOfService)
+  },
   {
     path: '**',
     redirectTo: ''

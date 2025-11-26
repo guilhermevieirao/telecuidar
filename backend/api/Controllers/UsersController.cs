@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using app.Application.Users.Commands.CreateUser;
 using app.Application.Users.Commands.UpdateUser;
 using app.Application.Users.Commands.DeleteUser;
+using app.Application.Users.Commands.DeleteAccount;
 using app.Application.Users.Queries.GetAllUsers;
 using app.Application.Users.Queries.GetUserById;
 
@@ -117,5 +118,21 @@ public class UsersController : ControllerBase
         }
         
         return BadRequest(result);
+    }
+
+    /// <summary>
+    /// Exclusão de conta LGPD - Anonimiza dados do usuário
+    /// </summary>
+    [HttpDelete("account")]
+    public async Task<IActionResult> DeleteAccount([FromBody] DeleteAccountCommand command)
+    {
+        var result = await _mediator.Send(command);
+        
+        if (result)
+        {
+            return Ok(new { message = "Conta excluída com sucesso (dados anonimizados conforme LGPD)" });
+        }
+        
+        return BadRequest(new { message = "Erro ao excluir conta" });
     }
 }

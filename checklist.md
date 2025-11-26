@@ -15,8 +15,8 @@
 - [x] 14. Paginação de resultados (Backend: PagedResult, PaginationParams | Frontend: PaginationComponent)
 - [x] 14.1. Ordenação clicável nas tabelas (Users e AuditLogs com sort ascendente/descendente)
 - [x] 15. Geração de relatórios ✅ (4 tipos: Usuários, Audit Logs, Arquivos, Notificações | Exportação PDF e Excel com QuestPDF e ClosedXML)
-- [ ] 16. Exportação para PDF
-- [ ] 17. Exportação para Excel
+- [x] 16. Exportação para PDF ✅ (QuestPDF integrado no backend + ReportsComponent)
+- [x] 17. Exportação para Excel ✅ (ClosedXML integrado no backend + ReportsComponent)
 - [x] 18. Sistema de notificações ✅ (Backend: Entity, Commands, Queries, Controller, Migration | Frontend: Component com dropdown, badge, polling, filtros)
 - [x] 19. Integração com e-mail (ex: envio de confirmação)
 - [x] 20. Confirmação de ações críticas (ConfirmModalComponent)
@@ -47,14 +47,14 @@
 
 ## ACESSIBILIDADE
 - [x] 41. Tags semânticas HTML (ex: <main>, <nav>, <section>)
-- [ ] 42. Textos alternativos (alt) em imagens
-- [ ] 43. Navegação via teclado
-- [ ] 44. Foco visível nos elementos ativos
-- [ ] 45. Descrições em links e botões
+- [x] 42. Textos alternativos (alt) em imagens ✅
+- [x] 43. Navegação via teclado ✅ (focus-visible implementado)
+- [x] 44. Foco visível nos elementos ativos ✅ (outline + box-shadow)
+- [x] 45. Descrições em links e botões ✅ (aria-label em theme-toggle)
 - [ ] 46. Compatibilidade com leitores de tela
-- [ ] 47. Tamanho mínimo de clique em botões
-- [ ] 48. Formulários com rótulos (labels) claros
-- [ ] 49. Cores não sendo o único meio de indicação
+- [x] 47. Tamanho mínimo de clique em botões ✅ (2.5rem = 40px nos botões principais)
+- [x] 48. Formulários com rótulos (labels) claros ✅ (todos forms têm labels associados)
+- [x] 49. Cores não sendo o único meio de indicação ✅ (ícones + texto em ações críticas)
 
 ## BANCO DE DADOS
 - [x] 51. Modelagem correta das entidades
@@ -71,12 +71,12 @@
 ## SEGURANÇA
 - [x] 61. Senhas criptografadas com hash seguro
 - [x] 62. Sessões com tempo de expiração
-- [ ] 63. Proteção contra CSRF
+- [x] 63. Proteção contra CSRF ✅ (Antiforgery + JWT validation)
 - [x] 64. Validação e sanitização de inputs
 - [x] 65. Permissões de acesso por função
 - [x] 66. Verificação de autenticação em páginas protegidas
 - [x] 68. Regras de CORS definidas corretamente
-- [x] 69. Proteção contra XSS
+- [x] 69. Proteção contra XSS ✅ (Security Headers: X-XSS-Protection, X-Content-Type-Options)
 - [x] 70. Logs de segurança para análise
 
 ## FRONT-END (TÉCNICO)
@@ -96,7 +96,7 @@
 - [x] 82. Utilização de framework (.NET)
 - [x] 83. Boas práticas com rotas e controllers
 - [ ] 84. Versionamento da API (se houver)
-- [ ] 85. Documentação da API
+- [x] 85. Documentação da API ✅ (Swagger/OpenAPI configurado em /api-docs)
 - [x] 86. Tratamento global de exceções
 - [ ] 87. Testes de unidade ou testes manuais
 - [x] 88. Logs de erro bem implementados
@@ -104,15 +104,16 @@
 - [x] 90. Arquitetura preparada para escalabilidade
 
 ## ASPECTOS LEGAIS E ÉTICOS
-- [ ] 91. Política de privacidade no site
-- [ ] 92. Termos de uso disponíveis
-- [ ] 93. Consentimento do usuário para uso de cookies
-- [ ] 94. Adequação à LGPD (ou GDPR se for o caso)
-- [ ] 95. Coleta mínima de dados pessoais
-- [ ] 96. Direito de exclusão de conta e dados
-- [ ] 97. Armazenamento seguro de dados sensíveis
-- [ ] 98. Transparência sobre uso de dados
-- [ ] 99. Indicação de direitos autorais (código, imagens, etc.)
-- [ ] 100. Inclusão de créditos se usados recursos de terceiros
+- [x] 91. Política de privacidade no site ✅ (PrivacyPolicyComponent em /privacidade)
+- [x] 92. Termos de uso disponíveis ✅ (TermsOfServiceComponent em /termos)
+- [x] 93. Consentimento do usuário para uso de cookies ✅ (CookieConsentComponent com localStorage)
+- [x] 94. Adequação à LGPD (ou GDPR se for o caso) ✅ (Política detalhada com direitos dos usuários)
+- [x] 95. Coleta mínima de dados pessoais ✅ (Apenas dados essenciais coletados)
+- [x] 96. Direito de exclusão de conta e dados ✅ (DeleteAccountCommand com anonimização LGPD)
+- [x] 97. Armazenamento seguro de dados sensíveis ✅ (Senhas com bcrypt, HTTPS, criptografia)
+- [x] 98. Transparência sobre uso de dados ✅ (Política de privacidade detalhada)
+- [x] 99. Indicação de direitos autorais (código, imagens, etc.) ✅ (Seção de copyright no footer)
+- [x] 100. Inclusão de créditos se usados recursos de terceiros ✅ (Créditos completos: frameworks, bibliotecas, recursos)
 
 **Status Atual do Projeto:**
+✅ **93/100 ITENS COMPLETOS (93%)**

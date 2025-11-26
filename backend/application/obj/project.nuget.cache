@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "YASVYtHEiJw=",
+  "dgSpecHash": "tjUOjohmFns=",
   "success": true,
   "projectFilePath": "C:\\Users\\GUILHERME\\Documents\\GitHub\\telecuidar\\backend\\application\\app.Application.csproj",
   "expectedPackageFiles": [
@@ -28,32 +28,7 @@
     "C:\\Users\\GUILHERME\\.nuget\\packages\\questpdf\\2024.10.3\\questpdf.2024.10.3.nupkg.sha512",
     "C:\\Users\\GUILHERME\\.nuget\\packages\\rbush\\3.2.0\\rbush.3.2.0.nupkg.sha512",
     "C:\\Users\\GUILHERME\\.nuget\\packages\\sixlabors.fonts\\1.0.0\\sixlabors.fonts.1.0.0.nupkg.sha512",
-    "C:\\Users\\GUILHERME\\.nuget\\packages\\system.io.packaging\\8.0.0\\system.io.packaging.8.0.0.nupkg.sha512"
+    "C:\\Users\\GUILHERME\\.nuget\\packages\\system.io.packaging\\9.0.0\\system.io.packaging.9.0.0.nupkg.sha512"
   ],
-  "logs": [
-    {
-      "code": "NU1903",
-      "level": "Warning",
-      "message": "Package 'System.IO.Packaging' 8.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-f32c-w444-8ppv",
-      "projectPath": "C:\\Users\\GUILHERME\\Documents\\GitHub\\telecuidar\\backend\\application\\app.Application.csproj",
-      "warningLevel": 1,
-      "filePath": "C:\\Users\\GUILHERME\\Documents\\GitHub\\telecuidar\\backend\\application\\app.Application.csproj",
-      "libraryId": "System.IO.Packaging",
-      "targetGraphs": [
-        "net10.0"
-      ]
-    },
-    {
-      "code": "NU1903",
-      "level": "Warning",
-      "message": "Package 'System.IO.Packaging' 8.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-qj66-m88j-hmgj",
-      "projectPath": "C:\\Users\\GUILHERME\\Documents\\GitHub\\telecuidar\\backend\\application\\app.Application.csproj",
-      "warningLevel": 1,
-      "filePath": "C:\\Users\\GUILHERME\\Documents\\GitHub\\telecuidar\\backend\\application\\app.Application.csproj",
-      "libraryId": "System.IO.Packaging",
-      "targetGraphs": [
-        "net10.0"
-      ]
-    }
-  ]
+  "logs": []
 }

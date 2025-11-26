@@ -952,6 +952,108 @@
   border-top: 1px solid #2d3748;
   text-align: center;
   color: #a0aec0;
+
+  .copyright-section {
+    margin-bottom: 2rem;
+
+    .copyright-text {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .tech-info {
+      margin: 0.5rem 0 0 0;
+      font-size: 0.875rem;
+      opacity: 0.8;
+    }
+  }
+
+  .credits-section {
+    text-align: left;
+    background: #1a202c;
+    border-radius: 1rem;
+    padding: 2rem;
+    margin-top: 2rem;
+    border: 1px solid #2d3748;
+
+    .credits-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #60a5fa;
+      margin: 0 0 1.5rem 0;
+      text-align: center;
+    }
+
+    .credits-content {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      margin-bottom: 2rem;
+
+      @media (max-width: 1024px) {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+    }
+
+    .credits-column {
+      .credit-category {
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: #60a5fa;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin: 0 0 0.75rem 0;
+      }
+
+      .credits-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        li {
+          font-size: 0.8rem;
+          color: #cbd5e0;
+          line-height: 1.8;
+          padding: 0.25rem 0;
+
+          strong {
+            color: #e2e8f0;
+            font-weight: 600;
+          }
+        }
+      }
+    }
+
+    .open-source-notice {
+      font-size: 0.85rem;
+      color: #a0aec0;
+      line-height: 1.6;
+      margin: 2rem 0 1rem 0;
+      padding: 1rem;
+      background: #0f1419;
+      border-radius: 0.5rem;
+      border-left: 3px solid #60a5fa;
+      text-align: left;
+    }
+
+    .license-info {
+      font-size: 0.85rem;
+      color: #cbd5e0;
+      line-height: 1.6;
+      margin: 1rem 0 0 0;
+      padding: 1rem;
+      background: #0f1419;
+      border-radius: 0.5rem;
+      border-left: 3px solid #16a34a;
+      text-align: left;
+
+      strong {
+        color: #16a34a;
+        font-weight: 700;
+      }
+    }
+  }
 }
 
 // Responsive
@@ -1281,5 +1383,42 @@
   .footer-tech .tech-badge {
     background: #1e293b;
     border: 1px solid #334155;
+  }
+
+  .footer-bottom .credits-section {
+    background: #0f172a;
+    border-color: #1e293b;
+
+    .credits-title {
+      color: #60a5fa;
+    }
+
+    .credit-category {
+      color: #60a5fa;
+    }
+
+    .credits-list li {
+      color: #cbd5e0;
+
+      strong {
+        color: #f1f5f9;
+      }
+    }
+
+    .open-source-notice {
+      background: #020617;
+      border-left-color: #60a5fa;
+      color: #94a3b8;
+    }
+
+    .license-info {
+      background: #020617;
+      border-left-color: #16a34a;
+      color: #cbd5e0;
+
+      strong {
+        color: #22c55e;
+      }
+    }
   }
 }

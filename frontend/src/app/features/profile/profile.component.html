@@ -135,6 +135,14 @@
             <li>O telefone pode ser usado para contato emergencial</li>
           </ul>
         </div>
+
+        <div class="info-box danger-zone">
+          <h3>⚠️ Zona de Perigo</h3>
+          <p>Esta ação é irreversível e removerá permanentemente todos os seus dados pessoais, conforme garantido pela LGPD (Lei nº 13.709/2018).</p>
+          <button type="button" class="btn btn-danger" (click)="openDeleteAccountModal()">
+            Excluir Minha Conta
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -146,4 +154,50 @@
     (close)="onCropCancel()"
     (cropComplete)="onCropComplete($event)"
   ></app-image-crop-modal>
+
+  <!-- Modal de Confirmação de Exclusão -->
+  <div class="modal-overlay" *ngIf="showDeleteModal" (click)="closeDeleteModal()">
+    <div class="modal-content delete-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>⚠️ Excluir Conta Permanentemente</h2>
+      </div>
+      
+      <div class="modal-body">
+        <p class="warning-text">
+          <strong>Esta ação é irreversível!</strong>
+        </p>
+        <p>
+          Ao confirmar, todos os seus dados pessoais serão permanentemente removidos de nossa plataforma, conforme garantido pela LGPD (Lei nº 13.709/2018, Art. 18).
+        </p>
+        <ul class="consequences-list">
+          <li>✕ Seu perfil será anonimizado</li>
+          <li>✕ Você perderá acesso à plataforma</li>
+          <li>✕ Históricos e registros serão excluídos</li>
+          <li>✕ Esta operação não pode ser desfeita</li>
+        </ul>
+        <p class="confirm-question">
+          Tem certeza que deseja excluir sua conta?
+        </p>
+      </div>
+      
+      <div class="modal-footer">
+        <button 
+          type="button" 
+          class="btn btn-secondary" 
+          (click)="closeDeleteModal()"
+          [disabled]="loading"
+        >
+          Cancelar
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-danger" 
+          (click)="confirmDeleteAccount()"
+          [disabled]="loading"
+        >
+          {{ loading ? 'Excluindo...' : 'Sim, Excluir Minha Conta' }}
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

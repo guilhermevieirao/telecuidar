@@ -1,0 +1,150 @@
+.cookie-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  background: white;
+  border-top: 3px solid #2563eb;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+  animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.cookie-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem 2rem;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.cookie-icon {
+  font-size: 3rem;
+}
+
+.cookie-text {
+  h3 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #1a202c;
+    margin: 0 0 0.5rem 0;
+  }
+
+  p {
+    font-size: 0.9rem;
+    color: #4a5568;
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  .cookie-link {
+    color: #2563eb;
+    font-weight: 600;
+    text-decoration: none;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.cookie-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-shrink: 0;
+
+  button {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: none;
+    white-space: nowrap;
+  }
+
+  .btn-accept {
+    background: #2563eb;
+    color: white;
+
+    &:hover {
+      background: #1d4ed8;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+  }
+
+  .btn-reject {
+    background: #f3f4f6;
+    color: #4b5563;
+
+    &:hover {
+      background: #e5e7eb;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .cookie-content {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .cookie-icon {
+    display: none;
+  }
+
+  .cookie-actions {
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+
+    button {
+      width: 100%;
+    }
+  }
+}
+
+/* Dark Mode */
+:host-context(html[data-theme="dark"]),
+:host-context(html.dark) {
+  .cookie-banner {
+    background: #1f2937;
+    border-top-color: #3b82f6;
+  }
+
+  .cookie-text {
+    h3 {
+      color: #f9fafb;
+    }
+
+    p {
+      color: #d1d5db;
+    }
+
+    .cookie-link {
+      color: #60a5fa;
+    }
+  }
+
+  .cookie-actions .btn-reject {
+    background: #374151;
+    color: #d1d5db;
+
+    &:hover {
+      background: #4b5563;
+    }
+  }
+}

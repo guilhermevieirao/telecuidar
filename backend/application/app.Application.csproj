@@ -19,6 +19,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="2.2.0" />
     <PackageReference Include="QuestPDF" Version="2024.10.3" />
+    <PackageReference Include="System.IO.Packaging" Version="9.0.0" />
   </ItemGroup>
 
 </Project>

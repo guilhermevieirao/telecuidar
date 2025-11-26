@@ -79,6 +79,10 @@
             "QuestPDF": {
               "target": "Package",
               "version": "[2024.10.3, )"
+            },
+            "System.IO.Packaging": {
+              "target": "Package",
+              "version": "[9.0.0, )"
             }
           },
           "imports": [

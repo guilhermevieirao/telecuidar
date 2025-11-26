@@ -1,0 +1,24 @@
+@if (showBanner()) {
+  <div class="cookie-banner">
+    <div class="cookie-content">
+      <div class="cookie-icon">🍪</div>
+      <div class="cookie-text">
+        <h3>Cookies e Privacidade</h3>
+        <p>
+          Utilizamos cookies essenciais para garantir o funcionamento adequado da plataforma e melhorar sua experiência. 
+          Ao continuar navegando, você concorda com nossa 
+          <a routerLink="/privacidade" class="cookie-link">Política de Privacidade</a> e 
+          <a routerLink="/termos" class="cookie-link">Termos de Uso</a>.
+        </p>
+      </div>
+      <div class="cookie-actions">
+        <button (click)="acceptCookies()" class="btn-accept">
+          ✓ Aceitar
+        </button>
+        <button (click)="rejectCookies()" class="btn-reject">
+          Recusar
+        </button>
+      </div>
+    </div>
+  </div>
+}

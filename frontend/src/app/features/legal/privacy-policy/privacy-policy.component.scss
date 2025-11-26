@@ -1,0 +1,149 @@
+.legal-page {
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.legal-header {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: white;
+  padding: 3rem 0;
+  text-align: center;
+
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+    opacity: 0.9;
+    margin-bottom: 1.5rem;
+  }
+
+  .btn-back {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid white;
+    border-radius: 0.5rem;
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+
+    &:hover {
+      background: white;
+      color: #2563eb;
+    }
+  }
+}
+
+.legal-content {
+  padding: 3rem 0;
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  section {
+    background: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1a202c;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid #e5e7eb;
+    }
+
+    p {
+      color: #4a5568;
+      line-height: 1.8;
+      margin-bottom: 1rem;
+    }
+
+    ul {
+      list-style: disc;
+      padding-left: 2rem;
+      color: #4a5568;
+      line-height: 1.8;
+
+      li {
+        margin-bottom: 0.5rem;
+      }
+    }
+
+    strong {
+      color: #2563eb;
+      font-weight: 600;
+    }
+  }
+
+  .acceptance {
+    background: #eff6ff;
+    border: 2px solid #2563eb;
+    border-radius: 1rem;
+    padding: 2rem;
+    text-align: center;
+    margin-top: 3rem;
+
+    p {
+      color: #1e40af;
+      font-size: 1.125rem;
+      margin: 0;
+      line-height: 1.6;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .legal-header h1 {
+    font-size: 2rem;
+  }
+
+  .legal-content section {
+    padding: 1.5rem;
+  }
+}
+
+/* Dark Mode */
+:host-context(html[data-theme="dark"]),
+:host-context(html.dark) {
+  .legal-page {
+    background: #111827;
+  }
+
+  .legal-content section {
+    background: #1f2937;
+
+    h2 {
+      color: #f9fafb;
+      border-color: #374151;
+    }
+
+    p, ul {
+      color: #d1d5db;
+    }
+
+    strong {
+      color: #60a5fa;
+    }
+  }
+
+  .acceptance {
+    background: #1e3a8a;
+    border-color: #3b82f6;
+
+    p {
+      color: #dbeafe;
+    }
+  }
+}

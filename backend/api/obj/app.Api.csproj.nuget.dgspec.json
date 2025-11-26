@@ -72,6 +72,10 @@
               "target": "Package",
               "version": "[9.0.0, )"
             },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[7.2.0, )"
+            },
             "System.IdentityModel.Tokens.Jwt": {
               "target": "Package",
               "version": "[8.2.1, )"
@@ -589,6 +593,10 @@
             "QuestPDF": {
               "target": "Package",
               "version": "[2024.10.3, )"
+            },
+            "System.IO.Packaging": {
+              "target": "Package",
+              "version": "[9.0.0, )"
             }
           },
           "imports": [

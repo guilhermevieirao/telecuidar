@@ -373,10 +373,10 @@
         <div class="footer-section">
           <h4>Compliance e Segurança</h4>
           <ul class="footer-links">
-            <li><a href="#">Política de Privacidade</a></li>
-            <li><a href="#">Termos de Uso</a></li>
-            <li><a href="#">Conformidade LGPD</a></li>
-            <li><a href="#">Certificações</a></li>
+            <li><a routerLink="/privacidade">Política de Privacidade</a></li>
+            <li><a routerLink="/termos">Termos de Uso</a></li>
+            <li><a (click)="scrollToSection('sobre')">Conformidade LGPD</a></li>
+            <li><a href="https://docs.microsoft.com/pt-br/azure/compliance/" target="_blank" rel="noopener">Certificações</a></li>
           </ul>
         </div>
 
@@ -391,10 +391,63 @@
       </div>
 
       <div class="footer-bottom">
-        <p>
-          © 2025 TeleCuidar. Todos os direitos reservados. 
-          Desenvolvido com ❤️ para transformar a saúde pública no Brasil.
-        </p>
+        <div class="copyright-section">
+          <p class="copyright-text">
+            © 2025 TeleCuidar. Todos os direitos reservados. 
+            Desenvolvido com ❤️ para transformar a saúde pública no Brasil.
+          </p>
+          <p class="tech-info">
+            Tecnologias: .NET 10 + Angular 20 + Azure + OpenAI | 
+            <a routerLink="/privacidade" style="color: inherit; text-decoration: underline;">Privacidade</a> | 
+            <a routerLink="/termos" style="color: inherit; text-decoration: underline;">Termos</a>
+          </p>
+        </div>
+
+        <div class="credits-section">
+          <h4 class="credits-title">🙏 Créditos e Atribuições</h4>
+          <div class="credits-content">
+            <div class="credits-column">
+              <p class="credit-category">Frameworks e Bibliotecas</p>
+              <ul class="credits-list">
+                <li><strong>ASP.NET Core 10.0</strong> - Microsoft Corporation (MIT License)</li>
+                <li><strong>Angular 20</strong> - Google LLC (MIT License)</li>
+                <li><strong>Entity Framework Core</strong> - Microsoft Corporation (MIT License)</li>
+                <li><strong>MediatR</strong> - Jimmy Bogard (Apache 2.0 License)</li>
+              </ul>
+            </div>
+
+            <div class="credits-column">
+              <p class="credit-category">Bibliotecas de Terceiros</p>
+              <ul class="credits-list">
+                <li><strong>QuestPDF</strong> - QuestPDF (MIT License) - Geração de PDF</li>
+                <li><strong>ClosedXML</strong> - ClosedXML (MIT License) - Exportação Excel</li>
+                <li><strong>BCrypt.Net</strong> - Chris McKee (MIT License) - Hash de senhas</li>
+                <li><strong>ngx-mask</strong> - JsDaddy (MIT License) - Máscaras de input</li>
+              </ul>
+            </div>
+
+            <div class="credits-column">
+              <p class="credit-category">Recursos e Ícones</p>
+              <ul class="credits-list">
+                <li><strong>Emoji Unicode</strong> - Unicode Consortium (Uso Livre)</li>
+                <li><strong>Azure Cloud Services</strong> - Microsoft Corporation</li>
+                <li><strong>OpenAI API</strong> - OpenAI (Licensed)</li>
+              </ul>
+            </div>
+          </div>
+
+          <p class="open-source-notice">
+            Este projeto utiliza software de código aberto. Todos os créditos e licenças são mantidos 
+            conforme especificado pelos respectivos autores. Para mais informações sobre as licenças, 
+            consulte os repositórios oficiais de cada biblioteca.
+          </p>
+
+          <p class="license-info">
+            <strong>Código Fonte:</strong> Propriedade de TeleCuidar © 2025. 
+            O uso comercial ou redistribuição sem autorização expressa é proibido. 
+            Desenvolvido como projeto acadêmico/profissional com fins de demonstração de habilidades técnicas.
+          </p>
+        </div>
       </div>
     </div>
   </footer>

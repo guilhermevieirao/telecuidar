@@ -372,3 +372,133 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Dark Mode Styles */
+:host-context(html[data-theme="dark"]),
+:host-context(html.dark) {
+  .dashboard-page {
+    background: #111827;
+  }
+
+  .navbar {
+    background: #1f2937;
+    border-color: #374151;
+  }
+
+  .logo,
+  .user-name {
+    color: #f9fafb;
+  }
+
+  .user-role {
+    color: #9ca3af;
+  }
+
+  .welcome-section,
+  .dashboard-card,
+  .info-section,
+  .quick-actions {
+    background: #1f2937;
+    border: 1px solid #374151;
+  }
+
+  .welcome-section {
+    h1 {
+      color: #f9fafb;
+    }
+
+    p {
+      color: #9ca3af;
+    }
+  }
+
+  .dashboard-card {
+    .card-icon {
+      &.blue {
+        background: #1e3a8a;
+        color: #60a5fa;
+      }
+
+      &.red {
+        background: #7f1d1d;
+        color: #f87171;
+      }
+
+      &.green {
+        background: #14532d;
+        color: #4ade80;
+      }
+
+      &.purple {
+        background: #581c87;
+        color: #c084fc;
+      }
+    }
+
+    .card-content {
+      h3 {
+        color: #9ca3af;
+      }
+
+      .card-value {
+        color: #f9fafb;
+      }
+
+      .card-description {
+        color: #6b7280;
+      }
+    }
+
+    &:hover {
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  .info-section,
+  .quick-actions {
+    h2 {
+      color: #f9fafb;
+    }
+  }
+
+  .info-item {
+    label {
+      color: #9ca3af;
+    }
+
+    span {
+      color: #e5e7eb;
+
+      &.confirmed {
+        color: #4ade80;
+      }
+
+      &.pending {
+        color: #fbbf24;
+      }
+    }
+  }
+
+  .action-btn {
+    background: #374151;
+    border-color: #4b5563;
+    color: #e5e7eb;
+
+    &:hover {
+      background: #4b5563;
+      border-color: #60a5fa;
+      box-shadow: 0 4px 12px rgba(96, 165, 250, 0.2);
+    }
+
+    &.primary {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      border-color: #2563eb;
+      color: white;
+
+      &:hover {
+        background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+      }
+    }
+  }
+}

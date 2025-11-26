@@ -235,6 +235,33 @@ body {
   background: var(--primary-600);
 }
 
+/* Acessibilidade - Foco Visível */
+*:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+button:focus,
+a:focus,
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* Remove outline apenas se usar mouse (não teclado) */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Garante foco visível para navegação por teclado */
+*:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
 /* Dark Mode Utility Classes */
 .bg-theme-primary {
   background-color: var(--bg-primary);

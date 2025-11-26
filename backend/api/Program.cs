@@ -20,7 +20,47 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-// builder.Services.AddSwaggerGen();
+
+// Configure Swagger/OpenAPI
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "TeleCuidar API",
+        Version = "v1",
+        Description = "API do sistema TeleCuidar - Plataforma de telemedicina híbrida",
+        Contact = new Microsoft.OpenApi.Models.OpenApiContact
+        {
+            Name = "Equipe TeleCuidar",
+            Email = "contato@telecuidar.com"
+        }
+    });
+
+    // JWT Authentication
+    c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header usando o esquema Bearer. Exemplo: \"Bearer {token}\"",
+        Name = "Authorization",
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    {
+        {
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                {
+                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
 // Configure Entity Framework
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -81,7 +121,18 @@ builder.Services.AddCors(options =>
         policy => policy
             .WithOrigins("http://localhost:4200")
             .AllowAnyMethod()
-            .AllowAnyHeader());
+            .AllowAnyHeader()
+            .AllowCredentials()); // Permite credenciais para cookies CSRF
+});
+
+// Add Antiforgery for CSRF protection
+builder.Services.AddAntiforgery(options =>
+{
+    options.HeaderName = "X-XSRF-TOKEN";
+    options.Cookie.Name = "XSRF-TOKEN";
+    options.Cookie.HttpOnly = false; // Allow client to read for SPA
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    options.Cookie.SameSite = SameSiteMode.Strict;
 });
 
 var app = builder.Build();
@@ -135,9 +186,25 @@ using (var scope = app.Services.CreateScope())
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    // app.UseSwagger();
-    // app.UseSwaggerUI();
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "TeleCuidar API v1");
+        c.RoutePrefix = "api-docs"; // Swagger UI em /api-docs
+        c.DocumentTitle = "TeleCuidar API Documentation";
+    });
 }
+
+// Security Headers
+app.Use(async (context, next) =>
+{
+    context.Response.Headers["X-Content-Type-Options"] = "nosniff";
+    context.Response.Headers["X-Frame-Options"] = "DENY";
+    context.Response.Headers["X-XSS-Protection"] = "1; mode=block";
+    context.Response.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
+    context.Response.Headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()";
+    await next();
+});
 
 app.UseHttpsRedirection();
 app.UseCors("AllowAngular");

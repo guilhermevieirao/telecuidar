@@ -2,12 +2,13 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { ToastComponent } from './shared/components/toast/toast.component';
+import { CookieConsentComponent } from './shared/components/cookie-consent/cookie-consent.component';
 import { ThemeService } from './core/services/theme.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, ToastComponent],
+  imports: [CommonModule, RouterOutlet, ToastComponent, CookieConsentComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
