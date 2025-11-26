@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { ToastService } from '../../../core/services/toast.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -35,7 +36,7 @@ export class LoginComponent {
       this.loading = true;
       this.errorMessage = '';
 
-      this.http.post<any>('http://localhost:5058/api/auth/login', this.loginForm.value)
+      this.http.post<any>(`${environment.apiUrl}/auth/login`, this.loginForm.value)
         .subscribe({
           next: (response) => {
             if (response.isSuccess) {

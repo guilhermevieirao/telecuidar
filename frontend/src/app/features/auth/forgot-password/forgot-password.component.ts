@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
 import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
@@ -35,7 +36,7 @@ export class ForgotPasswordComponent {
       this.errorMessage = '';
       this.successMessage = '';
 
-      this.http.post<any>('http://localhost:5058/api/auth/request-password-reset', this.forgotPasswordForm.value)
+      this.http.post<any>(`${environment.apiUrl}/auth/request-password-reset`, this.forgotPasswordForm.value)
         .subscribe({
           next: (response) => {
             if (response.isSuccess) {

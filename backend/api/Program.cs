@@ -91,7 +91,15 @@ builder.Services.AddMediatR(cfg =>
 
 // Configure JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("Jwt");
-var secretKey = jwtSettings["Secret"] ?? throw new InvalidOperationException("JWT Secret não configurado");
+var secretKey = Environment.GetEnvironmentVariable("Jwt__Secret") 
+    ?? jwtSettings["Secret"] 
+    ?? throw new InvalidOperationException("JWT Secret não configurado. Configure via variável de ambiente Jwt__Secret ou appsettings.json");
+
+// Validar tamanho mínimo da chave
+if (secretKey.Length < 32)
+{
+    throw new InvalidOperationException("JWT Secret deve ter no mínimo 32 caracteres");
+}
 
 builder.Services.AddAuthentication(options =>
 {
@@ -145,41 +153,56 @@ using (var scope = app.Services.CreateScope())
     {
         var context = services.GetRequiredService<ApplicationDbContext>();
         var passwordHasher = services.GetRequiredService<IPasswordHasher>();
+        var configuration = services.GetRequiredService<IConfiguration>();
         
         // Aplicar migrations pendentes
         context.Database.Migrate();
         
-        // Verificar se já existe usuário admin
-        var adminEmail = "adm@adm.com";
-        var adminExists = context.Users.Any(u => u.Email == adminEmail);
+        // Verificar se seed do admin está habilitado
+        var adminEnabled = configuration.GetValue<bool>("AdminUser:Enabled", false);
         
-        if (!adminExists)
+        if (adminEnabled)
         {
-            var adminUser = new User
+            var adminEmail = configuration["AdminUser:Email"] ?? "adm@adm.com";
+            var adminPassword = configuration["AdminUser:Password"] ?? "zxcasd";
+            var adminFirstName = configuration["AdminUser:FirstName"] ?? "Administrador";
+            var adminLastName = configuration["AdminUser:LastName"] ?? "Sistema";
+            
+            // Verificar se já existe usuário admin
+            var adminExists = context.Users.Any(u => u.Email == adminEmail);
+            
+            if (!adminExists)
             {
-                FirstName = "Administrador",
-                LastName = "Sistema",
-                Email = adminEmail,
-                PasswordHash = passwordHasher.HashPassword("admadm"),
-                Role = UserRole.Administrador,
-                EmailConfirmed = true,
-                IsActive = true
-            };
-            
-            context.Users.Add(adminUser);
-            context.SaveChanges();
-            
-            Console.WriteLine("========================================");
-            Console.WriteLine("✅ Usuário administrador criado:");
-            Console.WriteLine($"   Email: {adminEmail}");
-            Console.WriteLine($"   Senha: admadm");
-            Console.WriteLine("========================================");
+                var adminUser = new User
+                {
+                    FirstName = adminFirstName,
+                    LastName = adminLastName,
+                    Email = adminEmail,
+                    PasswordHash = passwordHasher.HashPassword(adminPassword),
+                    Role = UserRole.Administrador,
+                    EmailConfirmed = true,
+                    IsActive = true
+                };
+                
+                context.Users.Add(adminUser);
+                context.SaveChanges();
+                
+                Console.WriteLine("========================================");
+                Console.WriteLine("✅ Usuário administrador criado:");
+                Console.WriteLine($"   Email: {adminEmail}");
+                Console.WriteLine($"   ⚠️  ATENÇÃO: Altere a senha padrão!");
+                Console.WriteLine("========================================");
+            }
+        }
+        else
+        {
+            Console.WriteLine("ℹ️  Seed do admin desabilitado (AdminUser:Enabled=false)");
         }
     }
     catch (Exception ex)
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "Erro ao criar usuário administrador");
+        logger.LogError(ex, "Erro ao processar seed do banco de dados");
     }
 }
 

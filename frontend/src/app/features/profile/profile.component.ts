@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { ToastService } from '../../core/services/toast.service';
+import { environment } from '../../../environments/environment';
 import { NgxMaskDirective } from 'ngx-mask';
 import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcrumb.component';
 import { ImageCropModalComponent } from '../../shared/components/image-crop-modal/image-crop-modal.component';
@@ -53,7 +54,7 @@ export class ProfileComponent implements OnInit {
 
     this.user = JSON.parse(userString);
     
-    this.http.get<any>(`http://localhost:5058/api/users/${this.user.id}`)
+    this.http.get<any>(`${environment.apiUrl}/users/${this.user.id}`)
       .subscribe({
         next: (response) => {
           if (response.isSuccess) {
@@ -150,7 +151,7 @@ export class ProfileComponent implements OnInit {
       profilePhotoUrl: this.profilePhotoUrl
     };
 
-    this.http.put(`http://localhost:5058/api/users/${this.user.id}`, updateData)
+    this.http.put(`${environment.apiUrl}/users/${this.user.id}`, updateData)
       .subscribe({
         next: (response: any) => {
           if (response.isSuccess) {
@@ -194,7 +195,7 @@ export class ProfileComponent implements OnInit {
     if (!this.user?.id) return;
 
     this.loading = true;
-    this.http.delete(`http://localhost:5058/api/users/account`, {
+    this.http.delete(`${environment.apiUrl}/users/account`, {
       body: { userId: this.user.id }
     }).subscribe({
       next: () => {

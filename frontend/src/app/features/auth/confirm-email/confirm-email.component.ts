@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-confirm-email',
@@ -35,7 +36,7 @@ export class ConfirmEmailComponent implements OnInit {
   }
 
   confirmEmail(): void {
-    this.http.post<any>('http://localhost:5058/api/auth/confirm-email', { token: this.token })
+    this.http.post<any>(`${environment.apiUrl}/auth/confirm-email`, { token: this.token })
       .subscribe({
         next: (response) => {
           this.loading = false;

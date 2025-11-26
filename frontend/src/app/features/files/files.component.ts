@@ -6,6 +6,7 @@ import { RouterLink } from '@angular/router';
 import { ToastService } from '../../core/services/toast.service';
 import { PaginationComponent, PageInfo } from '../../shared/components/pagination/pagination.component';
 import { ThemeToggleComponent } from '../../shared/components/theme-toggle/theme-toggle.component';
+import { environment } from '../../../environments/environment';
 
 interface FileUpload {
   id: number;
@@ -69,7 +70,7 @@ export class FilesComponent implements OnInit {
       params.append('fileCategory', this.selectedCategory);
     }
 
-    this.http.get<any>(`http://localhost:5058/api/files/my-files?${params.toString()}`)
+    this.http.get<any>(`${environment.apiUrl}/files/my-files?${params.toString()}`)
       .subscribe({
         next: (response) => {
           if (response.isSuccess) {
@@ -115,7 +116,7 @@ export class FilesComponent implements OnInit {
     this.uploading = true;
     this.uploadProgress = 0;
 
-    this.http.post<any>('http://localhost:5058/api/files/upload', formData, {
+    this.http.post<any>(`${environment.apiUrl}/files/upload`, formData, {
       reportProgress: true,
       observe: 'events'
     }).subscribe({
@@ -144,7 +145,7 @@ export class FilesComponent implements OnInit {
   }
 
   downloadFile(file: FileUpload): void {
-    this.http.get(`http://localhost:5058/api/files/${file.id}/download`, {
+    this.http.get(`${environment.apiUrl}/files/${file.id}/download`, {
       responseType: 'blob'
     }).subscribe({
       next: (blob) => {
@@ -168,7 +169,7 @@ export class FilesComponent implements OnInit {
       return;
     }
 
-    this.http.delete<any>(`http://localhost:5058/api/files/${file.id}`)
+    this.http.delete<any>(`${environment.apiUrl}/files/${file.id}`)
       .subscribe({
         next: (response) => {
           if (response.isSuccess) {

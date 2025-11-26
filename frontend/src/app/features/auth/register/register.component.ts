@@ -5,6 +5,7 @@ import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { NgxMaskDirective } from 'ngx-mask';
 import { ToastService } from '../../../core/services/toast.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-register',
@@ -54,7 +55,7 @@ export class RegisterComponent implements OnInit {
 
   loadInvitationData(token: string): void {
     this.loading = true;
-    this.http.get<any>(`http://localhost:5058/api/admin/invitations/${token}`)
+    this.http.get<any>(`${environment.apiUrl}/admin/invitations/${token}`)
       .subscribe({
         next: (response) => {
           if (response.isSuccess && response.data) {
@@ -112,7 +113,7 @@ export class RegisterComponent implements OnInit {
         console.log('Enviando com token de convite:', this.invitationToken);
       }
 
-      this.http.post<any>('http://localhost:5058/api/auth/register', data)
+      this.http.post<any>(`${environment.apiUrl}/auth/register`, data)
         .subscribe({
           next: (response) => {
             if (response.isSuccess) {

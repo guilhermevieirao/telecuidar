@@ -12,6 +12,7 @@ import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
 import { PagedResult } from '../../core/models/paged-result.model';
 import { NotificationsComponent } from '../notifications/notifications.component';
 import { ThemeToggleComponent } from '../../shared/components/theme-toggle/theme-toggle.component';
+import { environment } from '../../../environments/environment';
 
 interface User {
   id: number;
@@ -342,7 +343,7 @@ export class AdminComponent implements OnInit {
 
   // Dashboard Methods
   loadStatistics(): void {
-    this.http.get<any>('http://localhost:5058/api/admin/statistics')
+    this.http.get<any>(`${environment.apiUrl}/admin/statistics`)
       .subscribe({
         next: (response) => {
           if (response.isSuccess) {
@@ -387,7 +388,7 @@ export class AdminComponent implements OnInit {
       params.append('searchTerm', this.searchTerm);
     }
 
-    this.http.get<any>(`http://localhost:5058/api/users?${params.toString()}`)
+    this.http.get<any>(`${environment.apiUrl}/users?${params.toString()}`)
       .subscribe({
         next: (response) => {
           if (response.isSuccess) {
@@ -484,7 +485,7 @@ export class AdminComponent implements OnInit {
   deleteUser(): void {
     if (!this.userToDelete) return;
 
-    this.http.delete(`http://localhost:5058/api/users/${this.userToDelete.id}`)
+    this.http.delete(`${environment.apiUrl}/users/${this.userToDelete.id}`)
       .subscribe({
         next: (response: any) => {
           if (response.isSuccess) {
@@ -529,7 +530,7 @@ export class AdminComponent implements OnInit {
       role: parseInt(this.editUserForm.value.role, 10)
     };
     
-    this.http.put(`http://localhost:5058/api/users/${userId}`, updateData)
+    this.http.put(`${environment.apiUrl}/users/${userId}`, updateData)
       .subscribe({
         next: (response: any) => {
           if (response.isSuccess) {
@@ -565,7 +566,7 @@ export class AdminComponent implements OnInit {
       ...this.createUserForm.value,
       role: this.selectedUserType
     };
-    this.http.post('http://localhost:5058/api/admin/users', userData)
+    this.http.post(`${environment.apiUrl}/admin/users`, userData)
       .subscribe({
         next: (response: any) => {
           if (response.isSuccess) {
@@ -593,7 +594,7 @@ export class AdminComponent implements OnInit {
       sortDirection: this.auditLogsSortDirection
     });
 
-    this.http.get<any>(`http://localhost:5058/api/admin/audit-logs?${params.toString()}`)
+    this.http.get<any>(`${environment.apiUrl}/admin/audit-logs?${params.toString()}`)
       .subscribe({
         next: (response) => {
           if (response.isSuccess) {
@@ -659,7 +660,7 @@ export class AdminComponent implements OnInit {
 
   // Invitations Methods
   loadInvitations(): void {
-    this.http.get<any>('http://localhost:5058/api/admin/invitations')
+    this.http.get<any>(`${environment.apiUrl}/admin/invitations`)
       .subscribe({
         next: (response) => {
           if (response.isSuccess) {
@@ -714,7 +715,7 @@ export class AdminComponent implements OnInit {
       role: this.selectedUserType
     };
 
-    this.http.post('http://localhost:5058/api/admin/invitations', invitationData)
+    this.http.post(`${environment.apiUrl}/admin/invitations`, invitationData)
       .subscribe({
         next: (response: any) => {
           if (response.isSuccess) {
@@ -755,7 +756,7 @@ export class AdminComponent implements OnInit {
       ...this.invitationForm.value,
       role: this.selectedUserType
     };
-    this.http.post('http://localhost:5058/api/admin/invitations', invitationData)
+    this.http.post(`${environment.apiUrl}/admin/invitations`, invitationData)
       .subscribe({
         next: (response: any) => {
           if (response.isSuccess) {
