@@ -77,6 +77,11 @@ export const routes: Routes = [
     data: { breadcrumbParent: '/painel' }
   },
   {
+    path: 'arquivos',
+    loadComponent: () => import('./features/files/files.component').then(m => m.FilesComponent),
+    canActivate: [authGuard]
+  },
+  {
     path: 'teste',
     loadComponent: () => import('./features/video-call/video-call-simple.component').then(m => m.VideoCallSimpleComponent)
   },

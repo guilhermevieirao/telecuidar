@@ -1,0 +1,57 @@
+<div *ngIf="pageInfo && pageInfo.totalCount > 0" class="pagination-container">
+  <!-- Informações de resultados -->
+  <div class="pagination-info">
+    <p class="text-sm text-gray-600">
+      Mostrando <span class="font-semibold text-gray-900">{{ getStartItem() }}</span> a 
+      <span class="font-semibold text-gray-900">{{ getEndItem() }}</span> de 
+      <span class="font-semibold text-gray-900">{{ pageInfo.totalCount }}</span> resultados
+    </p>
+  </div>
+
+  <!-- Controles de paginação -->
+  <nav class="pagination-nav" aria-label="Paginação">
+    <!-- Botão Anterior -->
+    <button
+      type="button"
+      (click)="onPrevious()"
+      [disabled]="!pageInfo.hasPreviousPage"
+      class="pagination-btn pagination-btn-arrow"
+      [class.disabled]="!pageInfo.hasPreviousPage"
+      aria-label="Página anterior">
+      <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+      </svg>
+    </button>
+
+    <!-- Números das páginas -->
+    <ng-container *ngFor="let page of pages">
+      <button
+        *ngIf="page !== -1"
+        type="button"
+        (click)="onPageClick(page)"
+        [class.active]="page === pageInfo.pageNumber"
+        class="pagination-btn pagination-btn-number"
+        [attr.aria-current]="page === pageInfo.pageNumber ? 'page' : null">
+        {{ page }}
+      </button>
+      
+      <!-- Ellipsis -->
+      <span *ngIf="page === -1" class="pagination-ellipsis">
+        ...
+      </span>
+    </ng-container>
+
+    <!-- Botão Próximo -->
+    <button
+      type="button"
+      (click)="onNext()"
+      [disabled]="!pageInfo.hasNextPage"
+      class="pagination-btn pagination-btn-arrow"
+      [class.disabled]="!pageInfo.hasNextPage"
+      aria-label="Próxima página">
+      <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+      </svg>
+    </button>
+  </nav>
+</div>

@@ -211,44 +211,29 @@
           <thead class="bg-gray-50">
             <tr>
               <th 
-                (click)="sortBy('id')"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors select-none">
-                <div class="flex items-center gap-2">
-                  <span>ID</span>
-                  <span class="text-sm">{{ getSortIcon('id') }}</span>
-                </div>
+                (click)="sortUsersBy('Id')"
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none">
+                ID {{ getUsersSortIcon('Id') }}
               </th>
               <th 
-                (click)="sortBy('fullName')"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors select-none">
-                <div class="flex items-center gap-2">
-                  <span>Usuário</span>
-                  <span class="text-sm">{{ getSortIcon('fullName') }}</span>
-                </div>
+                (click)="sortUsersBy('FullName')"
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none">
+                Usuário {{ getUsersSortIcon('FullName') }}
               </th>
               <th 
-                (click)="sortBy('email')"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors select-none">
-                <div class="flex items-center gap-2">
-                  <span>Email</span>
-                  <span class="text-sm">{{ getSortIcon('email') }}</span>
-                </div>
+                (click)="sortUsersBy('Email')"
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none">
+                Email {{ getUsersSortIcon('Email') }}
               </th>
               <th 
-                (click)="sortBy('role')"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors select-none">
-                <div class="flex items-center gap-2">
-                  <span>Perfil</span>
-                  <span class="text-sm">{{ getSortIcon('role') }}</span>
-                </div>
+                (click)="sortUsersBy('Role')"
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none">
+                Perfil {{ getUsersSortIcon('Role') }}
               </th>
               <th 
-                (click)="sortBy('isActive')"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors select-none">
-                <div class="flex items-center gap-2">
-                  <span>Status</span>
-                  <span class="text-sm">{{ getSortIcon('isActive') }}</span>
-                </div>
+                (click)="sortUsersBy('IsActive')"
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none">
+                Status {{ getUsersSortIcon('IsActive') }}
               </th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
             </tr>
@@ -289,6 +274,12 @@
             </tr>
           </tbody>
         </table>
+        
+        <!-- Paginação de Usuários -->
+        <app-pagination 
+          [pageInfo]="usersPageInfo"
+          (pageChange)="onUsersPageChange($event)">
+        </app-pagination>
       </div>
     </div>
 
@@ -296,21 +287,45 @@
     <div *ngIf="activeTab === 'audit-logs'" class="space-y-6">
       <div class="bg-white rounded-lg shadow overflow-hidden">
         <div class="px-6 py-4 border-b border-gray-200">
-          <h3 class="text-lg font-medium text-gray-900">Logs de Auditoria (Últimos 50)</h3>
+          <h3 class="text-lg font-medium text-gray-900">Logs de Auditoria</h3>
         </div>
         <div class="overflow-x-auto">
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
               <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data/Hora</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuário</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ação</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Entidade</th>
+                <th 
+                  (click)="sortAuditLogsBy('Id')"
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none">
+                  ID {{ getAuditLogsSortIcon('Id') }}
+                </th>
+                <th 
+                  (click)="sortAuditLogsBy('CreatedAt')"
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none">
+                  Data/Hora {{ getAuditLogsSortIcon('CreatedAt') }}
+                </th>
+                <th 
+                  (click)="sortAuditLogsBy('UserName')"
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none">
+                  Usuário {{ getAuditLogsSortIcon('UserName') }}
+                </th>
+                <th 
+                  (click)="sortAuditLogsBy('Action')"
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none">
+                  Ação {{ getAuditLogsSortIcon('Action') }}
+                </th>
+                <th 
+                  (click)="sortAuditLogsBy('EntityName')"
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none">
+                  Entidade {{ getAuditLogsSortIcon('EntityName') }}
+                </th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">IP</th>
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
               <tr *ngFor="let log of auditLogs" class="hover:bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-mono text-gray-700">#{{ log.id }}</div>
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ log.createdAt | date:'dd/MM/yyyy HH:mm' }}
                 </td>
@@ -324,6 +339,12 @@
               </tr>
             </tbody>
           </table>
+          
+          <!-- Paginação de Audit Logs -->
+          <app-pagination 
+            [pageInfo]="auditLogsPageInfo"
+            (pageChange)="onAuditLogsPageChange($event)">
+          </app-pagination>
         </div>
       </div>
     </div>

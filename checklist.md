@@ -4,19 +4,20 @@
 - [x] 3. Recuperação de senha
 - [x] 4. Validação de campos obrigatórios
 - [x] 5. Logout funcional
-- [ ] 6. Perfis ou tipos de usuário (Paciente, Profissional, Administrador)
-- [ ] 7. Painel administrativo (AdminComponent completo com filtros, busca)
+- [x] 6. Perfis ou tipos de usuário (Paciente, Profissional, Administrador)
+- [x] 7. Painel administrativo (AdminComponent completo com filtros, busca)
 - [x] 8. CRUD completo para as entidades principais (Users: Create, Read, Update, Delete)
 - [x] 9. Sistema de permissões e acesso (authGuard com roles)
-- [ ] 10. Upload de arquivos
+- [x] 10. Upload de arquivos (Backend: FileUpload entity, Commands, Queries | Frontend: FilesComponent com upload/download)
 - [x] 11. Edição de perfil de usuário (ProfileComponent + UpdateUserByAdmin)
-- [ ] 12. Histórico de ações realizadas (AuditLogsComponent + backend completo)
-- [ ] 13. Filtros e buscas nos dados (Admin + AuditLogs com filtros)
-- [ ] 14. Paginação de resultados
+- [x] 12. Histórico de ações realizadas (AuditLogsComponent + backend completo)
+- [x] 13. Filtros e buscas nos dados (Admin + AuditLogs com filtros)
+- [x] 14. Paginação de resultados (Backend: PagedResult, PaginationParams | Frontend: PaginationComponent)
+- [x] 14.1. Ordenação clicável nas tabelas (Users e AuditLogs com sort ascendente/descendente)
 - [ ] 15. Geração de relatórios
 - [ ] 16. Exportação para PDF
 - [ ] 17. Exportação para Excel
-- [ ] 18. Sistema de notificações
+- [ ] 18. Sistema de notificações (Backend 100%: Entity, Commands, Queries, Controller | Frontend: pendente)
 - [x] 19. Integração com e-mail (ex: envio de confirmação)
 - [x] 20. Confirmação de ações críticas (ConfirmModalComponent)
 
@@ -56,51 +57,51 @@
 - [ ] 49. Cores não sendo o único meio de indicação
 
 ## BANCO DE DADOS
-- [ ] 51. Modelagem correta das entidades
-- [ ] 52. Relacionamentos bem definidos (chaves estrangeiras)
-- [ ] 53. Normalização adequada
-- [ ] 54. Índices em colunas de busca
+- [x] 51. Modelagem correta das entidades
+- [x] 52. Relacionamentos bem definidos (chaves estrangeiras)
+- [x] 53. Normalização adequada
+- [x] 54. Índices em colunas de busca
 - [ ] 55. Backups automatizados
-- [ ] 56. Scripts de migração/versionamento
-- [ ] 57. Tratamento de erros nas queries
-- [ ] 58. Proteção contra SQL Injection
-- [ ] 59. Dados sensíveis criptografados
-- [ ] 60. Registro de auditoria se necessário
+- [x] 56. Scripts de migração/versionamento
+- [x] 57. Tratamento de erros nas queries
+- [x] 58. Proteção contra SQL Injection
+- [x] 59. Dados sensíveis criptografados
+- [x] 60. Registro de auditoria se necessário
 
 ## SEGURANÇA
-- [ ] 61. Senhas criptografadas com hash seguro
-- [ ] 62. Sessões com tempo de expiração
+- [x] 61. Senhas criptografadas com hash seguro
+- [x] 62. Sessões com tempo de expiração
 - [ ] 63. Proteção contra CSRF
-- [ ] 64. Validação e sanitização de inputs
-- [ ] 65. Permissões de acesso por função
-- [ ] 66. Verificação de autenticação em páginas protegidas
-- [ ] 68. Regras de CORS definidas corretamente
-- [ ] 69. Proteção contra XSS
-- [ ] 70. Logs de segurança para análise
+- [x] 64. Validação e sanitização de inputs
+- [x] 65. Permissões de acesso por função
+- [x] 66. Verificação de autenticação em páginas protegidas
+- [x] 68. Regras de CORS definidas corretamente
+- [x] 69. Proteção contra XSS
+- [x] 70. Logs de segurança para análise
 
 ## FRONT-END (TÉCNICO)
-- [ ] 71. Uso de componentes reutilizáveis
-- [ ] 72. Código bem estruturado e comentado
-- [ ] 73. Separação de responsabilidades (HTML, CSS, JS)
-- [ ] 74. Utilização de framework moderno Angular
-- [ ] 75. Boas práticas com CSS (BEM, SCSS, etc)
-- [ ] 76. Versionamento com Git
-- [ ] 77. Build e minificação dos arquivos
+- [x] 71. Uso de componentes reutilizáveis
+- [x] 72. Código bem estruturado e comentado
+- [x] 73. Separação de responsabilidades (HTML, CSS, JS)
+- [x] 74. Utilização de framework moderno Angular
+- [x] 75. Boas práticas com CSS (BEM, SCSS, etc)
+- [x] 76. Versionamento com Git
+- [x] 77. Build e minificação dos arquivos
 - [ ] 78. Compressão de imagens
 - [ ] 79. Testes de interface (unitários ou manuais)
-- [ ] 80. Compatibilidade com os principais navegadores
+- [x] 80. Compatibilidade com os principais navegadores
 
 ## BACK-END (TÉCNICO)
-- [ ] 81. Organização em camadas
-- [ ] 82. Utilização de framework (.NET)
-- [ ] 83. Boas práticas com rotas e controllers
+- [x] 81. Organização em camadas
+- [x] 82. Utilização de framework (.NET)
+- [x] 83. Boas práticas com rotas e controllers
 - [ ] 84. Versionamento da API (se houver)
 - [ ] 85. Documentação da API
-- [ ] 86. Tratamento global de exceções
+- [x] 86. Tratamento global de exceções
 - [ ] 87. Testes de unidade ou testes manuais
-- [ ] 88. Logs de erro bem implementados
-- [ ] 89. Mensagens de erro claras e seguras
-- [ ] 90. Arquitetura preparada para escalabilidade
+- [x] 88. Logs de erro bem implementados
+- [x] 89. Mensagens de erro claras e seguras
+- [x] 90. Arquitetura preparada para escalabilidade
 
 ## ASPECTOS LEGAIS E ÉTICOS
 - [ ] 91. Política de privacidade no site

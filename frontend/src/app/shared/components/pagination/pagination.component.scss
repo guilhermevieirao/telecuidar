@@ -1,0 +1,71 @@
+.pagination-container {
+  @apply flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200;
+}
+
+.pagination-info {
+  @apply flex-1;
+}
+
+.pagination-nav {
+  @apply flex items-center space-x-1;
+}
+
+.pagination-btn {
+  @apply relative inline-flex items-center justify-center;
+  @apply px-3 py-2 text-sm font-medium;
+  @apply border border-gray-300 bg-white;
+  @apply text-gray-700 hover:bg-gray-50;
+  @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500;
+  @apply transition-colors duration-200;
+  @apply disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white;
+  min-width: 2.5rem;
+  
+  &:first-child {
+    @apply rounded-l-md;
+  }
+  
+  &:last-child {
+    @apply rounded-r-md;
+  }
+}
+
+.pagination-btn-arrow {
+  @apply px-2;
+  
+  &.disabled {
+    @apply text-gray-400;
+  }
+}
+
+.pagination-btn-number {
+  &.active {
+    @apply bg-primary-600 text-white border-primary-600;
+    @apply hover:bg-primary-700;
+    @apply z-10;
+  }
+  
+  &:hover:not(.active):not(:disabled) {
+    @apply bg-gray-100;
+  }
+}
+
+.pagination-ellipsis {
+  @apply px-3 py-2 text-sm font-medium text-gray-700;
+  @apply inline-flex items-center justify-center;
+  min-width: 2.5rem;
+}
+
+// Versão responsiva para mobile
+@media (max-width: 640px) {
+  .pagination-container {
+    @apply flex-col space-y-3;
+  }
+
+  .pagination-info {
+    @apply text-center;
+  }
+
+  .pagination-nav {
+    @apply justify-center w-full;
+  }
+}

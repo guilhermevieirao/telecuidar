@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace app.Application.Users.Queries.GetAllUsers;
 
-public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, Result<List<UserListDto>>>
+public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, Result<PagedResult<UserListDto>>>
 {
     private readonly IRepository<Domain.Entities.User> _userRepository;
 
@@ -15,7 +15,7 @@ public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, Result<
         _userRepository = userRepository;
     }
 
-    public async Task<Result<List<UserListDto>>> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
+    public async Task<Result<PagedResult<UserListDto>>> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
     {
         try
         {
@@ -39,7 +39,29 @@ public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, Result<
                 );
             }
 
-            var users = await query.OrderByDescending(u => u.CreatedAt).ToListAsync(cancellationToken);
+            // Aplicar ordenação
+            var sortBy = request.SortBy?.ToLower() ?? "createdat";
+            var isDescending = request.SortDirection?.ToLower() == "desc";
+
+            query = sortBy switch
+            {
+                "id" => isDescending ? query.OrderByDescending(u => u.Id) : query.OrderBy(u => u.Id),
+                "fullname" => isDescending ? query.OrderByDescending(u => u.FirstName).ThenByDescending(u => u.LastName) : query.OrderBy(u => u.FirstName).ThenBy(u => u.LastName),
+                "email" => isDescending ? query.OrderByDescending(u => u.Email) : query.OrderBy(u => u.Email),
+                "role" => isDescending ? query.OrderByDescending(u => u.Role) : query.OrderBy(u => u.Role),
+                "isactive" => isDescending ? query.OrderByDescending(u => u.IsActive) : query.OrderBy(u => u.IsActive),
+                "createdat" => isDescending ? query.OrderByDescending(u => u.CreatedAt) : query.OrderBy(u => u.CreatedAt),
+                _ => query.OrderByDescending(u => u.CreatedAt)
+            };
+
+            // Obter contagem total
+            var totalCount = await query.CountAsync(cancellationToken);
+
+            // Aplicar paginação
+            var users = await query
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .ToListAsync(cancellationToken);
             
             var userDtos = users.Select(user => new UserListDto
             {
@@ -57,11 +79,13 @@ public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, Result<
                 IsActive = user.IsActive
             }).ToList();
 
-            return Result<List<UserListDto>>.Success(userDtos);
+            var pagedResult = PagedResult<UserListDto>.Create(userDtos, totalCount, request.PageNumber, request.PageSize);
+            
+            return Result<PagedResult<UserListDto>>.Success(pagedResult);
         }
         catch (Exception ex)
         {
-            return Result<List<UserListDto>>.Failure("Erro ao buscar usuários", new List<string> { ex.Message });
+            return Result<PagedResult<UserListDto>>.Failure("Erro ao buscar usuários", new List<string> { ex.Message });
         }
     }
 }

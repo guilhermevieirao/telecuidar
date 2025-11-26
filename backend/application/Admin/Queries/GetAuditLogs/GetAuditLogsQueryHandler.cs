@@ -7,7 +7,7 @@ using app.Domain.Interfaces;
 
 namespace app.Application.Admin.Queries.GetAuditLogs;
 
-public class GetAuditLogsQueryHandler : IRequestHandler<GetAuditLogsQuery, Result<List<AuditLogDto>>>
+public class GetAuditLogsQueryHandler : IRequestHandler<GetAuditLogsQuery, Result<PagedResult<AuditLogDto>>>
 {
     private readonly IRepository<AuditLog> _auditLogRepository;
 
@@ -16,7 +16,7 @@ public class GetAuditLogsQueryHandler : IRequestHandler<GetAuditLogsQuery, Resul
         _auditLogRepository = auditLogRepository;
     }
 
-    public async Task<Result<List<AuditLogDto>>> Handle(GetAuditLogsQuery request, CancellationToken cancellationToken)
+    public async Task<Result<PagedResult<AuditLogDto>>> Handle(GetAuditLogsQuery request, CancellationToken cancellationToken)
     {
         try
         {
@@ -44,14 +44,28 @@ public class GetAuditLogsQueryHandler : IRequestHandler<GetAuditLogsQuery, Resul
                 query = query.Where(a => a.CreatedAt <= request.EndDate.Value);
             }
 
-            query = query.OrderByDescending(a => a.CreatedAt);
+            // Aplicar ordenação
+            var sortBy = request.SortBy?.ToLower() ?? "createdat";
+            var isDescending = request.SortDirection?.ToLower() == "desc";
 
-            if (request.Limit.HasValue)
+            query = sortBy switch
             {
-                query = query.Take(request.Limit.Value);
-            }
+                "id" => isDescending ? query.OrderByDescending(a => a.Id) : query.OrderBy(a => a.Id),
+                "username" => isDescending ? query.OrderByDescending(a => a.User!.FullName) : query.OrderBy(a => a.User!.FullName),
+                "action" => isDescending ? query.OrderByDescending(a => a.Action) : query.OrderBy(a => a.Action),
+                "entityname" => isDescending ? query.OrderByDescending(a => a.EntityName) : query.OrderBy(a => a.EntityName),
+                "createdat" => isDescending ? query.OrderByDescending(a => a.CreatedAt) : query.OrderBy(a => a.CreatedAt),
+                _ => query.OrderByDescending(a => a.CreatedAt)
+            };
 
-            var logs = await query.ToListAsync(cancellationToken);
+            // Obter contagem total
+            var totalCount = await query.CountAsync(cancellationToken);
+
+            // Aplicar paginação
+            var logs = await query
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .ToListAsync(cancellationToken);
 
             var logDtos = logs.Select(log => new AuditLogDto
             {
@@ -69,11 +83,13 @@ public class GetAuditLogsQueryHandler : IRequestHandler<GetAuditLogsQuery, Resul
                 CreatedAt = log.CreatedAt
             }).ToList();
 
-            return Result<List<AuditLogDto>>.Success(logDtos);
+            var pagedResult = PagedResult<AuditLogDto>.Create(logDtos, totalCount, request.PageNumber, request.PageSize);
+
+            return Result<PagedResult<AuditLogDto>>.Success(pagedResult);
         }
         catch (Exception ex)
         {
-            return Result<List<AuditLogDto>>.Failure($"Erro ao obter logs de auditoria: {ex.Message}");
+            return Result<PagedResult<AuditLogDto>>.Failure($"Erro ao obter logs de auditoria: {ex.Message}");
         }
     }
 }

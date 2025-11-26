@@ -48,7 +48,10 @@ public class AdminController : ControllerBase
         [FromQuery] string? entityName,
         [FromQuery] DateTime? startDate,
         [FromQuery] DateTime? endDate,
-        [FromQuery] int? limit)
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 20,
+        [FromQuery] string? sortBy = "CreatedAt",
+        [FromQuery] string? sortDirection = "desc")
     {
         var query = new GetAuditLogsQuery
         {
@@ -56,7 +59,10 @@ public class AdminController : ControllerBase
             EntityName = entityName,
             StartDate = startDate,
             EndDate = endDate,
-            Limit = limit
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            SortBy = sortBy,
+            SortDirection = sortDirection
         };
 
         var result = await _mediator.Send(query);

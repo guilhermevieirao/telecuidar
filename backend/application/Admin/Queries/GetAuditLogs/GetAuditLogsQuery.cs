@@ -4,11 +4,14 @@ using app.Application.Admin.DTOs;
 
 namespace app.Application.Admin.Queries.GetAuditLogs;
 
-public class GetAuditLogsQuery : IRequest<Result<List<AuditLogDto>>>
+public class GetAuditLogsQuery : IRequest<Result<PagedResult<AuditLogDto>>>
 {
     public int? UserId { get; set; }
     public string? EntityName { get; set; }
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }
-    public int? Limit { get; set; } = 100;
+    public int PageNumber { get; set; } = 1;
+    public int PageSize { get; set; } = 20;
+    public string? SortBy { get; set; } = "CreatedAt";
+    public string? SortDirection { get; set; } = "desc";
 }

@@ -1,0 +1,208 @@
+<div class="min-h-screen bg-gray-50">
+  <!-- Header -->
+  <header class="bg-white shadow-sm border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="flex justify-between items-center">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-900">Meus Arquivos</h1>
+          <p class="text-sm text-gray-600 mt-1">Gerencie seus documentos e anexos</p>
+        </div>
+        <button 
+          (click)="openUploadModal()"
+          class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
+          <span class="text-xl">📤</span>
+          Enviar Arquivo
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Filters -->
+  <div class="bg-white border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="flex gap-2 overflow-x-auto">
+        <button
+          (click)="filterByCategory(null)"
+          [class]="!selectedCategory ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'"
+          class="px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-colors">
+          Todos
+        </button>
+        <button
+          *ngFor="let category of categories"
+          (click)="filterByCategory(category)"
+          [class]="selectedCategory === category ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'"
+          class="px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-colors">
+          {{ getCategoryName(category) }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <!-- Files Grid -->
+    <div *ngIf="files.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div *ngFor="let file of files" class="bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
+        <div class="p-6">
+          <!-- File Icon -->
+          <div class="text-center mb-4">
+            <div class="text-6xl mb-2">{{ getFileIcon(file.contentType) }}</div>
+            <span [class]="getCategoryBadgeClass(file.fileCategory)" 
+                  class="px-2 py-1 text-xs font-semibold rounded-full">
+              {{ getCategoryName(file.fileCategory) }}
+            </span>
+          </div>
+
+          <!-- File Info -->
+          <div class="mb-4">
+            <h3 class="font-semibold text-gray-900 truncate mb-1" [title]="file.originalFileName">
+              {{ file.originalFileName }}
+            </h3>
+            <p class="text-sm text-gray-500">{{ file.fileSizeFormatted }}</p>
+            <p class="text-xs text-gray-400 mt-1">
+              {{ file.createdAt | date:'dd/MM/yyyy HH:mm' }}
+            </p>
+            <p *ngIf="file.description" class="text-sm text-gray-600 mt-2 line-clamp-2">
+              {{ file.description }}
+            </p>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex gap-2">
+            <button
+              (click)="downloadFile(file)"
+              class="flex-1 px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">
+              📥 Baixar
+            </button>
+            <button
+              (click)="deleteFile(file)"
+              class="px-3 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition-colors">
+              🗑️
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="files.length === 0" class="text-center py-16">
+      <div class="text-6xl mb-4">📂</div>
+      <h3 class="text-xl font-semibold text-gray-900 mb-2">Nenhum arquivo encontrado</h3>
+      <p class="text-gray-600 mb-6">Comece enviando seus primeiros arquivos</p>
+      <button
+        (click)="openUploadModal()"
+        class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+        📤 Enviar Arquivo
+      </button>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="files.length > 0 && pageInfo" class="mt-8">
+      <app-pagination 
+        [pageInfo]="pageInfo"
+        (pageChange)="onPageChange($event)">
+      </app-pagination>
+    </div>
+
+  </main>
+</div>
+
+<!-- Upload Modal -->
+<div *ngIf="showUploadModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+  <div class="relative top-20 mx-auto p-6 border max-w-lg shadow-lg rounded-md bg-white">
+    <h3 class="text-xl font-semibold text-gray-900 mb-6">Enviar Arquivo</h3>
+    
+    <div class="space-y-4">
+      <!-- File Input -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Selecione o arquivo
+        </label>
+        <input
+          type="file"
+          (change)="onFileSelected($event)"
+          [disabled]="uploading"
+          accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.txt,.xlsx,.xls"
+          class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none">
+        <p class="text-xs text-gray-500 mt-1">
+          Tipos permitidos: PDF, DOC, DOCX, JPG, PNG, TXT, XLSX, XLS (máx 10MB)
+        </p>
+      </div>
+
+      <!-- Category -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Categoria
+        </label>
+        <select
+          [(ngModel)]="fileCategory"
+          [disabled]="uploading"
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+          <option value="Document">Documento</option>
+          <option value="Image">Imagem</option>
+          <option value="Medical">Médico</option>
+          <option value="Other">Outro</option>
+        </select>
+      </div>
+
+      <!-- Description -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Descrição (opcional)
+        </label>
+        <textarea
+          [(ngModel)]="fileDescription"
+          [disabled]="uploading"
+          rows="3"
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+          placeholder="Adicione uma descrição..."></textarea>
+      </div>
+
+      <!-- Public Checkbox -->
+      <div class="flex items-center">
+        <input
+          type="checkbox"
+          [(ngModel)]="isPublic"
+          [disabled]="uploading"
+          id="isPublic"
+          class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+        <label for="isPublic" class="ml-2 block text-sm text-gray-700">
+          Tornar público (visível para outros usuários)
+        </label>
+      </div>
+
+      <!-- Upload Progress -->
+      <div *ngIf="uploading" class="mt-4">
+        <div class="flex justify-between text-sm text-gray-600 mb-1">
+          <span>Enviando...</span>
+          <span>{{ uploadProgress }}%</span>
+        </div>
+        <div class="w-full bg-gray-200 rounded-full h-2">
+          <div 
+            class="bg-blue-600 h-2 rounded-full transition-all duration-300"
+            [style.width.%]="uploadProgress">
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex justify-end gap-3 mt-6">
+        <button
+          type="button"
+          (click)="closeUploadModal()"
+          [disabled]="uploading"
+          class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed">
+          Cancelar
+        </button>
+        <button
+          type="button"
+          (click)="uploadFile()"
+          [disabled]="!selectedFile || uploading"
+          class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed">
+          {{ uploading ? 'Enviando...' : 'Enviar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

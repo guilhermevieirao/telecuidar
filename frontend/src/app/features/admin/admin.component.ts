@@ -6,8 +6,10 @@ import { HttpClient } from '@angular/common/http';
 import { NgxMaskDirective } from 'ngx-mask';
 import { ToastService } from '../../core/services/toast.service';
 import { ConfirmModalComponent } from '../../shared/components/confirm-modal/confirm-modal.component';
+import { PaginationComponent, PageInfo } from '../../shared/components/pagination/pagination.component';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
+import { PagedResult } from '../../core/models/paged-result.model';
 
 interface User {
   id: number;
@@ -64,7 +66,7 @@ interface Statistics {
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, ConfirmModalComponent, NgxMaskDirective, BaseChartDirective],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, ConfirmModalComponent, NgxMaskDirective, BaseChartDirective, PaginationComponent],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss']
 })
@@ -83,8 +85,13 @@ export class AdminComponent implements OnInit {
   showDeleteModal = false;
   showEditModal = false;
   userToEdit: User | null = null;
+  usersPageInfo: PageInfo | null = null;
+  currentUsersPage = 1;
+  usersPageSize = 10;
+  usersSortBy: string = 'CreatedAt';
+  usersSortDirection: 'asc' | 'desc' = 'desc';
   
-  // Sorting
+  // Sorting - mantido por compatibilidade, mas não usado
   sortColumn: 'id' | 'fullName' | 'email' | 'role' | 'isActive' | null = null;
   sortDirection: 'asc' | 'desc' = 'asc';
   
@@ -98,6 +105,11 @@ export class AdminComponent implements OnInit {
   
   // Audit Logs
   auditLogs: AuditLog[] = [];
+  auditLogsPageInfo: PageInfo | null = null;
+  currentAuditLogsPage = 1;
+  auditLogsPageSize = 20;
+  auditLogsSortBy: string = 'CreatedAt';
+  auditLogsSortDirection: 'asc' | 'desc' = 'desc';
   
   // Invitations
   invitations: Invitation[] = [];
@@ -358,12 +370,36 @@ export class AdminComponent implements OnInit {
   // Users Methods
   loadUsers(): void {
     this.loading = true;
-    this.http.get<any>('http://localhost:5058/api/users')
+    const params = new URLSearchParams({
+      pageNumber: this.currentUsersPage.toString(),
+      pageSize: this.usersPageSize.toString(),
+      sortBy: this.usersSortBy,
+      sortDirection: this.usersSortDirection
+    });
+
+    if (this.selectedRoleFilter !== null) {
+      params.append('role', this.selectedRoleFilter.toString());
+    }
+
+    if (this.searchTerm) {
+      params.append('searchTerm', this.searchTerm);
+    }
+
+    this.http.get<any>(`http://localhost:5058/api/users?${params.toString()}`)
       .subscribe({
         next: (response) => {
           if (response.isSuccess) {
-            this.users = response.data;
-            this.filterUsers();
+            const pagedResult: PagedResult<User> = response.data;
+            this.filteredUsers = pagedResult.items;
+            this.usersPageInfo = {
+              items: pagedResult.items,
+              pageNumber: pagedResult.pageNumber,
+              pageSize: pagedResult.pageSize,
+              totalCount: pagedResult.totalCount,
+              totalPages: pagedResult.totalPages,
+              hasPreviousPage: pagedResult.hasPreviousPage,
+              hasNextPage: pagedResult.hasNextPage
+            };
           }
           this.loading = false;
         },
@@ -375,92 +411,50 @@ export class AdminComponent implements OnInit {
       });
   }
 
-  filterUsers(): void {
-    this.filteredUsers = this.users.filter(user => {
-      const matchesRole = this.selectedRoleFilter === null || user.role === this.selectedRoleFilter;
-      const matchesSearch = !this.searchTerm || 
-        user.id.toString().includes(this.searchTerm) ||
-        user.fullName.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        user.email.toLowerCase().includes(this.searchTerm.toLowerCase());
-      
-      return matchesRole && matchesSearch;
-    });
+  sortUsersBy(column: string): void {
+    // Se clicar na mesma coluna, inverte a direção
+    if (this.usersSortBy === column) {
+      this.usersSortDirection = this.usersSortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      // Nova coluna, começar com ordem descendente (exceto para ID que começa ascendente)
+      this.usersSortBy = column;
+      this.usersSortDirection = column === 'Id' ? 'asc' : 'desc';
+    }
     
-    // Aplicar ordenação se houver uma coluna selecionada
-    this.applySorting();
+    this.currentUsersPage = 1; // Reset para primeira página ao ordenar
+    this.loadUsers();
+  }
+
+  getUsersSortIcon(column: string): string {
+    if (this.usersSortBy !== column) {
+      return '⇅'; // Ícone neutro quando não está ordenado
+    }
+    return this.usersSortDirection === 'asc' ? '↑' : '↓';
+  }
+
+  onUsersPageChange(page: number): void {
+    this.currentUsersPage = page;
+    this.loadUsers();
   }
 
   onRoleFilterChange(role: number | null): void {
     this.selectedRoleFilter = role;
-    this.filterUsers();
+    this.currentUsersPage = 1; // Reset para primeira página ao filtrar
+    this.loadUsers();
   }
 
   onSearchChange(event: Event): void {
     this.searchTerm = (event.target as HTMLInputElement).value;
-    this.filterUsers();
+    this.currentUsersPage = 1; // Reset para primeira página ao buscar
+    this.loadUsers();
   }
 
-  sortBy(column: 'id' | 'fullName' | 'email' | 'role' | 'isActive'): void {
-    if (this.sortColumn === column) {
-      // Alternar direção se já estiver ordenando por esta coluna
-      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
-    } else {
-      // Nova coluna, começar com ordem ascendente
-      this.sortColumn = column;
-      this.sortDirection = 'asc';
-    }
-    
-    this.applySorting();
+  filterUsers(): void {
+    // Método mantido para compatibilidade, mas agora a filtragem é feita no backend
+    this.loadUsers();
   }
 
-  applySorting(): void {
-    if (!this.sortColumn) return;
-
-    this.filteredUsers.sort((a, b) => {
-      let valueA: any;
-      let valueB: any;
-
-      switch (this.sortColumn) {
-        case 'id':
-          valueA = a.id;
-          valueB = b.id;
-          break;
-        case 'fullName':
-          valueA = a.fullName.toLowerCase();
-          valueB = b.fullName.toLowerCase();
-          break;
-        case 'email':
-          valueA = a.email.toLowerCase();
-          valueB = b.email.toLowerCase();
-          break;
-        case 'role':
-          valueA = a.role;
-          valueB = b.role;
-          break;
-        case 'isActive':
-          valueA = a.isActive ? 1 : 0;
-          valueB = b.isActive ? 1 : 0;
-          break;
-        default:
-          return 0;
-      }
-
-      if (valueA < valueB) {
-        return this.sortDirection === 'asc' ? -1 : 1;
-      }
-      if (valueA > valueB) {
-        return this.sortDirection === 'asc' ? 1 : -1;
-      }
-      return 0;
-    });
-  }
-
-  getSortIcon(column: 'id' | 'fullName' | 'email' | 'role' | 'isActive'): string {
-    if (this.sortColumn !== column) {
-      return '↕️'; // Ícone neutro quando não está ordenado
-    }
-    return this.sortDirection === 'asc' ? '↑' : '↓';
-  }
+  // Removido sortBy e applySorting - a ordenação agora é feita no backend se necessário
 
   getRoleName(role: number): string {
     switch (role) {
@@ -590,11 +584,28 @@ export class AdminComponent implements OnInit {
 
   // Audit Logs Methods
   loadAuditLogs(): void {
-    this.http.get<any>('http://localhost:5058/api/admin/audit-logs?limit=50')
+    const params = new URLSearchParams({
+      pageNumber: this.currentAuditLogsPage.toString(),
+      pageSize: this.auditLogsPageSize.toString(),
+      sortBy: this.auditLogsSortBy,
+      sortDirection: this.auditLogsSortDirection
+    });
+
+    this.http.get<any>(`http://localhost:5058/api/admin/audit-logs?${params.toString()}`)
       .subscribe({
         next: (response) => {
           if (response.isSuccess) {
-            this.auditLogs = response.data;
+            const pagedResult: PagedResult<AuditLog> = response.data;
+            this.auditLogs = pagedResult.items;
+            this.auditLogsPageInfo = {
+              items: pagedResult.items,
+              pageNumber: pagedResult.pageNumber,
+              pageSize: pagedResult.pageSize,
+              totalCount: pagedResult.totalCount,
+              totalPages: pagedResult.totalPages,
+              hasPreviousPage: pagedResult.hasPreviousPage,
+              hasNextPage: pagedResult.hasNextPage
+            };
           } else {
             console.error('Erro na resposta de logs:', response);
             this.toastService.error(response.message || 'Erro ao carregar logs de auditoria');
@@ -616,6 +627,32 @@ export class AdminComponent implements OnInit {
           }
         }
       });
+  }
+
+  sortAuditLogsBy(column: string): void {
+    // Se clicar na mesma coluna, inverte a direção
+    if (this.auditLogsSortBy === column) {
+      this.auditLogsSortDirection = this.auditLogsSortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      // Nova coluna, começar com ordem descendente
+      this.auditLogsSortBy = column;
+      this.auditLogsSortDirection = 'desc';
+    }
+    
+    this.currentAuditLogsPage = 1; // Reset para primeira página ao ordenar
+    this.loadAuditLogs();
+  }
+
+  getAuditLogsSortIcon(column: string): string {
+    if (this.auditLogsSortBy !== column) {
+      return '⇅'; // Ícone neutro quando não está ordenado
+    }
+    return this.auditLogsSortDirection === 'asc' ? '↑' : '↓';
+  }
+
+  onAuditLogsPageChange(page: number): void {
+    this.currentAuditLogsPage = page;
+    this.loadAuditLogs();
   }
 
   // Invitations Methods

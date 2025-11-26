@@ -22,6 +22,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<EmailConfirmationToken> EmailConfirmationTokens { get; set; }
     public DbSet<AuditLog> AuditLogs { get; set; }
     public DbSet<InvitationToken> InvitationTokens { get; set; }
+    public DbSet<FileUpload> FileUploads { get; set; }
+    public DbSet<Notification> Notifications { get; set; }
 
     public void SetAuditInfo(int? userId, string? ipAddress = null, string? userAgent = null)
     {

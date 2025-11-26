@@ -23,12 +23,22 @@ public class UsersController : ControllerBase
     /// Obtém todos os usuários
     /// </summary>
     [HttpGet]
-    public async Task<IActionResult> GetAll([FromQuery] int? role, [FromQuery] string? searchTerm)
+    public async Task<IActionResult> GetAll(
+        [FromQuery] int? role, 
+        [FromQuery] string? searchTerm,
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10,
+        [FromQuery] string? sortBy = "CreatedAt",
+        [FromQuery] string? sortDirection = "desc")
     {
         var query = new GetAllUsersQuery 
         { 
             Role = role,
-            SearchTerm = searchTerm
+            SearchTerm = searchTerm,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            SortBy = sortBy,
+            SortDirection = sortDirection
         };
         var result = await _mediator.Send(query);
         
