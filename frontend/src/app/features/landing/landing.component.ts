@@ -14,6 +14,7 @@ export class LandingComponent implements OnInit {
   isLoggedIn = false;
   userName = '';
   showNavbar = true;
+  isInHeroSection = true;
   lastScrollTop = 0;
   scrollThreshold = 100;
 
@@ -134,6 +135,9 @@ export class LandingComponent implements OnInit {
   @HostListener('window:scroll', [])
   onWindowScroll(): void {
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    
+    // Detecta se está no hero section (primeiros ~600px)
+    this.isInHeroSection = scrollTop < 600;
     
     // Se estiver no topo, sempre mostrar
     if (scrollTop <= this.scrollThreshold) {

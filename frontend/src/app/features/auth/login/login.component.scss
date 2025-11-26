@@ -170,6 +170,13 @@
     &::placeholder {
       color: #a0aec0;
     }
+
+    &:-webkit-autofill,
+    &:-webkit-autofill:hover,
+    &:-webkit-autofill:focus {
+      -webkit-box-shadow: 0 0 0 1000px white inset !important;
+      -webkit-text-fill-color: #1a202c !important;
+    }
   }
 
   .error-message {
@@ -403,5 +410,96 @@
 
   .form-header h2 {
     font-size: 1.5rem;
+  }
+}
+
+/* Dark Mode Styles */
+:host-context(html[data-theme="dark"]),
+:host-context(html.dark) {
+  .auth-page {
+    background: #111827;
+  }
+
+  .auth-container {
+    background: #1f2937;
+  }
+
+  .auth-form-container {
+    background: #1f2937;
+  }
+
+  .form-header {
+    h2 {
+      color: #f9fafb;
+    }
+
+    p {
+      color: #9ca3af;
+    }
+  }
+
+  .form-group {
+    label {
+      color: #d1d5db;
+    }
+
+    input {
+      background: #374151;
+      border-color: #4b5563;
+      color: #f9fafb;
+
+      &:focus {
+        border-color: #2563eb;
+        background: #374151;
+      }
+
+      &::placeholder {
+        color: #6b7280;
+      }
+
+      &:-webkit-autofill,
+      &:-webkit-autofill:hover,
+      &:-webkit-autofill:focus {
+        -webkit-box-shadow: 0 0 0 1000px #374151 inset !important;
+        -webkit-text-fill-color: #f9fafb !important;
+        border-color: #4b5563 !important;
+      }
+    }
+  }
+
+  .form-options {
+    .checkbox-label {
+      color: #d1d5db;
+    }
+  }
+
+  .divider {
+    &::before {
+      background: #374151;
+    }
+
+    span {
+      background: #1f2937;
+      color: #9ca3af;
+    }
+  }
+
+  .social-login .btn-social {
+    background: #374151;
+    border-color: #4b5563;
+    color: #f9fafb;
+
+    &:hover {
+      background: #4b5563;
+      border-color: #6b7280;
+    }
+  }
+
+  .back-home .link {
+    color: #9ca3af;
+
+    &:hover {
+      color: #60a5fa;
+    }
   }
 }

@@ -67,7 +67,7 @@
       color: #f9fafb !important;
     }
 
-    & button:not(.bg-blue-600):not(.bg-red-600):not(.bg-green-600):not(.bg-yellow-600) {
+    & button:not(.bg-blue-600):not(.bg-red-600):not(.bg-green-600):not(.bg-yellow-600):not(.btn-cta-primary):not(.btn-hero-primary):not(.btn-hero-secondary) {
       color: #f9fafb !important;
     }
 
@@ -148,10 +148,11 @@
   --card-bg: #1f2937;
   --input-bg: #374151;
   --input-border: #4b5563;
-  --primary-color: #60a5fa;
-  --danger-color: #f87171;
-  --success-color: #34d399;
-  --warning-color: #fbbf24;
+  /* Cores auxiliares mantêm suas cores originais no dark mode */
+  --primary-color: #3b82f6;
+  --danger-color: #ef4444;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
 }
 
 /* Global Styles */

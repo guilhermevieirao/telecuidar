@@ -53,6 +53,28 @@
   &.navbar-hidden {
     transform: translateY(-100%);
   }
+
+  &.navbar-solid {
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    .logo,
+    .nav-link,
+    .user-greeting {
+      color: #1a202c;
+    }
+
+    .btn-secondary {
+      color: #2563eb;
+      border-color: #2563eb;
+
+      &:hover {
+        background: #2563eb;
+        color: white;
+      }
+    }
+  }
 }
 
 // Adicionar padding ao hero para compensar navbar fixed
@@ -562,6 +584,7 @@
   background: white;
   padding: 2rem;
   border-radius: 1rem;
+  border: 2px solid #e5e7eb;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   transition: all 0.3s;
 
@@ -975,5 +998,288 @@
     button {
       width: 100%;
     }
+  }
+}
+
+/* Dark Mode Styles */
+:host-context(html[data-theme="dark"]),
+:host-context(html.dark) {
+  // Hero section no dark mode - inverte as cores
+  .hero-section {
+    .hero-text,
+    .hero-title,
+    .hero-description,
+    .stat-value,
+    .stat-label,
+    .logo,
+    .nav-link,
+    .user-greeting {
+      color: #1a202c;
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #1a202c 0%, #374151 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .btn-hero-primary {
+      background: #1a202c;
+      color: white;
+
+      &:hover {
+        background: #111827;
+      }
+    }
+
+    .btn-hero-secondary {
+      background: transparent;
+      color: #1a202c;
+      border-color: #1a202c;
+
+      &:hover {
+        background: #1a202c;
+        color: white;
+      }
+    }
+
+    .btn-primary {
+      background: #1a202c;
+      color: white;
+
+      &:hover {
+        background: #111827;
+      }
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: #1a202c;
+      border-color: #1a202c;
+
+      &:hover {
+        background: #1a202c;
+        color: white;
+      }
+    }
+  }
+
+  // Navbar solid no dark mode
+  .navbar.navbar-solid {
+    background: #1f2937;
+    border-bottom: 1px solid #374151;
+
+    .logo,
+    .nav-link,
+    .user-greeting {
+      color: #f9fafb;
+    }
+
+    .btn-secondary {
+      color: #60a5fa;
+      border-color: #60a5fa;
+
+      &:hover {
+        background: #60a5fa;
+        color: #1f2937;
+      }
+    }
+  }
+
+  .section-about,
+  .section-technology {
+    background: #111827;
+  }
+
+  .section-features,
+  .section-solution,
+  .section-impact {
+    background: #1f2937;
+  }
+
+  .section-title {
+    color: #f9fafb;
+  }
+
+  .section-subtitle {
+    color: #9ca3af;
+  }
+
+  .challenge-card,
+  .feature-card,
+  .tech-card,
+  .flow-step,
+  .benefit-card {
+    background: #1f2937;
+    border-color: #374151;
+
+    h3,
+    .feature-title,
+    .tech-title {
+      color: #f9fafb;
+    }
+
+    p,
+    .feature-description {
+      color: #d1d5db;
+    }
+
+    &:hover {
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  // Mantém as cores dos hovers nos feature cards
+  .feature-card {
+    &:nth-child(3n+1):hover {
+      border-color: #2563eb;
+      box-shadow: 0 20px 40px rgba(37, 99, 235, 0.3);
+    }
+
+    &:nth-child(3n+2):hover {
+      border-color: #dc2626;
+      box-shadow: 0 20px 40px rgba(220, 38, 38, 0.3);
+    }
+
+    &:nth-child(3n):hover {
+      border-color: #16a34a;
+      box-shadow: 0 20px 40px rgba(22, 163, 74, 0.3);
+    }
+  }
+
+  // Mantém as cores dos tech cards
+  .tech-card {
+    &:nth-child(1) {
+      border-top-color: #2563eb;
+      
+      &:hover {
+        border-color: #2563eb;
+      }
+    }
+
+    &:nth-child(2) {
+      border-top-color: #dc2626;
+      
+      &:hover {
+        border-color: #dc2626;
+      }
+    }
+
+    &:nth-child(3) {
+      border-top-color: #16a34a;
+      
+      &:hover {
+        border-color: #16a34a;
+      }
+    }
+
+    .tech-list li {
+      color: #d1d5db;
+
+      .check-icon {
+        color: #16a34a;
+      }
+    }
+  }
+
+  // Mantém as cores dos benefit cards
+  .benefit-card {
+    &:nth-child(1) {
+      border-top-color: #2563eb;
+      
+      &:hover {
+        border-color: #2563eb;
+      }
+
+      .benefit-list .arrow {
+        color: #2563eb;
+      }
+    }
+
+    &:nth-child(2) {
+      border-top-color: #dc2626;
+      
+      &:hover {
+        border-color: #dc2626;
+      }
+
+      .benefit-list .arrow {
+        color: #dc2626;
+      }
+    }
+
+    &:nth-child(3) {
+      border-top-color: #16a34a;
+      
+      &:hover {
+        border-color: #16a34a;
+      }
+
+      .benefit-list .arrow {
+        color: #16a34a;
+      }
+    }
+
+    .benefit-list li {
+      color: #d1d5db;
+    }
+  }
+
+  .step-content p {
+    color: #d1d5db;
+  }
+
+  .flow-step {
+    border-color: #4b5563;
+
+    &:nth-child(1) {
+      border-left: 4px solid #2563eb;
+    }
+
+    &:nth-child(2) {
+      border-left: 4px solid #dc2626;
+    }
+
+    &:nth-child(3) {
+      border-left: 4px solid #16a34a;
+    }
+
+    &:nth-child(4) {
+      border-left: 4px solid #2563eb;
+    }
+
+    &:nth-child(5) {
+      border-left: 4px solid #dc2626;
+    }
+  }
+
+  .floating-card {
+    background: #1f2937;
+    border: 1px solid #374151;
+
+    .card-text {
+      color: #60a5fa;
+    }
+  }
+
+  // Preserva cor branca do botão CTA primary
+  .btn-cta-primary {
+    background: white;
+    color: #2563eb;
+
+    &:hover {
+      background: #f0f9ff;
+    }
+  }
+
+  .footer {
+    background: #0f172a;
+    border-top: 1px solid #1e293b;
+  }
+
+  .footer-tech .tech-badge {
+    background: #1e293b;
+    border: 1px solid #334155;
   }
 }

@@ -34,6 +34,12 @@
   }
 }
 
+.nav-buttons {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
 .btn-back {
   padding: 0.5rem 1.25rem;
   background: #f3f4f6;
@@ -402,21 +408,38 @@
     }
 
     .btn-back {
-      color: #60a5fa;
+      background: #374151;
+      color: #d1d5db;
 
       &:hover {
-        background: #374151;
+        background: #4b5563;
       }
     }
   }
 
   .profile-header {
+    background: #1f2937;
+    border-color: #374151;
+
     h1 {
       color: #f9fafb;
     }
 
     p {
       color: #9ca3af;
+    }
+  }
+
+  .info-box {
+    background: #1f2937;
+    border-color: #374151;
+
+    h3 {
+      color: #60a5fa;
+    }
+
+    ul {
+      color: #d1d5db;
     }
   }
 
@@ -453,7 +476,12 @@
     }
   }
 
-  .photo-preview-placeholder {
+  .photo-upload-container {
+    background: #374151;
+    border-color: #4b5563;
+  }
+
+  .photo-placeholder {
     background: #374151;
 
     p {

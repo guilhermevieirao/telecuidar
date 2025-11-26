@@ -29,3 +29,13 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Dark Mode Styles */
+:host-context(html[data-theme="dark"]),
+:host-context(html.dark) {
+  .success-alert {
+    background: #064e3b;
+    color: #6ee7b7;
+    border-color: #047857;
+  }
+}
