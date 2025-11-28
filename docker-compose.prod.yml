@@ -1,0 +1,14 @@
+services:
+  backend:
+    # Não expõe porta para fora; acessível via rede Docker pelo Nginx do frontend
+    ports: []
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - FrontendUrl=${FRONTEND_URL:-http://localhost}
+
+  frontend:
+    # Expor apenas HTTP 80 (use Nginx/Certbot no host ou um proxy com TLS)
+    ports:
+      - "80:80"
+    depends_on:
+      - backend

@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: telecuidar-backend
+    ports:
+      - "5058:5058"
+    environment:
+      - ASPNETCORE_URLS=http://+:5058
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Data Source=/data/telecuidar.db
+      - Jwt__Secret=${JWT_SECRET:-CHANGE-THIS-SECRET-KEY-IN-PRODUCTION-MIN-32-CHARACTERS-REQUIRED-FOR-SECURITY}
+      - Jwt__Issuer=TeleCuidar
+      - Jwt__Audience=TeleCuidar-Users
+      - Jwt__ExpirationHours=24
+      - AdminUser__Enabled=${ADMIN_ENABLED:-false}
+      - AdminUser__Email=${ADMIN_EMAIL:-admin@telecuidar.com}
+      - AdminUser__Password=${ADMIN_PASSWORD:-Admin123!}
+      - AdminUser__FirstName=Administrador
+      - AdminUser__LastName=Sistema
+      - FrontendUrl=http://localhost:4200
+    volumes:
+      - db-data:/data
+    restart: unless-stopped
+    networks:
+      - telecuidar-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: telecuidar-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - telecuidar-network
+
+volumes:
+  db-data:
+    driver: local
+
+networks:
+  telecuidar-network:
+    driver: bridge
