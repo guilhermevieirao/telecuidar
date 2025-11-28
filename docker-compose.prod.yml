@@ -4,11 +4,33 @@ services:
     ports: []
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - FrontendUrl=${FRONTEND_URL:-http://localhost}
+      - FrontendUrl=${FRONTEND_URL:-https://www.telecuidar.com.br}
 
   frontend:
-    # Expor apenas HTTP 80 (use Nginx/Certbot no host ou um proxy com TLS)
-    ports:
-      - "80:80"
+    # Em produção, não expõe porta direta; acesso via Caddy (TLS)
+    ports: []
     depends_on:
       - backend
+
+  caddy:
+    image: caddy:2
+    container_name: telecuidar-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - ACME_AGREE=true
+      - EMAIL=${SSL_EMAIL:-admin@telecuidar.com.br}
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - frontend
+    networks:
+      - telecuidar-network
+
+volumes:
+  caddy-data:
+  caddy-config:

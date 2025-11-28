@@ -1,0 +1,20 @@
+# Redirecionamentos canônicos -> https://www.telecuidar.com.br
+telecuidar.com, www.telecuidar.com, telecuidar.com.br {
+  redir https://www.telecuidar.com.br{uri} permanent
+}
+
+# Host principal com TLS automático
+www.telecuidar.com.br {
+  encode gzip
+
+  # Headers de segurança
+  header {
+    Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    X-Frame-Options "DENY"
+    X-Content-Type-Options "nosniff"
+    Referrer-Policy "strict-origin-when-cross-origin"
+  }
+
+  # Reverso para o frontend (que por sua vez faz proxy de /api para o backend)
+  reverse_proxy frontend:80
+}
