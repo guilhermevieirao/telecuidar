@@ -4,6 +4,7 @@ using app.Application.Common.Interfaces;
 using app.Application.Admin.DTOs;
 using app.Domain.Entities;
 using app.Domain.Interfaces;
+using Microsoft.Extensions.Configuration;
 
 namespace app.Application.Admin.Commands.CreateInvitation;
 
@@ -13,17 +14,20 @@ public class CreateInvitationCommandHandler : IRequestHandler<CreateInvitationCo
     private readonly IRepository<User> _userRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IEmailService _emailService;
+    private readonly IConfiguration _configuration;
 
     public CreateInvitationCommandHandler(
         IRepository<InvitationToken> invitationRepository,
         IRepository<User> userRepository,
         IUnitOfWork unitOfWork,
-        IEmailService emailService)
+        IEmailService emailService,
+        IConfiguration configuration)
     {
         _invitationRepository = invitationRepository;
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
         _emailService = emailService;
+        _configuration = configuration;
     }
 
     public async Task<Result<InvitationTokenDto>> Handle(CreateInvitationCommand request, CancellationToken cancellationToken)
@@ -66,7 +70,8 @@ public class CreateInvitationCommandHandler : IRequestHandler<CreateInvitationCo
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             // Enviar email de convite
-            var invitationLink = $"http://localhost:4200/cadastrar?token={invitation.Token}";
+            var frontendUrl = _configuration["FrontendUrl"] ?? "http://localhost:4200";
+            var invitationLink = $"{frontendUrl}/cadastrar?token={invitation.Token}";
             await _emailService.SendInvitationEmailAsync(request.Email, invitation.Role.ToString(), invitationLink);
 
             var createdByUser = await _userRepository.GetByIdAsync(request.CreatedByUserId);

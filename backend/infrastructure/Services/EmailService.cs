@@ -1,9 +1,17 @@
 using app.Application.Common.Interfaces;
+using Microsoft.Extensions.Configuration;
 
 namespace app.Infrastructure.Services;
 
 public class EmailService : IEmailService
 {
+    private readonly IConfiguration _configuration;
+    
+    public EmailService(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
+    
     // TODO: Implementar com serviço real de email (SendGrid, AWS SES, etc)
     
     public Task SendPasswordResetEmailAsync(string email, string firstName, string resetToken)
@@ -21,7 +29,8 @@ public class EmailService : IEmailService
 
     public Task SendEmailConfirmationAsync(string email, string confirmationToken)
     {
-        var confirmationLink = $"http://localhost:4200/confirm-email?token={confirmationToken}";
+        var frontendUrl = _configuration["FrontendUrl"] ?? "http://localhost:4200";
+        var confirmationLink = $"{frontendUrl}/confirm-email?token={confirmationToken}";
         
         Console.WriteLine($"========================================");
         Console.WriteLine($"[EMAIL] Confirmação de Email");
