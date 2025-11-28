@@ -17,8 +17,8 @@ services:
       - Jwt__Audience=TeleCuidar-Users
       - Jwt__ExpirationHours=24
       - AdminUser__Enabled=${ADMIN_ENABLED:-false}
-      - AdminUser__Email=${ADMIN_EMAIL:-admin@telecuidar.com}
-      - AdminUser__Password=${ADMIN_PASSWORD:-Admin123!}
+      - AdminUser__Email=${ADMIN_EMAIL:-adm@adm.com}
+      - AdminUser__Password=${ADMIN_PASSWORD:-zxcasd}
       - AdminUser__FirstName=Administrador
       - AdminUser__LastName=Sistema
       - FrontendUrl=http://localhost:4200

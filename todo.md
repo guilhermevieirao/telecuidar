@@ -1,8 +1,8 @@
 dotnet ef database drop --force; dotnet ef database update; dotnet run --seed
 
-Ajustar DNS e SMTP de todos os 8 dominios
-gerar o arquivo .sh
-se atentar a como passar os arquivos do projeto pra VPS
+MDS
+
+SMTP
 
 Náo permitir usar o mesmo numero ou cpf
 

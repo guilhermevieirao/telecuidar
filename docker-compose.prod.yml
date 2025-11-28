@@ -21,7 +21,7 @@ services:
       - "443:443"
     environment:
       - ACME_AGREE=true
-      - EMAIL=${SSL_EMAIL:-admin@telecuidar.com.br}
+      - EMAIL=${SSL_EMAIL:-adm@adm.com.br}
     volumes:
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy-data:/data
