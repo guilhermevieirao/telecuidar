@@ -235,3 +235,93 @@
     }
   }
 }
+
+// Dark mode support
+:host-context(html.dark) {
+  .modal-content {
+    background: #1f2937;
+
+    &::-webkit-scrollbar-track {
+      background: #111827;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #4b5563;
+
+      &:hover {
+        background: #6b7280;
+      }
+    }
+  }
+
+  .modal-header {
+    border-bottom-color: #374151;
+
+    h2 {
+      color: #f9fafb;
+    }
+
+    .btn-close {
+      color: #9ca3af;
+
+      &:hover {
+        background: #374151;
+        color: #f9fafb;
+      }
+    }
+  }
+
+  .canvas-wrapper {
+    background: #111827;
+  }
+
+  .preview-section {
+    background: #111827;
+
+    h3 {
+      color: #f9fafb;
+    }
+
+    .preview-wrapper {
+      background: #1f2937;
+    }
+
+    .preview-hint {
+      color: #9ca3af;
+    }
+  }
+
+  .instructions {
+    background: #1e3a8a;
+    border-left-color: #3b82f6;
+
+    p {
+      color: #93c5fd;
+
+      strong {
+        color: #dbeafe;
+      }
+    }
+  }
+
+  .modal-footer {
+    border-top-color: #374151;
+
+    .btn-secondary {
+      background: #374151;
+      color: #d1d5db;
+
+      &:hover {
+        background: #4b5563;
+      }
+    }
+
+    .btn-primary {
+      background: #3b82f6;
+
+      &:hover {
+        background: #2563eb;
+      }
+    }
+  }
+}

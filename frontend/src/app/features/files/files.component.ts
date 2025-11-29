@@ -124,6 +124,10 @@ export class FilesComponent implements OnInit {
   }
 
   loadFiles(): void {
+    console.log('📂 Carregando arquivos...');
+    console.log('📂 Current page:', this.currentPage);
+    console.log('📂 Selected category:', this.selectedCategory);
+    
     const params = new URLSearchParams({
       pageNumber: this.currentPage.toString(),
       pageSize: this.pageSize.toString()
@@ -133,12 +137,19 @@ export class FilesComponent implements OnInit {
       params.append('fileCategory', this.selectedCategory);
     }
 
-    this.http.get<any>(`${environment.apiUrl}/files/my-files?${params.toString()}`)
+    const url = `${environment.apiUrl}/files/my-files?${params.toString()}`;
+    console.log('📂 URL:', url);
+
+    this.http.get<any>(url)
       .subscribe({
         next: (response) => {
+          console.log('📦 Resposta loadFiles:', response);
           if (response.isSuccess) {
             const pagedResult = response.data;
+            console.log('📋 Items recebidos:', pagedResult.items.length);
+            console.log('📋 Files antes:', this.files.length);
             this.files = pagedResult.items;
+            console.log('📋 Files depois:', this.files.length);
             this.pageInfo = {
               items: pagedResult.items,
               pageNumber: pagedResult.pageNumber,
@@ -148,10 +159,11 @@ export class FilesComponent implements OnInit {
               hasPreviousPage: pagedResult.hasPreviousPage,
               hasNextPage: pagedResult.hasNextPage
             };
+            console.log('✅ Arquivos carregados com sucesso');
           }
         },
         error: (error) => {
-          console.error('Erro ao carregar arquivos:', error);
+          console.error('❌ Erro ao carregar arquivos:', error);
           this.toastService.error('Erro ao carregar arquivos');
         }
       });
@@ -232,16 +244,18 @@ export class FilesComponent implements OnInit {
       return;
     }
 
+    console.log('🗑️ Deletando arquivo:', file.id);
     this.http.delete<any>(`${environment.apiUrl}/files/${file.id}`)
       .subscribe({
         next: (response) => {
-          if (response.isSuccess) {
-            this.toastService.success('Arquivo excluído com sucesso');
-            this.loadFiles();
-          }
+          console.log('✅ Resposta do delete:', response);
+          this.toastService.success('Arquivo excluído com sucesso');
+          this.loadFiles();
         },
         error: (error) => {
-          console.error('Erro ao excluir arquivo:', error);
+          console.error('❌ Erro ao excluir arquivo:', error);
+          console.error('❌ Status:', error.status);
+          console.error('❌ Error body:', error.error);
           this.toastService.error(error.error?.message || 'Erro ao excluir arquivo');
         }
       });

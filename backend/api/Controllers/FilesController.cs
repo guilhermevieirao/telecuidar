@@ -18,11 +18,13 @@ public class FilesController : ControllerBase
 {
     private readonly IMediator _mediator;
     private readonly IRepository<FileUpload> _fileRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public FilesController(IMediator mediator, IRepository<FileUpload> fileRepository)
+    public FilesController(IMediator mediator, IRepository<FileUpload> fileRepository, IUnitOfWork unitOfWork)
     {
         _mediator = mediator;
         _fileRepository = fileRepository;
+        _unitOfWork = unitOfWork;
     }
 
     private int GetCurrentUserId()
@@ -138,6 +140,7 @@ public class FilesController : ControllerBase
 
         // Excluir registro do banco
         await _fileRepository.DeleteAsync(file.Id);
+        await _unitOfWork.SaveChangesAsync();
 
         return Ok(new { isSuccess = true, message = "Arquivo excluído com sucesso" });
     }
