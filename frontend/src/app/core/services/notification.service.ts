@@ -64,7 +64,7 @@ export class NotificationService {
       message: `O arquivo "${fileName}" foi enviado com sucesso.`,
       type: 'success',
       userId,
-      actionUrl: '/arquivos',
+      actionUrl: '/admin',
       actionText: 'Ver arquivos',
       relatedEntityType: 'FileUpload',
       relatedEntityId: fileId

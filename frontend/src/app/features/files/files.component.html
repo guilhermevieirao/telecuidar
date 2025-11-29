@@ -1,17 +1,22 @@
 <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
   <!-- Header -->
-  <header class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+  <header *ngIf="!embeddedMode" class="bg-white shadow-sm border-b border-gray-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
       <div class="flex justify-between items-center">
         <div>
-          <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Meus Arquivos</h1>
-          <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Gerencie seus documentos e anexos</p>
+          <h1 class="text-2xl font-bold text-gray-900">Meus Arquivos</h1>
+          <p class="text-sm text-gray-600 mt-1">Bem-vindo, {{ currentUser?.firstName }}</p>
         </div>
         
         <!-- Desktop Navigation -->
         <div class="flex items-center gap-4 desktop-only">
           <app-theme-toggle></app-theme-toggle>
           <app-notifications></app-notifications>
+          <a routerLink="/perfil" class="profile-button" title="Meu Perfil">
+            <svg class="profile-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </a>
           <button 
             (click)="openUploadModal()"
             class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
@@ -36,22 +41,22 @@
   </header>
 
   <!-- Breadcrumb -->
-  <app-breadcrumb></app-breadcrumb>
+  <app-breadcrumb *ngIf="!embeddedMode"></app-breadcrumb>
 
   <!-- Filters -->
-  <div class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+  <div *ngIf="!embeddedMode" class="bg-white border-b border-gray-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
       <div class="flex gap-2 overflow-x-auto">
         <button
           (click)="filterByCategory(null)"
-          [class]="!selectedCategory ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'"
+          [class]="!selectedCategory ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'"
           class="px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-colors">
           Todos
         </button>
         <button
           *ngFor="let category of categories"
           (click)="filterByCategory(category)"
-          [class]="selectedCategory === category ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'"
+          [class]="selectedCategory === category ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'"
           class="px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-colors">
           {{ getCategoryName(category) }}
         </button>
@@ -60,7 +65,27 @@
   </div>
 
   <!-- Content -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <main [class]="embeddedMode ? '' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'">
+    
+    <!-- Filters in embedded mode -->
+    <div *ngIf="embeddedMode" class="mb-6">
+      <div class="flex gap-2 items-center mb-4">
+        <h2 class="text-lg font-semibold text-gray-900">Filtros:</h2>
+        <button
+          (click)="filterByCategory(null)"
+          [class]="!selectedCategory ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'"
+          class="px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-colors text-sm">
+          Todos
+        </button>
+        <button
+          *ngFor="let category of categories"
+          (click)="filterByCategory(category)"
+          [class]="selectedCategory === category ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'"
+          class="px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-colors text-sm">
+          {{ getCategoryName(category) }}
+        </button>
+      </div>
+    </div>
     
     <!-- Mobile Upload Button -->
     <div class="mb-4 mobile-only">
@@ -74,7 +99,7 @@
     
     <!-- Files Grid -->
     <div *ngIf="files.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-      <div *ngFor="let file of files" class="bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg transition-shadow">
+      <div *ngFor="let file of files" class="bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
         <div class="p-6">
           <!-- File Icon -->
           <div class="text-center mb-4">
@@ -87,14 +112,14 @@
 
           <!-- File Info -->
           <div class="mb-4">
-            <h3 class="font-semibold text-gray-900 dark:text-white truncate mb-1" [title]="file.originalFileName">
+            <h3 class="font-semibold text-gray-900 truncate mb-1" [title]="file.originalFileName">
               {{ file.originalFileName }}
             </h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400">{{ file.fileSizeFormatted }}</p>
-            <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">
+            <p class="text-sm text-gray-500">{{ file.fileSizeFormatted }}</p>
+            <p class="text-xs text-gray-400 mt-1">
               {{ file.createdAt | date:'dd/MM/yyyy HH:mm' }}
             </p>
-            <p *ngIf="file.description" class="text-sm text-gray-600 dark:text-gray-400 mt-2 line-clamp-2">
+            <p *ngIf="file.description" class="text-sm text-gray-600 mt-2 line-clamp-2">
               {{ file.description }}
             </p>
           </div>
@@ -119,8 +144,8 @@
     <!-- Empty State -->
     <div *ngIf="files.length === 0" class="text-center py-16">
       <div class="text-6xl mb-4">📂</div>
-      <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Nenhum arquivo encontrado</h3>
-      <p class="text-gray-600 dark:text-gray-400 mb-6">Comece enviando seus primeiros arquivos</p>
+      <h3 class="text-xl font-semibold text-gray-900 mb-2">Nenhum arquivo encontrado</h3>
+      <p class="text-gray-600 mb-6">Comece enviando seus primeiros arquivos</p>
       <button
         (click)="openUploadModal()"
         class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
@@ -141,13 +166,13 @@
 
 <!-- Upload Modal -->
 <div *ngIf="showUploadModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-  <div class="relative top-20 mx-auto p-6 border max-w-lg shadow-lg rounded-md bg-white dark:bg-gray-800">
-    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">Enviar Arquivo</h3>
+  <div class="relative top-20 mx-auto p-6 border max-w-lg shadow-lg rounded-md bg-white">
+    <h3 class="text-xl font-semibold text-gray-900 mb-6">Enviar Arquivo</h3>
     
     <div class="space-y-4">
       <!-- File Input -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label class="block text-sm font-medium text-gray-700 mb-2">
           Selecione o arquivo
         </label>
         <input
@@ -155,21 +180,21 @@
           (change)="onFileSelected($event)"
           [disabled]="uploading"
           accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.txt,.xlsx,.xls"
-          class="block w-full text-sm text-gray-900 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 focus:outline-none">
-        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none">
+        <p class="text-xs text-gray-500 mt-1">
           Tipos permitidos: PDF, DOC, DOCX, JPG, PNG, TXT, XLSX, XLS (máx 10MB)
         </p>
       </div>
 
       <!-- Category -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label class="block text-sm font-medium text-gray-700 mb-2">
           Categoria
         </label>
         <select
           [(ngModel)]="fileCategory"
           [disabled]="uploading"
-          class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500">
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500">
           <option value="Document">Documento</option>
           <option value="Image">Imagem</option>
           <option value="Medical">Médico</option>
@@ -179,14 +204,14 @@
 
       <!-- Description -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label class="block text-sm font-medium text-gray-700 mb-2">
           Descrição (opcional)
         </label>
         <textarea
           [(ngModel)]="fileDescription"
           [disabled]="uploading"
           rows="3"
-          class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500"
           placeholder="Adicione uma descrição..."></textarea>
       </div>
 
@@ -197,19 +222,19 @@
           [(ngModel)]="isPublic"
           [disabled]="uploading"
           id="isPublic"
-          class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-gray-600 rounded">
-        <label for="isPublic" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+          class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+        <label for="isPublic" class="ml-2 block text-sm text-gray-700">
           Tornar público (visível para outros usuários)
         </label>
       </div>
 
       <!-- Upload Progress -->
       <div *ngIf="uploading" class="mt-4">
-        <div class="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-1">
+        <div class="flex justify-between text-sm text-gray-600 mb-1">
           <span>Enviando...</span>
           <span>{{ uploadProgress }}%</span>
         </div>
-        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+        <div class="w-full bg-gray-200 rounded-full h-2">
           <div 
             class="bg-blue-600 h-2 rounded-full transition-all duration-300"
             [style.width.%]="uploadProgress">
@@ -223,7 +248,7 @@
           type="button"
           (click)="closeUploadModal()"
           [disabled]="uploading"
-          class="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed">
+          class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed">
           Cancelar
         </button>
         <button

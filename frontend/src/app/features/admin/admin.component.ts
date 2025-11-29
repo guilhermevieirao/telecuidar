@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { NgxMaskDirective } from 'ngx-mask';
 import { ToastService } from '../../core/services/toast.service';
@@ -13,6 +13,11 @@ import { PagedResult } from '../../core/models/paged-result.model';
 import { NotificationsComponent } from '../notifications/notifications.component';
 import { ThemeToggleComponent } from '../../shared/components/theme-toggle/theme-toggle.component';
 import { MobileMenu, MenuItem } from '../../shared/components/mobile-menu/mobile-menu';
+import { FilesComponent } from '../files/files.component';
+import { ReportsComponent } from '../reports/reports.component';
+import { ProfileComponent } from '../profile/profile.component';
+import { SpecialtiesComponent } from '../../pages/specialties/specialties.component';
+import { SchedulesComponent } from '../../pages/schedules/schedules.component';
 import { environment } from '../../../environments/environment';
 
 interface User {
@@ -70,12 +75,12 @@ interface Statistics {
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, ConfirmModalComponent, NgxMaskDirective, BaseChartDirective, PaginationComponent, NotificationsComponent, ThemeToggleComponent, MobileMenu],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, ConfirmModalComponent, NgxMaskDirective, BaseChartDirective, PaginationComponent, NotificationsComponent, ThemeToggleComponent, MobileMenu, FilesComponent, ReportsComponent, ProfileComponent, SpecialtiesComponent, SchedulesComponent],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss']
 })
 export class AdminComponent implements OnInit {
-  activeTab: 'dashboard' | 'users' | 'audit-logs' | 'invitations' = 'dashboard';
+  activeTab: 'dashboard' | 'users' | 'audit-logs' | 'invitations' | 'files' | 'reports' | 'profile' | 'specialties' | 'schedules' = 'dashboard';
   menuItems: MenuItem[] = [];
   adminUser: any = null;
   
@@ -96,6 +101,14 @@ export class AdminComponent implements OnInit {
   usersPageSize = 10;
   usersSortBy: string = 'CreatedAt';
   usersSortDirection: 'asc' | 'desc' = 'desc';
+  
+  // Specialties management in users table
+  showSpecialtiesModal = false;
+  selectedUserForSpecialties: User | null = null;
+  allSpecialties: any[] = [];
+  userSpecialties: any[] = [];
+  availableSpecialties: any[] = [];
+  selectedSpecialtyToAdd: number | null = null;
   
   // Sorting - mantido por compatibilidade, mas não usado
   sortColumn: 'id' | 'fullName' | 'email' | 'role' | 'isActive' | null = null;
@@ -343,14 +356,17 @@ export class AdminComponent implements OnInit {
       { label: 'Auditoria', icon: '📋', action: () => this.setActiveTab('audit-logs') },
       { label: 'Convites', icon: '✉️', action: () => this.setActiveTab('invitations') },
       { divider: true },
-      { label: 'Arquivos', icon: '📁', route: '/arquivos' },
-      { label: 'Relatórios', icon: '📈', route: '/relatorios' },
+      { label: 'Especialidades', icon: '🩺', action: () => this.setActiveTab('specialties') },
+      { label: 'Agendas', icon: '📅', action: () => this.setActiveTab('schedules') },
+      { label: 'Arquivos', icon: '📁', action: () => this.setActiveTab('files') },
+      { label: 'Relatórios', icon: '📈', action: () => this.setActiveTab('reports') },
+      { label: 'Perfil', icon: '👤', action: () => this.setActiveTab('profile') },
       { divider: true },
       { label: 'Sair', icon: '🚪', action: () => this.logout() }
     ];
   }
 
-  setActiveTab(tab: 'dashboard' | 'users' | 'audit-logs' | 'invitations'): void {
+  setActiveTab(tab: 'dashboard' | 'users' | 'audit-logs' | 'invitations' | 'files' | 'reports' | 'profile' | 'specialties' | 'schedules'): void {
     this.activeTab = tab;
     
     if (tab === 'invitations') {
@@ -521,6 +537,141 @@ export class AdminComponent implements OnInit {
           this.showDeleteModal = false;
         }
       });
+  }
+
+  // Specialty Management Methods
+  openSpecialtiesModal(user: User): void {
+    this.selectedUserForSpecialties = user;
+    this.showSpecialtiesModal = true;
+    this.loadAllSpecialties();
+    this.loadUserSpecialties(user.id);
+  }
+
+  closeSpecialtiesModal(): void {
+    this.showSpecialtiesModal = false;
+    this.selectedUserForSpecialties = null;
+    this.userSpecialties = [];
+    this.availableSpecialties = [];
+    this.selectedSpecialtyToAdd = null;
+  }
+
+  loadAllSpecialties(): void {
+    this.http.get<any>(`${environment.apiUrl}/specialties`).subscribe({
+      next: (response) => {
+        console.log('Response all specialties:', response);
+        // A resposta vem diretamente como array
+        if (Array.isArray(response)) {
+          this.allSpecialties = response;
+        } else if (response.isSuccess && response.data) {
+          this.allSpecialties = response.data;
+        } else if (response.data && Array.isArray(response.data)) {
+          this.allSpecialties = response.data;
+        } else {
+          this.allSpecialties = [];
+        }
+        console.log('All specialties loaded:', this.allSpecialties);
+        this.updateAvailableSpecialties();
+      },
+      error: (error) => {
+        console.error('Erro ao carregar especialidades:', error);
+        this.allSpecialties = [];
+      }
+    });
+  }
+
+  loadUserSpecialties(userId: number): void {
+    console.log('🔍 Loading specialties for user:', userId);
+    this.http.get<any>(`${environment.apiUrl}/specialties/user/${userId}`).subscribe({
+      next: (response) => {
+        console.log('📦 Raw response:', response);
+        console.log('📦 Response type:', typeof response);
+        console.log('📦 Is array?', Array.isArray(response));
+        console.log('📦 Has isSuccess?', response?.isSuccess);
+        console.log('📦 Has data?', response?.data);
+        
+        // A resposta pode vir com wrapper isSuccess
+        if (Array.isArray(response)) {
+          this.userSpecialties = response;
+          console.log('✅ Set from array:', this.userSpecialties);
+        } else if (response.isSuccess && response.data) {
+          this.userSpecialties = response.data;
+          console.log('✅ Set from isSuccess wrapper:', this.userSpecialties);
+        } else if (response.data && Array.isArray(response.data)) {
+          this.userSpecialties = response.data;
+          console.log('✅ Set from data array:', this.userSpecialties);
+        } else {
+          this.userSpecialties = [];
+          console.log('⚠️ No valid data found, set to empty array');
+        }
+        console.log('📋 Final userSpecialties:', this.userSpecialties);
+        console.log('📋 Length:', this.userSpecialties.length);
+        this.updateAvailableSpecialties();
+      },
+      error: (error) => {
+        console.error('❌ Erro ao carregar especialidades do usuário:', error);
+        console.error('❌ Error details:', error.error);
+        console.error('❌ Status:', error.status);
+        this.userSpecialties = [];
+        this.updateAvailableSpecialties();
+      }
+    });
+  }
+
+  updateAvailableSpecialties(): void {
+    console.log('Updating available specialties...');
+    console.log('All specialties:', this.allSpecialties);
+    console.log('User specialties:', this.userSpecialties);
+    
+    const userSpecialtyIds = this.userSpecialties.map(s => s.specialtyId || s.id);
+    console.log('User specialty IDs:', userSpecialtyIds);
+    
+    this.availableSpecialties = this.allSpecialties.filter(
+      s => !userSpecialtyIds.includes(s.id)
+    );
+    console.log('Available specialties:', this.availableSpecialties);
+  }
+
+  addSpecialtyToUser(): void {
+    if (!this.selectedSpecialtyToAdd || !this.selectedUserForSpecialties) {
+      this.toastService.warning('Selecione uma especialidade');
+      return;
+    }
+
+    this.http.post(
+      `${environment.apiUrl}/specialties/${this.selectedSpecialtyToAdd}/professionals/${this.selectedUserForSpecialties.id}`,
+      {}
+    ).subscribe({
+      next: () => {
+        this.toastService.success('Especialidade atribuída com sucesso');
+        this.loadUserSpecialties(this.selectedUserForSpecialties!.id);
+        this.selectedSpecialtyToAdd = null;
+      },
+      error: (error) => {
+        console.error('Erro ao atribuir especialidade:', error);
+        this.toastService.error(error.error?.message || 'Erro ao atribuir especialidade');
+      }
+    });
+  }
+
+  removeSpecialtyFromUser(specialtyId: number): void {
+    if (!this.selectedUserForSpecialties) return;
+
+    if (!confirm('Tem certeza que deseja remover esta especialidade?')) {
+      return;
+    }
+
+    this.http.delete(
+      `${environment.apiUrl}/specialties/${specialtyId}/professionals/${this.selectedUserForSpecialties.id}`
+    ).subscribe({
+      next: () => {
+        this.toastService.success('Especialidade removida com sucesso');
+        this.loadUserSpecialties(this.selectedUserForSpecialties!.id);
+      },
+      error: (error) => {
+        console.error('Erro ao remover especialidade:', error);
+        this.toastService.error('Erro ao remover especialidade');
+      }
+    });
   }
 
   openEditModal(user: User): void {

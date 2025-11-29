@@ -1,0 +1,211 @@
+<div class="specialties-container" [class.embedded]="embeddedMode">
+  <!-- Header -->
+  <div class="header" *ngIf="!embeddedMode">
+    <div class="breadcrumb">
+      <a routerLink="/admin" class="text-gray-600 hover:text-blue-600">Painel</a>
+      <span class="mx-2 text-gray-400">/</span>
+      <span class="text-gray-900">Especialidades</span>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <button (click)="openCreateModal()" class="btn-primary">
+        <i class="fas fa-plus mr-2"></i>
+        Nova Especialidade
+      </button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="content-area">
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-semibold">Gerenciar Especialidades</h2>
+        <button (click)="openCreateModal()" class="btn-primary">
+          <i class="fas fa-plus mr-2"></i>
+          Nova Especialidade
+        </button>
+      </div>
+
+      <!-- Loading -->
+      <div *ngIf="loading" class="flex justify-center py-8">
+        <div class="spinner"></div>
+      </div>
+
+      <!-- Specialties List -->
+      <div *ngIf="!loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div *ngFor="let specialty of specialties" class="specialty-card">
+          <div class="flex items-start justify-between">
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-2">
+                <i *ngIf="specialty.icon" [class]="specialty.icon + ' text-blue-600'"></i>
+                <h3 class="font-semibold">{{ specialty.name }}</h3>
+              </div>
+              <p *ngIf="specialty.description" class="text-sm text-gray-600 mb-2">{{ specialty.description }}</p>
+              <p class="text-xs text-gray-500">
+                {{ specialty.professionalsCount }} profissional(is) com esta especialidade
+              </p>
+            </div>
+
+            <div class="flex flex-col gap-2 ml-4">
+              <button (click)="openAssignModal(specialty)" class="btn-sm btn-primary whitespace-nowrap" title="Atribuir a profissional">
+                <i class="fas fa-user-plus mr-1"></i>
+                Atribuir
+              </button>
+              <button (click)="openUnassignModal(specialty)" class="btn-sm bg-orange-600 text-white hover:bg-orange-700 whitespace-nowrap" title="Remover de profissional">
+                <i class="fas fa-user-minus mr-1"></i>
+                Remover
+              </button>
+              <button (click)="openEditModal(specialty)" class="btn-sm btn-secondary whitespace-nowrap" title="Editar">
+                <i class="fas fa-edit mr-1"></i>
+                Editar
+              </button>
+              <button (click)="deleteSpecialty(specialty)" class="btn-sm bg-red-600 text-white hover:bg-red-700 whitespace-nowrap" title="Excluir">
+                <i class="fas fa-trash mr-1"></i>
+                Excluir
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty state -->
+        <div *ngIf="specialties.length === 0" class="col-span-full text-center py-12 text-gray-500">
+          <i class="fas fa-stethoscope text-4xl mb-4"></i>
+          <p>Nenhuma especialidade cadastrada</p>
+          <button (click)="openCreateModal()" class="mt-4 text-blue-600 hover:text-blue-700">
+            Criar primeira especialidade
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Modal -->
+  <div *ngIf="showCreateModal" class="modal-overlay" (click)="closeCreateModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h3 class="text-xl font-semibold mb-4">Nova Especialidade</h3>
+
+      <form (ngSubmit)="createSpecialty()">
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Nome *</label>
+          <input type="text" [(ngModel)]="newSpecialty.name" name="name" class="form-input" required />
+        </div>
+
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
+          <textarea [(ngModel)]="newSpecialty.description" name="description" class="form-input" rows="3"></textarea>
+        </div>
+
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Ícone (classe FontAwesome)</label>
+          <input type="text" [(ngModel)]="newSpecialty.icon" name="icon" class="form-input" placeholder="fas fa-stethoscope" />
+        </div>
+
+        <div class="flex justify-end gap-2">
+          <button type="button" (click)="closeCreateModal()" class="btn-secondary">Cancelar</button>
+          <button type="submit" class="btn-primary" [disabled]="loading">
+            {{ loading ? 'Criando...' : 'Criar' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Modal -->
+  <div *ngIf="showEditModal" class="modal-overlay" (click)="closeEditModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h3 class="text-xl font-semibold mb-4">Editar Especialidade</h3>
+
+      <form (ngSubmit)="updateSpecialty()">
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Nome *</label>
+          <input type="text" [(ngModel)]="editSpecialty.name" name="name" class="form-input" required />
+        </div>
+
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
+          <textarea [(ngModel)]="editSpecialty.description" name="description" class="form-input" rows="3"></textarea>
+        </div>
+
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Ícone (classe FontAwesome)</label>
+          <input type="text" [(ngModel)]="editSpecialty.icon" name="icon" class="form-input" placeholder="fas fa-stethoscope" />
+        </div>
+
+        <div class="flex justify-end gap-2">
+          <button type="button" (click)="closeEditModal()" class="btn-secondary">Cancelar</button>
+          <button type="submit" class="btn-primary" [disabled]="loading">
+            {{ loading ? 'Salvando...' : 'Salvar' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Assign Modal -->
+  <div *ngIf="showAssignModal" class="modal-overlay" (click)="closeAssignModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h3 class="text-xl font-semibold mb-4">Atribuir Especialidade</h3>
+
+      <p class="text-sm text-gray-600 mb-4">
+        Selecione um profissional para atribuir a especialidade "{{ selectedSpecialty?.name }}"
+      </p>
+
+      <div class="max-h-96 overflow-y-auto">
+        <div *ngFor="let prof of professionals" class="professional-item">
+          <div class="flex-1">
+            <p class="font-medium">{{ prof.fullName }}</p>
+            <p class="text-sm text-gray-600">{{ prof.email }}</p>
+          </div>
+          <button (click)="assignToProfessional(prof.id)" class="btn-primary btn-sm" [disabled]="loading">
+            Atribuir
+          </button>
+        </div>
+
+        <div *ngIf="professionals.length === 0" class="text-center py-8 text-gray-500">
+          Nenhum profissional disponível
+        </div>
+      </div>
+
+      <div class="flex justify-end mt-4">
+        <button type="button" (click)="closeAssignModal()" class="btn-secondary">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Unassign Modal -->
+  <div *ngIf="showUnassignModal" class="modal-overlay" (click)="closeUnassignModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h3 class="text-xl font-semibold mb-4">Remover Especialidade</h3>
+
+      <p class="text-sm text-gray-600 mb-4">
+        Profissionais com a especialidade "{{ selectedSpecialty?.name }}"
+      </p>
+
+      <div class="max-h-96 overflow-y-auto">
+        <div *ngFor="let prof of professionalsWithSpecialty" class="professional-item">
+          <div class="flex-1">
+            <p class="font-medium">{{ prof.fullName }}</p>
+            <p class="text-sm text-gray-600">{{ prof.email }}</p>
+          </div>
+          <button (click)="unassignFromProfessional(prof.id, selectedSpecialty!.id)" 
+                  class="btn-sm bg-red-600 text-white hover:bg-red-700" 
+                  [disabled]="loading">
+            Remover
+          </button>
+        </div>
+
+        <div *ngIf="professionalsWithSpecialty.length === 0 && !loading" class="text-center py-8 text-gray-500">
+          Nenhum profissional com esta especialidade
+        </div>
+
+        <div *ngIf="loading" class="text-center py-8">
+          <div class="spinner"></div>
+        </div>
+      </div>
+
+      <div class="flex justify-end mt-4">
+        <button type="button" (click)="closeUnassignModal()" class="btn-secondary">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>

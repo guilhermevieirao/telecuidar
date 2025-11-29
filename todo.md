@@ -1,7 +1,5 @@
 dotnet ef database drop --force; dotnet ef database update; dotnet run --seed
 
-MDS
-
 SMTP
 
 Náo permitir usar o mesmo numero ou cpf
@@ -20,6 +18,7 @@ Biométricos
 IA Analisando info resumindo e sugerindo
 Emissão de Receita
 Solicitação de Exame
+    
 Solicitação de Encaminhamento ou Retorno
 PACS
 Certificação Digital

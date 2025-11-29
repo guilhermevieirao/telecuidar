@@ -3,6 +3,52 @@
   background: #f8fafc;
 }
 
+/* Profile Button - Padronizado com Theme e Notifications */
+.profile-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border: 1px solid #d1d5db;
+  background: transparent;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    .profile-icon {
+      color: #374151;
+    }
+  }
+
+  .profile-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: #6b7280;
+    stroke-width: 2;
+    transition: color 0.2s;
+  }
+}
+
+/* Responsive Utilities */
+.desktop-only {
+  @media (max-width: 768px) {
+    display: none !important;
+  }
+}
+
+.mobile-nav-section {
+  display: none;
+  
+  @media (max-width: 768px) {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+}
+
 .navbar {
   background: white;
   border-bottom: 1px solid #e5e7eb;
@@ -438,6 +484,20 @@
 /* Dark Mode Styles */
 :host-context(html[data-theme="dark"]),
 :host-context(html.dark) {
+  .profile-button {
+    border-color: #4b5563;
+
+    &:hover {
+      .profile-icon {
+        color: #d1d5db;
+      }
+    }
+
+    .profile-icon {
+      color: #9ca3af;
+    }
+  }
+
   .profile-page {
     background: #111827;
   }

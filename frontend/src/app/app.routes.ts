@@ -77,18 +77,6 @@ export const routes: Routes = [
     data: { breadcrumbParent: '/painel' }
   },
   {
-    path: 'arquivos',
-    loadComponent: () => import('./features/files/files.component').then(m => m.FilesComponent),
-    canActivate: [authGuard],
-    data: { breadcrumbParent: '/painel' }
-  },
-  {
-    path: 'relatorios',
-    loadComponent: () => import('./features/reports/reports.component').then(m => m.ReportsComponent),
-    canActivate: [authGuard],
-    data: { roles: [3], breadcrumbParent: '/admin' }
-  },
-  {
     path: 'teste',
     loadComponent: () => import('./features/video-call/video-call-simple.component').then(m => m.VideoCallSimpleComponent)
   },

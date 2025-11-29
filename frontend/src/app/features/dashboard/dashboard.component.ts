@@ -43,8 +43,6 @@ export class DashboardComponent implements OnInit {
     this.menuItems = [
       { label: 'Dashboard', icon: '🏠', route: '/painel' },
       { label: 'Meu Perfil', icon: '👤', route: '/perfil' },
-      { label: 'Arquivos', icon: '📁', route: '/arquivos' },
-      { label: 'Relatórios', icon: '📊', route: '/relatorios' },
       { divider: true },
       { label: 'Sair', icon: '🚪', action: () => this.logout() }
     ];

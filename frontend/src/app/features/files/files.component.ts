@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpEventType } from '@angular/common/http';
@@ -45,6 +45,8 @@ interface FileUpload {
   styleUrls: ['./files.component.scss']
 })
 export class FilesComponent implements OnInit {
+  @Input() embeddedMode = false; // Quando true, oculta header e breadcrumb
+  
   files: FileUpload[] = [];
   pageInfo: PageInfo | null = null;
   currentPage = 1;
@@ -102,17 +104,12 @@ export class FilesComponent implements OnInit {
       this.menuItems = [
         { label: 'Painel Admin', icon: '⚙️', route: '/admin' },
         { divider: true },
-        { label: 'Arquivos', icon: '📁', route: '/arquivos' },
-        { label: 'Relatórios', icon: '📈', route: '/relatorios' },
-        { divider: true },
         { label: 'Perfil', icon: '👤', route: '/perfil' },
         { label: 'Sair', icon: '🚪', action: () => this.logout() }
       ];
     } else {
       this.menuItems = [
         { label: 'Dashboard', icon: '📊', route: '/dashboard' },
-        { label: 'Arquivos', icon: '📁', route: '/arquivos' },
-        { label: 'Relatórios', icon: '📈', route: '/relatorios' },
         { divider: true },
         { label: 'Perfil', icon: '👤', route: '/perfil' },
         { label: 'Sair', icon: '🚪', action: () => this.logout() }

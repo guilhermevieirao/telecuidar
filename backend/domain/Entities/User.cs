@@ -19,4 +19,5 @@ public class User : BaseEntity
     
     // Navigation properties
     public ICollection<PasswordResetToken> PasswordResetTokens { get; set; } = new List<PasswordResetToken>();
+    public ICollection<UserSpecialty> UserSpecialties { get; set; } = new List<UserSpecialty>();
 }

@@ -24,6 +24,10 @@ public class ApplicationDbContext : DbContext
     public DbSet<InvitationToken> InvitationTokens { get; set; }
     public DbSet<FileUpload> FileUploads { get; set; }
     public DbSet<Notification> Notifications { get; set; }
+    public DbSet<Specialty> Specialties { get; set; }
+    public DbSet<UserSpecialty> UserSpecialties { get; set; }
+    public DbSet<Schedule> Schedules { get; set; }
+    public DbSet<ScheduleDay> ScheduleDays { get; set; }
 
     public void SetAuditInfo(int? userId, string? ipAddress = null, string? userAgent = null)
     {
