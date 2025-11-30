@@ -127,8 +127,8 @@ public class CreateAppointmentCommandHandler : IRequestHandler<CreateAppointment
         }
 
         // Validar se o horário está dentro do range
-        if (request.AppointmentTime < scheduleDay.StartTime || 
-            request.AppointmentTime.Add(TimeSpan.FromMinutes(scheduleDay.AppointmentDuration)) > scheduleDay.EndTime)
+        if (scheduleDay != null && (request.AppointmentTime < scheduleDay.StartTime || 
+            request.AppointmentTime.Add(TimeSpan.FromMinutes(scheduleDay.AppointmentDuration)) > scheduleDay.EndTime))
         {
             return Result<int>.Failure("Horário fora do expediente do profissional");
         }
@@ -167,6 +167,7 @@ public class CreateAppointmentCommandHandler : IRequestHandler<CreateAppointment
             DurationMinutes = scheduleDay.AppointmentDuration,
             Status = "Agendado",
             Notes = request.Notes,
+            MeetingRoomId = GenerateMeetingRoomId(request.PatientId, request.ProfessionalId.Value, targetDate, request.AppointmentTime),
             CreatedAt = DateTime.UtcNow,
             IsActive = true
         };
@@ -175,5 +176,14 @@ public class CreateAppointmentCommandHandler : IRequestHandler<CreateAppointment
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result<int>.Success(appointment.Id);
+    }
+
+    private string GenerateMeetingRoomId(int patientId, int professionalId, DateTime date, TimeSpan time)
+    {
+        // Gerar um ID único e previsível para a sala de reunião
+        var dateStr = date.ToString("yyyyMMdd");
+        var timeStr = time.ToString(@"hhmm");
+        var uniqueId = $"TC-{patientId}-{professionalId}-{dateStr}-{timeStr}";
+        return uniqueId;
     }
 }

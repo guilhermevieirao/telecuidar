@@ -43,12 +43,9 @@
       <!-- Cabeçalho -->
       <div class="appointments-header">
         <div>
-          <h1>Minhas Consultas</h1>
-          <p class="subtitle">Acompanhe todas as suas consultas agendadas</p>
+          <h1>Minhas Consultas Profissionais</h1>
+          <p class="subtitle">Acompanhe todas as suas consultas agendadas com pacientes</p>
         </div>
-        <button class="btn btn-primary" routerLink="/agendar">
-          <span>+ Agendar Nova Consulta</span>
-        </button>
       </div>
 
       <!-- Filtros -->
@@ -113,19 +110,16 @@
           <p *ngIf="currentFilter === 'upcoming'">Você não tem consultas próximas agendadas.</p>
           <p *ngIf="currentFilter === 'past'">Você não tem consultas passadas.</p>
           <p *ngIf="currentFilter === 'cancelled'">Você não tem consultas canceladas.</p>
-          <button class="btn btn-primary" routerLink="/agendar" *ngIf="currentFilter === 'all' || currentFilter === 'upcoming'">
-            Agendar Consulta
-          </button>
         </div>
 
         <!-- Cards de Consultas -->
         <div class="appointment-card" *ngFor="let appointment of filteredAppointments" [class.upcoming]="isUpcoming(appointment)">
           <div class="appointment-header">
             <div class="appointment-specialty">
-              <span class="specialty-icon">🏥</span>
+              <span class="specialty-icon">👤</span>
               <div>
-                <h3>{{ appointment.specialtyName }}</h3>
-                <p class="professional-name">{{ appointment.professionalName }}</p>
+                <h3>{{ appointment.patientName }}</h3>
+                <p class="professional-name">{{ appointment.specialtyName }}</p>
               </div>
             </div>
             <span class="status-badge" [ngClass]="getStatusClass(appointment.status)">
@@ -171,7 +165,7 @@
               <button class="btn-action btn-video" *ngIf="isUpcoming(appointment) && appointment.meetingRoomId" [routerLink]="['/consulta-video', appointment.id]">
                 Entrar na Chamada
               </button>
-              <button class="btn-action btn-details" *ngIf="isUpcoming(appointment)" (click)="viewDetails(appointment)">
+              <button class="btn-action btn-details" (click)="viewDetails(appointment)">
                 Ver Detalhes
               </button>
               <button class="btn-action btn-cancel" *ngIf="isUpcoming(appointment)" (click)="openCancelModal(appointment)">
@@ -202,12 +196,12 @@
           <h3>Informações da Consulta</h3>
           <div class="detail-grid">
             <div class="detail-row">
-              <span class="label">Especialidade:</span>
-              <span class="value">{{ selectedAppointment.specialtyName }}</span>
+              <span class="label">Paciente:</span>
+              <span class="value">{{ selectedAppointment.patientName }}</span>
             </div>
             <div class="detail-row">
-              <span class="label">Profissional:</span>
-              <span class="value">{{ selectedAppointment.professionalName }}</span>
+              <span class="label">Especialidade:</span>
+              <span class="value">{{ selectedAppointment.specialtyName }}</span>
             </div>
             <div class="detail-row">
               <span class="label">Data:</span>
@@ -231,7 +225,7 @@
         </div>
 
         <div class="detail-section" *ngIf="selectedAppointment.notes">
-          <h3>Observações</h3>
+          <h3>Observações do Paciente</h3>
           <p class="notes-text">{{ selectedAppointment.notes }}</p>
         </div>
 
@@ -270,8 +264,8 @@
         </div>
 
         <div class="appointment-summary">
+          <p><strong>Paciente:</strong> {{ selectedAppointment.patientName }}</p>
           <p><strong>Especialidade:</strong> {{ selectedAppointment.specialtyName }}</p>
-          <p><strong>Profissional:</strong> {{ selectedAppointment.professionalName }}</p>
           <p><strong>Data e Horário:</strong> {{ formatDate(selectedAppointment.appointmentDate) }} às {{ formatTime(selectedAppointment.appointmentTime) }}</p>
         </div>
 

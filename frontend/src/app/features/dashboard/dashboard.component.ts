@@ -40,14 +40,27 @@ export class DashboardComponent implements OnInit {
   }
 
   setupMenu(): void {
-    this.menuItems = [
-      { label: 'Dashboard', icon: '🏠', route: '/painel' },
-      { label: 'Agendar Consulta', icon: '🗓️', route: '/agendar' },
-      { label: 'Minhas Consultas', icon: '📋', route: '/minhas-consultas' },
-      { label: 'Meu Perfil', icon: '👤', route: '/perfil' },
-      { divider: true },
-      { label: 'Sair', icon: '🚪', action: () => this.logout() }
-    ];
+    // Menu para Pacientes (role = 1)
+    if (this.user?.role === 1) {
+      this.menuItems = [
+        { label: 'Dashboard', icon: '🏠', route: '/painel' },
+        { label: 'Agendar Consulta', icon: '🗓️', route: '/agendar' },
+        { label: 'Minhas Consultas', icon: '📋', route: '/minhas-consultas' },
+        { label: 'Meu Perfil', icon: '👤', route: '/perfil' },
+        { divider: true },
+        { label: 'Sair', icon: '🚪', action: () => this.logout() }
+      ];
+    }
+    // Menu para Profissionais (role = 2)
+    else if (this.user?.role === 2) {
+      this.menuItems = [
+        { label: 'Dashboard', icon: '🏠', route: '/painel' },
+        { label: 'Minhas Consultas', icon: '📋', route: '/consultas-profissional' },
+        { label: 'Meu Perfil', icon: '👤', route: '/perfil' },
+        { divider: true },
+        { label: 'Sair', icon: '🚪', action: () => this.logout() }
+      ];
+    }
   }
 
   logout(): void {

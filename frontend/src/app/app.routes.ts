@@ -77,6 +77,18 @@ export const routes: Routes = [
     data: { roles: [1], breadcrumbParent: '/painel' }
   },
   {
+    path: 'consultas-profissional',
+    loadComponent: () => import('./features/professional-appointments/professional-appointments.component').then(m => m.ProfessionalAppointmentsComponent),
+    canActivate: [authGuard],
+    data: { roles: [2], breadcrumbParent: '/painel' }
+  },
+  {
+    path: 'consulta-video/:id',
+    loadComponent: () => import('./features/video-call/appointment-video-call.component').then(m => m.AppointmentVideoCallComponent),
+    canActivate: [authGuard],
+    data: { roles: [1, 2] }
+  },
+  {
     path: 'admin',
     loadComponent: () => import('./features/admin/admin.component').then(m => m.AdminComponent),
     canActivate: [authGuard],

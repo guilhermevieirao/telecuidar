@@ -21,13 +21,29 @@ public class CancelAppointmentCommandHandler : IRequestHandler<CancelAppointment
 
     public async Task<Result<bool>> Handle(CancelAppointmentCommand request, CancellationToken cancellationToken)
     {
-        // Buscar o agendamento
-        var appointment = await _appointmentRepository.GetQueryable()
-            .FirstOrDefaultAsync(a => a.Id == request.AppointmentId && a.PatientId == request.PatientId, cancellationToken);
+        // Buscar o agendamento com validação de quem está cancelando
+        var query = _appointmentRepository.GetQueryable()
+            .Where(a => a.Id == request.AppointmentId);
+
+        // Validar se é paciente ou profissional
+        if (request.PatientId.HasValue)
+        {
+            query = query.Where(a => a.PatientId == request.PatientId.Value);
+        }
+        else if (request.ProfessionalId.HasValue)
+        {
+            query = query.Where(a => a.ProfessionalId == request.ProfessionalId.Value);
+        }
+        else
+        {
+            return Result<bool>.Failure("É necessário informar o paciente ou profissional");
+        }
+
+        var appointment = await query.FirstOrDefaultAsync(cancellationToken);
 
         if (appointment == null)
         {
-            return Result<bool>.Failure("Agendamento não encontrado");
+            return Result<bool>.Failure("Agendamento não encontrado ou você não tem permissão para cancelá-lo");
         }
 
         // Verificar se já está cancelado

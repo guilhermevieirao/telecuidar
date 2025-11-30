@@ -7,16 +7,16 @@ using app.Domain.Interfaces;
 
 namespace app.Application.Appointments.Queries;
 
-public class GetPatientAppointmentsQueryHandler : IRequestHandler<GetPatientAppointmentsQuery, Result<List<AppointmentDto>>>
+public class GetProfessionalAppointmentsQueryHandler : IRequestHandler<GetProfessionalAppointmentsQuery, Result<List<AppointmentDto>>>
 {
     private readonly IRepository<Appointment> _appointmentRepository;
 
-    public GetPatientAppointmentsQueryHandler(IRepository<Appointment> appointmentRepository)
+    public GetProfessionalAppointmentsQueryHandler(IRepository<Appointment> appointmentRepository)
     {
         _appointmentRepository = appointmentRepository;
     }
 
-    public async Task<Result<List<AppointmentDto>>> Handle(GetPatientAppointmentsQuery request, CancellationToken cancellationToken)
+    public async Task<Result<List<AppointmentDto>>> Handle(GetProfessionalAppointmentsQuery request, CancellationToken cancellationToken)
     {
         try
         {
@@ -24,7 +24,7 @@ public class GetPatientAppointmentsQueryHandler : IRequestHandler<GetPatientAppo
                 .Include(a => a.Patient)
                 .Include(a => a.Professional)
                 .Include(a => a.Specialty)
-                .Where(a => a.PatientId == request.PatientId && a.IsActive);
+                .Where(a => a.ProfessionalId == request.ProfessionalId && a.IsActive);
 
             if (!request.IncludePast.GetValueOrDefault())
             {
@@ -48,7 +48,7 @@ public class GetPatientAppointmentsQueryHandler : IRequestHandler<GetPatientAppo
                 PatientId = a.PatientId,
                 PatientName = a.Patient?.FullName ?? "Desconhecido",
                 ProfessionalId = a.ProfessionalId,
-                ProfessionalName = a.Professional?.FullName ?? "Qualquer profissional",
+                ProfessionalName = a.Professional?.FullName ?? "Não atribuído",
                 SpecialtyId = a.SpecialtyId,
                 SpecialtyName = a.Specialty?.Name ?? "Não especificada",
                 AppointmentDate = a.AppointmentDate,

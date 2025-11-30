@@ -19,5 +19,7 @@ public class Appointment : BaseEntity
     public string? CancellationReason { get; set; }
     public DateTime? CancelledAt { get; set; }
     
+    public string? MeetingRoomId { get; set; } // ID da sala de videochamada Jitsi
+    
     public string? Notes { get; set; }
 }

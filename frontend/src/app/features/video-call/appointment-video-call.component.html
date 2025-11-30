@@ -1,0 +1,395 @@
+<div class="video-call-page" [class.with-medical-record]="showMedicalRecord">
+  <!-- Header com informações da consulta -->
+  <div class="video-call-header" *ngIf="appointment && !errorMessage">
+    <div class="header-content">
+      <div class="appointment-info">
+        <h2>{{ user?.role === 1 ? 'Consulta com' : 'Consulta de' }} {{ user?.role === 1 ? appointment.professionalName : appointment.patientName }}</h2>
+        <p>{{ appointment.specialtyName }} • {{ formatDate(appointment.appointmentDate) }} às {{ formatTime(appointment.appointmentTime) }}</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn-toggle-record" *ngIf="user?.role === 2" (click)="toggleMedicalRecord()" title="Alternar prontuário">
+          {{ showMedicalRecord ? '◀ Ocultar Prontuário' : '▶ Mostrar Prontuário' }}
+        </button>
+        <button class="btn-back" (click)="goBack()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          Voltar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-overlay" *ngIf="isLoading && !errorMessage">
+    <div class="loading-content">
+      <div class="spinner"></div>
+      <p>Conectando à videochamada...</p>
+      <small>Aguarde enquanto preparamos tudo para você</small>
+    </div>
+  </div>
+
+  <!-- Error Message -->
+  <div class="error-container" *ngIf="errorMessage">
+    <div class="error-content">
+      <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="15" y1="9" x2="9" y2="15"></line>
+        <line x1="9" y1="9" x2="15" y2="15"></line>
+      </svg>
+      <h2>Erro ao Conectar</h2>
+      <p>{{ errorMessage }}</p>
+      <button class="btn-primary" (click)="goBack()">Voltar para Consultas</button>
+    </div>
+  </div>
+
+  <!-- Jitsi Container -->
+  <div class="video-container" *ngIf="!errorMessage">
+    <div id="jitsi-meet-container"></div>
+  </div>
+
+  <!-- Painel de Prontuário Médico (apenas para profissionais) -->
+  <div class="medical-record-panel" *ngIf="showMedicalRecord && user?.role === 2">
+    <div class="medical-header">
+      <h2>📋 Prontuário de Atendimento</h2>
+      <div class="header-actions">
+        <button class="btn-action btn-save" (click)="saveMedicalRecord()" title="Salvar prontuário">
+          💾 Salvar
+        </button>
+        <button class="btn-action btn-print" (click)="printMedicalRecord()" title="Imprimir">
+          🖨️ Imprimir
+        </button>
+        <button class="btn-action btn-clear" (click)="clearMedicalRecord()" title="Limpar">
+          🗑️ Limpar
+        </button>
+      </div>
+    </div>
+
+    <div class="medical-tabs" *ngIf="selectedSpecialty">
+      <button 
+        class="tab-btn" 
+        [class.active]="activeTab === 'patient'"
+        (click)="setActiveTab('patient')">
+        👤 Paciente
+      </button>
+      <button 
+        class="tab-btn" 
+        [class.active]="activeTab === 'anamnesis'"
+        (click)="setActiveTab('anamnesis')">
+        📝 Anamnese
+      </button>
+      <button 
+        class="tab-btn" 
+        [class.active]="activeTab === 'exam'"
+        (click)="setActiveTab('exam')">
+        🩺 Exame
+      </button>
+      <button 
+        class="tab-btn" 
+        [class.active]="activeTab === 'diagnosis'"
+        (click)="setActiveTab('diagnosis')">
+        💊 Diagnóstico
+      </button>
+    </div>
+
+    <div class="medical-content">
+      <!-- Tab: Seleção de Especialidade -->
+      <div class="tab-content" *ngIf="activeTab === 'specialty'">
+        <div class="specialty-selection">
+          <h3>Selecione a Especialidade</h3>
+          <p class="specialty-subtitle">Escolha a área médica para personalizar o atendimento</p>
+          
+          <div class="specialty-grid">
+            <div 
+              *ngFor="let specialty of specialties"
+              class="specialty-card"
+              (click)="selectSpecialty(specialty.id)"
+              [class.selected]="selectedSpecialty === specialty.id">
+              <div class="specialty-icon">{{ specialty.icon }}</div>
+              <div class="specialty-info">
+                <h4>{{ specialty.name }}</h4>
+                <p>{{ specialty.description }}</p>
+              </div>
+              <div class="specialty-check" *ngIf="selectedSpecialty === specialty.id">✓</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Dados do Paciente -->
+      <div class="tab-content" *ngIf="activeTab === 'patient'">
+        <div class="specialty-badge" *ngIf="selectedSpecialty">
+          <span class="badge-label">Especialidade:</span>
+          <span class="badge-value">{{ getSpecialtyName() }}</span>
+          <button class="btn-change-specialty" (click)="setActiveTab('specialty')" title="Trocar especialidade">
+            🔄
+          </button>
+        </div>
+        <div class="form-section">
+          <h3>Identificação do Paciente</h3>
+          
+          <div class="form-group">
+            <label for="patientName">Nome Completo *</label>
+            <input 
+              id="patientName"
+              type="text" 
+              [(ngModel)]="medicalRecord.patientName"
+              placeholder="Nome completo do paciente"
+              class="form-control">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="patientCPF">CPF</label>
+              <input 
+                id="patientCPF"
+                type="text" 
+                [(ngModel)]="medicalRecord.patientCPF"
+                placeholder="000.000.000-00"
+                class="form-control">
+            </div>
+
+            <div class="form-group">
+              <label for="patientAge">Idade</label>
+              <input 
+                id="patientAge"
+                type="number" 
+                [(ngModel)]="medicalRecord.patientAge"
+                placeholder="Idade"
+                class="form-control">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="patientGender">Sexo</label>
+            <select 
+              id="patientGender"
+              [(ngModel)]="medicalRecord.patientGender"
+              class="form-control">
+              <option value="">Selecione</option>
+              <option value="M">Masculino</option>
+              <option value="F">Feminino</option>
+              <option value="O">Outro</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="consultationDate">Data da Consulta</label>
+              <input 
+                id="consultationDate"
+                type="date" 
+                [(ngModel)]="medicalRecord.consultationDate"
+                class="form-control">
+            </div>
+
+            <div class="form-group">
+              <label for="consultationTime">Horário</label>
+              <input 
+                id="consultationTime"
+                type="time" 
+                [(ngModel)]="medicalRecord.consultationTime"
+                class="form-control">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Anamnese -->
+      <div class="tab-content" *ngIf="activeTab === 'anamnesis'">
+        <div class="form-section">
+          <h3>Anamnese</h3>
+
+          <div class="form-group">
+            <label for="chiefComplaint">Queixa Principal *</label>
+            <textarea 
+              id="chiefComplaint"
+              [(ngModel)]="medicalRecord.chiefComplaint"
+              placeholder="Descreva a queixa principal do paciente..."
+              rows="3"
+              class="form-control"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="symptoms">Sintomas</label>
+            <textarea 
+              id="symptoms"
+              [(ngModel)]="medicalRecord.symptoms"
+              placeholder="Liste os sintomas apresentados..."
+              rows="4"
+              class="form-control"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="medicalHistory">Histórico Médico</label>
+            <textarea 
+              id="medicalHistory"
+              [(ngModel)]="medicalRecord.medicalHistory"
+              placeholder="Doenças prévias, cirurgias, internações..."
+              rows="4"
+              class="form-control"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="currentMedications">Medicações em Uso</label>
+            <textarea 
+              id="currentMedications"
+              [(ngModel)]="medicalRecord.currentMedications"
+              placeholder="Liste as medicações que o paciente está utilizando..."
+              rows="3"
+              class="form-control"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="allergies">Alergias</label>
+            <textarea 
+              id="allergies"
+              [(ngModel)]="medicalRecord.allergies"
+              placeholder="Alergias conhecidas (medicamentos, alimentos, etc)..."
+              rows="2"
+              class="form-control"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Exame Físico -->
+      <div class="tab-content" *ngIf="activeTab === 'exam'">
+        <div class="form-section">
+          <h3>Sinais Vitais</h3>
+
+          <div class="vital-signs-grid">
+            <div class="form-group">
+              <label for="bloodPressure">Pressão Arterial</label>
+              <input 
+                id="bloodPressure"
+                type="text" 
+                [(ngModel)]="medicalRecord.vitalSigns.bloodPressure"
+                placeholder="120/80 mmHg"
+                class="form-control">
+            </div>
+
+            <div class="form-group">
+              <label for="heartRate">Frequência Cardíaca</label>
+              <input 
+                id="heartRate"
+                type="text" 
+                [(ngModel)]="medicalRecord.vitalSigns.heartRate"
+                placeholder="75 bpm"
+                class="form-control">
+            </div>
+
+            <div class="form-group">
+              <label for="temperature">Temperatura</label>
+              <input 
+                id="temperature"
+                type="text" 
+                [(ngModel)]="medicalRecord.vitalSigns.temperature"
+                placeholder="36.5°C"
+                class="form-control">
+            </div>
+
+            <div class="form-group">
+              <label for="oxygenSaturation">Saturação O2</label>
+              <input 
+                id="oxygenSaturation"
+                type="text" 
+                [(ngModel)]="medicalRecord.vitalSigns.oxygenSaturation"
+                placeholder="98%"
+                class="form-control">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="physicalExam">Exame Físico</label>
+            <textarea 
+              id="physicalExam"
+              [(ngModel)]="medicalRecord.physicalExam"
+              placeholder="Descreva os achados do exame físico..."
+              rows="6"
+              class="form-control"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Diagnóstico e Tratamento -->
+      <div class="tab-content" *ngIf="activeTab === 'diagnosis'">
+        <div class="form-section" *ngIf="getSpecialtyFields().length > 0">
+          <h3>🔬 Campos Específicos - {{ getSpecialtyName() }}</h3>
+          
+          <div *ngFor="let field of getSpecialtyFields()" class="form-group">
+            <label [for]="field.key">{{ field.label }}</label>
+            <input 
+              *ngIf="field.type === 'text' || field.type === 'date'"
+              [id]="field.key"
+              [type]="field.type"
+              [(ngModel)]="specialtyData[field.key]"
+              [placeholder]="field.label"
+              class="form-control">
+            <textarea 
+              *ngIf="field.type === 'textarea'"
+              [id]="field.key"
+              [(ngModel)]="specialtyData[field.key]"
+              [placeholder]="field.label"
+              rows="3"
+              class="form-control"></textarea>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3>Diagnóstico e Conduta</h3>
+
+          <div class="form-group">
+            <label for="diagnosis">Diagnóstico / Hipótese Diagnóstica *</label>
+            <textarea 
+              id="diagnosis"
+              [(ngModel)]="medicalRecord.diagnosis"
+              placeholder="CID-10, diagnóstico clínico..."
+              rows="3"
+              class="form-control"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="treatment">Tratamento / Conduta</label>
+            <textarea 
+              id="treatment"
+              [(ngModel)]="medicalRecord.treatment"
+              placeholder="Plano terapêutico, orientações..."
+              rows="4"
+              class="form-control"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="prescription">Prescrição Médica</label>
+            <textarea 
+              id="prescription"
+              [(ngModel)]="medicalRecord.prescription"
+              placeholder="Medicamentos prescritos com posologia..."
+              rows="5"
+              class="form-control"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="observations">Observações</label>
+            <textarea 
+              id="observations"
+              [(ngModel)]="medicalRecord.observations"
+              placeholder="Observações adicionais sobre a consulta..."
+              rows="3"
+              class="form-control"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="followUp">Retorno / Acompanhamento</label>
+            <textarea 
+              id="followUp"
+              [(ngModel)]="medicalRecord.followUp"
+              placeholder="Orientações sobre retorno, exames solicitados..."
+              rows="3"
+              class="form-control"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

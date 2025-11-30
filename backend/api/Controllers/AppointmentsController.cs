@@ -123,7 +123,33 @@ public class AppointmentsController : ControllerBase
     }
 
     /// <summary>
-    /// Cancelar um agendamento
+    /// Buscar agendamentos do profissional
+    /// </summary>
+    [HttpGet("my-professional-appointments")]
+    [Authorize(Roles = "Profissional")]
+    public async Task<IActionResult> GetProfessionalAppointments([FromQuery] bool includePast = false)
+    {
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+        {
+            return Unauthorized();
+        }
+
+        var query = new GetProfessionalAppointmentsQuery
+        {
+            ProfessionalId = userId,
+            IncludePast = includePast
+        };
+        var result = await _mediator.Send(query);
+
+        if (!result.IsSuccess)
+            return BadRequest(new { result.Message, result.Errors });
+
+        return Ok(result.Data);
+    }
+
+    /// <summary>
+    /// Cancelar um agendamento (Paciente)
     /// </summary>
     [HttpPut("{id}/cancel")]
     [Authorize(Roles = "Paciente")]
@@ -139,6 +165,34 @@ public class AppointmentsController : ControllerBase
         {
             AppointmentId = id,
             PatientId = userId,
+            CancellationReason = request.Reason
+        };
+
+        var result = await _mediator.Send(command);
+
+        if (!result.IsSuccess)
+            return BadRequest(new { result.Message, result.Errors });
+
+        return Ok();
+    }
+
+    /// <summary>
+    /// Cancelar um agendamento (Profissional)
+    /// </summary>
+    [HttpPut("{id}/cancel-professional")]
+    [Authorize(Roles = "Profissional")]
+    public async Task<IActionResult> CancelAppointmentByProfessional(int id, [FromBody] CancelAppointmentRequest request)
+    {
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+        {
+            return Unauthorized();
+        }
+
+        var command = new CancelAppointmentCommand
+        {
+            AppointmentId = id,
+            ProfessionalId = userId,
             CancellationReason = request.Reason
         };
 

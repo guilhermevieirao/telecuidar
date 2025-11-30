@@ -14,6 +14,7 @@ public class AppointmentDto
     public int DurationMinutes { get; set; }
     public string Status { get; set; } = string.Empty;
     public string? Notes { get; set; }
+    public string? MeetingRoomId { get; set; }
     public DateTime CreatedAt { get; set; }
 }
 

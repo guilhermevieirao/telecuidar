@@ -42,6 +42,7 @@ export interface Appointment {
   durationMinutes: number;
   status: string;
   notes?: string;
+  meetingRoomId?: string;
   createdAt: string;
 }
 
@@ -87,7 +88,17 @@ export class AppointmentService {
     );
   }
 
+  getMyProfessionalAppointments(includePast: boolean = false): Observable<Appointment[]> {
+    return this.http.get<Appointment[]>(
+      `${this.baseUrl}/my-professional-appointments?includePast=${includePast}`
+    );
+  }
+
   cancelAppointment(appointmentId: number, reason: string): Observable<void> {
     return this.http.put<void>(`${this.baseUrl}/${appointmentId}/cancel`, { reason });
+  }
+
+  cancelAppointmentByProfessional(appointmentId: number, reason: string): Observable<void> {
+    return this.http.put<void>(`${this.baseUrl}/${appointmentId}/cancel-professional`, { reason });
   }
 }
