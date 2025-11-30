@@ -21,6 +21,7 @@ public class GetAllSchedulesQueryHandler : IRequestHandler<GetAllSchedulesQuery,
     {
         var query = _scheduleRepository.GetQueryable()
             .Include(s => s.Professional)
+            .Include(s => s.CreatedByUser)
             .Include(s => s.ScheduleDays)
             .AsQueryable();
 
@@ -45,6 +46,8 @@ public class GetAllSchedulesQueryHandler : IRequestHandler<GetAllSchedulesQuery,
                 EndDate = s.EndDate,
                 IsActive = s.IsActive,
                 CreatedAt = s.CreatedAt,
+                UpdatedAt = s.UpdatedAt,
+                CreatedByName = s.CreatedByUser != null ? s.CreatedByUser.FullName : null,
                 ScheduleDays = s.ScheduleDays.OrderBy(d => d.DayOfWeek).Select(d => new ScheduleDayDto
                 {
                     Id = d.Id,

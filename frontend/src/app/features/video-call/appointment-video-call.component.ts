@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppointmentService, Appointment } from '../../core/services/appointment.service';
+import { ModalService } from '../../services/modal.service';
 
 declare var JitsiMeetExternalAPI: any;
 
@@ -114,7 +115,8 @@ export class AppointmentVideoCallComponent implements OnInit, OnDestroy, AfterVi
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private appointmentService: AppointmentService
+    private appointmentService: AppointmentService,
+    private modalService: ModalService
   ) {}
 
   ngOnInit(): void {
@@ -397,7 +399,7 @@ export class AppointmentVideoCallComponent implements OnInit, OnDestroy, AfterVi
   saveMedicalRecord(): void {
     console.log('Prontuário salvo:', this.medicalRecord);
     console.log('Dados específicos da especialidade:', this.specialtyData);
-    alert('Prontuário salvo com sucesso!');
+    this.modalService.showSuccess('Prontuário salvo com sucesso!');
     // Aqui você implementaria a lógica para salvar no backend
   }
 

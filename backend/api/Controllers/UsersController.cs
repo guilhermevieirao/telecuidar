@@ -4,6 +4,7 @@ using app.Application.Users.Commands.CreateUser;
 using app.Application.Users.Commands.UpdateUser;
 using app.Application.Users.Commands.DeleteUser;
 using app.Application.Users.Commands.DeleteAccount;
+using app.Application.Users.Commands.ChangePassword;
 using app.Application.Users.Queries.GetAllUsers;
 using app.Application.Users.Queries.GetUserById;
 
@@ -134,5 +135,21 @@ public class UsersController : ControllerBase
         }
         
         return BadRequest(new { message = "Erro ao excluir conta" });
+    }
+
+    /// <summary>
+    /// Altera a senha do usuário
+    /// </summary>
+    [HttpPost("change-password")]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordCommand command)
+    {
+        var result = await _mediator.Send(command);
+        
+        if (result.IsSuccess)
+        {
+            return Ok(result);
+        }
+        
+        return BadRequest(result);
     }
 }

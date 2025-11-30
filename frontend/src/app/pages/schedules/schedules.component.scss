@@ -139,7 +139,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 10500;
   padding: 1rem;
 }
 
@@ -181,5 +181,158 @@
 
   .day-config-card {
     padding: 0.75rem;
+  }
+}
+
+// Dark mode
+:host-context(html[data-theme="dark"]),
+:host-context(html.dark) {
+  .schedule-card {
+    background: #1f2937;
+    border-color: #374151;
+    color: #f9fafb;
+
+    &:hover {
+      border-color: #3b82f6;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  .day-config-card {
+    background: #374151;
+    border-color: #4b5563;
+    color: #f9fafb;
+  }
+
+  .day-config-details {
+    border-color: #4b5563;
+  }
+
+  .btn-secondary {
+    background: #374151;
+    color: #d1d5db;
+
+    &:hover {
+      background: #4b5563;
+    }
+  }
+
+  .form-input,
+  .form-input-sm {
+    background: #374151;
+    border-color: #4b5563;
+    color: #f9fafb;
+
+    &:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+
+    &:disabled {
+      background: #1f2937;
+    }
+
+    &::placeholder {
+      color: #6b7280;
+    }
+  }
+
+  .modal-content-large {
+    background: #1f2937;
+    color: #f9fafb;
+  }
+
+  .spinner {
+    border-color: #374151;
+    border-top-color: #3b82f6;
+  }
+
+  // Tabela
+  ::ng-deep table {
+    thead {
+      background: #374151;
+      
+      th {
+        color: #9ca3af;
+      }
+    }
+
+    tbody {
+      background: #1f2937;
+
+      tr {
+        border-color: #374151;
+
+        &:hover {
+          background: #374151;
+        }
+
+        td {
+          color: #f9fafb;
+
+          .text-gray-900 {
+            color: #f9fafb;
+          }
+
+          .text-gray-500 {
+            color: #9ca3af !important;
+          }
+
+          .text-gray-600 {
+            color: #d1d5db !important;
+          }
+        }
+      }
+    }
+  }
+
+  // Card de configurações globais
+  ::ng-deep .bg-blue-50 {
+    background: #1e3a5f !important;
+    border-color: #2563eb !important;
+  }
+
+  ::ng-deep .text-gray-800 {
+    color: #f9fafb;
+  }
+
+  ::ng-deep .text-gray-600 {
+    color: #d1d5db !important;
+  }
+
+  ::ng-deep .text-gray-700 {
+    color: #e5e7eb !important;
+  }
+
+  ::ng-deep .text-blue-700 {
+    color: #93c5fd !important;
+  }
+
+  ::ng-deep .text-blue-800 {
+    color: #bfdbfe !important;
+  }
+
+  ::ng-deep .text-blue-900 {
+    color: #93c5fd !important;
+  }
+
+  ::ng-deep .border-blue-200 {
+    border-color: #1e40af !important;
+  }
+
+  ::ng-deep .bg-white {
+    background: #1f2937 !important;
+  }
+
+  ::ng-deep .bg-gray-50 {
+    background: #374151 !important;
+  }
+
+  ::ng-deep .divide-gray-200 > * {
+    border-color: #374151 !important;
+  }
+
+  ::ng-deep .border-gray-200 {
+    border-color: #374151 !important;
   }
 }

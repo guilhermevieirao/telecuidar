@@ -1,10 +1,11 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { SpecialtyService } from '../../services/specialty.service';
 import { SpecialtyDto, CreateSpecialtyCommand, UpdateSpecialtyCommand } from '../../models/specialty.model';
+import { ModalService } from '../../services/modal.service';
 import { environment } from '../../../environments/environment';
 
 interface Professional {
@@ -51,7 +52,8 @@ export class SpecialtiesComponent implements OnInit {
 
   constructor(
     private specialtyService: SpecialtyService,
-    private http: HttpClient
+    private http: HttpClient,
+    private modalService: ModalService
   ) {}
 
   ngOnInit(): void {
@@ -102,20 +104,25 @@ export class SpecialtiesComponent implements OnInit {
 
   createSpecialty(): void {
     if (!this.newSpecialty.name.trim()) {
-      alert('Nome da especialidade é obrigatório');
+      this.modalService.showAlert({
+        title: 'Validação',
+        message: 'Nome da especialidade é obrigatório',
+        type: 'warning'
+      });
       return;
     }
 
     this.loading = true;
     this.specialtyService.create(this.newSpecialty).subscribe({
       next: () => {
+        this.modalService.showSuccess('Especialidade criada com sucesso');
         this.loadSpecialties();
         this.closeCreateModal();
         this.loading = false;
       },
       error: (error) => {
         console.error('Erro ao criar especialidade:', error);
-        alert('Erro ao criar especialidade');
+        this.modalService.showError('Erro ao criar especialidade');
         this.loading = false;
       }
     });
@@ -137,39 +144,52 @@ export class SpecialtiesComponent implements OnInit {
 
   updateSpecialty(): void {
     if (!this.editSpecialty.name.trim()) {
-      alert('Nome da especialidade é obrigatório');
+      this.modalService.showAlert({
+        title: 'Validação',
+        message: 'Nome da especialidade é obrigatório',
+        type: 'warning'
+      });
       return;
     }
 
     this.loading = true;
     this.specialtyService.update(this.editSpecialty).subscribe({
       next: () => {
+        this.modalService.showSuccess('Especialidade atualizada com sucesso');
         this.loadSpecialties();
         this.closeEditModal();
         this.loading = false;
       },
       error: (error) => {
         console.error('Erro ao atualizar especialidade:', error);
-        alert('Erro ao atualizar especialidade');
+        this.modalService.showError('Erro ao atualizar especialidade');
         this.loading = false;
       }
     });
   }
 
-  deleteSpecialty(specialty: SpecialtyDto): void {
-    if (!confirm(`Tem certeza que deseja excluir a especialidade "${specialty.name}"?`)) {
+  async deleteSpecialty(specialty: SpecialtyDto): Promise<void> {
+    const result = await this.modalService.showConfirm({
+      title: 'Confirmar exclusão',
+      message: `Tem certeza que deseja excluir a especialidade "${specialty.name}"?`,
+      confirmText: 'Excluir',
+      cancelText: 'Cancelar',
+      type: 'danger'
+    });
+    if (!result) {
       return;
     }
 
     this.loading = true;
     this.specialtyService.delete(specialty.id).subscribe({
       next: () => {
+        this.modalService.showSuccess('Especialidade excluída com sucesso');
         this.loadSpecialties();
         this.loading = false;
       },
       error: (error) => {
         console.error('Erro ao excluir especialidade:', error);
-        alert('Erro ao excluir especialidade');
+        this.modalService.showError('Erro ao excluir especialidade');
         this.loading = false;
       }
     });
@@ -219,22 +239,29 @@ export class SpecialtiesComponent implements OnInit {
     });
   }
 
-  unassignFromProfessional(userId: number, specialtyId: number): void {
-    if (!confirm('Tem certeza que deseja remover esta especialidade do profissional?')) {
+  async unassignFromProfessional(userId: number, specialtyId: number): Promise<void> {
+    const result = await this.modalService.showConfirm({
+      title: 'Confirmar remoção',
+      message: 'Tem certeza que deseja remover esta especialidade do profissional?',
+      confirmText: 'Remover',
+      cancelText: 'Cancelar',
+      type: 'danger'
+    });
+    if (!result) {
       return;
     }
 
     this.loading = true;
     this.http.delete(`${environment.apiUrl}/specialties/${specialtyId}/professionals/${userId}`).subscribe({
       next: (response: any) => {
-        alert('Especialidade removida com sucesso');
+        this.modalService.showSuccess('Especialidade removida com sucesso');
         this.loadProfessionalsWithSpecialty(specialtyId);
         this.loadSpecialties();
         this.loading = false;
       },
       error: (error) => {
         console.error('Erro ao remover especialidade:', error);
-        alert(error.error?.message || 'Erro ao remover especialidade');
+        this.modalService.showError(error.error?.message || 'Erro ao remover especialidade');
         this.loading = false;
       }
     });
@@ -246,13 +273,13 @@ export class SpecialtiesComponent implements OnInit {
     this.loading = true;
     this.specialtyService.assignToProfessional(this.selectedSpecialty.id, professionalId).subscribe({
       next: () => {
-        alert('Especialidade atribuída com sucesso');
+        this.modalService.showSuccess('Especialidade atribuída com sucesso');
         this.loadSpecialties();
         this.loading = false;
       },
       error: (error) => {
         console.error('Erro ao atribuir especialidade:', error);
-        alert(error.error?.message || 'Erro ao atribuir especialidade');
+        this.modalService.showError(error.error?.message || 'Erro ao atribuir especialidade');
         this.loading = false;
       }
     });

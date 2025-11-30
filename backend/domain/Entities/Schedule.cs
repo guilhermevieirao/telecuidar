@@ -7,6 +7,9 @@ public class Schedule : BaseEntity
     public int ProfessionalId { get; set; }
     public User Professional { get; set; } = null!;
     
+    public int? CreatedByUserId { get; set; }
+    public User? CreatedByUser { get; set; }
+    
     public DateTime StartDate { get; set; }
     public DateTime? EndDate { get; set; }
     

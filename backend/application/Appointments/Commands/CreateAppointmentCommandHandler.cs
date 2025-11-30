@@ -134,7 +134,7 @@ public class CreateAppointmentCommandHandler : IRequestHandler<CreateAppointment
         }
 
         // Verificar se está no horário de pausa
-        if (scheduleDay.BreakStartTime.HasValue && scheduleDay.BreakEndTime.HasValue)
+        if (scheduleDay != null && scheduleDay.BreakStartTime.HasValue && scheduleDay.BreakEndTime.HasValue)
         {
             if (request.AppointmentTime >= scheduleDay.BreakStartTime.Value && 
                 request.AppointmentTime < scheduleDay.BreakEndTime.Value)

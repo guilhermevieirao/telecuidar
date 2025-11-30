@@ -4,7 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { ScheduleService } from '../../services/schedule.service';
-import { ScheduleDto, CreateScheduleCommand, CreateScheduleDayDto } from '../../models/schedule.model';
+import { ScheduleDto, CreateScheduleCommand, CreateScheduleDayDto, UpdateScheduleCommand } from '../../models/schedule.model';
+import { ModalService } from '../../services/modal.service';
 import { environment } from '../../../environments/environment';
 
 interface Professional {
@@ -45,6 +46,7 @@ export class SchedulesComponent implements OnInit {
   selectedSchedule: ScheduleDto | null = null;
   showCreateModal = false;
   showEditModal = false;
+  showDetailsModal = false;
   loading = false;
 
   // Form data
@@ -75,7 +77,8 @@ export class SchedulesComponent implements OnInit {
 
   constructor(
     private scheduleService: ScheduleService,
-    private http: HttpClient
+    private http: HttpClient,
+    private modalService: ModalService
   ) {}
 
   ngOnInit(): void {
@@ -133,9 +136,32 @@ export class SchedulesComponent implements OnInit {
     this.hasEndDate = !!schedule.endDate;
     this.isActive = schedule.isActive;
 
+    // Detectar se há configurações globais (mesmas configurações para todos os dias)
+    const firstDay = schedule.scheduleDays[0];
+    const hasGlobalSettings = schedule.scheduleDays.every(sd => 
+      sd.startTime === firstDay.startTime &&
+      sd.endTime === firstDay.endTime &&
+      sd.appointmentDuration === firstDay.appointmentDuration &&
+      sd.intervalBetweenAppointments === firstDay.intervalBetweenAppointments &&
+      sd.breakStartTime === firstDay.breakStartTime &&
+      sd.breakEndTime === firstDay.breakEndTime
+    );
+
+    // Definir valores globais primeiro (sempre, para ter referência)
+    if (firstDay) {
+      this.globalStartTime = firstDay.startTime;
+      this.globalEndTime = firstDay.endTime;
+      this.globalAppointmentDuration = firstDay.appointmentDuration;
+      this.globalIntervalBetweenAppointments = firstDay.intervalBetweenAppointments;
+      this.globalHasBreak = !!firstDay.breakStartTime;
+      this.globalBreakStartTime = firstDay.breakStartTime || '12:00';
+      this.globalBreakEndTime = firstDay.breakEndTime || '13:00';
+    }
+
     // Reset days
     this.daysOfWeek.forEach(day => {
       day.enabled = false;
+      day.useCustomSettings = false;
       const scheduleDay = schedule.scheduleDays.find(sd => sd.dayOfWeek === day.dayOfWeek);
       if (scheduleDay) {
         day.enabled = true;
@@ -146,6 +172,15 @@ export class SchedulesComponent implements OnInit {
         day.hasBreak = !!scheduleDay.breakStartTime;
         day.breakStartTime = scheduleDay.breakStartTime || '12:00';
         day.breakEndTime = scheduleDay.breakEndTime || '13:00';
+
+        // Marcar useCustomSettings apenas para dias que são diferentes da configuração global
+        day.useCustomSettings = 
+          scheduleDay.startTime !== this.globalStartTime ||
+          scheduleDay.endTime !== this.globalEndTime ||
+          scheduleDay.appointmentDuration !== this.globalAppointmentDuration ||
+          scheduleDay.intervalBetweenAppointments !== this.globalIntervalBetweenAppointments ||
+          scheduleDay.breakStartTime !== (this.globalHasBreak ? this.globalBreakStartTime : null) ||
+          scheduleDay.breakEndTime !== (this.globalHasBreak ? this.globalBreakEndTime : null);
       }
     });
 
@@ -188,12 +223,20 @@ export class SchedulesComponent implements OnInit {
 
   createSchedule(): void {
     if (!this.selectedProfessionalId) {
-      alert('Selecione um profissional');
+      this.modalService.showAlert({
+        title: 'Validação',
+        message: 'Selecione um profissional',
+        type: 'warning'
+      });
       return;
     }
 
     if (!this.startDate) {
-      alert('Informe a data de início');
+      this.modalService.showAlert({
+        title: 'Validação',
+        message: 'Informe a data de início',
+        type: 'warning'
+      });
       return;
     }
 
@@ -226,14 +269,14 @@ export class SchedulesComponent implements OnInit {
     this.loading = true;
     this.scheduleService.create(command).subscribe({
       next: () => {
+        this.modalService.showSuccess('Agenda criada com sucesso');
         this.loadSchedules();
         this.closeCreateModal();
         this.loading = false;
-        alert('Agenda criada com sucesso!');
       },
       error: (error) => {
         console.error('Erro ao criar agenda:', error);
-        alert(error.error?.message || 'Erro ao criar agenda');
+        this.modalService.showError(error.error?.message || 'Erro ao criar agenda');
         this.loading = false;
       }
     });
@@ -244,7 +287,11 @@ export class SchedulesComponent implements OnInit {
 
     const enabledDays = this.daysOfWeek.filter(d => d.enabled);
     if (enabledDays.length === 0) {
-      alert('Selecione pelo menos um dia da semana');
+      this.modalService.showAlert({
+        title: 'Validação',
+        message: 'Selecione pelo menos um dia da semana',
+        type: 'warning'
+      });
       return;
     }
 
@@ -271,34 +318,87 @@ export class SchedulesComponent implements OnInit {
     this.loading = true;
     this.scheduleService.update(command).subscribe({
       next: () => {
+        this.modalService.showSuccess('Agenda atualizada com sucesso');
         this.loadSchedules();
         this.closeEditModal();
         this.loading = false;
-        alert('Agenda atualizada com sucesso!');
       },
       error: (error) => {
         console.error('Erro ao atualizar agenda:', error);
-        alert(error.error?.message || 'Erro ao atualizar agenda');
+        this.modalService.showError(error.error?.message || 'Erro ao atualizar agenda');
         this.loading = false;
       }
     });
   }
 
-  deleteSchedule(schedule: ScheduleDto): void {
-    if (!confirm(`Tem certeza que deseja excluir a agenda de ${schedule.professionalName}?`)) {
+  async deleteSchedule(schedule: ScheduleDto): Promise<void> {
+    const result = await this.modalService.showConfirm({
+      title: 'Confirmar exclusão',
+      message: `Tem certeza que deseja excluir a agenda de ${schedule.professionalName}?`,
+      confirmText: 'Excluir',
+      cancelText: 'Cancelar',
+      type: 'danger'
+    });
+    if (!result) {
       return;
     }
 
     this.loading = true;
     this.scheduleService.delete(schedule.id).subscribe({
       next: () => {
+        this.modalService.showSuccess('Agenda excluída com sucesso');
         this.loadSchedules();
         this.loading = false;
-        alert('Agenda excluída com sucesso!');
       },
       error: (error) => {
         console.error('Erro ao excluir agenda:', error);
-        alert('Erro ao excluir agenda');
+        this.modalService.showError('Erro ao excluir agenda');
+        this.loading = false;
+      }
+    });
+  }
+
+  async toggleScheduleStatus(schedule: ScheduleDto): Promise<void> {
+    const action = schedule.isActive ? 'desativar' : 'ativar';
+    const result = await this.modalService.showConfirm({
+      title: 'Confirmar ação',
+      message: `Tem certeza que deseja ${action} a agenda de ${schedule.professionalName}?`,
+      confirmText: action === 'desativar' ? 'Desativar' : 'Ativar',
+      cancelText: 'Cancelar',
+      type: 'primary'
+    });
+    if (!result) {
+      return;
+    }
+
+    this.loading = true;
+    
+    // Criar comando de atualização mantendo todas as configurações, apenas mudando isActive
+    const command: UpdateScheduleCommand = {
+      id: schedule.id,
+      startDate: schedule.startDate,
+      endDate: schedule.endDate || undefined,
+      isActive: !schedule.isActive,
+      scheduleDays: schedule.scheduleDays.map(sd => ({
+        dayOfWeek: sd.dayOfWeek,
+        startTime: sd.startTime,
+        endTime: sd.endTime,
+        appointmentDuration: sd.appointmentDuration,
+        intervalBetweenAppointments: sd.intervalBetweenAppointments,
+        breakStartTime: sd.breakStartTime || undefined,
+        breakEndTime: sd.breakEndTime || undefined
+      }))
+    };
+
+    this.scheduleService.update(command).subscribe({
+      next: () => {
+        this.modalService.showSuccess(`Agenda ${action}ada com sucesso`);
+        this.loadSchedules();
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Erro ao atualizar status da agenda:', error);
+        this.modalService.showError(error.error?.message || 'Erro ao atualizar status da agenda');
         this.loading = false;
       }
     });
@@ -312,6 +412,11 @@ export class SchedulesComponent implements OnInit {
 
   formatDate(date: Date): string {
     return new Date(date).toLocaleDateString('pt-BR');
+  }
+
+  formatDateTime(date: Date): string {
+    const d = new Date(date);
+    return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR');
   }
 
   getStatusBadge(schedule: ScheduleDto): string {
@@ -335,5 +440,168 @@ export class SchedulesComponent implements OnInit {
       case 'Expirada': return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';
     }
+  }
+
+  getCompactedScheduleDays(schedule: ScheduleDto): string[] {
+    if (!schedule.scheduleDays || schedule.scheduleDays.length === 0) return [];
+
+    const dayNames = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+    
+    // Agrupar dias por configuração (horários, duração, intervalo)
+    interface GroupKey {
+      startTime: string;
+      endTime: string;
+      appointmentDuration: number;
+      intervalBetweenAppointments: number;
+      breakStartTime?: string;
+      breakEndTime?: string;
+    }
+
+    const groups = new Map<string, number[]>();
+
+    schedule.scheduleDays.forEach(day => {
+      const key = JSON.stringify({
+        startTime: day.startTime,
+        endTime: day.endTime,
+        appointmentDuration: day.appointmentDuration,
+        intervalBetweenAppointments: day.intervalBetweenAppointments,
+        breakStartTime: day.breakStartTime,
+        breakEndTime: day.breakEndTime
+      });
+
+      if (!groups.has(key)) {
+        groups.set(key, []);
+      }
+      groups.get(key)!.push(day.dayOfWeek);
+    });
+
+    // Gerar descrições compactadas
+    const result: string[] = [];
+
+    groups.forEach((days, keyStr) => {
+      const config: GroupKey = JSON.parse(keyStr);
+      days.sort((a, b) => a - b);
+
+      // Detectar sequências consecutivas
+      const ranges: string[] = [];
+      let rangeStart = days[0];
+      let rangeEnd = days[0];
+
+      for (let i = 1; i <= days.length; i++) {
+        if (i < days.length && days[i] === rangeEnd + 1) {
+          rangeEnd = days[i];
+        } else {
+          // Finalizar range
+          if (rangeStart === rangeEnd) {
+            ranges.push(dayNames[rangeStart]);
+          } else if (rangeEnd === rangeStart + 1) {
+            ranges.push(`${dayNames[rangeStart]} e ${dayNames[rangeEnd]}`);
+          } else {
+            ranges.push(`${dayNames[rangeStart]} a ${dayNames[rangeEnd]}`);
+          }
+
+          if (i < days.length) {
+            rangeStart = days[i];
+            rangeEnd = days[i];
+          }
+        }
+      }
+
+      let description = `${ranges.join(', ')}|${config.startTime} - ${config.endTime}`;
+      
+      if (config.breakStartTime && config.breakEndTime) {
+        description += `|${config.breakStartTime} - ${config.breakEndTime}`;
+      }
+
+      result.push(description);
+    });
+
+    return result;
+  }
+
+  getDayRangeOnly(dayRange: string): string {
+    return dayRange.split('|')[0];
+  }
+
+  getTimeRange(dayRange: string): string {
+    const parts = dayRange.split('|');
+    return parts[1] || '';
+  }
+
+  getBreakTime(dayRange: string): string {
+    const parts = dayRange.split('|');
+    return parts[2] || '';
+  }
+
+  getProfessionalEmail(schedule: ScheduleDto): string {
+    const professional = this.professionals.find(p => p.id === schedule.professionalId);
+    return professional?.email || '';
+  }
+
+  viewScheduleDetails(schedule: ScheduleDto): void {
+    console.log('viewScheduleDetails called', schedule);
+    this.selectedSchedule = schedule;
+    this.showDetailsModal = true;
+    console.log('showDetailsModal:', this.showDetailsModal);
+  }
+
+  closeDetailsModal(): void {
+    this.showDetailsModal = false;
+    this.selectedSchedule = null;
+  }
+
+  formatDayRangeForDisplay(dayRange: string): string {
+    const parts = dayRange.split('|');
+    const days = parts[0];
+    const timeRange = parts[1];
+    const breakTime = parts[2];
+    
+    let result = `${days} • Horário: ${timeRange}`;
+    if (breakTime) {
+      result += ` • Pausa: ${breakTime}`;
+    }
+    
+    return result;
+  }
+
+  formatInterval(interval: number | undefined): string {
+    if (interval === undefined || interval === null) return 'Sem intervalo';
+    return interval === 0 ? 'Sem intervalo' : `${interval}min`;
+  }
+
+  hasMultipleConfigurations(schedule: ScheduleDto): boolean {
+    if (!schedule.scheduleDays || schedule.scheduleDays.length <= 1) return false;
+    
+    const first = schedule.scheduleDays[0];
+    return schedule.scheduleDays.some(sd => 
+      sd.startTime !== first.startTime ||
+      sd.endTime !== first.endTime ||
+      sd.appointmentDuration !== first.appointmentDuration ||
+      sd.intervalBetweenAppointments !== first.intervalBetweenAppointments ||
+      sd.breakStartTime !== first.breakStartTime ||
+      sd.breakEndTime !== first.breakEndTime
+    );
+  }
+
+  hasMultipleTimeConfigurations(schedule: ScheduleDto): boolean {
+    if (!schedule.scheduleDays || schedule.scheduleDays.length <= 1) return false;
+    
+    const first = schedule.scheduleDays[0];
+    return schedule.scheduleDays.some(sd => 
+      sd.startTime !== first.startTime ||
+      sd.endTime !== first.endTime ||
+      sd.breakStartTime !== first.breakStartTime ||
+      sd.breakEndTime !== first.breakEndTime
+    );
+  }
+
+  hasMultipleDurationConfigurations(schedule: ScheduleDto): boolean {
+    if (!schedule.scheduleDays || schedule.scheduleDays.length <= 1) return false;
+    
+    const first = schedule.scheduleDays[0];
+    return schedule.scheduleDays.some(sd => 
+      sd.appointmentDuration !== first.appointmentDuration ||
+      sd.intervalBetweenAppointments !== first.intervalBetweenAppointments
+    );
   }
 }

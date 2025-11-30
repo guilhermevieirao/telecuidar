@@ -32,12 +32,85 @@
 
   <div [class]="embeddedMode ? '' : 'profile-container'">
     <div *ngIf="!embeddedMode" class="profile-header">
-      <h1>Meu Perfil</h1>
-      <p>Gerencie suas informações pessoais</p>
+      <div>
+        <h1>Meu Perfil</h1>
+        <p>{{ isEditMode ? 'Edite suas informações pessoais' : 'Visualize suas informações pessoais' }}</p>
+      </div>
+      <button 
+        *ngIf="!isEditMode" 
+        type="button" 
+        class="btn btn-primary"
+        (click)="enableEditMode()"
+      >
+        ✏️ Editar Perfil
+      </button>
     </div>
 
     <div class="profile-content">
-      <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="profile-form">
+      <!-- Modo Visualização -->
+      <div *ngIf="!isEditMode" class="profile-view">
+        <div class="view-section">
+          <div class="view-photo">
+            <div class="photo-preview-large" *ngIf="profilePhotoPreview">
+              <img [src]="profilePhotoPreview" alt="Foto de perfil">
+            </div>
+            <div class="photo-placeholder-large" *ngIf="!profilePhotoPreview">
+              <span class="placeholder-icon">👤</span>
+            </div>
+          </div>
+
+          <div class="view-info">
+            <div class="info-row">
+              <label>Nome Completo</label>
+              <p>{{ profileForm.get('firstName')?.value }} {{ profileForm.get('lastName')?.value }}</p>
+            </div>
+
+            <div class="info-row">
+              <label>E-mail</label>
+              <p>{{ profileForm.get('email')?.value }}</p>
+            </div>
+
+            <div class="info-row">
+              <label>Telefone</label>
+              <p>{{ profileForm.get('phoneNumber')?.value || 'Não informado' }}</p>
+            </div>
+
+            <div class="info-row">
+              <label>Perfil</label>
+              <p>
+                <span class="role-badge" *ngIf="user?.role === 1">👤 Paciente</span>
+                <span class="role-badge professional" *ngIf="user?.role === 2">👨‍⚕️ Profissional</span>
+                <span class="role-badge admin" *ngIf="user?.role === 3">⚙️ Administrador</span>
+              </p>
+            </div>
+
+            <div class="info-row">
+              <label>Status do E-mail</label>
+              <p>
+                <span class="email-status verified" *ngIf="user?.emailConfirmed">
+                  ✓ E-mail Verificado
+                </span>
+                <span class="email-status unverified" *ngIf="!user?.emailConfirmed">
+                  ⚠ E-mail Não Verificado
+                </span>
+              </p>
+            </div>
+
+            <div class="info-row">
+              <label>Membro desde</label>
+              <p>{{ user?.createdAt | date: 'dd/MM/yyyy HH:mm' }}</p>
+            </div>
+
+            <div class="info-row" *ngIf="user?.updatedAt">
+              <label>Última Atualização</label>
+              <p>{{ user?.updatedAt | date: 'dd/MM/yyyy HH:mm' }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modo Edição -->
+      <form *ngIf="isEditMode" [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="profile-form">
         <div class="form-row">
           <div class="form-group">
             <label for="firstName">Nome *</label>
@@ -130,7 +203,7 @@
         </div>
 
         <div class="form-actions">
-          <button type="button" routerLink="/painel" class="btn btn-secondary">
+          <button type="button" class="btn btn-secondary" (click)="cancelEdit()">
             Cancelar
           </button>
           <button type="submit" class="btn btn-primary" [disabled]="loading || profileForm.invalid">
@@ -147,6 +220,25 @@
             <li>O e-mail é usado para login e recuperação de senha</li>
             <li>O telefone pode ser usado para contato emergencial</li>
           </ul>
+        </div>
+
+        <!-- Botão de editar para modo embedded -->
+        <div *ngIf="embeddedMode && !isEditMode" class="embedded-edit-button">
+          <button 
+            type="button" 
+            class="btn btn-primary"
+            (click)="enableEditMode()"
+          >
+            ✏️ Editar Perfil
+          </button>
+        </div>
+
+        <div class="info-box security-zone">
+          <h3>🔒 Segurança</h3>
+          <p>Altere sua senha regularmente para manter sua conta segura.</p>
+          <button type="button" class="btn btn-outline" (click)="openChangePasswordModal()">
+            Trocar Senha
+          </button>
         </div>
 
         <div class="info-box danger-zone">
@@ -167,6 +259,115 @@
     (close)="onCropCancel()"
     (cropComplete)="onCropComplete($event)"
   ></app-image-crop-modal>
+
+  <!-- Modal de Troca de Senha -->
+  <div class="modal-overlay" *ngIf="showChangePasswordModal" (click)="closeChangePasswordModal()">
+    <div class="modal-content password-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>🔒 Trocar Senha</h2>
+      </div>
+      
+      <form [formGroup]="changePasswordForm" (ngSubmit)="confirmChangePassword()" class="modal-body">
+        <div class="form-group">
+          <label for="currentPassword">Senha Atual *</label>
+          <div class="password-input-wrapper">
+            <input
+              [type]="showCurrentPassword ? 'text' : 'password'"
+              id="currentPassword"
+              formControlName="currentPassword"
+              placeholder="Digite sua senha atual"
+              [class.error]="currentPassword?.invalid && currentPassword?.touched"
+            />
+            <button
+              type="button"
+              class="toggle-password"
+              (click)="showCurrentPassword = !showCurrentPassword"
+              tabindex="-1"
+            >
+              <span *ngIf="!showCurrentPassword">👁️</span>
+              <span *ngIf="showCurrentPassword">🙈</span>
+            </button>
+          </div>
+          <span class="error-message" *ngIf="currentPassword?.invalid && currentPassword?.touched">
+            <span *ngIf="currentPassword?.errors?.['required']">Senha atual é obrigatória</span>
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="newPassword">Nova Senha *</label>
+          <div class="password-input-wrapper">
+            <input
+              [type]="showNewPassword ? 'text' : 'password'"
+              id="newPassword"
+              formControlName="newPassword"
+              placeholder="Digite sua nova senha"
+              [class.error]="newPassword?.invalid && newPassword?.touched"
+            />
+            <button
+              type="button"
+              class="toggle-password"
+              (click)="showNewPassword = !showNewPassword"
+              tabindex="-1"
+            >
+              <span *ngIf="!showNewPassword">👁️</span>
+              <span *ngIf="showNewPassword">🙈</span>
+            </button>
+          </div>
+          <span class="error-message" *ngIf="newPassword?.invalid && newPassword?.touched">
+            <span *ngIf="newPassword?.errors?.['required']">Nova senha é obrigatória</span>
+            <span *ngIf="newPassword?.errors?.['minlength']">Mínimo 6 caracteres</span>
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmNewPassword">Confirmar Nova Senha *</label>
+          <div class="password-input-wrapper">
+            <input
+              [type]="showConfirmPassword ? 'text' : 'password'"
+              id="confirmNewPassword"
+              formControlName="confirmNewPassword"
+              placeholder="Confirme sua nova senha"
+              [class.error]="confirmNewPassword?.invalid && confirmNewPassword?.touched"
+            />
+            <button
+              type="button"
+              class="toggle-password"
+              (click)="showConfirmPassword = !showConfirmPassword"
+              tabindex="-1"
+            >
+              <span *ngIf="!showConfirmPassword">👁️</span>
+              <span *ngIf="showConfirmPassword">🙈</span>
+            </button>
+          </div>
+          <span class="error-message" *ngIf="confirmNewPassword?.invalid && confirmNewPassword?.touched">
+            <span *ngIf="confirmNewPassword?.errors?.['required']">Confirmação é obrigatória</span>
+          </span>
+          <span class="error-message" *ngIf="!passwordsMatch && confirmNewPassword?.touched">
+            As senhas não coincidem
+          </span>
+        </div>
+      </form>
+      
+      <div class="modal-footer">
+        <button 
+          type="button" 
+          class="btn btn-secondary" 
+          (click)="closeChangePasswordModal()"
+          [disabled]="loading"
+        >
+          Cancelar
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-primary" 
+          (click)="confirmChangePassword()"
+          [disabled]="loading || changePasswordForm.invalid"
+        >
+          {{ loading ? 'Alterando...' : 'Alterar Senha' }}
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- Modal de Confirmação de Exclusão -->
   <div class="modal-overlay" *ngIf="showDeleteModal" (click)="closeDeleteModal()">

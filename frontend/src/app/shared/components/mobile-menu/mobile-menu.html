@@ -53,6 +53,7 @@
         <button 
           *ngIf="item.action && !item.route && !item.divider" 
           class="mobile-menu-item"
+          [class.logout-item]="item.label === 'Sair'"
           (click)="handleItemClick(item)"
           type="button"
         >

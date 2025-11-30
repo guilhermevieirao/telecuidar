@@ -11,6 +11,7 @@ public class CreateScheduleCommand : IRequest<Result<int>>
     public DateTime? EndDate { get; set; }
     public bool IsActive { get; set; } = true;
     public List<CreateScheduleDayDto> ScheduleDays { get; set; } = new();
+    public int? CreatedByUserId { get; set; }
 }
 
 public class CreateScheduleDayDto

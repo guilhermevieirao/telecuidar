@@ -38,7 +38,9 @@ public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, Result<
                 ProfilePhotoUrl = user.ProfilePhotoUrl,
                 LastLoginAt = user.LastLoginAt,
                 Role = user.Role,
-                EmailConfirmed = user.EmailConfirmed
+                EmailConfirmed = user.EmailConfirmed,
+                CreatedAt = user.CreatedAt,
+                UpdatedAt = user.UpdatedAt
             };
 
             return Result<UserDto>.Success(userDto);

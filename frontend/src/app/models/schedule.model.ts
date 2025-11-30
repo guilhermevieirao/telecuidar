@@ -7,6 +7,8 @@ export interface ScheduleDto {
   isActive: boolean;
   scheduleDays: ScheduleDayDto[];
   createdAt: Date;
+  updatedAt?: Date;
+  createdByName?: string;
 }
 
 export interface ScheduleDayDto {

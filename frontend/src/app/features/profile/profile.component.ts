@@ -21,13 +21,19 @@ export class ProfileComponent implements OnInit {
   @Input() embeddedMode = false; // Quando true, oculta header
   
   profileForm: FormGroup;
+  changePasswordForm: FormGroup;
   loading = false;
+  isEditMode = false; // Controla se está no modo de edição
   user: any = null;
   profilePhotoUrl: string | null = null;
   profilePhotoPreview: string | null = null;
   showCropModal = false;
   tempImageForCrop: string = '';
   showDeleteModal = false;
+  showChangePasswordModal = false;
+  showCurrentPassword = false;
+  showNewPassword = false;
+  showConfirmPassword = false;
 
   constructor(
     private fb: FormBuilder,
@@ -41,6 +47,12 @@ export class ProfileComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       phoneNumber: ['', [Validators.required]],
     });
+
+    this.changePasswordForm = this.fb.group({
+      currentPassword: ['', [Validators.required]],
+      newPassword: ['', [Validators.required, Validators.minLength(6)]],
+      confirmNewPassword: ['', [Validators.required]]
+    }, { validators: this.passwordMatchValidator });
   }
 
   ngOnInit() {
@@ -64,6 +76,12 @@ export class ProfileComponent implements OnInit {
             const formattedPhone = this.formatPhone(userData.phoneNumber || '');
             this.profilePhotoUrl = userData.profilePhotoUrl;
             this.profilePhotoPreview = userData.profilePhotoUrl;
+            
+            // Atualiza o objeto user com todas as informações
+            this.user = {
+              ...this.user,
+              ...userData
+            };
             
             this.profileForm.patchValue({
               firstName: userData.firstName,
@@ -137,6 +155,16 @@ export class ProfileComponent implements OnInit {
     this.profilePhotoUrl = null;
   }
 
+  enableEditMode() {
+    this.isEditMode = true;
+  }
+
+  cancelEdit() {
+    this.isEditMode = false;
+    this.loadUserData(); // Recarrega os dados originais
+    this.toastService.info('Edição cancelada');
+  }
+
   onSubmit() {
     if (this.profileForm.invalid) {
       this.toastService.warning('Por favor, preencha todos os campos corretamente');
@@ -169,6 +197,7 @@ export class ProfileComponent implements OnInit {
             localStorage.setItem('user', JSON.stringify(updatedUser));
             
             this.toastService.success('Perfil atualizado com sucesso!');
+            this.isEditMode = false; // Volta para modo visualização
             this.loading = false;
           }
         },
@@ -184,6 +213,64 @@ export class ProfileComponent implements OnInit {
   get lastName() { return this.profileForm.get('lastName'); }
   get email() { return this.profileForm.get('email'); }
   get phoneNumber() { return this.profileForm.get('phoneNumber'); }
+  get currentPassword() { return this.changePasswordForm.get('currentPassword'); }
+  get newPassword() { return this.changePasswordForm.get('newPassword'); }
+  get confirmNewPassword() { return this.changePasswordForm.get('confirmNewPassword'); }
+
+  get passwordsMatch(): boolean {
+    return !this.changePasswordForm.hasError('mismatch');
+  }
+
+  passwordMatchValidator(g: FormGroup) {
+    const newPassword = g.get('newPassword')?.value;
+    const confirmNewPassword = g.get('confirmNewPassword')?.value;
+    return newPassword === confirmNewPassword ? null : { mismatch: true };
+  }
+
+  openChangePasswordModal() {
+    this.changePasswordForm.reset();
+    this.showCurrentPassword = false;
+    this.showNewPassword = false;
+    this.showConfirmPassword = false;
+    this.showChangePasswordModal = true;
+  }
+
+  closeChangePasswordModal() {
+    this.showChangePasswordModal = false;
+    this.changePasswordForm.reset();
+  }
+
+  confirmChangePassword() {
+    if (this.changePasswordForm.invalid) {
+      this.toastService.warning('Por favor, preencha todos os campos corretamente');
+      return;
+    }
+
+    this.loading = true;
+    const payload = {
+      userId: this.user.id,
+      currentPassword: this.changePasswordForm.get('currentPassword')?.value,
+      newPassword: this.changePasswordForm.get('newPassword')?.value
+    };
+
+    this.http.post(`${environment.apiUrl}/users/change-password`, payload).subscribe({
+      next: (response: any) => {
+        if (response.isSuccess) {
+          this.toastService.success('Senha alterada com sucesso!');
+          this.closeChangePasswordModal();
+          this.loading = false;
+        } else {
+          this.toastService.error(response.message || 'Erro ao alterar senha');
+          this.loading = false;
+        }
+      },
+      error: (error) => {
+        console.error('Erro ao alterar senha:', error);
+        this.toastService.error(error.error?.message || 'Erro ao alterar senha. Verifique sua senha atual.');
+        this.loading = false;
+      }
+    });
+  }
 
   openDeleteAccountModal() {
     this.showDeleteModal = true;

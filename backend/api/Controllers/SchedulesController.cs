@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using app.Application.Schedules.Commands;
 using app.Application.Schedules.Queries;
+using System.Security.Claims;
 
 namespace app.Api.Controllers;
 
@@ -37,6 +38,13 @@ public class SchedulesController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateScheduleCommand command)
     {
+        // Capturar o ID do usuário autenticado
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim != null && int.TryParse(userIdClaim.Value, out int userId))
+        {
+            command.CreatedByUserId = userId;
+        }
+
         var result = await _mediator.Send(command);
 
         if (!result.IsSuccess)

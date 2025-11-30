@@ -52,6 +52,7 @@ public class CreateScheduleCommandHandler : IRequestHandler<CreateScheduleComman
         var schedule = new Schedule
         {
             ProfessionalId = request.ProfessionalId,
+            CreatedByUserId = request.CreatedByUserId,
             StartDate = request.StartDate,
             EndDate = request.EndDate,
             IsActive = request.IsActive,

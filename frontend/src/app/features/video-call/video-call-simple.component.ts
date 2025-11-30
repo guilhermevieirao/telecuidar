@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { ModalService } from '../../services/modal.service';
 
 declare var JitsiMeetExternalAPI: any;
 
@@ -108,7 +109,7 @@ export class VideoCallSimpleComponent implements OnInit, OnDestroy, AfterViewIni
     consultationTime: new Date().toTimeString().split(' ')[0].substring(0, 5)
   };
 
-  constructor(private sanitizer: DomSanitizer) {}
+  constructor(private sanitizer: DomSanitizer, private modalService: ModalService) {}
 
   ngOnInit(): void {
     this.checkBrowserSupport();
@@ -301,7 +302,7 @@ export class VideoCallSimpleComponent implements OnInit, OnDestroy, AfterViewIni
     const roomLink = `https://jitsi.riot.im/${this.roomName}`;
     
     navigator.clipboard.writeText(roomLink).then(() => {
-      alert('Link da sala copiado para a área de transferência!');
+      this.modalService.showSuccess('Link da sala copiado para a área de transferência!');
     }).catch(err => {
       console.error('Erro ao copiar link:', err);
       // Fallback
@@ -311,7 +312,7 @@ export class VideoCallSimpleComponent implements OnInit, OnDestroy, AfterViewIni
       textArea.select();
       document.execCommand('copy');
       document.body.removeChild(textArea);
-      alert('Link da sala copiado para a área de transferência!');
+      this.modalService.showSuccess('Link da sala copiado para a área de transferência!');
     });
   }
 
@@ -376,7 +377,7 @@ export class VideoCallSimpleComponent implements OnInit, OnDestroy, AfterViewIni
 
   saveMedicalRecord(): void {
     console.log('Prontuário salvo:', this.medicalRecord);
-    alert('Prontuário salvo com sucesso!');
+    this.modalService.showSuccess('Prontuário salvo com sucesso!');
     // Aqui você implementaria a lógica para salvar no backend
   }
 
@@ -384,33 +385,40 @@ export class VideoCallSimpleComponent implements OnInit, OnDestroy, AfterViewIni
     window.print();
   }
 
-  clearMedicalRecord(): void {
-    if (confirm('Deseja realmente limpar todos os dados do prontuário?')) {
-      this.medicalRecord = {
-        patientName: '',
-        patientCPF: '',
-        patientAge: null,
-        patientGender: '',
-        chiefComplaint: '',
-        symptoms: '',
-        medicalHistory: '',
-        currentMedications: '',
-        allergies: '',
-        vitalSigns: {
-          bloodPressure: '',
-          heartRate: '',
-          temperature: '',
-          oxygenSaturation: ''
-        },
-        physicalExam: '',
-        diagnosis: '',
-        treatment: '',
-        prescription: '',
-        observations: '',
-        followUp: '',
-        consultationDate: new Date().toISOString().split('T')[0],
-        consultationTime: new Date().toTimeString().split(' ')[0].substring(0, 5)
-      };
-    }
+  async clearMedicalRecord(): Promise<void> {
+    const result = await this.modalService.showConfirm({
+      title: 'Limpar prontuário',
+      message: 'Deseja realmente limpar todos os dados do prontuário?',
+      confirmText: 'Limpar',
+      cancelText: 'Cancelar',
+      type: 'danger'
+    });
+    if (!result) return;
+    
+    this.medicalRecord = {
+      patientName: '',
+      patientCPF: '',
+      patientAge: null,
+      patientGender: '',
+      chiefComplaint: '',
+      symptoms: '',
+      medicalHistory: '',
+      currentMedications: '',
+      allergies: '',
+      vitalSigns: {
+        bloodPressure: '',
+        heartRate: '',
+        temperature: '',
+        oxygenSaturation: ''
+      },
+      physicalExam: '',
+      diagnosis: '',
+      treatment: '',
+      prescription: '',
+      observations: '',
+      followUp: '',
+      consultationDate: new Date().toISOString().split('T')[0],
+      consultationTime: new Date().toTimeString().split(' ')[0].substring(0, 5)
+    };
   }
 }

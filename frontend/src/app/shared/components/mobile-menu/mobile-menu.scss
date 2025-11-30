@@ -13,7 +13,7 @@
   border: none;
   cursor: pointer;
   padding: 0.5rem;
-  z-index: 10001; // Acima do drawer
+  z-index: 9998;
   border-radius: 0.5rem;
   transition: background 0.2s;
   position: relative;
@@ -185,6 +185,24 @@
       background: #e5e7eb;
     }
 
+    &.logout-item {
+      color: white;
+      background: #dc2626;
+      font-weight: 600;
+      margin: 0.5rem 1rem;
+      padding: 0.875rem 1rem;
+      border-radius: 0.5rem;
+      width: calc(100% - 2rem);
+
+      &:hover {
+        background: #b91c1c;
+      }
+
+      &:active {
+        background: #991b1b;
+      }
+    }
+
     .item-icon {
       font-size: 1.25rem;
       width: 1.5rem;
@@ -243,6 +261,19 @@
 
       &:active {
         background: #4b5563;
+      }
+
+      &.logout-item {
+        color: white;
+        background: #dc2626;
+
+        &:hover {
+          background: #b91c1c;
+        }
+
+        &:active {
+          background: #991b1b;
+        }
       }
     }
   }

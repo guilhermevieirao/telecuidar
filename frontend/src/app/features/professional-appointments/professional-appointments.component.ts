@@ -8,6 +8,7 @@ import { NotificationsComponent } from '../notifications/notifications.component
 import { ThemeToggleComponent } from '../../shared/components/theme-toggle/theme-toggle.component';
 import { MobileMenu, MenuItem } from '../../shared/components/mobile-menu/mobile-menu';
 import { AppointmentService, Appointment } from '../../core/services/appointment.service';
+import { ModalService } from '../../services/modal.service';
 
 type FilterStatus = 'all' | 'upcoming' | 'past' | 'cancelled';
 
@@ -38,7 +39,8 @@ export class ProfessionalAppointmentsComponent implements OnInit {
 
   constructor(
     private appointmentService: AppointmentService,
-    private router: Router
+    private router: Router,
+    private modalService: ModalService
   ) {}
 
   ngOnInit(): void {
@@ -249,7 +251,11 @@ export class ProfessionalAppointmentsComponent implements OnInit {
 
   cancelAppointment(): void {
     if (!this.selectedAppointment || !this.cancellationReason.trim()) {
-      alert('Por favor, informe o motivo do cancelamento.');
+      this.modalService.showAlert({
+        title: 'Validação',
+        message: 'Por favor, informe o motivo do cancelamento.',
+        type: 'warning'
+      });
       return;
     }
 
@@ -258,6 +264,7 @@ export class ProfessionalAppointmentsComponent implements OnInit {
     this.appointmentService.cancelAppointmentByProfessional(this.selectedAppointment.id, this.cancellationReason).subscribe({
       next: () => {
         console.log('Consulta cancelada com sucesso');
+        this.modalService.showSuccess('Consulta cancelada com sucesso');
         this.cancelLoading = false;
         this.closeCancelModal();
         
@@ -267,7 +274,7 @@ export class ProfessionalAppointmentsComponent implements OnInit {
       error: (err) => {
         console.error('Erro ao cancelar consulta:', err);
         this.cancelLoading = false;
-        alert(err.error?.message || 'Erro ao cancelar consulta. Tente novamente.');
+        this.modalService.showError(err.error?.message || 'Erro ao cancelar consulta. Tente novamente.');
       }
     });
   }

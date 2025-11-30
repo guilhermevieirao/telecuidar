@@ -10,6 +10,8 @@ public class ScheduleDto
     public bool IsActive { get; set; }
     public List<ScheduleDayDto> ScheduleDays { get; set; } = new();
     public DateTime CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
+    public string? CreatedByName { get; set; }
 }
 
 public class ScheduleDayDto
