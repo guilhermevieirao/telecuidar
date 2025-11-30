@@ -28,6 +28,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<UserSpecialty> UserSpecialties { get; set; }
     public DbSet<Schedule> Schedules { get; set; }
     public DbSet<ScheduleDay> ScheduleDays { get; set; }
+    public DbSet<Appointment> Appointments { get; set; }
 
     public void SetAuditInfo(int? userId, string? ipAddress = null, string? userAgent = null)
     {

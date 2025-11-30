@@ -19,8 +19,8 @@ services:
       - AdminUser__Enabled=${ADMIN_ENABLED:-false}
       - AdminUser__Email=${ADMIN_EMAIL:-adm@adm.com}
       - AdminUser__Password=${ADMIN_PASSWORD:-zxcasd}
-      - AdminUser__FirstName=Administrador
-      - AdminUser__LastName=Sistema
+      - AdminUser__FirstName=adm
+      - AdminUser__LastName=adm
       - FrontendUrl=http://localhost:4200
     volumes:
       - db-data:/data

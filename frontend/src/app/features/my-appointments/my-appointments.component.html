@@ -1,0 +1,298 @@
+<div class="dashboard-page">
+  <nav class="navbar">
+    <div class="navbar-content">
+      <div class="logo">
+        <span class="logo-icon">🏥</span>
+        <span class="logo-text">TeleCuidar</span>
+      </div>
+      
+      <div class="nav-right">
+        <app-theme-toggle></app-theme-toggle>
+        <app-notifications></app-notifications>
+        
+        <!-- Desktop User Section -->
+        <div class="user-profile-section desktop-only">
+          <div class="user-avatar" routerLink="/perfil" title="Editar perfil">
+            <img *ngIf="user?.profilePhotoUrl" [src]="user.profilePhotoUrl" [alt]="user.fullName">
+            <span *ngIf="!user?.profilePhotoUrl" class="avatar-initials">{{ getUserInitials() }}</span>
+          </div>
+          <div class="user-info">
+            <span class="user-name">{{ user?.fullName }}</span>
+            <span class="user-role">{{ getUserRoleName() }}</span>
+          </div>
+        </div>
+        <button class="btn-logout desktop-only" (click)="logout()">
+          Sair
+        </button>
+
+        <!-- Mobile Menu -->
+        <app-mobile-menu
+          [items]="menuItems"
+          [userName]="user?.fullName"
+          [userRole]="getUserRoleName()"
+          [userAvatar]="user?.profilePhotoUrl"
+        ></app-mobile-menu>
+      </div>
+    </div>
+  </nav>
+  
+  <app-breadcrumb></app-breadcrumb>
+
+  <div class="dashboard-container">
+    <div class="appointments-container">
+      <!-- Cabeçalho -->
+      <div class="appointments-header">
+        <div>
+          <h1>Minhas Consultas</h1>
+          <p class="subtitle">Acompanhe todas as suas consultas agendadas</p>
+        </div>
+        <button class="btn btn-primary" routerLink="/agendar">
+          <span>+ Agendar Nova Consulta</span>
+        </button>
+      </div>
+
+      <!-- Filtros -->
+      <div class="filter-tabs">
+        <button 
+          class="filter-tab" 
+          [class.active]="currentFilter === 'all'"
+          (click)="setFilter('all')"
+        >
+          <span class="filter-label">Todas</span>
+          <span class="filter-count">{{ getCountByStatus('all') }}</span>
+        </button>
+        <button 
+          class="filter-tab" 
+          [class.active]="currentFilter === 'upcoming'"
+          (click)="setFilter('upcoming')"
+        >
+          <span class="filter-label">Próximas</span>
+          <span class="filter-count">{{ getCountByStatus('upcoming') }}</span>
+        </button>
+        <button 
+          class="filter-tab" 
+          [class.active]="currentFilter === 'past'"
+          (click)="setFilter('past')"
+        >
+          <span class="filter-label">Passadas</span>
+          <span class="filter-count">{{ getCountByStatus('past') }}</span>
+        </button>
+        <button 
+          class="filter-tab" 
+          [class.active]="currentFilter === 'cancelled'"
+          (click)="setFilter('cancelled')"
+        >
+          <span class="filter-label">Canceladas</span>
+          <span class="filter-count">{{ getCountByStatus('cancelled') }}</span>
+        </button>
+      </div>
+
+      <!-- Mensagem de Erro -->
+      <div class="alert alert-error" *ngIf="error">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="15" y1="9" x2="9" y2="15"></line>
+          <line x1="9" y1="9" x2="15" y2="15"></line>
+        </svg>
+        {{ error }}
+      </div>
+
+      <!-- Loading -->
+      <div class="loading-container" *ngIf="loading">
+        <div class="spinner"></div>
+        <p>Carregando consultas...</p>
+      </div>
+
+      <!-- Lista de Consultas -->
+      <div class="appointments-list" *ngIf="!loading && !error">
+        <!-- Nenhuma consulta -->
+        <div class="empty-state" *ngIf="filteredAppointments.length === 0">
+          <div class="empty-icon">📋</div>
+          <h3>Nenhuma consulta encontrada</h3>
+          <p *ngIf="currentFilter === 'all'">Você ainda não tem consultas agendadas.</p>
+          <p *ngIf="currentFilter === 'upcoming'">Você não tem consultas próximas agendadas.</p>
+          <p *ngIf="currentFilter === 'past'">Você não tem consultas passadas.</p>
+          <p *ngIf="currentFilter === 'cancelled'">Você não tem consultas canceladas.</p>
+          <button class="btn btn-primary" routerLink="/agendar" *ngIf="currentFilter === 'all' || currentFilter === 'upcoming'">
+            Agendar Consulta
+          </button>
+        </div>
+
+        <!-- Cards de Consultas -->
+        <div class="appointment-card" *ngFor="let appointment of filteredAppointments" [class.upcoming]="isUpcoming(appointment)">
+          <div class="appointment-header">
+            <div class="appointment-specialty">
+              <span class="specialty-icon">🏥</span>
+              <div>
+                <h3>{{ appointment.specialtyName }}</h3>
+                <p class="professional-name">{{ appointment.professionalName }}</p>
+              </div>
+            </div>
+            <span class="status-badge" [ngClass]="getStatusClass(appointment.status)">
+              <span class="status-icon">{{ getStatusIcon(appointment.status) }}</span>
+              {{ appointment.status }}
+            </span>
+          </div>
+
+          <div class="appointment-details">
+            <div class="detail-item">
+              <span class="detail-icon">📅</span>
+              <div>
+                <span class="detail-label">Data</span>
+                <span class="detail-value">{{ formatDate(appointment.appointmentDate) }}</span>
+              </div>
+            </div>
+
+            <div class="detail-item">
+              <span class="detail-icon">🕐</span>
+              <div>
+                <span class="detail-label">Horário</span>
+                <span class="detail-value">{{ formatTime(appointment.appointmentTime) }}</span>
+              </div>
+            </div>
+
+            <div class="detail-item">
+              <span class="detail-icon">⏱️</span>
+              <div>
+                <span class="detail-label">Duração</span>
+                <span class="detail-value">{{ appointment.durationMinutes }} minutos</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="appointment-notes" *ngIf="appointment.notes">
+            <span class="notes-icon">📝</span>
+            <p>{{ appointment.notes }}</p>
+          </div>
+
+          <div class="appointment-footer">
+            <span class="created-date">Criado em {{ formatDate(appointment.createdAt) }}</span>
+            <div class="appointment-actions">
+              <button class="btn-action btn-details" *ngIf="isUpcoming(appointment)" (click)="viewDetails(appointment)">
+                Ver Detalhes
+              </button>
+              <button class="btn-action btn-cancel" *ngIf="isUpcoming(appointment)" (click)="openCancelModal(appointment)">
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Detalhes -->
+  <div class="modal-overlay" *ngIf="showDetailsModal" (click)="closeDetailsModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Detalhes da Consulta</h2>
+        <button class="modal-close" (click)="closeDetailsModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      
+      <div class="modal-body" *ngIf="selectedAppointment">
+        <div class="detail-section">
+          <h3>Informações da Consulta</h3>
+          <div class="detail-grid">
+            <div class="detail-row">
+              <span class="label">Especialidade:</span>
+              <span class="value">{{ selectedAppointment.specialtyName }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Profissional:</span>
+              <span class="value">{{ selectedAppointment.professionalName }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Data:</span>
+              <span class="value">{{ formatDate(selectedAppointment.appointmentDate) }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Horário:</span>
+              <span class="value">{{ formatTime(selectedAppointment.appointmentTime) }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Duração:</span>
+              <span class="value">{{ selectedAppointment.durationMinutes }} minutos</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Status:</span>
+              <span class="value" [ngClass]="getStatusClass(selectedAppointment.status)">
+                {{ getStatusIcon(selectedAppointment.status) }} {{ selectedAppointment.status }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-section" *ngIf="selectedAppointment.notes">
+          <h3>Observações</h3>
+          <p class="notes-text">{{ selectedAppointment.notes }}</p>
+        </div>
+
+        <div class="detail-section">
+          <p class="created-info">Consulta agendada em {{ formatDate(selectedAppointment.createdAt) }}</p>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeDetailsModal()">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Cancelamento -->
+  <div class="modal-overlay" *ngIf="showCancelModal" (click)="closeCancelModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Cancelar Consulta</h2>
+        <button class="modal-close" (click)="closeCancelModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      
+      <div class="modal-body" *ngIf="selectedAppointment">
+        <div class="cancel-warning">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <p>Tem certeza que deseja cancelar esta consulta?</p>
+        </div>
+
+        <div class="appointment-summary">
+          <p><strong>Especialidade:</strong> {{ selectedAppointment.specialtyName }}</p>
+          <p><strong>Profissional:</strong> {{ selectedAppointment.professionalName }}</p>
+          <p><strong>Data e Horário:</strong> {{ formatDate(selectedAppointment.appointmentDate) }} às {{ formatTime(selectedAppointment.appointmentTime) }}</p>
+        </div>
+
+        <div class="form-group">
+          <label for="cancellationReason">Motivo do cancelamento *</label>
+          <textarea 
+            id="cancellationReason" 
+            [(ngModel)]="cancellationReason"
+            placeholder="Por favor, informe o motivo do cancelamento..."
+            rows="4"
+            [disabled]="cancelLoading"
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeCancelModal()" [disabled]="cancelLoading">
+          Voltar
+        </button>
+        <button class="btn btn-danger" (click)="cancelAppointment()" [disabled]="cancelLoading || !cancellationReason.trim()">
+          <span *ngIf="!cancelLoading">Confirmar Cancelamento</span>
+          <span *ngIf="cancelLoading">Cancelando...</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

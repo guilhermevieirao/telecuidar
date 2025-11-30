@@ -39,7 +39,8 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Resul
                 FirstName = request.FirstName,
                 LastName = request.LastName,
                 Email = request.Email,
-                PasswordHash = _passwordHasher.HashPassword(request.Password)
+                PasswordHash = _passwordHasher.HashPassword(request.Password),
+                Role = request.Role
             };
 
             await _userRepository.AddAsync(user);
@@ -53,7 +54,8 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Resul
                 Email = user.Email,
                 FullName = user.FullName,
                 AvatarUrl = user.AvatarUrl,
-                LastLoginAt = user.LastLoginAt
+                LastLoginAt = user.LastLoginAt,
+                Role = user.Role
             };
 
             return Result<UserDto>.Success(userDto, "Usuário criado com sucesso");

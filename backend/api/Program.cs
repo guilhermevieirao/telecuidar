@@ -166,8 +166,8 @@ using (var scope = app.Services.CreateScope())
         {
             var adminEmail = configuration["AdminUser:Email"] ?? "adm@adm.com";
             var adminPassword = configuration["AdminUser:Password"] ?? "zxcasd";
-            var adminFirstName = configuration["AdminUser:FirstName"] ?? "Administrador";
-            var adminLastName = configuration["AdminUser:LastName"] ?? "Sistema";
+            var adminFirstName = configuration["AdminUser:FirstName"] ?? "adm";
+            var adminLastName = configuration["AdminUser:LastName"] ?? "adm";
             
             // Verificar se já existe usuário admin
             var adminExists = context.Users.Any(u => u.Email == adminEmail);

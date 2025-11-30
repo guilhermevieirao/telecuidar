@@ -65,6 +65,18 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'agendar',
+    loadComponent: () => import('./features/booking/booking.component').then(m => m.BookingComponent),
+    canActivate: [authGuard],
+    data: { roles: [1], breadcrumbParent: '/painel' }
+  },
+  {
+    path: 'minhas-consultas',
+    loadComponent: () => import('./features/my-appointments/my-appointments.component').then(m => m.MyAppointmentsComponent),
+    canActivate: [authGuard],
+    data: { roles: [1], breadcrumbParent: '/painel' }
+  },
+  {
     path: 'admin',
     loadComponent: () => import('./features/admin/admin.component').then(m => m.AdminComponent),
     canActivate: [authGuard],

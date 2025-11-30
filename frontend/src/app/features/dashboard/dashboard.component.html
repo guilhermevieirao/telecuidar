@@ -53,12 +53,21 @@
     </div>
 
     <div class="cards-grid">
-      <div class="dashboard-card">
+      <div class="dashboard-card booking-card" routerLink="/agendar" style="cursor: pointer;">
+        <div class="card-icon orange">🗓️</div>
+        <div class="card-content">
+          <h3>Agendar Consulta</h3>
+          <p class="card-value">Nova</p>
+          <p class="card-description">Escolha especialidade, data e horário</p>
+        </div>
+      </div>
+
+      <div class="dashboard-card" routerLink="/minhas-consultas" style="cursor: pointer;">
         <div class="card-icon blue">📅</div>
         <div class="card-content">
-          <h3>Próximas Consultas</h3>
-          <p class="card-value">0</p>
-          <p class="card-description">Nenhuma consulta agendada</p>
+          <h3>Minhas Consultas</h3>
+          <p class="card-value">Ver todas</p>
+          <p class="card-description">Acompanhe seus agendamentos</p>
         </div>
       </div>
 

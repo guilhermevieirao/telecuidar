@@ -1,0 +1,219 @@
+<div class="dashboard-page">
+  <nav class="navbar">
+    <div class="navbar-content">
+      <div class="logo">
+        <span class="logo-icon">🏥</span>
+        <span class="logo-text">TeleCuidar</span>
+      </div>
+      
+      <div class="nav-right">
+        <app-theme-toggle></app-theme-toggle>
+        <app-notifications></app-notifications>
+        
+        <!-- Desktop User Section -->
+        <div class="user-profile-section desktop-only">
+          <div class="user-avatar" routerLink="/perfil" title="Editar perfil">
+            <img *ngIf="user?.profilePhotoUrl" [src]="user.profilePhotoUrl" [alt]="user.fullName">
+            <span *ngIf="!user?.profilePhotoUrl" class="avatar-initials">{{ getUserInitials() }}</span>
+          </div>
+          <div class="user-info">
+            <span class="user-name">{{ user?.fullName }}</span>
+            <span class="user-role">{{ getUserRoleName() }}</span>
+          </div>
+        </div>
+        <button class="btn-logout desktop-only" (click)="logout()">
+          Sair
+        </button>
+
+        <!-- Mobile Menu -->
+        <app-mobile-menu
+          [items]="menuItems"
+          [userName]="user?.fullName"
+          [userRole]="getUserRoleName()"
+          [userAvatar]="user?.profilePhotoUrl"
+        ></app-mobile-menu>
+      </div>
+    </div>
+  </nav>
+  
+  <app-breadcrumb></app-breadcrumb>
+
+  <div class="dashboard-container">
+    <div class="booking-container">
+      <!-- Cabeçalho -->
+      <div class="booking-header">
+        <h1>Agendar Consulta</h1>
+        <p class="subtitle">Escolha a especialidade, data e horário para sua consulta</p>
+      </div>
+
+      <!-- Indicador de Progresso -->
+      <div class="progress-indicator">
+        <div class="step" [class.active]="currentStep === 'specialty'" [class.completed]="selectedSpecialty">
+          <div class="step-number">1</div>
+          <span>Especialidade</span>
+        </div>
+        <div class="step" [class.active]="currentStep === 'date'" [class.completed]="selectedDate">
+          <div class="step-number">2</div>
+          <span>Data</span>
+        </div>
+        <div class="step" [class.active]="currentStep === 'time'" [class.completed]="selectedTimeSlot">
+          <div class="step-number">3</div>
+          <span>Horário</span>
+        </div>
+        <div class="step" [class.active]="currentStep === 'professional'" [class.completed]="selectedProfessional" *ngIf="selectedTimeSlot && selectedTimeSlot.professionals.length > 1">
+          <div class="step-number">4</div>
+          <span>Profissional</span>
+        </div>
+        <div class="step" [class.active]="currentStep === 'confirm'">
+          <div class="step-number">{{ selectedTimeSlot && selectedTimeSlot.professionals.length > 1 ? '5' : '4' }}</div>
+          <span>Confirmar</span>
+        </div>
+      </div>
+
+      <!-- Mensagens -->
+      <div class="alert alert-error" *ngIf="error && !success">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="15" y1="9" x2="9" y2="15"></line>
+          <line x1="9" y1="9" x2="15" y2="15"></line>
+        </svg>
+        {{ error }}
+      </div>
+
+      <div class="alert alert-success" *ngIf="success">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+        Agendamento realizado com sucesso! Redirecionando...
+      </div>
+
+      <!-- Loading -->
+      <div class="loading-container" *ngIf="loading">
+        <div class="spinner"></div>
+        <p>Carregando...</p>
+      </div>
+
+      <!-- Etapa 1: Selecionar Especialidade -->
+      <div class="step-content" *ngIf="currentStep === 'specialty' && !loading">
+        <h2>Selecione a Especialidade</h2>
+        <div class="specialty-grid">
+          <div class="specialty-card" *ngFor="let specialty of availableSpecialties" (click)="selectSpecialty(specialty)">
+            <div class="specialty-icon">{{ specialty.icon || '🏥' }}</div>
+            <h3>{{ specialty.name }}</h3>
+            <p *ngIf="specialty.description">{{ specialty.description }}</p>
+            <span class="badge">{{ specialty.availableProfessionalsCount }} profissional(is) disponível(is)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Etapa 2: Selecionar Data com Calendário -->
+      <div class="step-content" *ngIf="currentStep === 'date' && !loading">
+        <button class="btn-back" (click)="goBack()">← Voltar</button>
+        <h2>Selecione a Data</h2>
+        <p class="selected-info">Especialidade: <strong>{{ selectedSpecialty?.name }}</strong></p>
+        
+        <div class="calendar-container">
+          <div class="calendar-header">
+            <button class="calendar-nav" (click)="previousMonth()">‹</button>
+            <h3>{{ getMonthName() }}</h3>
+            <button class="calendar-nav" (click)="nextMonth()">›</button>
+          </div>
+          
+          <div class="calendar-weekdays">
+            <div class="weekday" *ngFor="let day of weekDays">{{ day }}</div>
+          </div>
+          
+          <div class="calendar-days">
+            <div 
+              class="calendar-day" 
+              *ngFor="let day of calendarDays"
+              [class.empty]="!day.date"
+              [class.available]="day.available"
+              [class.unavailable]="day.date && !day.available"
+              (click)="selectDateFromCalendar(day)"
+            >
+              <span class="day-number" *ngIf="day.date">{{ day.date.getDate() }}</span>
+              <span class="day-slots" *ngIf="day.available && day.data">
+                {{ day.data.availableSlotsCount }} vagas
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Etapa 3: Selecionar Horário -->
+      <div class="step-content" *ngIf="currentStep === 'time' && !loading">
+        <button class="btn-back" (click)="goBack()">← Voltar</button>
+        <h2>Selecione o Horário</h2>
+        <p class="selected-info">
+          Especialidade: <strong>{{ selectedSpecialty?.name }}</strong><br>
+          Data: <strong>{{ selectedDate?.dateFormatted }} ({{ selectedDate?.dayOfWeek }})</strong>
+        </p>
+        <div class="time-grid">
+          <div class="time-card" *ngFor="let timeSlot of availableTimeSlots" (click)="selectTimeSlot(timeSlot)">
+            <div class="time-value">{{ timeSlot.time }}</div>
+            <span class="badge-small">{{ timeSlot.professionals.length }} profissional(is)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Etapa 4: Selecionar Profissional (se necessário) -->
+      <div class="step-content" *ngIf="currentStep === 'professional' && !loading">
+        <button class="btn-back" (click)="goBack()">← Voltar</button>
+        <h2>Selecione o Profissional</h2>
+        <p class="selected-info">
+          Especialidade: <strong>{{ selectedSpecialty?.name }}</strong><br>
+          Data: <strong>{{ selectedDate?.dateFormatted }}</strong><br>
+          Horário: <strong>{{ selectedTimeSlot?.time }}</strong>
+        </p>
+        <div class="professional-grid">
+          <div class="professional-card" *ngFor="let professional of selectedTimeSlot?.professionals" (click)="selectProfessional(professional)">
+            <img [src]="professional.profilePhotoUrl || '/assets/default-avatar.png'" [alt]="professional.name" class="professional-photo">
+            <h3>{{ professional.name }}</h3>
+          </div>
+        </div>
+      </div>
+
+      <!-- Etapa 5: Confirmar -->
+      <div class="step-content" *ngIf="currentStep === 'confirm' && !loading && !success">
+        <button class="btn-back" (click)="goBack()">← Voltar</button>
+        <h2>Confirmar Agendamento</h2>
+        
+        <div class="confirmation-card">
+          <div class="confirmation-item">
+            <span class="label">Especialidade:</span>
+            <span class="value">{{ selectedSpecialty?.name }}</span>
+          </div>
+          <div class="confirmation-item">
+            <span class="label">Data:</span>
+            <span class="value">{{ selectedDate?.dateFormatted }} ({{ selectedDate?.dayOfWeek }})</span>
+          </div>
+          <div class="confirmation-item">
+            <span class="label">Horário:</span>
+            <span class="value">{{ selectedTimeSlot?.time }}</span>
+          </div>
+          <div class="confirmation-item">
+            <span class="label">Profissional:</span>
+            <span class="value">{{ selectedProfessional?.name }}</span>
+          </div>
+        </div>
+
+        <div class="notes-section">
+          <label for="notes">Observações (opcional):</label>
+          <textarea 
+            id="notes" 
+            [(ngModel)]="notes" 
+            placeholder="Adicione informações relevantes sobre sua consulta..."
+            rows="4"
+          ></textarea>
+        </div>
+
+        <div class="action-buttons">
+          <button class="btn btn-secondary" (click)="reset()">Cancelar</button>
+          <button class="btn btn-primary" (click)="confirmAppointment()">Confirmar Agendamento</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

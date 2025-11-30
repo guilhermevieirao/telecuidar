@@ -42,6 +42,8 @@ export class DashboardComponent implements OnInit {
   setupMenu(): void {
     this.menuItems = [
       { label: 'Dashboard', icon: '🏠', route: '/painel' },
+      { label: 'Agendar Consulta', icon: '🗓️', route: '/agendar' },
+      { label: 'Minhas Consultas', icon: '📋', route: '/minhas-consultas' },
       { label: 'Meu Perfil', icon: '👤', route: '/perfil' },
       { divider: true },
       { label: 'Sair', icon: '🚪', action: () => this.logout() }

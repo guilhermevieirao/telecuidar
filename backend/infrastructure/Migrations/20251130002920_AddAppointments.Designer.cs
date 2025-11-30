@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using app.Infrastructure.Persistence;
 
@@ -10,9 +11,11 @@ using app.Infrastructure.Persistence;
 namespace app.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251130002920_AddAppointments")]
+    partial class AddAppointments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.0");
@@ -50,7 +53,7 @@ namespace app.Infrastructure.Migrations
                     b.Property<int>("PatientId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("ProfessionalId")
+                    b.Property<int>("ProfessionalId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("SpecialtyId")
@@ -626,7 +629,9 @@ namespace app.Infrastructure.Migrations
 
                     b.HasOne("app.Domain.Entities.User", "Professional")
                         .WithMany()
-                        .HasForeignKey("ProfessionalId");
+                        .HasForeignKey("ProfessionalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("app.Domain.Entities.Specialty", "Specialty")
                         .WithMany()
