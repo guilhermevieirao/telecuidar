@@ -286,3 +286,88 @@ select:focus {
 .hover-theme:hover {
   background-color: var(--hover-bg);
 }
+
+/* Universal autofill fix para modo escuro */
+html[data-theme="dark"] input:-webkit-autofill,
+html[data-theme="dark"] input:-webkit-autofill:focus,
+html[data-theme="dark"] input:-webkit-autofill:hover,
+html[data-theme="dark"] textarea:-webkit-autofill,
+html[data-theme="dark"] textarea:-webkit-autofill:focus,
+html[data-theme="dark"] textarea:-webkit-autofill:hover,
+html[data-theme="dark"] select:-webkit-autofill,
+html[data-theme="dark"] select:-webkit-autofill:focus,
+html[data-theme="dark"] select:-webkit-autofill:hover {
+  box-shadow: 0 0 0 1000px #374151 inset !important;
+  -webkit-box-shadow: 0 0 0 1000px #374151 inset !important;
+  color: #f9fafb !important;
+  -webkit-text-fill-color: #f9fafb !important;
+  border-color: #4b5563 !important;
+  caret-color: #f9fafb !important;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+html[data-theme="dark"] input:-webkit-autofill::first-line {
+  color: #f9fafb !important;
+}
+
+html[data-theme="dark"] input:-internal-autofill-selected {
+  background-color: #374151 !important;
+  color: #f9fafb !important;
+}
+
+html[data-theme="dark"] input:-moz-autofill,
+html[data-theme="dark"] textarea:-moz-autofill,
+html[data-theme="dark"] select:-moz-autofill {
+  box-shadow: 0 0 0 1000px #374151 inset !important;
+  color: #f9fafb !important;
+  border-color: #4b5563 !important;
+  caret-color: #f9fafb !important;
+}
+
+html[data-theme="dark"] input:-ms-input-autofill {
+  background-color: #374151 !important;
+  color: #f9fafb !important;
+}
+
+/* Universal: Scroll do modal sempre dentro do modal, com bordas arredondadas preservadas */
+.fixed.inset-0 .modal-scrollable-content {
+  max-height: 70vh;
+  overflow-y: auto;
+  border-radius: inherit;
+  scrollbar-width: thin;
+  scrollbar-color: #6b7280 #1f2937;
+}
+
+.fixed.inset-0 .modal-scrollable-content::-webkit-scrollbar {
+  width: 8px;
+  border-radius: 8px;
+  background: #1f2937;
+}
+.fixed.inset-0 .modal-scrollable-content::-webkit-scrollbar-thumb {
+  background: #6b7280;
+  border-radius: 8px;
+}
+
+/* Garante que o conteúdo do modal use a classe modal-scrollable-content */
+.fixed.inset-0 .modal-content > .modal-body,
+.fixed.inset-0 .modal-content > form,
+.fixed.inset-0 .modal-content > div[ngcontent] {
+  max-height: 70vh;
+  overflow-y: auto;
+  border-radius: inherit;
+  scrollbar-width: thin;
+  scrollbar-color: #6b7280 #1f2937;
+}
+.fixed.inset-0 .modal-content > .modal-body::-webkit-scrollbar,
+.fixed.inset-0 .modal-content > form::-webkit-scrollbar,
+.fixed.inset-0 .modal-content > div[ngcontent]::-webkit-scrollbar {
+  width: 8px;
+  border-radius: 8px;
+  background: #1f2937;
+}
+.fixed.inset-0 .modal-content > .modal-body::-webkit-scrollbar-thumb,
+.fixed.inset-0 .modal-content > form::-webkit-scrollbar-thumb,
+.fixed.inset-0 .modal-content > div[ngcontent]::-webkit-scrollbar-thumb {
+  background: #6b7280;
+  border-radius: 8px;
+}

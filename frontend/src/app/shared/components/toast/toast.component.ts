@@ -45,8 +45,8 @@ export class ToastComponent implements OnInit {
   ngOnInit() {
     this.toastService.toasts$.subscribe((toast: Toast) => {
       this.toasts.push(toast);
-      
-      if (toast.duration) {
+      // Só remove automaticamente se a duração for maior que 0
+      if (toast.duration && toast.duration > 0) {
         setTimeout(() => this.remove(toast), toast.duration);
       }
     });

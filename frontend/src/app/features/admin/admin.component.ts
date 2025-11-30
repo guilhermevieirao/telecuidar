@@ -75,7 +75,23 @@ interface Statistics {
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, ConfirmModalComponent, NgxMaskDirective, BaseChartDirective, PaginationComponent, NotificationsComponent, ThemeToggleComponent, MobileMenu, FilesComponent, ReportsComponent, ProfileComponent, SpecialtiesComponent, SchedulesComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    ConfirmModalComponent,
+    NgxMaskDirective,
+    BaseChartDirective,
+    PaginationComponent,
+    NotificationsComponent,
+    ThemeToggleComponent,
+    MobileMenu,
+    FilesComponent,
+    ReportsComponent,
+    ProfileComponent,
+    SpecialtiesComponent,
+    SchedulesComponent
+  ],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss']
 })

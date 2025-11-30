@@ -1,7 +1,18 @@
+// Interface para paginação de agendas
+export interface SchedulesPageInfo {
+  pageNumber: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+}
+
+// As propriedades devem ser públicas e declaradas na classe SchedulesComponent
+
 import { Component, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { PaginationComponent } from '../../shared/components/pagination/pagination.component';
 import { HttpClient } from '@angular/common/http';
 import { ScheduleService } from '../../services/schedule.service';
 import { ScheduleDto, CreateScheduleCommand, CreateScheduleDayDto, UpdateScheduleCommand } from '../../models/schedule.model';
@@ -34,16 +45,24 @@ interface DayConfig {
 @Component({
   selector: 'app-schedules',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, PaginationComponent],
   templateUrl: './schedules.component.html',
   styleUrls: ['./schedules.component.scss']
 })
 export class SchedulesComponent implements OnInit {
   @Input() embeddedMode: boolean = false;
 
-  schedules: ScheduleDto[] = [];
-  professionals: Professional[] = [];
-  selectedSchedule: ScheduleDto | null = null;
+  public schedules: ScheduleDto[] = [];
+  public filteredSchedules: ScheduleDto[] = [];
+  public professionals: Professional[] = [];
+  public selectedSchedule: ScheduleDto | null = null;
+
+  // Propriedades para paginação, busca, filtro e ordenação
+  public schedulesPageInfo: SchedulesPageInfo = { pageNumber: 1, pageSize: 10, totalCount: 0, totalPages: 1 };
+  public schedulesSortBy = 'startDate';
+  public schedulesSortDirection: 'asc' | 'desc' = 'desc';
+  public schedulesSearchTerm = '';
+  public schedulesProfessionalFilter: number | null = null;
   showCreateModal = false;
   showEditModal = false;
   showDetailsModal = false;
@@ -82,9 +101,9 @@ export class SchedulesComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.loadSchedules();
     this.loadProfessionals();
     this.setDefaultDates();
+    this.loadSchedules();
   }
 
   setDefaultDates(): void {
@@ -97,6 +116,7 @@ export class SchedulesComponent implements OnInit {
     this.scheduleService.getAll().subscribe({
       next: (data) => {
         this.schedules = data;
+        this.applySchedulesFilters();
         this.loading = false;
       },
       error: (error) => {
@@ -104,6 +124,70 @@ export class SchedulesComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  applySchedulesFilters(): void {
+    let filtered = [...this.schedules];
+    // Filtro por profissional
+    if (this.schedulesProfessionalFilter) {
+      filtered = filtered.filter(s => s.professionalId === this.schedulesProfessionalFilter);
+    }
+    // Busca
+    if (this.schedulesSearchTerm) {
+      const term = this.schedulesSearchTerm.toLowerCase();
+      filtered = filtered.filter(s =>
+        s.professionalName.toLowerCase().includes(term) ||
+        (s.scheduleDays && s.scheduleDays.some(d => d.dayOfWeekName.toLowerCase().includes(term)))
+      );
+    }
+    // Ordenação
+    filtered = filtered.sort((a, b) => {
+      let aValue = (a as any)[this.schedulesSortBy];
+      let bValue = (b as any)[this.schedulesSortBy];
+      if (aValue instanceof Date) aValue = aValue.getTime();
+      if (bValue instanceof Date) bValue = bValue.getTime();
+      if (aValue < bValue) return this.schedulesSortDirection === 'asc' ? -1 : 1;
+      if (aValue > bValue) return this.schedulesSortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+    // Paginação
+    this.schedulesPageInfo.totalCount = filtered.length;
+    this.schedulesPageInfo.totalPages = Math.ceil(filtered.length / this.schedulesPageInfo.pageSize) || 1;
+    const start = (this.schedulesPageInfo.pageNumber - 1) * this.schedulesPageInfo.pageSize;
+    const end = start + this.schedulesPageInfo.pageSize;
+    this.filteredSchedules = filtered.slice(start, end);
+  }
+
+  onSchedulesSearchChange(event: Event): void {
+    this.schedulesSearchTerm = (event.target as HTMLInputElement).value;
+    this.schedulesPageInfo.pageNumber = 1;
+    this.applySchedulesFilters();
+  }
+
+  onSchedulesProfessionalFilterChange(profId: number | null): void {
+    this.schedulesProfessionalFilter = profId;
+    this.schedulesPageInfo.pageNumber = 1;
+    this.applySchedulesFilters();
+  }
+
+  sortSchedulesBy(column: string): void {
+    if (this.schedulesSortBy === column) {
+      this.schedulesSortDirection = this.schedulesSortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.schedulesSortBy = column;
+      this.schedulesSortDirection = 'asc';
+    }
+    this.applySchedulesFilters();
+  }
+
+  onSchedulesPageChange(page: number): void {
+    this.schedulesPageInfo.pageNumber = page;
+    this.applySchedulesFilters();
+  }
+
+  getSchedulesSortIcon(column: string): string {
+    if (this.schedulesSortBy !== column) return '⇅';
+    return this.schedulesSortDirection === 'asc' ? '↑' : '↓';
   }
 
   loadProfessionals(): void {

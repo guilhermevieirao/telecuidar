@@ -23,9 +23,25 @@
 
 .toast-success {
   border-left-color: #16a34a;
-  
+  border-radius: 0.75rem !important;
   .toast-icon {
     color: #16a34a;
+  }
+}
+
+:host-context(html[data-theme="dark"]),
+:host-context(html.dark) {
+  .toast {
+    background: #1f2937;
+    color: #f9fafb;
+  }
+  .toast-success {
+    border-left-color: #22c55e;
+    background: #14532d;
+    color: #bbf7d0;
+    .toast-icon {
+      color: #22c55e;
+    }
   }
 }
 

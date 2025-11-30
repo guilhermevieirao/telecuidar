@@ -23,16 +23,38 @@
         <div class="spinner"></div>
       </div>
 
+      <!-- Filtros, busca e paginação -->
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+        <div class="flex flex-row gap-2 items-center w-full">
+          <input
+            type="text"
+            class="form-input w-1/2"
+            style="min-width:0;"
+            placeholder="Buscar por profissional, dia..."
+            [value]="schedulesSearchTerm"
+            (input)="onSchedulesSearchChange($event)"
+          />
+          <select class="form-input w-1/2" style="min-width:0;" [value]="schedulesProfessionalFilter || ''" (change)="onSchedulesProfessionalFilterChange($any($event.target).value ? +$any($event.target).value : null)">
+            <option value="">Todos os profissionais</option>
+            <option *ngFor="let prof of professionals" [value]="prof.id">{{ prof.fullName }}</option>
+          </select>
+        </div>
+        <div class="flex-1"></div>
+      </div>
+
       <!-- Schedules Table -->
-      <div *ngIf="!loading && schedules.length > 0" class="overflow-x-auto">
+      <div *ngIf="!loading && filteredSchedules.length > 0" class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200">
           <thead class="bg-gray-50">
             <tr>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Profissional
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" (click)="sortSchedulesBy('professionalName')">
+                Profissional {{ getSchedulesSortIcon('professionalName') }}
               </th>
               <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Dias de Atendimento
+              </th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" (click)="sortSchedulesBy('startDate')">
+                Validade {{ getSchedulesSortIcon('startDate') }}
               </th>
               <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Horário
@@ -40,11 +62,8 @@
               <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Duração e Intervalo
               </th>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Validade
-              </th>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" (click)="sortSchedulesBy('isActive')">
+                Status {{ getSchedulesSortIcon('isActive') }}
               </th>
               <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Ações
@@ -52,7 +71,7 @@
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
-            <tr *ngFor="let schedule of schedules" class="hover:bg-gray-50">
+            <tr *ngFor="let schedule of filteredSchedules" class="hover:bg-gray-50">
               <td class="px-4 py-4">
                 <div class="flex flex-col">
                   <div class="text-sm font-medium text-gray-900">{{ schedule.professionalName }}</div>
@@ -136,6 +155,19 @@
           </tbody>
         </table>
       </div>
+      <app-pagination
+        *ngIf="filteredSchedules.length > 0"
+        [pageInfo]="{
+          items: filteredSchedules,
+          pageNumber: schedulesPageInfo.pageNumber,
+          pageSize: schedulesPageInfo.pageSize,
+          totalCount: schedulesPageInfo.totalCount,
+          totalPages: schedulesPageInfo.totalPages,
+          hasPreviousPage: schedulesPageInfo.pageNumber > 1,
+          hasNextPage: schedulesPageInfo.pageNumber < schedulesPageInfo.totalPages
+        }"
+        (pageChange)="onSchedulesPageChange($event)">
+      </app-pagination>
 
       <!-- Empty state -->
       <div *ngIf="!loading && schedules.length === 0" class="text-center py-12 text-gray-500">

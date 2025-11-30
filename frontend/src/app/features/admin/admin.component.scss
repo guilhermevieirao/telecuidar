@@ -1,13 +1,69 @@
+/* Modal de Criação Manual - Dark mode fix */
+:host-context(html[data-theme="dark"]),
+:host-context(html.dark) {
+  .modal-create-user-bg {
+    background-color: #1f2937 !important;
+    border-color: #374151 !important;
+    color: #f9fafb;
+  }
+  .modal-create-user-title {
+    color: #f9fafb;
+  }
+  .modal-create-user-section-title {
+    color: #d1d5db;
+  }
+  .modal-create-user-btn {
+    background-color: #4b5563;
+    color: #f9fafb;
+  }
+  .modal-create-user-btn:hover:not(:disabled) {
+    background-color: #2563eb;
+  }
+  .modal-create-user-input {
+    background-color: #374151;
+    border-color: #4b5563;
+    color: #f9fafb;
+  }
+  .modal-create-user-input:focus {
+    border-color: #2563eb;
+    background-color: #1f2937;
+  }
+}
+/* Modal de Especialidades - Dark mode fix */
+:host-context(html[data-theme="dark"]),
+:host-context(html.dark) {
+  .modal-specialty-bg {
+    background-color: #1f2937 !important;
+    border-color: #374151 !important;
+    color: #f9fafb;
+  }
+  .modal-specialty-title {
+    color: #f9fafb;
+  }
+  .modal-specialty-section-title {
+    color: #d1d5db;
+  }
+  .modal-specialty-btn {
+    background-color: #4b5563;
+    color: #f9fafb;
+  }
+  .modal-specialty-btn:hover:not(:disabled) {
+    background-color: #6d28d9;
+  }
+}
 .badge-paciente {
-  @apply bg-green-100 text-green-800;
+  background-color: #d1fae5; /* bg-green-100 */
+  color: #065f46; /* text-green-800 */
 }
 
 .badge-profissional {
-  @apply bg-purple-100 text-purple-800;
+  background-color: #ede9fe; /* bg-purple-100 */
+  color: #6d28d9; /* text-purple-800 */
 }
 
 .badge-admin {
-  @apply bg-red-100 text-red-800;
+  background-color: #fee2e2; /* bg-red-100 */
+  color: #991b1b; /* text-red-800 */
 }
 
 /* Profile Button - Padronizado com Theme e Notifications */
