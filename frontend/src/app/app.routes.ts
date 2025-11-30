@@ -23,6 +23,11 @@ export const routes: Routes = [
     canActivate: [guestGuard]
   },
   {
+    path: 'redefinir-senha',
+    loadComponent: () => import('./features/auth/reset-password/reset-password.component').then(m => m.ResetPasswordComponent),
+    canActivate: [guestGuard]
+  },
+  {
     path: 'confirmar-email',
     loadComponent: () => import('./features/auth/confirm-email/confirm-email.component').then(m => m.ConfirmEmailComponent),
     canActivate: [guestGuard]
@@ -41,6 +46,11 @@ export const routes: Routes = [
   {
     path: 'forgot-password',
     redirectTo: 'recuperar-senha',
+    pathMatch: 'full'
+  },
+  {
+    path: 'reset-password',
+    redirectTo: 'redefinir-senha',
     pathMatch: 'full'
   },
   {

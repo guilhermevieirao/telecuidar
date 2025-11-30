@@ -1,7 +1,5 @@
 dotnet ef database drop --force; dotnet ef database update; dotnet run --seed
 
-SMTP
-
 Náo permitir usar o mesmo numero ou cpf
 
 Organizar pastas arquivos

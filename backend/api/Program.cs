@@ -14,6 +14,19 @@ using app.Infrastructure.Repositories;
 using app.Infrastructure.Services;
 using MediatR;
 using System.Reflection;
+using DotNetEnv;
+
+// Carrega variáveis de ambiente do arquivo .env
+var envPath = Path.Combine(Directory.GetCurrentDirectory(), ".env");
+if (File.Exists(envPath))
+{
+    Env.Load(envPath);
+    Console.WriteLine("✅ Arquivo .env carregado com sucesso");
+}
+else
+{
+    Console.WriteLine("⚠️  Arquivo .env não encontrado, usando apenas appsettings.json");
+}
 
 var builder = WebApplication.CreateBuilder(args);
 
