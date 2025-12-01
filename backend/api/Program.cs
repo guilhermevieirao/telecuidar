@@ -207,6 +207,94 @@ using (var scope = app.Services.CreateScope())
                 Console.WriteLine($"   ⚠️  ATENÇÃO: Altere a senha padrão!");
                 Console.WriteLine("========================================");
             }
+
+            // Seed dos usuários gui@gui.com e med@med.com
+            var usersToSeed = new[]
+            {
+                new { FirstName = "gui", LastName = "gui", Email = "gui@gui.com", Password = "zxcasd", Role = UserRole.Paciente },
+                new { FirstName = "med", LastName = "med", Email = "med@med.com", Password = "zxcasd", Role = UserRole.Profissional }
+            };
+
+            foreach (var userSeed in usersToSeed)
+            {
+                var exists = context.Users.Any(u => u.Email == userSeed.Email);
+                if (!exists)
+                {
+                    var user = new User
+                    {
+                        FirstName = userSeed.FirstName,
+                        LastName = userSeed.LastName,
+                        Email = userSeed.Email,
+                        PasswordHash = passwordHasher.HashPassword(userSeed.Password),
+                        Role = userSeed.Role,
+                        EmailConfirmed = true,
+                        IsActive = true
+                    };
+                    context.Users.Add(user);
+                    context.SaveChanges();
+                    Console.WriteLine($"✅ Usuário criado: {user.Email}");
+                }
+            }
+
+            // Especialidade e atribuição ao médico
+            var medUser = context.Users.FirstOrDefault(u => u.Email == "med@med.com");
+            if (medUser != null)
+            {
+                // Cria especialidade se não existir
+                var specialtyName = "Clínico Geral";
+                var specialty = context.Specialties.FirstOrDefault(s => s.Name == specialtyName);
+                if (specialty == null)
+                {
+                    specialty = new Specialty { Name = specialtyName, Description = "Especialidade padrão criada pelo seed" };
+                    context.Specialties.Add(specialty);
+                    context.SaveChanges();
+                    Console.WriteLine($"✅ Especialidade criada: {specialty.Name}");
+                }
+
+                // Atribui especialidade ao médico se não estiver atribuída
+                var hasSpecialty = context.UserSpecialties.Any(us => us.UserId == medUser.Id && us.SpecialtyId == specialty.Id);
+                if (!hasSpecialty)
+                {
+                    var userSpecialty = new UserSpecialty { UserId = medUser.Id, SpecialtyId = specialty.Id };
+                    context.UserSpecialties.Add(userSpecialty);
+                    context.SaveChanges();
+                    Console.WriteLine($"✅ Especialidade atribuída ao médico: {medUser.Email}");
+                }
+
+                // Cria agenda para o médico se não existir
+                var yesterday = DateTime.Now.Date.AddDays(-1);
+                var hasSchedule = context.Schedules.Any(s => s.ProfessionalId == medUser.Id);
+                if (!hasSchedule)
+                {
+                    var schedule = new Schedule
+                    {
+                        ProfessionalId = medUser.Id,
+                        StartDate = yesterday,
+                        EndDate = null,
+                        CreatedByUserId = medUser.Id,
+                        IsActive = true
+                    };
+                    context.Schedules.Add(schedule);
+                    context.SaveChanges();
+
+                    // Cria dias da semana (domingo a sábado)
+                    for (int day = 0; day <= 6; day++)
+                    {
+                        var scheduleDay = new ScheduleDay
+                        {
+                            ScheduleId = schedule.Id,
+                            DayOfWeek = day,
+                            StartTime = new TimeSpan(0, 0, 0), // 00:00
+                            EndTime = new TimeSpan(23, 59, 0), // 23:59
+                            AppointmentDuration = 30, // valor padrão
+                            IntervalBetweenAppointments = 0 // valor padrão
+                        };
+                        context.ScheduleDays.Add(scheduleDay);
+                    }
+                    context.SaveChanges();
+                    Console.WriteLine($"✅ Agenda criada para o médico: {medUser.Email}");
+                }
+            }
         }
         else
         {

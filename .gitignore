@@ -79,6 +79,18 @@
 
 # NuGet Packages
 *.nupkg
+
+# Banco de dados local
+*.db
+
+# Arquivos auxiliares do SQLite
+*.db-shm
+*.db-wal
+backend/api/*.db-shm
+backend/api/*.db-wal
+
+# Não versionar package-lock.json em qualquer pasta
+**/package-lock.json
 *.snupkg
 **/packages/*
 !**/packages/build/
