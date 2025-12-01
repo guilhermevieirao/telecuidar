@@ -1,12 +1,47 @@
-dotnet ef database drop --force; dotnet ef database update; dotnet run --seed
+Refatorar a estilização removero tailwind
 
+copiar ADM > MED > PAC
 Náo permitir usar o mesmo numero ou cpf
+pre consulta
+
+Paciente 
+CPF 
+CNS
+NOME
+NOME SOCIAL 
+SEXO
+DATA NASCIMENTO 
+NOME DA MÃE 
+NOME PAI 
+CEP 
+ENDEREÇO 
+MUNICÍPIO 
+ESTADO
+NACIONALIDADE 
+EMAIL 
+TELEFONE 
+
+MÉDICO 
+CPF 
+CRM
+CBO
+ESPECIALIDADE 
+NOME
+SEXO 
+DATA NASCIMENTO 
+ENDEREÇO 
+CEP
+MUNICÍPIO 
+ESTADO
+NACIONALIDADE 
+EMAIL
+TELEFONE
+
+Integrar os dois sistemas do meu pai
 
 Organizar pastas arquivos
 Remover Inutilidades
 Ajustar Migrations
-
-Integrar VideoChamada
 
 Copiar SusAtende
 

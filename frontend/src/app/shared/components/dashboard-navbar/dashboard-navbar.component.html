@@ -1,0 +1,31 @@
+<nav class="navbar">
+  <div class="navbar-content">
+    <div class="logo">
+      <span class="logo-icon">🏥</span>
+      <span class="logo-text">TeleCuidar</span>
+    </div>
+    <div class="nav-right">
+      <app-theme-toggle></app-theme-toggle>
+      <!-- <app-notifications></app-notifications>  Se/quando disponível -->
+      <div class="user-profile-section desktop-only" *ngIf="user">
+        <div class="user-avatar" routerLink="/perfil" title="Editar perfil">
+          <img *ngIf="user?.profilePhotoUrl" [src]="user.profilePhotoUrl" [alt]="user.fullName">
+          <span *ngIf="!user?.profilePhotoUrl" class="avatar-initials">{{ getUserInitials() }}</span>
+        </div>
+        <div class="user-info">
+          <span class="user-name">{{ user?.fullName }}</span>
+          <span class="user-role">{{ getUserRoleName() }}</span>
+        </div>
+      </div>
+      <button class="btn-logout desktop-only" (click)="logout()">
+        Sair
+      </button>
+      <app-mobile-menu
+        [items]="menuItems"
+        [userName]="user?.fullName"
+        [userRole]="getUserRoleName()"
+        [userAvatar]="user?.profilePhotoUrl"
+      ></app-mobile-menu>
+    </div>
+  </div>
+</nav>

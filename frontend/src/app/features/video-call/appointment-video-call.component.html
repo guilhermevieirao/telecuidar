@@ -1,6 +1,9 @@
 <div class="video-call-page" [class.with-medical-record]="showMedicalRecord">
   <!-- Header com informações da consulta -->
-  <div class="video-call-header" *ngIf="appointment && !errorMessage">
+  <button class="btn-toggle-header" (click)="toggleHeader()" *ngIf="appointment && !errorMessage" style="position: absolute; top: 10px; right: 10px; z-index: 1000;">
+    {{ showHeader ? 'Ocultar cabeçalho' : 'Exibir cabeçalho' }}
+  </button>
+  <div class="video-call-header" *ngIf="appointment && !errorMessage && showHeader">
     <div class="header-content">
       <div class="appointment-info">
         <h2>{{ user?.role === 1 ? 'Consulta com' : 'Consulta de' }} {{ user?.role === 1 ? appointment.professionalName : appointment.patientName }}</h2>

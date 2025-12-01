@@ -1,0 +1,76 @@
+<div class="admin-blocks-list">
+  <h2>Solicitações de Bloqueio</h2>
+  <div *ngIf="loading">Carregando...</div>
+  <div class="bg-white rounded-lg shadow overflow-hidden">
+    <table *ngIf="!loading && blocks.length > 0" class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Profissional</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Período</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Motivo</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Justificativa ADM</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <tr *ngFor="let block of blocks" class="hover:bg-gray-50">
+          <td class="px-6 py-4 whitespace-nowrap">{{ block.professionalName }}</td>
+          <td class="px-6 py-4 whitespace-nowrap">{{ block.startDate | date:'shortDate' }}<span *ngIf="block.startDate !== block.endDate"> - {{ block.endDate | date:'shortDate' }}</span></td>
+          <td class="px-6 py-4 whitespace-nowrap">{{ block.reason }}</td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="status-badge"
+              [ngClass]="{
+                'badge-pending': getStatusLabel(block) === 'Pendente',
+                'badge-accepted': getStatusLabel(block) === 'Aceita',
+                'badge-rejected': getStatusLabel(block) === 'Recusada',
+                'badge-expired': getStatusLabel(block) === 'Passada'
+              }">
+              {{ getStatusLabel(block) }}
+            </span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">{{ block.adminJustification || '-' }}</td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <button *ngIf="getStatusLabel(block) === 'Pendente'" class="text-green-700 hover:text-green-900 font-semibold mr-2" (click)="openAction(block, 'accept')">Aceitar</button>
+            <button *ngIf="getStatusLabel(block) === 'Pendente'" class="text-red-700 hover:text-red-900 font-semibold" (click)="openAction(block, 'reject')">Recusar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div *ngIf="!loading && blocks.length === 0">Nenhuma solicitação encontrada.</div>
+
+  <div *ngIf="selectedBlock && action" class="modal show d-block" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content modal-block-action">
+        <div class="modal-header">
+          <div class="modal-title-block flex items-center gap-2">
+            <span class="modal-icon text-2xl">{{ action === 'accept' ? '✅' : '❌' }}</span>
+            <span class="modal-title-text">{{ action === 'accept' ? 'Aceitar' : 'Recusar' }} Bloqueio</span>
+          </div>
+          <button type="button" class="btn-close" (click)="closeAction()" aria-label="Fechar">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="modal-info mb-4">
+            <div><strong>Profissional:</strong> {{ selectedBlock.professionalName }}</div>
+            <div><strong>Período:</strong> {{ selectedBlock.startDate | date:'shortDate' }} - {{ selectedBlock.endDate | date:'shortDate' }}</div>
+            <div><strong>Motivo:</strong> {{ selectedBlock.reason }}</div>
+          </div>
+          <div class="form-group mb-3">
+            <label for="justification" class="block font-semibold mb-1">Justificativa <span class="text-red-500">*</span></label>
+            <textarea id="justification" [(ngModel)]="justification" class="form-control" required placeholder="Descreva o motivo da decisão..."></textarea>
+          </div>
+          <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+        </div>
+        <div class="modal-footer flex gap-3 justify-end">
+          <button type="button" class="btn btn-secondary flex items-center gap-1" (click)="closeAction()">
+            <span>Cancelar</span>
+          </button>
+          <button type="button" class="btn btn-primary flex items-center gap-1" (click)="submitAction()">
+            <span>{{ action === 'accept' ? 'Aceitar' : 'Recusar' }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

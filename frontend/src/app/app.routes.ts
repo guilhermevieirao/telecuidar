@@ -4,6 +4,24 @@ import { guestGuard } from './core/guards/guest.guard';
 
 export const routes: Routes = [
   {
+    path: 'meus-bloqueios',
+    loadComponent: () => import('./features/schedule-blocks/professional-blocks.component').then(m => m.ProfessionalBlocksComponent),
+    canActivate: [authGuard],
+    data: { roles: [2], breadcrumbParent: '/painel' }
+  },
+  {
+    path: 'solicitar-bloqueio',
+    loadComponent: () => import('./features/schedule-blocks/request-block.component').then(m => m.RequestBlockComponent),
+    canActivate: [authGuard],
+    data: { roles: [2], breadcrumbParent: '/painel' }
+  },
+  {
+    path: 'admin/bloqueios',
+    loadComponent: () => import('./features/schedule-blocks/admin-blocks.component').then(m => m.AdminBlocksComponent),
+    canActivate: [authGuard],
+    data: { roles: [3], breadcrumbParent: '/admin' }
+  },
+  {
     path: '',
     loadComponent: () => import('./features/landing/landing.component').then(m => m.LandingComponent)
   },

@@ -76,10 +76,12 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 // Configure Entity Framework
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(
         builder.Configuration.GetConnectionString("DefaultConnection"),
         b => b.MigrationsAssembly("app.Infrastructure")));
+builder.Services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
 
 // Register services
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));

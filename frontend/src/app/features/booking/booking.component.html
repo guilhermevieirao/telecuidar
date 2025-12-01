@@ -131,7 +131,11 @@
               [class.empty]="!day.date"
               [class.available]="day.available"
               [class.unavailable]="day.date && !day.available"
-              (click)="selectDateFromCalendar(day)"
+              [class.disabled]="day.date && !day.available"
+              [attr.tabindex]="day.available ? 0 : -1"
+              (click)="day.available ? selectDateFromCalendar(day) : null"
+              [style.pointerEvents]="day.available ? 'auto' : 'none'"
+              [style.opacity]="day.available ? 1 : 0.5"
             >
               <span class="day-number" *ngIf="day.date">{{ day.date.getDate() }}</span>
               <span class="day-slots" *ngIf="day.available && day.data">

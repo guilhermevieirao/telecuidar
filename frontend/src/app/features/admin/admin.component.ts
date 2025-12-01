@@ -18,6 +18,7 @@ import { ReportsComponent } from '../reports/reports.component';
 import { ProfileComponent } from '../profile/profile.component';
 import { SpecialtiesComponent } from '../../pages/specialties/specialties.component';
 import { SchedulesComponent } from '../../pages/schedules/schedules.component';
+import { AdminBlocksComponent } from '../schedule-blocks/admin-blocks.component';
 import { environment } from '../../../environments/environment';
 
 interface User {
@@ -90,13 +91,14 @@ interface Statistics {
     ReportsComponent,
     ProfileComponent,
     SpecialtiesComponent,
-    SchedulesComponent
+    SchedulesComponent,
+    AdminBlocksComponent
   ],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss']
 })
 export class AdminComponent implements OnInit {
-  activeTab: 'dashboard' | 'users' | 'audit-logs' | 'invitations' | 'files' | 'reports' | 'profile' | 'specialties' | 'schedules' = 'dashboard';
+  activeTab: 'dashboard' | 'users' | 'audit-logs' | 'invitations' | 'files' | 'reports' | 'profile' | 'specialties' | 'schedules' | 'blocks' = 'dashboard';
   menuItems: MenuItem[] = [];
   adminUser: any = null;
   
@@ -382,7 +384,7 @@ export class AdminComponent implements OnInit {
     ];
   }
 
-  setActiveTab(tab: 'dashboard' | 'users' | 'audit-logs' | 'invitations' | 'files' | 'reports' | 'profile' | 'specialties' | 'schedules'): void {
+  setActiveTab(tab: 'dashboard' | 'users' | 'audit-logs' | 'invitations' | 'files' | 'reports' | 'profile' | 'specialties' | 'schedules' | 'blocks'): void {
     this.activeTab = tab;
     
     if (tab === 'invitations') {

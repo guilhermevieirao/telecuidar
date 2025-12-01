@@ -1,3 +1,4 @@
+// ...existing code...
 import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -41,6 +42,10 @@ interface MedicalRecord {
   styleUrls: ['./appointment-video-call.component.scss']
 })
 export class AppointmentVideoCallComponent implements OnInit, OnDestroy, AfterViewInit {
+    showHeader = true;
+    toggleHeader() {
+      this.showHeader = !this.showHeader;
+    }
   appointment: Appointment | null = null;
   roomName: string = '';
   isLoading = true;

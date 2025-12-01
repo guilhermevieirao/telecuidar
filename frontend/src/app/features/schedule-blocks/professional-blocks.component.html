@@ -1,0 +1,50 @@
+<div class="dashboard-page">
+  <app-dashboard-navbar
+    [user]="user"
+    [menuItems]="menuItems"
+    [getUserRoleName]="getUserRoleName"
+    [getUserInitials]="getUserInitials"
+    [logout]="logout"
+  ></app-dashboard-navbar>
+  <app-breadcrumb></app-breadcrumb>
+  <div class="dashboard-container">
+    <div class="section-header flex items-center justify-between mb-4">
+      <h2 class="text-2xl font-bold">Meus Bloqueios</h2>
+      <a routerLink="/solicitar-bloqueio" class="btn btn-primary">Solicitar Bloqueio</a>
+    </div>
+    <div class="card bg-white rounded-lg shadow p-6">
+      <div *ngIf="loading" class="text-center py-4">Carregando...</div>
+      <table *ngIf="!loading && blocks.length > 0" class="table w-full table-auto border">
+        <thead>
+          <tr class="bg-gray-100">
+            <th class="px-4 py-2">Solicitado em</th>
+            <th class="px-4 py-2">Período</th>
+            <th class="px-4 py-2">Motivo</th>
+            <th class="px-4 py-2">Status</th>
+            <th class="px-4 py-2">Justificativa ADM</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let block of blocks" class="border-t hover:bg-gray-50 transition">
+            <td class="px-4 py-2 font-semibold text-blue-700">{{ block.createdAt | date:'short' }}</td>
+            <td class="px-4 py-2">{{ block.startDate | date:'dd/MM/yyyy' }}<span *ngIf="block.startDate !== block.endDate"> - {{ block.endDate | date:'dd/MM/yyyy' }}</span></td>
+            <td class="px-4 py-2">{{ block.reason }}</td>
+            <td class="px-4 py-2">
+              <span class="status-badge"
+                [ngClass]="{
+                  'badge-pending': getStatusLabel(block) === 'Pendente',
+                  'badge-accepted': getStatusLabel(block) === 'Aceita',
+                  'badge-rejected': getStatusLabel(block) === 'Recusada',
+                  'badge-expired': getStatusLabel(block) === 'Passada'
+                }">
+                {{ getStatusLabel(block) }}
+              </span>
+            </td>
+            <td class="px-4 py-2">{{ block.adminJustification || '-' }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div *ngIf="!loading && blocks.length === 0" class="text-center text-gray-500 py-6">Nenhum bloqueio encontrado.</div>
+    </div>
+  </div>
+</div>

@@ -81,6 +81,22 @@
           <p class="card-description">Consultas agendadas com pacientes</p>
         </div>
       </div>
+      <div *ngIf="user?.role === 2" class="dashboard-card" routerLink="/meus-bloqueios" style="cursor: pointer;">
+        <div class="card-icon orange">⛔</div>
+        <div class="card-content">
+          <h3>Meus Bloqueios</h3>
+          <p class="card-value">Ver bloqueios</p>
+          <p class="card-description">Visualize e acompanhe seus bloqueios</p>
+        </div>
+      </div>
+      <div *ngIf="user?.role === 2" class="dashboard-card" routerLink="/solicitar-bloqueio" style="cursor: pointer;">
+        <div class="card-icon red">🛑</div>
+        <div class="card-content">
+          <h3>Solicitar Bloqueio</h3>
+          <p class="card-value">Novo</p>
+          <p class="card-description">Solicite um novo bloqueio de agenda</p>
+        </div>
+      </div>
 
       <div class="dashboard-card" routerLink="/admin" style="cursor: pointer;">
         <div class="card-icon purple">📁</div>

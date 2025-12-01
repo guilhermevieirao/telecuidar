@@ -1,3 +1,24 @@
+.btn-action.btn-video {
+  position: relative;
+  z-index: 10;
+}
+
+.modal-overlay[ng-reflect-ng-if="false"],
+.modal-overlay:not([ng-reflect-ng-if]) {
+  display: none !important;
+}
+// Melhorias para mobile: botões de ação ocupam toda a largura e aumentam área de toque
+@media (max-width: 768px) {
+  .appointment-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .btn-action {
+    width: 100%;
+    font-size: 1.1rem;
+    min-height: 48px;
+  }
+}
 // Dashboard Layout Styles
 .dashboard-page {
   min-height: 100vh;

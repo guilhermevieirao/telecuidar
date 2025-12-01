@@ -168,7 +168,7 @@
           <div class="appointment-footer">
             <span class="created-date">Criado em {{ formatDate(appointment.createdAt) }}</span>
             <div class="appointment-actions">
-              <button class="btn-action btn-video" *ngIf="isUpcoming(appointment) && appointment.meetingRoomId" [routerLink]="['/consulta-video', appointment.id]">
+              <button class="btn-action btn-video" [routerLink]="['/consulta-video', appointment.id]">
                 Entrar na Chamada
               </button>
               <button class="btn-action btn-details" *ngIf="isUpcoming(appointment)" (click)="viewDetails(appointment)">

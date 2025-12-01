@@ -6,6 +6,8 @@ using app.Domain.Interfaces;
 
 namespace app.Application.Appointments.Commands;
 
+using app.Application.Common.Interfaces;
+
 public class CreateAppointmentCommandHandler : IRequestHandler<CreateAppointmentCommand, Result<int>>
 {
     private readonly IRepository<Appointment> _appointmentRepository;
@@ -13,23 +15,27 @@ public class CreateAppointmentCommandHandler : IRequestHandler<CreateAppointment
     private readonly IRepository<UserSpecialty> _userSpecialtyRepository;
     private readonly IRepository<User> _userRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IApplicationDbContext _db;
 
     public CreateAppointmentCommandHandler(
         IRepository<Appointment> appointmentRepository,
         IRepository<Schedule> scheduleRepository,
         IRepository<UserSpecialty> userSpecialtyRepository,
         IRepository<User> userRepository,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        IApplicationDbContext db)
     {
         _appointmentRepository = appointmentRepository;
         _scheduleRepository = scheduleRepository;
         _userSpecialtyRepository = userSpecialtyRepository;
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
+        _db = db;
     }
 
     public async Task<Result<int>> Handle(CreateAppointmentCommand request, CancellationToken cancellationToken)
     {
+        var targetDate = request.AppointmentDate.Date;
         // Validar se o paciente existe
         var patient = await _userRepository.GetByIdAsync(request.PatientId);
         if (patient == null)
@@ -37,9 +43,22 @@ public class CreateAppointmentCommandHandler : IRequestHandler<CreateAppointment
             return Result<int>.Failure("Paciente não encontrado");
         }
 
-        // Se um profissional específico foi selecionado, validar
+
+
+
+        // Verificar bloqueio de agenda (ScheduleBlock Accepted)
         if (request.ProfessionalId.HasValue)
         {
+            var hasBlock = await _db.ScheduleBlocks
+                .AnyAsync(b => b.ProfessionalId == request.ProfessionalId.Value
+                    && b.Status == BlockStatus.Accepted
+                    && b.StartDate.Date <= targetDate && b.EndDate.Date >= targetDate,
+                    cancellationToken);
+            if (hasBlock)
+            {
+                return Result<int>.Failure("Não é possível agendar: o profissional está bloqueado nesta data.");
+            }
+
             // Validar se o profissional existe
             var professional = await _userRepository.GetByIdAsync(request.ProfessionalId.Value);
             if (professional == null)
@@ -60,7 +79,7 @@ public class CreateAppointmentCommandHandler : IRequestHandler<CreateAppointment
             }
         }
 
-        var targetDate = request.AppointmentDate.Date;
+
         var dayOfWeek = (int)targetDate.DayOfWeek;
 
         Schedule? schedule = null;

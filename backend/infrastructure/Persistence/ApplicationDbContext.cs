@@ -5,9 +5,11 @@ using app.Domain.Enums;
 using System.Reflection;
 using System.Text.Json;
 
+using app.Application.Common.Interfaces;
+
 namespace app.Infrastructure.Persistence;
 
-public class ApplicationDbContext : DbContext
+public class ApplicationDbContext : DbContext, IApplicationDbContext
 {
     private int? _currentUserId;
     private string? _ipAddress;
@@ -29,6 +31,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Schedule> Schedules { get; set; }
     public DbSet<ScheduleDay> ScheduleDays { get; set; }
     public DbSet<Appointment> Appointments { get; set; }
+    public DbSet<ScheduleBlock> ScheduleBlocks { get; set; }
 
     public void SetAuditInfo(int? userId, string? ipAddress = null, string? userAgent = null)
     {

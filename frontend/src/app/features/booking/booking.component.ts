@@ -165,10 +165,12 @@ export class BookingComponent implements OnInit {
       const date = new Date(year, month, day);
       const dateStr = date.toISOString().split('T')[0];
       const availableDate = this.availableDates.find(d => d.date.startsWith(dateStr));
-      
+
+      // Disponível apenas se houver slots disponíveis
+      const isAvailable = !!availableDate && availableDate.availableSlotsCount > 0;
       this.calendarDays.push({
         date: date,
-        available: !!availableDate,
+        available: isAvailable,
         data: availableDate
       });
     }
@@ -189,7 +191,10 @@ export class BookingComponent implements OnInit {
   }
 
   selectDateFromCalendar(day: {date: Date | null, available: boolean, data?: AvailableDate}): void {
+    // Garantir que só dias disponíveis possam ser selecionados
     if (!day.date || !day.available || !day.data) return;
+    // Proteção extra: se não houver slots disponíveis, não seleciona
+    if (!day.data.availableSlotsCount || day.data.availableSlotsCount <= 0) return;
     this.selectDate(day.data);
   }
 

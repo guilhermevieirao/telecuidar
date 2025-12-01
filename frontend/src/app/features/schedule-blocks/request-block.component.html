@@ -1,0 +1,54 @@
+<div class="dashboard-page">
+  <app-dashboard-navbar
+    [user]="user"
+    [menuItems]="menuItems"
+    [getUserRoleName]="getUserRoleName"
+    [getUserInitials]="getUserInitials"
+    [logout]="logout"
+  ></app-dashboard-navbar>
+  <app-breadcrumb></app-breadcrumb>
+  <div class="dashboard-container">
+    <div class="section-header flex items-center justify-between mb-4">
+      <h2 class="text-2xl font-bold">Solicitar Bloqueio</h2>
+    </div>
+    <div class="card request-block-card">
+      <form (ngSubmit)="submit()" #blockForm="ngForm" autocomplete="off">
+        <div class="form-title mb-6">
+          <span class="icon-calendar">🗓️</span>
+          <h3>Solicite um bloqueio de agenda</h3>
+          <p class="subtitle">Escolha o período e informe o motivo do bloqueio.</p>
+        </div>
+        <div class="form-group">
+          <label for="type">Tipo de bloqueio</label>
+          <select [(ngModel)]="type" name="type" id="type" class="form-control">
+            <option value="single">Dia único</option>
+            <option value="range">Faixa de dias</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="startDate">Data inicial</label>
+            <input type="date" [(ngModel)]="startDate" name="startDate" id="startDate" class="form-control" required />
+          </div>
+          <div class="form-group" *ngIf="type === 'range'">
+            <label for="endDate">Data final</label>
+            <input type="date" [(ngModel)]="endDate" name="endDate" id="endDate" class="form-control" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="reason">Motivo</label>
+          <textarea [(ngModel)]="reason" name="reason" id="reason" class="form-control" required placeholder="Descreva o motivo do bloqueio..."></textarea>
+        </div>
+        <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+        <div *ngIf="success" class="alert alert-success">{{ success }}</div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" [disabled]="loading">
+            <span *ngIf="!loading">Solicitar</span>
+            <span *ngIf="loading">Enviando...</span>
+          </button>
+          <a routerLink="/meus-bloqueios" class="btn btn-link">Voltar</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
