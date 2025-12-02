@@ -8,9 +8,11 @@ import { ToastService } from '../services/toast.service';
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   const toastService = inject(ToastService);
+  
   return next(req).pipe(
     catchError((error) => {
       console.error('HTTP Error:', error);
+      
       // Se for erro de autenticação (sessão expirada)
       if (error.status === 401) {
         // Toast persistente (sem duração) para sessão expirada

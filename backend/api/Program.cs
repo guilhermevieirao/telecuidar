@@ -93,6 +93,7 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IPdfExportService, PdfExportService>();
 builder.Services.AddScoped<IExcelExportService, ExcelExportService>();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient(); // Adicionar HttpClientFactory
 
 // Register MediatR with Behaviors
 var applicationAssembly = AppDomain.CurrentDomain.Load("app.Application");
@@ -407,6 +408,38 @@ using (var scope = app.Services.CreateScope())
                     }
                     context.SaveChanges();
                     Console.WriteLine($"✅ Agenda criada para o cardiologista: {medUser.Email}");
+                }
+
+                // Criar consulta de teste para gui@gui.com em cardiologia para 2026
+                var guiUser = context.Users.FirstOrDefault(u => u.Email == "gui@gui.com");
+                if (guiUser != null && medUser != null && cardiology != null)
+                {
+                    // Verifica se já existe consulta de teste
+                    var testAppointmentExists = context.Appointments.Any(a => 
+                        a.PatientId == guiUser.Id && 
+                        a.ProfessionalId == medUser.Id && 
+                        a.SpecialtyId == cardiology.Id &&
+                        a.AppointmentDate.Year == 2026);
+
+                    if (!testAppointmentExists)
+                    {
+                        var appointmentDate = new DateTime(2026, 3, 15); // 15 de março de 2026
+                        var appointmentTime = new TimeSpan(14, 30, 0); // 14:30
+                        var testAppointment = new Appointment
+                        {
+                            PatientId = guiUser.Id,
+                            ProfessionalId = medUser.Id,
+                            SpecialtyId = cardiology.Id,
+                            AppointmentDate = appointmentDate,
+                            AppointmentTime = appointmentTime,
+                            DurationMinutes = 30,
+                            Status = "Agendado",
+                            Notes = "Consulta de teste - Cardiologia"
+                        };
+                        context.Appointments.Add(testAppointment);
+                        context.SaveChanges();
+                        Console.WriteLine($"✅ Consulta criada para {guiUser.Email} em Cardiologia - {appointmentDate:dd/MM/yyyy} {appointmentTime:hh\\:mm}");
+                    }
                 }
             }
         }

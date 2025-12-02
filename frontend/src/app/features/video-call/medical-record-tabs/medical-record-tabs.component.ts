@@ -6,13 +6,14 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { SpecialtyService } from '../../../services/specialty.service';
 import { AppointmentFieldService } from '../../../services/appointment-field.service';
+import { AIService, AIResponse } from '../../../core/services/ai.service';
 import { SpecialtyFieldDto } from '../../../models/specialty.model';
 import { AppointmentFieldValueDto, SaveAppointmentFieldValueDto } from '../../../models/appointment-field.model';
 
 Chart.register(...registerables);
 
 export type TabMode = 'hidden' | 'sidebar' | 'fullscreen';
-export type ActiveTab = 'patient' | 'soap' | 'custom-fields' | 'biometric' | 'prescription' | 'exams' | 'transcription';
+export type ActiveTab = 'patient' | 'soap' | 'custom-fields' | 'biometric' | 'prescription' | 'exams' | 'transcription' | 'ai-analysis';
 
 interface PatientInfo {
   name: string;
@@ -87,6 +88,7 @@ declare global {
   selector: 'app-medical-record-tabs',
   standalone: true,
   imports: [CommonModule, FormsModule],
+  providers: [AIService],
   templateUrl: './medical-record-tabs.component.html',
   styleUrls: ['./medical-record-tabs.component.scss']
 })
@@ -176,9 +178,15 @@ export class MedicalRecordTabsComponent implements OnInit {
   private bloodPressureChart: Chart | null = null;
   private oxygenChart: Chart | null = null;
 
+  // IA Médica
+  isGeneratingAI = false;
+  aiAnalysisResult: AIResponse | null = null;
+  aiError: string | null = null;
+
   constructor(
     private specialtyService: SpecialtyService,
-    private appointmentFieldService: AppointmentFieldService
+    private appointmentFieldService: AppointmentFieldService,
+    private aiService: AIService
   ) {}
 
   ngOnInit(): void {
@@ -1547,4 +1555,118 @@ export class MedicalRecordTabsComponent implements OnInit {
     const sum = this.biometricData.oxygenSaturation.reduce((a, b) => a + b, 0);
     return Math.round(sum / this.biometricData.oxygenSaturation.length);
   }
+
+  // ==========================================
+  // SISTEMA DE IA MÉDICA
+  // ==========================================
+
+  generateAIAnalysis(): void {
+    this.isGeneratingAI = true;
+    this.aiError = null;
+
+    // Preparar dados customizados com labels
+    const customFieldsWithLabels: any = {};
+    this.customFields.forEach(field => {
+      const value = this.customFieldValues[field.id];
+      if (value !== undefined && value !== null && value !== '') {
+        customFieldsWithLabels[field.label] = value;
+      }
+    });
+
+    const lastBP = this.biometricData.bloodPressure[this.biometricData.bloodPressure.length - 1];
+    
+    const request = {
+      patientData: this.patientInfo,
+      soapData: this.soapData,
+      biometricData: {
+        heartRate: { current: this.biometricData.heartRate[this.biometricData.heartRate.length - 1] || null },
+        bloodPressure: {
+          systolic: lastBP?.systolic || null,
+          diastolic: lastBP?.diastolic || null
+        },
+        oxygenSaturation: { current: this.biometricData.oxygenSaturation[this.biometricData.oxygenSaturation.length - 1] || null },
+        temperature: { current: this.biometricData.temperature[this.biometricData.temperature.length - 1] || null },
+        respiratoryRate: { current: null }
+      },
+      customFields: customFieldsWithLabels,
+      transcription: this.transcriptionData.entries,
+      prescription: this.prescription,
+      examRequests: this.examRequests
+    };
+
+    this.aiService.generateMedicalAnalysis(request).subscribe({
+      next: (response) => {
+        console.log('Resposta da IA:', response);
+        if (response.choices && response.choices.length > 0) {
+          const content = response.choices[0].message.content;
+          this.aiAnalysisResult = this.aiService.parseAIResponse(content);
+        } else {
+          this.aiError = 'Resposta inválida da API. Verifique os logs do console.';
+        }
+        this.isGeneratingAI = false;
+      },
+      error: (error) => {
+        console.error('Erro completo ao gerar análise de IA:', error);
+        
+        let errorMessage = 'Erro ao comunicar com o serviço de IA.';
+        
+        if (error.status === 401) {
+          errorMessage = 'Token de API inválido ou expirado. Verifique a configuração da API Key.';
+        } else if (error.status === 403) {
+          errorMessage = 'Acesso negado. Verifique as permissões do token.';
+        } else if (error.status === 429) {
+          errorMessage = 'Limite de requisições excedido. Tente novamente em alguns momentos.';
+        } else if (error.status === 0) {
+          errorMessage = 'Erro de conexão. Verifique sua internet ou se há problemas de CORS.';
+        } else if (error.error?.error?.message) {
+          errorMessage = error.error.error.message;
+        } else if (error.message) {
+          errorMessage = error.message;
+        }
+        
+        this.aiError = errorMessage;
+        this.isGeneratingAI = false;
+      }
+    });
+  }
+
+  copyToClipboard(text: string): void {
+    navigator.clipboard.writeText(text).then(() => {
+      alert('Texto copiado para a área de transferência!');
+    }).catch(err => {
+      console.error('Erro ao copiar texto:', err);
+      alert('Erro ao copiar texto');
+    });
+  }
+
+  formatAIText(text: string): string {
+    if (!text) return '';
+    
+    // Converter markdown bold (**texto** ou __texto__) para <strong>
+    let formatted = text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    formatted = formatted.replace(/__([^_]+)__/g, '<strong>$1</strong>');
+    
+    // Converter markdown itálico (*texto* ou _texto_)
+    formatted = formatted.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+    formatted = formatted.replace(/_([^_]+)_/g, '<em>$1</em>');
+    
+    // Converter quebras de linha em <br>
+    formatted = formatted.replace(/\n/g, '<br>');
+    
+    // Converter marcadores de lista
+    formatted = formatted.replace(/^- /gm, '• ');
+    formatted = formatted.replace(/^\* /gm, '• ');
+    formatted = formatted.replace(/^\d+\.\s/gm, (match) => `<strong>${match}</strong>`);
+    
+    // Destacar títulos (linhas com apenas letras maiúsculas seguidas de :)
+    formatted = formatted.replace(/^([A-ZÁÀÂÃÉÊÍÓÔÕÚÇ\s]+):?<br>/gm, '<strong>$1:</strong><br>');
+    
+    // Converter títulos markdown (### Título)
+    formatted = formatted.replace(/###\s*([^<]+)<br>/g, '<strong style="font-size: 1.1em;">$1</strong><br>');
+    formatted = formatted.replace(/##\s*([^<]+)<br>/g, '<strong style="font-size: 1.2em;">$1</strong><br>');
+    formatted = formatted.replace(/#\s*([^<]+)<br>/g, '<strong style="font-size: 1.3em;">$1</strong><br>');
+    
+    return formatted;
+  }
 }
+

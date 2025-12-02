@@ -77,6 +77,13 @@
         <span class="tab-icon">🎙️</span>
         <span class="tab-label">Transcrição</span>
       </button>
+      <button 
+        class="tab-btn" 
+        [class.active]="activeTab === 'ai-analysis'"
+        (click)="setActiveTab('ai-analysis')">
+        <span class="tab-icon">🤖</span>
+        <span class="tab-label">IA Médica</span>
+      </button>
     </div>
 
     <!-- Conteúdo das tabs -->
@@ -725,6 +732,83 @@
               (click)="addManualEntry(manualSpeaker.value === 'professional' ? 'professional' : 'patient', manualText.value); manualText.value = ''">
               ➕ Adicionar
             </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: IA Médica -->
+      <div class="tab-panel" *ngIf="activeTab === 'ai-analysis'">
+        <div class="panel-header">
+          <h3>🤖 Análise por Inteligência Artificial</h3>
+          <p class="panel-description">Gere resumo clínico e hipóteses diagnósticas baseadas em todos os dados do prontuário</p>
+        </div>
+
+        <div class="ai-analysis-container">
+          <!-- Botões de Ação -->
+          <div class="ai-actions">
+            <button 
+              class="btn-primary btn-generate-analysis" 
+              (click)="generateAIAnalysis()"
+              [disabled]="isGeneratingAI">
+              <span *ngIf="!isGeneratingAI">🧠 Gerar Análise Completa</span>
+              <span *ngIf="isGeneratingAI">⏳ Analisando dados...</span>
+            </button>
+          </div>
+
+          <!-- Área de Resultados -->
+          <div class="ai-results" *ngIf="aiAnalysisResult">
+            <!-- Resumo Clínico -->
+            <div class="ai-section">
+              <div class="ai-section-header">
+                <h4>📋 Resumo Clínico</h4>
+                <button 
+                  class="btn-copy" 
+                  (click)="copyToClipboard(aiAnalysisResult.summary)"
+                  title="Copiar resumo">
+                  📋 Copiar
+                </button>
+              </div>
+              <div class="ai-content">
+                <p [innerHTML]="formatAIText(aiAnalysisResult.summary)"></p>
+              </div>
+            </div>
+
+            <!-- Hipóteses Diagnósticas -->
+            <div class="ai-section">
+              <div class="ai-section-header">
+                <h4>🔍 Hipóteses Diagnósticas</h4>
+                <button 
+                  class="btn-copy" 
+                  (click)="copyToClipboard(aiAnalysisResult.diagnosis)"
+                  title="Copiar hipóteses">
+                  📋 Copiar
+                </button>
+              </div>
+              <div class="ai-content">
+                <p [innerHTML]="formatAIText(aiAnalysisResult.diagnosis)"></p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Estado Vazio -->
+          <div class="ai-empty-state" *ngIf="!aiAnalysisResult && !isGeneratingAI">
+            <div class="empty-icon">🤖</div>
+            <h4>Nenhuma análise gerada ainda</h4>
+            <p>Clique no botão acima para gerar uma análise completa do prontuário usando IA</p>
+          </div>
+
+          <!-- Erro -->
+          <div class="ai-error" *ngIf="aiError">
+            <div class="error-icon">⚠️</div>
+            <h4>Erro ao gerar análise</h4>
+            <p>{{ aiError }}</p>
+            <div class="error-details" *ngIf="aiError.includes('CORS') || aiError.includes('conexão')">
+              <small>
+                <strong>Possível causa:</strong> A API do DeepSeek não permite chamadas diretas do navegador.<br>
+                <strong>Solução:</strong> Configure um proxy no backend ou use uma API key válida.
+              </small>
+            </div>
+            <button class="btn-secondary" (click)="aiError = null">Fechar</button>
           </div>
         </div>
       </div>

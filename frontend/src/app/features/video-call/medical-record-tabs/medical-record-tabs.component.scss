@@ -1400,3 +1400,251 @@ textarea.form-control {
   }
 }
 
+// ==========================================
+// ABA DE IA MÉDICA
+// ==========================================
+
+.ai-analysis-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.ai-actions {
+  display: flex;
+  justify-content: center;
+  padding: 16px 0;
+}
+
+.btn-generate-analysis {
+  padding: 16px 32px;
+  font-size: 16px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(139, 92, 246, 0.4);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.ai-results {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.ai-section {
+  background: rgba(139, 92, 246, 0.05);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.ai-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+
+  h4 {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .btn-copy {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 8px 16px;
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.9);
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-1px);
+    }
+  }
+}
+
+.ai-content {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 16px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.9);
+  
+  p {
+    margin: 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  strong {
+    color: rgba(255, 255, 255, 1);
+    font-weight: 600;
+  }
+}
+
+.ai-empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: rgba(255, 255, 255, 0.6);
+
+  .empty-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+
+  h4 {
+    margin: 0 0 8px 0;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 20px;
+  }
+
+  p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 14px;
+  }
+}
+
+.ai-error {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+
+  .error-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+  }
+
+  h4 {
+    margin: 0 0 8px 0;
+    color: #fca5a5;
+    font-size: 18px;
+  }
+
+  p {
+    margin: 0 0 16px 0;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+  }
+
+  .error-details {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 16px;
+    text-align: left;
+
+    small {
+      font-size: 12px;
+      line-height: 1.5;
+      color: rgba(255, 255, 255, 0.6);
+      
+      strong {
+        color: rgba(255, 255, 255, 0.8);
+      }
+    }
+  }
+
+  .btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 8px 24px;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+  }
+}
+
+// Tema claro para IA
+.theme-light {
+  .ai-section {
+    background: rgba(139, 92, 246, 0.08);
+    border-color: rgba(139, 92, 246, 0.25);
+
+    h4 {
+      color: #1e293b;
+    }
+
+    .btn-copy {
+      background: rgba(139, 92, 246, 0.1);
+      border-color: rgba(139, 92, 246, 0.25);
+      color: #1e293b;
+
+      &:hover {
+        background: rgba(139, 92, 246, 0.15);
+      }
+    }
+  }
+
+  .ai-content {
+    background: white;
+    border: 1px solid rgba(139, 92, 246, 0.15);
+    color: #1e293b;
+
+    strong {
+      color: #7c3aed;
+    }
+  }
+
+  .ai-empty-state {
+    color: #64748b;
+
+    h4 {
+      color: #1e293b;
+    }
+
+    p {
+      color: #64748b;
+    }
+  }
+
+  .ai-error {
+    background: rgba(239, 68, 68, 0.05);
+    border-color: rgba(239, 68, 68, 0.2);
+
+    h4 {
+      color: #dc2626;
+    }
+
+    p {
+      color: #64748b;
+    }
+
+    .btn-secondary {
+      background: white;
+      border-color: #cbd5e1;
+      color: #1e293b;
+
+      &:hover {
+        background: #f1f5f9;
+      }
+    }
+  }
+}
