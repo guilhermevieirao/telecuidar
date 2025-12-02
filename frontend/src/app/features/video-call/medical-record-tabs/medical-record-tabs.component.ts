@@ -152,6 +152,14 @@ export class MedicalRecordTabsComponent implements OnInit {
   customFieldValues: { [fieldId: number]: any } = {};
   loadingCustomFields = false;
 
+  // Sistema de ditado por voz
+  private voiceDictationRecognition: any = null;
+  isVoiceDictationActive = false;
+  private currentFocusedField: HTMLElement | null = null;
+  private currentFocusedFieldId: string | null = null;
+  private lastInterimText = ''; // Armazena o último texto intermediário
+  private baseTextBeforeDictation = ''; // Texto base antes de começar a ditar
+
   // Sistema de transcrição dual
   private recognitionProfessional: any = null; // Microfone local
   private recognitionPatient: any = null; // Áudio do paciente (Jitsi)
@@ -177,6 +185,7 @@ export class MedicalRecordTabsComponent implements OnInit {
     this.patientInfo.name = this.patientName;
     this.generateMockBiometricData();
     this.initializeSpeechRecognition();
+    this.initializeVoiceDictation();
     this.loadCustomFieldsForAppointment();
     // Emitir estado inicial do modo
     this.onModeChange.emit(this.tabMode);
@@ -189,11 +198,15 @@ export class MedicalRecordTabsComponent implements OnInit {
         this.initializeCharts();
       }
     }, 100);
+    
+    // Configurar listeners para detectar foco em campos
+    this.setupFieldFocusListeners();
   }
 
   ngOnDestroy(): void {
     this.destroyCharts();
     this.stopTranscription();
+    this.stopVoiceDictation();
   }
 
   // Controle de modo de visualização
@@ -1114,6 +1127,318 @@ export class MedicalRecordTabsComponent implements OnInit {
     const entry = this.transcriptionData.entries.find(e => e.id === id);
     if (entry) {
       entry.text = newText;
+    }
+  }
+
+  // ==========================================
+  // SISTEMA DE DITADO POR VOZ PARA CAMPOS
+  // ==========================================
+
+  // Inicializar sistema de ditado por voz
+  private initializeVoiceDictation(): void {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    
+    if (!SpeechRecognition) {
+      console.warn('Web Speech API não suportada neste navegador');
+      return;
+    }
+
+    this.voiceDictationRecognition = new SpeechRecognition();
+    this.voiceDictationRecognition.continuous = true;
+    this.voiceDictationRecognition.interimResults = true; // Habilitar resultados intermediários
+    this.voiceDictationRecognition.lang = 'pt-BR';
+    this.voiceDictationRecognition.maxAlternatives = 1;
+
+    this.voiceDictationRecognition.onresult = (event: any) => {
+      let interimTranscript = '';
+      let finalTranscript = '';
+
+      // Processar todos os resultados
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript;
+        
+        if (event.results[i].isFinal) {
+          finalTranscript += transcript;
+        } else {
+          interimTranscript += transcript;
+        }
+      }
+
+      // Se houver um campo focado, preenche em tempo real
+      if (this.currentFocusedField && this.currentFocusedFieldId) {
+        if (finalTranscript.trim()) {
+          // Resultado final: adicionar permanentemente e resetar controles
+          this.fillFocusedFieldWithVoice(finalTranscript.trim(), false);
+          this.lastInterimText = '';
+          this.baseTextBeforeDictation = '';
+        } else if (interimTranscript.trim()) {
+          // Resultado intermediário: substituir o anterior
+          this.fillFocusedFieldWithVoice(interimTranscript.trim(), true);
+        }
+      }
+    };
+
+    this.voiceDictationRecognition.onerror = (event: any) => {
+      console.error('Erro no ditado por voz:', event.error);
+      
+      if (event.error === 'no-speech') {
+        // Reiniciar se não detectar fala
+        if (this.isVoiceDictationActive) {
+          setTimeout(() => {
+            if (this.isVoiceDictationActive) {
+              try {
+                this.voiceDictationRecognition.start();
+              } catch (e) {
+                // Ignorar erro se já estiver rodando
+              }
+            }
+          }, 100);
+        }
+      }
+    };
+
+    this.voiceDictationRecognition.onend = () => {
+      // Reiniciar automaticamente se ainda estiver ativo
+      if (this.isVoiceDictationActive) {
+        try {
+          this.voiceDictationRecognition.start();
+        } catch (e) {
+          console.error('Erro ao reiniciar ditado por voz:', e);
+        }
+      }
+    };
+
+    console.log('✅ Sistema de ditado por voz inicializado');
+  }
+
+  // Alternar ditado por voz
+  toggleVoiceDictation(): void {
+    if (this.isVoiceDictationActive) {
+      this.stopVoiceDictation();
+    } else {
+      this.startVoiceDictation();
+    }
+  }
+
+  // Iniciar ditado por voz
+  private async startVoiceDictation(): Promise<void> {
+    if (!this.voiceDictationRecognition) {
+      alert('Sistema de ditado por voz não disponível neste navegador.');
+      return;
+    }
+
+    // Solicitar permissão de microfone
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true
+        } 
+      });
+      
+      // Liberar o stream imediatamente (só precisamos da permissão)
+      stream.getTracks().forEach(track => track.stop());
+      
+      // Iniciar reconhecimento
+      this.isVoiceDictationActive = true;
+      this.voiceDictationRecognition.start();
+      
+      console.log('🎤 Ditado por voz iniciado');
+    } catch (error) {
+      console.error('❌ Erro ao acessar microfone:', error);
+      alert('Não foi possível acessar o microfone. Verifique as permissões.');
+    }
+  }
+
+  // Parar ditado por voz
+  stopVoiceDictation(): void {
+    if (this.isVoiceDictationActive && this.voiceDictationRecognition) {
+      this.isVoiceDictationActive = false;
+      
+      try {
+        this.voiceDictationRecognition.stop();
+      } catch (e) {
+        // Ignorar erro se já estiver parado
+      }
+      
+      console.log('🛑 Ditado por voz parado');
+    }
+  }
+
+  // Configurar listeners para detectar foco nos campos
+  private setupFieldFocusListeners(): void {
+    // Usar evento de captura para detectar foco em qualquer elemento
+    document.addEventListener('focusin', (event: FocusEvent) => {
+      const target = event.target as HTMLElement;
+      
+      // Verificar se é um campo de formulário
+      if (target && (
+        target.tagName === 'INPUT' || 
+        target.tagName === 'TEXTAREA' || 
+        target.tagName === 'SELECT'
+      )) {
+        // Verificar se NÃO é campo de transcrição manual (evitar conflito)
+        const isTranscriptionField = target.closest('.transcription-panel');
+        if (isTranscriptionField) {
+          this.currentFocusedField = null;
+          this.currentFocusedFieldId = null;
+          return;
+        }
+
+        // Armazenar referência ao campo focado
+        this.currentFocusedField = target;
+        const name = (target as HTMLInputElement).name || '';
+        this.currentFocusedFieldId = target.id || name || `field_${Date.now()}`;
+        
+        console.log('📝 Campo focado para ditado:', this.currentFocusedFieldId, target);
+      }
+    }, true);
+
+    // Detectar quando perde o foco
+    document.addEventListener('focusout', (event: FocusEvent) => {
+      // Manter a referência ao último campo focado
+      // (ditado continua ativo, apenas não preenche se não houver foco)
+      console.log('📝 Campo perdeu foco');
+    }, true);
+  }
+
+  // Preencher campo focado com texto ditado
+  private fillFocusedFieldWithVoice(text: string, isInterim: boolean = false): void {
+    if (!this.currentFocusedField || !this.currentFocusedFieldId) {
+      console.log('⚠️ Nenhum campo focado, texto ignorado:', text);
+      return;
+    }
+
+    const element = this.currentFocusedField;
+    
+    // Verificar se é campo personalizado
+    if (this.currentFocusedFieldId.startsWith('customField_')) {
+      this.fillCustomFieldWithVoice(text, isInterim);
+      return;
+    }
+
+    // Para todos os outros campos (SOAP, Paciente, Prescrição, Exames, etc.)
+    if (element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement) {
+      const isTextArea = element instanceof HTMLTextAreaElement;
+      const isTextInput = element instanceof HTMLInputElement && 
+                         (element.type === 'text' || element.type === 'search' || !element.type);
+      const isNumberInput = element instanceof HTMLInputElement && element.type === 'number';
+      
+      if (isTextArea || isTextInput) {
+        if (isInterim) {
+          // Resultado intermediário: guardar base e substituir apenas o texto intermediário
+          if (!this.baseTextBeforeDictation) {
+            // Primeira vez que recebe interim, salvar o texto base
+            this.baseTextBeforeDictation = element.value || '';
+          }
+          
+          // Construir novo valor: base + espaço (se necessário) + texto intermediário
+          const needsSpace = this.baseTextBeforeDictation && 
+                            !this.baseTextBeforeDictation.endsWith(' ') && 
+                            !this.baseTextBeforeDictation.endsWith('\n');
+          element.value = this.baseTextBeforeDictation + (needsSpace ? ' ' : '') + text;
+          this.lastInterimText = text;
+          
+          console.log(`✅ Campo (interim) atualizado:`, text);
+        } else {
+          // Resultado final: adicionar permanentemente ao texto base
+          if (this.baseTextBeforeDictation) {
+            // Já tínhamos uma base, adicionar ao final dela
+            const needsSpace = this.baseTextBeforeDictation && 
+                              !this.baseTextBeforeDictation.endsWith(' ') && 
+                              !this.baseTextBeforeDictation.endsWith('\n');
+            element.value = this.baseTextBeforeDictation + (needsSpace ? ' ' : '') + text;
+          } else {
+            // Primeira vez sem base prévia
+            const currentValue = element.value || '';
+            const needsSpace = currentValue && 
+                              !currentValue.endsWith(' ') && 
+                              !currentValue.endsWith('\n');
+            element.value = currentValue + (needsSpace ? ' ' : '') + text;
+          }
+          
+          // Resetar controles para próxima frase
+          this.baseTextBeforeDictation = '';
+          this.lastInterimText = '';
+          
+          console.log(`✅ Campo (final) preenchido:`, text);
+        }
+        
+        // Disparar evento input para atualizar ngModel
+        element.dispatchEvent(new Event('input', { bubbles: true }));
+      } else if (isNumberInput) {
+        // Para campos numéricos, extrair números
+        const numbers = text.match(/\d+/g);
+        if (numbers && numbers.length > 0) {
+          element.value = numbers[0];
+          element.dispatchEvent(new Event('input', { bubbles: true }));
+          console.log('✅ Campo numérico preenchido:', this.currentFocusedFieldId, '=', numbers[0]);
+        }
+      } else {
+        // Para outros tipos de input, substituir valor
+        element.value = text;
+        element.dispatchEvent(new Event('input', { bubbles: true }));
+        console.log('✅ Campo preenchido:', this.currentFocusedFieldId, '=', text);
+      }
+    }
+  }
+
+  // Preencher campo personalizado com texto ditado
+  private fillCustomFieldWithVoice(text: string, isInterim: boolean = false): void {
+    const fieldIdStr = this.currentFocusedFieldId!.replace('customField_', '');
+    const fieldId = parseInt(fieldIdStr, 10);
+    
+    if (!isNaN(fieldId)) {
+      // Encontrar o campo para verificar o tipo
+      const field = this.customFields.find(f => f.id === fieldId);
+      
+      if (field) {
+        // Atualizar o valor baseado no tipo do campo
+        if (field.fieldType === 'textarea' || field.fieldType === 'text') {
+          if (isInterim) {
+            // Resultado intermediário: guardar base e substituir
+            if (!this.baseTextBeforeDictation) {
+              this.baseTextBeforeDictation = this.customFieldValues[fieldId] || '';
+            }
+            
+            const needsSpace = this.baseTextBeforeDictation && !this.baseTextBeforeDictation.endsWith(' ');
+            this.customFieldValues[fieldId] = this.baseTextBeforeDictation + (needsSpace ? ' ' : '') + text;
+            this.lastInterimText = text;
+          } else {
+            // Resultado final: adicionar permanentemente
+            if (this.baseTextBeforeDictation) {
+              const needsSpace = this.baseTextBeforeDictation && !this.baseTextBeforeDictation.endsWith(' ');
+              this.customFieldValues[fieldId] = this.baseTextBeforeDictation + (needsSpace ? ' ' : '') + text;
+            } else {
+              const currentValue = this.customFieldValues[fieldId] || '';
+              const needsSpace = currentValue && !currentValue.endsWith(' ');
+              this.customFieldValues[fieldId] = currentValue + (needsSpace ? ' ' : '') + text;
+            }
+            
+            // Resetar controles
+            this.baseTextBeforeDictation = '';
+            this.lastInterimText = '';
+          }
+        } else if (field.fieldType === 'number') {
+          // Para number, tentar extrair números do texto
+          const numbers = text.match(/\d+/g);
+          if (numbers && numbers.length > 0) {
+            this.customFieldValues[fieldId] = parseInt(numbers[0], 10);
+          }
+        } else {
+          // Para outros tipos, substituir valor
+          this.customFieldValues[fieldId] = text;
+        }
+        
+        // Atualizar o elemento DOM diretamente para feedback visual imediato
+        if (this.currentFocusedField instanceof HTMLInputElement || 
+            this.currentFocusedField instanceof HTMLTextAreaElement) {
+          this.currentFocusedField.value = this.customFieldValues[fieldId]?.toString() || '';
+        }
+        
+        console.log(`✅ Campo personalizado ${isInterim ? '(interim)' : '(final)'} preenchido:`, field.label, '=', text);
+      }
     }
   }
 

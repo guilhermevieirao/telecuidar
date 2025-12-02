@@ -129,6 +129,30 @@
     font-size: 18px;
     padding: 6px 12px;
   }
+
+  &.btn-voice-dictation {
+    position: relative;
+    
+    &.active {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      border-color: #ef4444;
+      animation: pulse-voice 1.5s ease-in-out infinite;
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+      
+      &:hover {
+        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+      }
+    }
+  }
+}
+
+@keyframes pulse-voice {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(239, 68, 68, 0.8);
+  }
 }
 
 // Navegação de tabs

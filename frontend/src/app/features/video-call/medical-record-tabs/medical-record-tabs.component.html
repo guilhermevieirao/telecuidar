@@ -5,6 +5,14 @@
     <div class="record-header">
       <h2>📋 Prontuário Médico</h2>
       <div class="header-actions">
+        <!-- Botão de ditado por voz -->
+        <button 
+          class="btn-action btn-voice-dictation" 
+          [class.active]="isVoiceDictationActive"
+          (click)="toggleVoiceDictation()" 
+          title="Ditado por voz (preenche campo focado)">
+          🎤
+        </button>
         <button class="btn-action btn-mode" (click)="cycleTabMode()" title="Alternar modo de visualização">
           {{ getTabModeIcon() }}
         </button>
@@ -245,7 +253,7 @@
           <div *ngFor="let field of customFields" 
                [class.full-width]="field.fieldType === 'textarea'"
                class="form-group">
-            <label [for]="'field-' + field.id">
+            <label [for]="'customField_' + field.id">
               {{ field.label }}
               <span *ngIf="field.isRequired" class="required">*</span>
             </label>
@@ -254,7 +262,7 @@
             <!-- Text input -->
             <input 
               *ngIf="field.fieldType === 'text'"
-              [id]="'field-' + field.id"
+              [id]="'customField_' + field.id"
               type="text"
               [(ngModel)]="customFieldValues[field.id]"
               [placeholder]="field.placeholder || ''"
@@ -265,7 +273,7 @@
             <!-- Textarea -->
             <textarea 
               *ngIf="field.fieldType === 'textarea'"
-              [id]="'field-' + field.id"
+              [id]="'customField_' + field.id"
               [(ngModel)]="customFieldValues[field.id]"
               [placeholder]="field.placeholder || ''"
               [required]="field.isRequired"
@@ -276,7 +284,7 @@
             <!-- Number input -->
             <input 
               *ngIf="field.fieldType === 'number'"
-              [id]="'field-' + field.id"
+              [id]="'customField_' + field.id"
               type="number"
               [(ngModel)]="customFieldValues[field.id]"
               [placeholder]="field.placeholder || ''"
@@ -287,7 +295,7 @@
             <!-- Date input -->
             <input 
               *ngIf="field.fieldType === 'date'"
-              [id]="'field-' + field.id"
+              [id]="'customField_' + field.id"
               type="date"
               [(ngModel)]="customFieldValues[field.id]"
               [required]="field.isRequired"
@@ -297,7 +305,7 @@
             <!-- Select -->
             <select 
               *ngIf="field.fieldType === 'select' && field.options"
-              [id]="'field-' + field.id"
+              [id]="'customField_' + field.id"
               [(ngModel)]="customFieldValues[field.id]"
               [required]="field.isRequired"
               class="form-control"
@@ -309,12 +317,12 @@
             <!-- Checkbox -->
             <div *ngIf="field.fieldType === 'checkbox'" class="checkbox-wrapper">
               <input 
-                [id]="'field-' + field.id"
+                [id]="'customField_' + field.id"
                 type="checkbox"
                 [(ngModel)]="customFieldValues[field.id]"
                 [required]="field.isRequired"
               />
-              <label [for]="'field-' + field.id" class="checkbox-label">
+              <label [for]="'customField_' + field.id" class="checkbox-label">
                 {{ field.label }}
               </label>
             </div>
@@ -323,14 +331,14 @@
             <div *ngIf="field.fieldType === 'radio' && field.options" class="radio-group">
               <div *ngFor="let option of field.options; let i = index" class="radio-wrapper">
                 <input 
-                  [id]="'field-' + field.id + '-' + i"
+                  [id]="'customField_' + field.id + '-' + i"
                   type="radio"
-                  [name]="'field-' + field.id"
+                  [name]="'customField_' + field.id"
                   [value]="option"
                   [(ngModel)]="customFieldValues[field.id]"
                   [required]="field.isRequired"
                 />
-                <label [for]="'field-' + field.id + '-' + i" class="radio-label">
+                <label [for]="'customField_' + field.id + '-' + i" class="radio-label">
                   {{ option }}
                 </label>
               </div>

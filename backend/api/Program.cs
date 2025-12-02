@@ -238,26 +238,138 @@ using (var scope = app.Services.CreateScope())
                 }
             }
 
-            // Especialidade e atribuição ao médico
+            // Especialidades e atribuição ao médico
             var medUser = context.Users.FirstOrDefault(u => u.Email == "med@med.com");
             if (medUser != null)
             {
-                // Cria especialidade se não existir
-                var specialtyName = "Clínico Geral";
-                var specialty = context.Specialties.FirstOrDefault(s => s.Name == specialtyName);
-                if (specialty == null)
+                // Cria especialidade Cardiologia
+                var cardiologyName = "Cardiologia";
+                var cardiology = context.Specialties.FirstOrDefault(s => s.Name == cardiologyName);
+                if (cardiology == null)
                 {
-                    specialty = new Specialty { Name = specialtyName, Description = "Especialidade padrão criada pelo seed" };
-                    context.Specialties.Add(specialty);
+                    cardiology = new Specialty 
+                    { 
+                        Name = cardiologyName, 
+                        Description = "Especialidade focada em doenças cardiovasculares",
+                        Icon = "fas fa-heartbeat"
+                    };
+                    context.Specialties.Add(cardiology);
                     context.SaveChanges();
-                    Console.WriteLine($"✅ Especialidade criada: {specialty.Name}");
+                    Console.WriteLine($"✅ Especialidade criada: {cardiology.Name}");
+
+                    // Criar campos personalizados para Cardiologia
+                    var cardiologyFields = new[]
+                    {
+                        new SpecialtyField
+                        {
+                            SpecialtyId = cardiology.Id,
+                            FieldName = "pressao_arterial",
+                            Label = "Pressão Arterial",
+                            Description = "Pressão arterial sistólica/diastólica (ex: 120/80)",
+                            FieldType = "text",
+                            IsRequired = true,
+                            DisplayOrder = 1,
+                            Placeholder = "120/80 mmHg",
+                            IsActive = true
+                        },
+                        new SpecialtyField
+                        {
+                            SpecialtyId = cardiology.Id,
+                            FieldName = "frequencia_cardiaca",
+                            Label = "Frequência Cardíaca",
+                            Description = "Batimentos por minuto (bpm)",
+                            FieldType = "number",
+                            IsRequired = true,
+                            DisplayOrder = 2,
+                            Placeholder = "75",
+                            ValidationRules = "{\"min\": 40, \"max\": 200}",
+                            IsActive = true
+                        },
+                        new SpecialtyField
+                        {
+                            SpecialtyId = cardiology.Id,
+                            FieldName = "ritmo_cardiaco",
+                            Label = "Ritmo Cardíaco",
+                            Description = "Avaliação do ritmo cardíaco",
+                            FieldType = "select",
+                            Options = "[\"Regular\", \"Irregular\", \"Arritmia\"]",
+                            IsRequired = true,
+                            DisplayOrder = 3,
+                            IsActive = true
+                        },
+                        new SpecialtyField
+                        {
+                            SpecialtyId = cardiology.Id,
+                            FieldName = "ausculta_cardiaca",
+                            Label = "Ausculta Cardíaca",
+                            Description = "Descrição dos sons cardíacos auscultados",
+                            FieldType = "textarea",
+                            IsRequired = false,
+                            DisplayOrder = 4,
+                            Placeholder = "Descreva os sons cardíacos...",
+                            IsActive = true
+                        },
+                        new SpecialtyField
+                        {
+                            SpecialtyId = cardiology.Id,
+                            FieldName = "dor_toracica",
+                            Label = "Dor Torácica",
+                            Description = "Paciente relata dor torácica?",
+                            FieldType = "radio",
+                            Options = "[\"Sim\", \"Não\"]",
+                            IsRequired = true,
+                            DisplayOrder = 5,
+                            IsActive = true
+                        },
+                        new SpecialtyField
+                        {
+                            SpecialtyId = cardiology.Id,
+                            FieldName = "dispneia",
+                            Label = "Dispneia",
+                            Description = "Presença de falta de ar",
+                            FieldType = "checkbox",
+                            IsRequired = false,
+                            DisplayOrder = 6,
+                            IsActive = true
+                        },
+                        new SpecialtyField
+                        {
+                            SpecialtyId = cardiology.Id,
+                            FieldName = "edema_perifericos",
+                            Label = "Edema em Membros",
+                            Description = "Presença de edema nos membros inferiores",
+                            FieldType = "checkbox",
+                            IsRequired = false,
+                            DisplayOrder = 7,
+                            IsActive = true
+                        },
+                        new SpecialtyField
+                        {
+                            SpecialtyId = cardiology.Id,
+                            FieldName = "classificacao_nyha",
+                            Label = "Classificação NYHA",
+                            Description = "Classificação funcional da insuficiência cardíaca",
+                            FieldType = "select",
+                            Options = "[\"Classe I - Sem limitação\", \"Classe II - Limitação leve\", \"Classe III - Limitação moderada\", \"Classe IV - Limitação grave\"]",
+                            IsRequired = false,
+                            DisplayOrder = 8,
+                            IsActive = true
+                        }
+                    };
+
+                    foreach (var field in cardiologyFields)
+                    {
+                        context.SpecialtyFields.Add(field);
+                    }
+                    context.SaveChanges();
+                    Console.WriteLine($"✅ {cardiologyFields.Length} campos personalizados criados para Cardiologia");
                 }
 
                 // Atribui especialidade ao médico se não estiver atribuída
-                var hasSpecialty = context.UserSpecialties.Any(us => us.UserId == medUser.Id && us.SpecialtyId == specialty.Id);
+                var hasSpecialty = context.UserSpecialties.Any(us => us.UserId == medUser.Id && us.SpecialtyId == cardiology.Id);
                 if (!hasSpecialty)
                 {
-                    var userSpecialty = new UserSpecialty { UserId = medUser.Id, SpecialtyId = specialty.Id };
+                    var userSpecialty = new UserSpecialty { UserId = medUser.Id, SpecialtyId = cardiology.Id };
                     context.UserSpecialties.Add(userSpecialty);
                     context.SaveChanges();
                     Console.WriteLine($"✅ Especialidade atribuída ao médico: {medUser.Email}");
@@ -294,7 +406,7 @@ using (var scope = app.Services.CreateScope())
                         context.ScheduleDays.Add(scheduleDay);
                     }
                     context.SaveChanges();
-                    Console.WriteLine($"✅ Agenda criada para o médico: {medUser.Email}");
+                    Console.WriteLine($"✅ Agenda criada para o cardiologista: {medUser.Email}");
                 }
             }
         }
