@@ -32,6 +32,8 @@
     "@angular/platform-browser": "~20.3.14",
     "@angular/router": "~20.3.14",
     "chart.js": "^4.5.1",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^3.0.4",
     "lucide-angular": "^0.554.0",
     "ng2-charts": "^8.0.0",
     "ngx-mask": "^20.0.3",

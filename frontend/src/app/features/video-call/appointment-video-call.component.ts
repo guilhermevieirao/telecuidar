@@ -5,39 +5,14 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppointmentService, Appointment } from '../../core/services/appointment.service';
 import { ModalService } from '../../services/modal.service';
+import { MedicalRecordTabsComponent } from './medical-record-tabs/medical-record-tabs.component';
 
 declare var JitsiMeetExternalAPI: any;
-
-interface MedicalRecord {
-  patientName: string;
-  patientCPF: string;
-  patientAge: number | null;
-  patientGender: string;
-  chiefComplaint: string;
-  symptoms: string;
-  medicalHistory: string;
-  currentMedications: string;
-  allergies: string;
-  vitalSigns: {
-    bloodPressure: string;
-    heartRate: string;
-    temperature: string;
-    oxygenSaturation: string;
-  };
-  physicalExam: string;
-  diagnosis: string;
-  treatment: string;
-  prescription: string;
-  observations: string;
-  followUp: string;
-  consultationDate: string;
-  consultationTime: string;
-}
 
 @Component({
   selector: 'app-appointment-video-call',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MedicalRecordTabsComponent],
   templateUrl: './appointment-video-call.component.html',
   styleUrls: ['./appointment-video-call.component.scss']
 })
@@ -51,71 +26,9 @@ export class AppointmentVideoCallComponent implements OnInit, OnDestroy, AfterVi
   isLoading = true;
   errorMessage = '';
   showControls = false;
-  showMedicalRecord = false;
-  activeTab: 'specialty' | 'patient' | 'anamnesis' | 'exam' | 'diagnosis' = 'patient';
-  selectedSpecialty: string = '';
-  specialtyData: { [key: string]: any } = {};
   private jitsiApi: any = null;
   user: any = null;
   appointmentId: number = 0;
-
-  specialties = [
-    { id: 'cardiology', name: 'Cardiologia', icon: '❤️', description: 'Avaliação cardiovascular' },
-    { id: 'dermatology', name: 'Dermatologia', icon: '🩹', description: 'Análise de pele' },
-    { id: 'pediatrics', name: 'Pediatria', icon: '👶', description: 'Atendimento infantil' },
-    { id: 'orthopedics', name: 'Ortopedia', icon: '🦴', description: 'Sistema músculo-esquelético' },
-    { id: 'general', name: 'Clínico Geral', icon: '🏥', description: 'Atendimento geral' }
-  ];
-
-  specialtyFields: any = {
-    cardiology: [
-      { key: 'chestPain', label: 'Dor no peito', type: 'text' },
-      { key: 'palpitations', label: 'Palpitações', type: 'text' },
-      { key: 'ecgNotes', label: 'Notas do ECG', type: 'textarea' }
-    ],
-    dermatology: [
-      { key: 'lesionType', label: 'Tipo de lesão', type: 'text' },
-      { key: 'lesionLocation', label: 'Localização da lesão', type: 'text' },
-      { key: 'skinPhotos', label: 'Fotos anexadas', type: 'text' }
-    ],
-    pediatrics: [
-      { key: 'birthDate', label: 'Data de nascimento', type: 'date' },
-      { key: 'vaccinations', label: 'Vacinações', type: 'textarea' },
-      { key: 'developmentNotes', label: 'Desenvolvimento', type: 'textarea' }
-    ],
-    orthopedics: [
-      { key: 'injuryType', label: 'Tipo de lesão', type: 'text' },
-      { key: 'mobilityNotes', label: 'Mobilidade', type: 'textarea' },
-      { key: 'xrayNotes', label: 'Notas do Raio-X', type: 'textarea' }
-    ],
-    general: []
-  };
-
-  medicalRecord: MedicalRecord = {
-    patientName: '',
-    patientCPF: '',
-    patientAge: null,
-    patientGender: '',
-    chiefComplaint: '',
-    symptoms: '',
-    medicalHistory: '',
-    currentMedications: '',
-    allergies: '',
-    vitalSigns: {
-      bloodPressure: '',
-      heartRate: '',
-      temperature: '',
-      oxygenSaturation: ''
-    },
-    physicalExam: '',
-    diagnosis: '',
-    treatment: '',
-    prescription: '',
-    observations: '',
-    followUp: '',
-    consultationDate: new Date().toISOString().split('T')[0],
-    consultationTime: new Date().toTimeString().split(' ')[0].substring(0, 5)
-  };
 
   constructor(
     private route: ActivatedRoute,
@@ -128,8 +41,6 @@ export class AppointmentVideoCallComponent implements OnInit, OnDestroy, AfterVi
     const userStr = localStorage.getItem('user');
     if (userStr) {
       this.user = JSON.parse(userStr);
-      // Mostrar formulário médico apenas para profissionais
-      this.showMedicalRecord = this.user?.role === 2;
     }
 
     this.route.params.subscribe(params => {
@@ -185,14 +96,6 @@ export class AppointmentVideoCallComponent implements OnInit, OnDestroy, AfterVi
         }
 
         this.roomName = this.appointment.meetingRoomId;
-        
-        // Preencher dados do paciente no formulário médico
-        if (this.user?.role === 2) {
-          this.medicalRecord.patientName = this.appointment.patientName;
-          this.medicalRecord.consultationDate = this.appointment.appointmentDate.split('T')[0];
-          this.medicalRecord.consultationTime = this.formatTime(this.appointment.appointmentTime);
-        }
-        
         this.loadJitsiScript();
       },
       error: (err) => {
@@ -377,73 +280,5 @@ export class AppointmentVideoCallComponent implements OnInit, OnDestroy, AfterVi
 
   formatTime(timeStr: string): string {
     return timeStr.substring(0, 5);
-  }
-
-  toggleMedicalRecord(): void {
-    this.showMedicalRecord = !this.showMedicalRecord;
-  }
-
-  setActiveTab(tab: 'specialty' | 'patient' | 'anamnesis' | 'exam' | 'diagnosis'): void {
-    this.activeTab = tab;
-  }
-
-  selectSpecialty(specialtyId: string): void {
-    this.selectedSpecialty = specialtyId;
-    this.activeTab = 'patient';
-  }
-
-  getSpecialtyFields(): any[] {
-    return this.specialtyFields[this.selectedSpecialty] || [];
-  }
-
-  getSpecialtyName(): string {
-    const specialty = this.specialties.find(s => s.id === this.selectedSpecialty);
-    return specialty ? specialty.name : '';
-  }
-
-  saveMedicalRecord(): void {
-    console.log('Prontuário salvo:', this.medicalRecord);
-    console.log('Dados específicos da especialidade:', this.specialtyData);
-    this.modalService.showSuccess('Prontuário salvo com sucesso!');
-    // Aqui você implementaria a lógica para salvar no backend
-  }
-
-  printMedicalRecord(): void {
-    window.print();
-  }
-
-  clearMedicalRecord(): void {
-    if (confirm('Deseja realmente limpar todos os dados do prontuário?')) {
-      const patientName = this.medicalRecord.patientName;
-      const consultationDate = this.medicalRecord.consultationDate;
-      const consultationTime = this.medicalRecord.consultationTime;
-      
-      this.medicalRecord = {
-        patientName: patientName, // Manter nome do paciente
-        patientCPF: '',
-        patientAge: null,
-        patientGender: '',
-        chiefComplaint: '',
-        symptoms: '',
-        medicalHistory: '',
-        currentMedications: '',
-        allergies: '',
-        vitalSigns: {
-          bloodPressure: '',
-          heartRate: '',
-          temperature: '',
-          oxygenSaturation: ''
-        },
-        physicalExam: '',
-        diagnosis: '',
-        treatment: '',
-        prescription: '',
-        observations: '',
-        followUp: '',
-        consultationDate: consultationDate,
-        consultationTime: consultationTime
-      };
-      this.specialtyData = {};
-    }
   }
 }

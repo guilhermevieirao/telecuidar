@@ -1,0 +1,489 @@
+<div class="medical-record-container" [ngClass]="'mode-' + tabMode">
+  <!-- Conteúdo do prontuário -->
+  <div class="medical-record-content" *ngIf="tabMode !== 'hidden'" #contentToPrint>
+    <!-- Header -->
+    <div class="record-header">
+      <h2>📋 Prontuário Médico</h2>
+      <div class="header-actions">
+        <button class="btn-action btn-save" (click)="saveData()" title="Salvar">
+          💾
+        </button>
+        <button class="btn-action btn-pdf" (click)="exportToPDF()" title="Exportar PDF">
+          📄
+        </button>
+        <button class="btn-action btn-close" (click)="close()" title="Fechar" *ngIf="tabMode === 'sidebar'">
+          ✕
+        </button>
+      </div>
+    </div>
+
+    <!-- Navegação de tabs -->
+    <div class="tabs-navigation">
+      <button 
+        class="tab-btn" 
+        [class.active]="activeTab === 'patient'"
+        (click)="setActiveTab('patient')">
+        <span class="tab-icon">👤</span>
+        <span class="tab-label">Paciente</span>
+      </button>
+      <button 
+        class="tab-btn" 
+        [class.active]="activeTab === 'soap'"
+        (click)="setActiveTab('soap')">
+        <span class="tab-icon">📝</span>
+        <span class="tab-label">SOAP</span>
+      </button>
+      <button 
+        class="tab-btn" 
+        [class.active]="activeTab === 'biometric'"
+        (click)="setActiveTab('biometric')">
+        <span class="tab-icon">📊</span>
+        <span class="tab-label">Biométricos</span>
+      </button>
+      <button 
+        class="tab-btn" 
+        [class.active]="activeTab === 'prescription'"
+        (click)="setActiveTab('prescription')">
+        <span class="tab-icon">💊</span>
+        <span class="tab-label">Prescrição</span>
+      </button>
+      <button 
+        class="tab-btn" 
+        [class.active]="activeTab === 'exams'"
+        (click)="setActiveTab('exams')">
+        <span class="tab-icon">🔬</span>
+        <span class="tab-label">Exames</span>
+      </button>
+    </div>
+
+    <!-- Conteúdo das tabs -->
+    <div class="tabs-content">
+      <!-- Tab: Informações do Paciente -->
+      <div class="tab-panel" *ngIf="activeTab === 'patient'">
+        <div class="panel-header">
+          <h3>👤 Informações do Paciente</h3>
+        </div>
+        
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label for="patientName">Nome Completo *</label>
+            <input 
+              id="patientName"
+              type="text" 
+              [(ngModel)]="patientInfo.name"
+              placeholder="Nome completo do paciente"
+              class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label for="patientCPF">CPF</label>
+            <input 
+              id="patientCPF"
+              type="text" 
+              [(ngModel)]="patientInfo.cpf"
+              placeholder="000.000.000-00"
+              class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label for="patientBirthDate">Data de Nascimento</label>
+            <input 
+              id="patientBirthDate"
+              type="date" 
+              [(ngModel)]="patientInfo.birthDate"
+              class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label for="patientAge">Idade</label>
+            <input 
+              id="patientAge"
+              type="number" 
+              [(ngModel)]="patientInfo.age"
+              placeholder="Idade"
+              class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label for="patientGender">Sexo</label>
+            <select 
+              id="patientGender"
+              [(ngModel)]="patientInfo.gender"
+              class="form-control">
+              <option value="">Selecione</option>
+              <option value="Masculino">Masculino</option>
+              <option value="Feminino">Feminino</option>
+              <option value="Outro">Outro</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="patientPhone">Telefone</label>
+            <input 
+              id="patientPhone"
+              type="tel" 
+              [(ngModel)]="patientInfo.phone"
+              placeholder="(00) 00000-0000"
+              class="form-control">
+          </div>
+
+          <div class="form-group full-width">
+            <label for="patientEmail">E-mail</label>
+            <input 
+              id="patientEmail"
+              type="email" 
+              [(ngModel)]="patientInfo.email"
+              placeholder="email@exemplo.com"
+              class="form-control">
+          </div>
+
+          <div class="form-group full-width">
+            <label for="patientAddress">Endereço</label>
+            <textarea 
+              id="patientAddress"
+              [(ngModel)]="patientInfo.address"
+              placeholder="Endereço completo"
+              rows="2"
+              class="form-control"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: SOAP -->
+      <div class="tab-panel" *ngIf="activeTab === 'soap'">
+        <div class="panel-header">
+          <h3>📝 Método SOAP</h3>
+          <p class="panel-description">Subjetivo, Objetivo, Avaliação e Plano</p>
+        </div>
+
+        <div class="soap-section">
+          <div class="soap-item">
+            <div class="soap-header">
+              <span class="soap-letter">S</span>
+              <label for="subjective">Subjetivo</label>
+            </div>
+            <p class="soap-hint">O que o paciente relata (queixas, sintomas, histórico)</p>
+            <textarea 
+              id="subjective"
+              [(ngModel)]="soapData.subjective"
+              placeholder="Descreva as queixas e relatos do paciente..."
+              rows="6"
+              class="form-control"></textarea>
+          </div>
+
+          <div class="soap-item">
+            <div class="soap-header">
+              <span class="soap-letter">O</span>
+              <label for="objective">Objetivo</label>
+            </div>
+            <p class="soap-hint">Achados clínicos mensuráveis (exame físico, sinais vitais)</p>
+            <textarea 
+              id="objective"
+              [(ngModel)]="soapData.objective"
+              placeholder="Descreva os achados objetivos do exame..."
+              rows="6"
+              class="form-control"></textarea>
+          </div>
+
+          <div class="soap-item">
+            <div class="soap-header">
+              <span class="soap-letter">A</span>
+              <label for="assessment">Avaliação</label>
+            </div>
+            <p class="soap-hint">Diagnóstico ou hipótese diagnóstica</p>
+            <textarea 
+              id="assessment"
+              [(ngModel)]="soapData.assessment"
+              placeholder="Diagnóstico, CID-10, hipótese diagnóstica..."
+              rows="6"
+              class="form-control"></textarea>
+          </div>
+
+          <div class="soap-item">
+            <div class="soap-header">
+              <span class="soap-letter">P</span>
+              <label for="plan">Plano</label>
+            </div>
+            <p class="soap-hint">Conduta terapêutica e acompanhamento</p>
+            <textarea 
+              id="plan"
+              [(ngModel)]="soapData.plan"
+              placeholder="Plano de tratamento, orientações, retorno..."
+              rows="6"
+              class="form-control"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Parâmetros Biométricos -->
+      <div class="tab-panel" *ngIf="activeTab === 'biometric'">
+        <div class="panel-header">
+          <h3>📊 Parâmetros Biométricos</h3>
+          <p class="panel-description">Monitoramento em tempo real dos sinais vitais</p>
+        </div>
+
+        <div class="biometric-grid">
+          <!-- Card BPM -->
+          <div class="biometric-card">
+            <div class="card-header">
+              <span class="card-icon">❤️</span>
+              <div class="card-info">
+                <h4>Frequência Cardíaca</h4>
+                <p class="current-value">{{ biometricData.heartRate[biometricData.heartRate.length - 1] || 0 }} BPM</p>
+              </div>
+            </div>
+            <div class="chart-container">
+              <canvas id="heartRateChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Card Temperatura -->
+          <div class="biometric-card">
+            <div class="card-header">
+              <span class="card-icon">🌡️</span>
+              <div class="card-info">
+                <h4>Temperatura</h4>
+                <p class="current-value">{{ biometricData.temperature[biometricData.temperature.length - 1] || 0 }}°C</p>
+              </div>
+            </div>
+            <div class="chart-container">
+              <canvas id="temperatureChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Card Pressão Arterial -->
+          <div class="biometric-card">
+            <div class="card-header">
+              <span class="card-icon">💉</span>
+              <div class="card-info">
+                <h4>Pressão Arterial</h4>
+                <p class="current-value">
+                  {{ biometricData.bloodPressure[biometricData.bloodPressure.length - 1]?.systolic || 0 }}/{{ biometricData.bloodPressure[biometricData.bloodPressure.length - 1]?.diastolic || 0 }} mmHg
+                </p>
+              </div>
+            </div>
+            <div class="chart-container">
+              <canvas id="bloodPressureChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Card Saturação -->
+          <div class="biometric-card">
+            <div class="card-header">
+              <span class="card-icon">💨</span>
+              <div class="card-info">
+                <h4>Saturação O₂</h4>
+                <p class="current-value">{{ biometricData.oxygenSaturation[biometricData.oxygenSaturation.length - 1] || 0 }}%</p>
+              </div>
+            </div>
+            <div class="chart-container">
+              <canvas id="oxygenChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="biometric-stats">
+          <h4>📈 Estatísticas</h4>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <span class="stat-label">Média BPM:</span>
+              <span class="stat-value">{{ getAverageHeartRate() }}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Temp. Média:</span>
+              <span class="stat-value">{{ getAverageTemperature() }}°C</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">SpO₂ Média:</span>
+              <span class="stat-value">{{ getAverageOxygen() }}%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Prescrição -->
+      <div class="tab-panel" *ngIf="activeTab === 'prescription'">
+        <div class="panel-header">
+          <h3>💊 Prescrição Médica</h3>
+          <button class="btn-add" (click)="addMedication()">+ Adicionar Medicação</button>
+        </div>
+
+        <div class="prescription-list" *ngIf="prescription.medications.length > 0">
+          <div class="medication-item" *ngFor="let med of prescription.medications; let i = index">
+            <div class="medication-header">
+              <h4>Medicamento {{ i + 1 }}</h4>
+              <button class="btn-remove" (click)="removeMedication(i)" title="Remover">🗑️</button>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group full-width">
+                <label [for]="'medName' + i">Nome do Medicamento *</label>
+                <input 
+                  [id]="'medName' + i"
+                  type="text" 
+                  [(ngModel)]="med.name"
+                  placeholder="Ex: Paracetamol"
+                  class="form-control">
+              </div>
+
+              <div class="form-group">
+                <label [for]="'medDosage' + i">Dosagem</label>
+                <input 
+                  [id]="'medDosage' + i"
+                  type="text" 
+                  [(ngModel)]="med.dosage"
+                  placeholder="Ex: 500mg"
+                  class="form-control">
+              </div>
+
+              <div class="form-group">
+                <label [for]="'medFrequency' + i">Frequência</label>
+                <input 
+                  [id]="'medFrequency' + i"
+                  type="text" 
+                  [(ngModel)]="med.frequency"
+                  placeholder="Ex: 8/8 horas"
+                  class="form-control">
+              </div>
+
+              <div class="form-group">
+                <label [for]="'medDuration' + i">Duração</label>
+                <input 
+                  [id]="'medDuration' + i"
+                  type="text" 
+                  [(ngModel)]="med.duration"
+                  placeholder="Ex: 7 dias"
+                  class="form-control">
+              </div>
+
+              <div class="form-group full-width">
+                <label [for]="'medInstructions' + i">Instruções de Uso</label>
+                <textarea 
+                  [id]="'medInstructions' + i"
+                  [(ngModel)]="med.instructions"
+                  placeholder="Instruções adicionais..."
+                  rows="2"
+                  class="form-control"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="empty-state" *ngIf="prescription.medications.length === 0">
+          <p>Nenhuma medicação prescrita ainda.</p>
+          <p class="hint">Clique em "Adicionar Medicação" para começar.</p>
+        </div>
+
+        <div class="form-group">
+          <label for="prescriptionInstructions">Instruções Gerais</label>
+          <textarea 
+            id="prescriptionInstructions"
+            [(ngModel)]="prescription.generalInstructions"
+            placeholder="Instruções gerais sobre a prescrição..."
+            rows="4"
+            class="form-control"></textarea>
+        </div>
+      </div>
+
+      <!-- Tab: Exames -->
+      <div class="tab-panel" *ngIf="activeTab === 'exams'">
+        <div class="panel-header">
+          <h3>🔬 Solicitação de Exames</h3>
+          <button class="btn-add" (click)="addExam()">+ Adicionar Exame</button>
+        </div>
+
+        <div class="exams-list" *ngIf="examRequests.exams.length > 0">
+          <div class="exam-item" *ngFor="let exam of examRequests.exams; let i = index">
+            <div class="exam-header">
+              <h4>Exame {{ i + 1 }}</h4>
+              <button class="btn-remove" (click)="removeExam(i)" title="Remover">🗑️</button>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label [for]="'examType' + i">Tipo de Exame *</label>
+                <select 
+                  [id]="'examType' + i"
+                  [(ngModel)]="exam.type"
+                  class="form-control">
+                  <option value="">Selecione</option>
+                  <option value="Sangue">Hemograma</option>
+                  <option value="Urina">Urina</option>
+                  <option value="Raio-X">Raio-X</option>
+                  <option value="Tomografia">Tomografia</option>
+                  <option value="Ressonância">Ressonância Magnética</option>
+                  <option value="Ultrassom">Ultrassom</option>
+                  <option value="ECG">Eletrocardiograma</option>
+                  <option value="Outro">Outro</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label [for]="'examUrgency' + i">Urgência</label>
+                <select 
+                  [id]="'examUrgency' + i"
+                  [(ngModel)]="exam.urgency"
+                  class="form-control">
+                  <option value="normal">Normal</option>
+                  <option value="urgente">Urgente</option>
+                  <option value="rotina">Rotina</option>
+                </select>
+              </div>
+
+              <div class="form-group full-width">
+                <label [for]="'examDescription' + i">Descrição</label>
+                <input 
+                  [id]="'examDescription' + i"
+                  type="text" 
+                  [(ngModel)]="exam.description"
+                  placeholder="Descreva o exame solicitado"
+                  class="form-control">
+              </div>
+
+              <div class="form-group full-width">
+                <label [for]="'examNotes' + i">Observações</label>
+                <textarea 
+                  [id]="'examNotes' + i"
+                  [(ngModel)]="exam.notes"
+                  placeholder="Observações sobre o exame..."
+                  rows="2"
+                  class="form-control"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="empty-state" *ngIf="examRequests.exams.length === 0">
+          <p>Nenhum exame solicitado ainda.</p>
+          <p class="hint">Clique em "Adicionar Exame" para começar.</p>
+        </div>
+
+        <div class="form-group">
+          <label for="examsNotes">Observações Gerais</label>
+          <textarea 
+            id="examsNotes"
+            [(ngModel)]="examRequests.generalNotes"
+            placeholder="Observações gerais sobre os exames solicitados..."
+            rows="4"
+            class="form-control"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botão para alternar modo de visualização (inferior direito) -->
+  <div class="mode-toggle-wrapper" *ngIf="tabMode !== 'hidden'">
+    <button class="btn-mode-toggle" (click)="cycleTabMode()" title="Alternar modo de visualização">
+      {{ getTabModeLabel() }}
+    </button>
+  </div>
+</div>
+
+<!-- Botão flutuante para mostrar painel quando oculto -->
+<button 
+  class="btn-show-panel" 
+  *ngIf="tabMode === 'hidden'" 
+  (click)="cycleTabMode()"
+  title="Mostrar prontuário">
+  📋
+</button>
