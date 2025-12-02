@@ -26,7 +26,7 @@ export class AppointmentVideoCallComponent implements OnInit, OnDestroy, AfterVi
   isLoading = true;
   errorMessage = '';
   showControls = false;
-  private jitsiApi: any = null;
+  jitsiApi: any = null; // Tornar público para passar ao componente filho
   user: any = null;
   appointmentId: number = 0;
 

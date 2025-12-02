@@ -545,6 +545,366 @@ textarea.form-control {
   }
 }
 
+// Transcrição
+.transcription-controls {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn-control {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &.btn-start {
+    background: #10b981;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background: #059669;
+    }
+  }
+
+  &.btn-pause {
+    background: #f59e0b;
+    color: white;
+
+    &:hover {
+      background: #d97706;
+    }
+  }
+
+  &.btn-resume {
+    background: #3b82f6;
+    color: white;
+
+    &:hover {
+      background: #2563eb;
+    }
+  }
+
+  &.btn-stop {
+    background: #ef4444;
+    color: white;
+
+    &:hover {
+      background: #dc2626;
+    }
+  }
+
+  &.btn-download {
+    background: #8b5cf6;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background: #7c3aed;
+    }
+  }
+
+  &.btn-clear {
+    background: #6b7280;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background: #4b5563;
+    }
+  }
+}
+
+.transcription-status {
+  padding: 12px 16px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  margin-bottom: 16px;
+
+  &.paused {
+    background: #fef3c7;
+    border-color: #fde68a;
+  }
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #15803d;
+  font-weight: 600;
+  font-size: 14px;
+
+  &.paused {
+    color: #b45309;
+  }
+
+  .pulse-dot {
+    width: 10px;
+    height: 10px;
+    background: #22c55e;
+    border-radius: 50%;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+
+  &.paused .pulse-dot {
+    background: #f59e0b;
+    animation: none;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.2);
+  }
+}
+
+.transcription-list {
+  max-height: 500px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 4px;
+  margin-bottom: 20px;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 3px;
+
+    &:hover {
+      background: #a0aec0;
+    }
+  }
+}
+
+.transcription-entry {
+  background: white;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border-left: 4px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  animation: slideInEntry 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  &.professional {
+    border-left-color: #667eea;
+    background: linear-gradient(to right, rgba(102, 126, 234, 0.05), white);
+  }
+
+  &.patient {
+    border-left-color: #10b981;
+    background: linear-gradient(to right, rgba(16, 185, 129, 0.05), white);
+  }
+
+  .entry-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .speaker-badge {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 12px;
+    background: #f3f4f6;
+    color: #374151;
+  }
+
+  &.professional .speaker-badge {
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+  }
+
+  &.patient .speaker-badge {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+  }
+
+  .entry-time {
+    font-size: 11px;
+    color: #9ca3af;
+    margin-left: auto;
+  }
+
+  .btn-remove-entry {
+    background: transparent;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    font-size: 14px;
+
+    &:hover {
+      background: #fee;
+      color: #ef4444;
+    }
+  }
+
+  .entry-text {
+    color: #1e293b;
+    line-height: 1.6;
+    font-size: 14px;
+  }
+
+  .entry-confidence {
+    margin-top: 6px;
+    
+    small {
+      color: #f59e0b;
+      font-size: 11px;
+      font-weight: 500;
+    }
+  }
+}
+
+@keyframes slideInEntry {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.empty-transcription {
+  text-align: center;
+  padding: 60px 24px;
+  color: #64748b;
+
+  .empty-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+
+  p {
+    margin: 8px 0;
+    font-size: 16px;
+
+    &.hint {
+      font-size: 13px;
+      color: #94a3b8;
+    }
+  }
+
+  .transcription-info {
+    margin-top: 32px;
+    text-align: left;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 20px;
+    background: #f8fafc;
+    border-radius: 8px;
+
+    h4 {
+      margin: 0 0 12px 0;
+      color: #475569;
+      font-size: 14px;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 20px;
+      
+      li {
+        margin: 8px 0;
+        font-size: 13px;
+        line-height: 1.6;
+        color: #64748b;
+      }
+    }
+  }
+}
+
+.manual-entry-section {
+  margin-top: 24px;
+  padding: 20px;
+  background: #fafafa;
+  border-radius: 12px;
+  border: 1px dashed #cbd5e0;
+
+  h4 {
+    margin: 0 0 16px 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: #1e293b;
+  }
+
+  .manual-entry-form {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 12px;
+    align-items: start;
+
+    .speaker-select {
+      min-width: 160px;
+    }
+
+    .manual-text {
+      min-height: 60px;
+    }
+
+    .btn-add-manual {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      height: 60px;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: #5568d3;
+        transform: translateY(-1px);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+  }
+}
+
 // Botão flutuante
 .btn-show-panel {
   position: fixed;
@@ -596,6 +956,22 @@ textarea.form-control {
 
     .tab-btn {
       min-width: 60px;
+    }
+  }
+
+  .manual-entry-section .manual-entry-form {
+    grid-template-columns: 1fr;
+
+    .btn-add-manual {
+      height: auto;
+    }
+  }
+
+  .transcription-controls {
+    .btn-control {
+      flex: 1;
+      min-width: 100px;
+      justify-content: center;
     }
   }
 }

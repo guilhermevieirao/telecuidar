@@ -112,7 +112,8 @@
       "command": "php",
       "args": [
         "artisan",
-        "serve"
+        "serve",
+        "--host=0.0.0.0"
       ],
       "options": {
         "cwd": "C:\\projetos\\susatende"

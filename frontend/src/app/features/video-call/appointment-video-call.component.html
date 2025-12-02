@@ -59,6 +59,7 @@
   <app-medical-record-tabs 
     *ngIf="user?.role === 2 && appointment"
     [appointmentId]="appointmentId"
-    [patientName]="appointment.patientName">
+    [patientName]="appointment.patientName"
+    [jitsiApi]="jitsiApi">
   </app-medical-record-tabs>
 </div>
