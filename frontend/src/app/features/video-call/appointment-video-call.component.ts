@@ -18,6 +18,7 @@ declare var JitsiMeetExternalAPI: any;
 })
 export class AppointmentVideoCallComponent implements OnInit, OnDestroy, AfterViewInit {
     showHeader = true;
+    isDarkTheme = true; // Controlar tema do header
     toggleHeader() {
       this.showHeader = !this.showHeader;
     }
@@ -29,13 +30,20 @@ export class AppointmentVideoCallComponent implements OnInit, OnDestroy, AfterVi
   jitsiApi: any = null; // Tornar público para passar ao componente filho
   user: any = null;
   appointmentId: number = 0;
+  hasSidebar: boolean = true; // Controlar classe para redimensionar Jitsi
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private appointmentService: AppointmentService,
     private modalService: ModalService
-  ) {}
+  ) {
+    // Carregar preferência de tema do localStorage
+    const savedTheme = localStorage.getItem('themePreference');
+    if (savedTheme !== null) {
+      this.isDarkTheme = savedTheme === 'dark';
+    }
+  }
 
   ngOnInit(): void {
     const userStr = localStorage.getItem('user');
@@ -280,5 +288,15 @@ export class AppointmentVideoCallComponent implements OnInit, OnDestroy, AfterVi
 
   formatTime(timeStr: string): string {
     return timeStr.substring(0, 5);
+  }
+
+  onMedicalRecordModeChange(mode: string): void {
+    this.hasSidebar = mode === 'sidebar';
+  }
+
+  toggleTheme(): void {
+    this.isDarkTheme = !this.isDarkTheme;
+    // Salvar preferência no localStorage
+    localStorage.setItem('themePreference', this.isDarkTheme ? 'dark' : 'light');
   }
 }

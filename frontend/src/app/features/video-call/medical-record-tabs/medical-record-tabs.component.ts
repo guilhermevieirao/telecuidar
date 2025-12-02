@@ -90,7 +90,9 @@ export class MedicalRecordTabsComponent implements OnInit {
   @Input() appointmentId: number = 0;
   @Input() patientName: string = '';
   @Input() jitsiApi: any = null; // Referência para API do Jitsi
+  @Input() isDarkTheme: boolean = true; // Receber tema do componente pai
   @Output() onClose = new EventEmitter<void>();
+  @Output() onModeChange = new EventEmitter<TabMode>();
 
   @ViewChild('contentToPrint') contentToPrint!: ElementRef;
 
@@ -160,6 +162,8 @@ export class MedicalRecordTabsComponent implements OnInit {
     this.patientInfo.name = this.patientName;
     this.generateMockBiometricData();
     this.initializeSpeechRecognition();
+    // Emitir estado inicial do modo
+    this.onModeChange.emit(this.tabMode);
   }
 
   ngAfterViewInit(): void {
@@ -181,6 +185,7 @@ export class MedicalRecordTabsComponent implements OnInit {
     const modes: TabMode[] = ['hidden', 'sidebar', 'fullscreen'];
     const currentIndex = modes.indexOf(this.tabMode);
     this.tabMode = modes[(currentIndex + 1) % modes.length];
+    this.onModeChange.emit(this.tabMode);
   }
 
   getTabModeLabel(): string {
@@ -190,6 +195,15 @@ export class MedicalRecordTabsComponent implements OnInit {
       fullscreen: '⛶ Tela Cheia'
     };
     return labels[this.tabMode];
+  }
+
+  getTabModeIcon(): string {
+    const icons = {
+      hidden: '👁️',
+      sidebar: '📋',
+      fullscreen: '⛶'
+    };
+    return icons[this.tabMode];
   }
 
   // Navegação de tabs
@@ -1035,7 +1049,8 @@ export class MedicalRecordTabsComponent implements OnInit {
   }
 
   close(): void {
-    this.onClose.emit();
+    this.tabMode = 'hidden';
+    this.onModeChange.emit(this.tabMode);
   }
 
   // Métodos auxiliares para cálculos no template

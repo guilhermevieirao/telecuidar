@@ -1,17 +1,17 @@
-<div class="medical-record-container" [ngClass]="'mode-' + tabMode">
+<div class="medical-record-container" [ngClass]="['mode-' + tabMode, isDarkTheme ? 'theme-dark' : 'theme-light']">
   <!-- Conteúdo do prontuário -->
   <div class="medical-record-content" *ngIf="tabMode !== 'hidden'" #contentToPrint>
     <!-- Header -->
     <div class="record-header">
       <h2>📋 Prontuário Médico</h2>
       <div class="header-actions">
-        <button class="btn-action btn-save" (click)="saveData()" title="Salvar">
-          💾
+        <button class="btn-action btn-mode" (click)="cycleTabMode()" title="Alternar modo de visualização">
+          {{ getTabModeIcon() }}
         </button>
         <button class="btn-action btn-pdf" (click)="exportToPDF()" title="Exportar PDF">
           📄
         </button>
-        <button class="btn-action btn-close" (click)="close()" title="Fechar" *ngIf="tabMode === 'sidebar'">
+        <button class="btn-action btn-close" (click)="close()" title="Fechar">
           ✕
         </button>
       </div>
@@ -594,13 +594,6 @@
         </div>
       </div>
     </div>
-  </div>
-
-  <!-- Botão para alternar modo de visualização (inferior direito) -->
-  <div class="mode-toggle-wrapper" *ngIf="tabMode !== 'hidden'">
-    <button class="btn-mode-toggle" (click)="cycleTabMode()" title="Alternar modo de visualização">
-      {{ getTabModeLabel() }}
-    </button>
   </div>
 </div>
 

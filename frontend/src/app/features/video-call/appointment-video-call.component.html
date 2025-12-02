@@ -1,27 +1,35 @@
-<div class="video-call-page">
-  <!-- Botão para ocultar/exibir cabeçalho -->
-  <button class="btn-toggle-header" (click)="toggleHeader()" *ngIf="appointment && !errorMessage" title="{{ showHeader ? 'Ocultar cabeçalho' : 'Exibir cabeçalho' }}">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+<div class="video-call-page" [class.has-sidebar]="hasSidebar && user?.role === 2 && appointment && !isLoading">
+  <!-- Botão compacto para exibir header quando oculto -->
+  <button class="btn-show-header" [class.theme-light]="!isDarkTheme" (click)="toggleHeader()" *ngIf="appointment && !errorMessage && !showHeader" title="Exibir cabeçalho">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
       <line x1="3" y1="9" x2="21" y2="9"></line>
     </svg>
-    {{ showHeader ? 'Ocultar' : 'Exibir' }}
   </button>
-  
+
   <!-- Header com informações da consulta -->
-  <div class="video-call-header" *ngIf="appointment && !errorMessage && showHeader">
+  <div class="video-call-header" [class.theme-light]="!isDarkTheme" *ngIf="appointment && !errorMessage && showHeader">
     <div class="header-content">
       <div class="appointment-info">
         <h2>{{ user?.role === 1 ? 'Consulta com' : 'Consulta de' }} {{ user?.role === 1 ? appointment.professionalName : appointment.patientName }}</h2>
         <p>{{ appointment.specialtyName }} • {{ formatDate(appointment.appointmentDate) }} às {{ formatTime(appointment.appointmentTime) }}</p>
       </div>
       <div class="header-actions">
+        <button class="btn-theme" (click)="toggleTheme()" title="Alternar tema">
+          {{ isDarkTheme ? '☀️' : '🌙' }}
+        </button>
         <button class="btn-back" (click)="goBack()">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+            <path d="M6.62 10.79a15.91 15.91 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.27 11.36 11.36 0 004.48.9 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.19a1 1 0 011 1 11.36 11.36 0 00.9 4.48 1 1 0 01-.27 1.11l-2.2 2.2z" transform="rotate(135 12 12)"/>
           </svg>
-          Voltar
+          Sair
+        </button>
+        <button class="btn-toggle-header" (click)="toggleHeader()" *ngIf="appointment && !errorMessage" title="{{ showHeader ? 'Ocultar cabeçalho' : 'Exibir cabeçalho' }}">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="3" y1="9" x2="21" y2="9"></line>
+          </svg>
+          {{ showHeader ? 'Ocultar' : 'Exibir' }}
         </button>
       </div>
     </div>
@@ -57,9 +65,11 @@
 
   <!-- Novo Componente de Prontuário Médico (apenas para profissionais) -->
   <app-medical-record-tabs 
-    *ngIf="user?.role === 2 && appointment"
+    *ngIf="user?.role === 2 && appointment && !isLoading"
     [appointmentId]="appointmentId"
     [patientName]="appointment.patientName"
-    [jitsiApi]="jitsiApi">
+    [jitsiApi]="jitsiApi"
+    [isDarkTheme]="isDarkTheme"
+    (onModeChange)="onMedicalRecordModeChange($event)">
   </app-medical-record-tabs>
 </div>
