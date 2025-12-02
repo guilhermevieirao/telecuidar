@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgIf, NgForOf, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
 import jsPDF from 'jspdf';
@@ -7,6 +7,7 @@ import html2canvas from 'html2canvas';
 import { SpecialtyService } from '../../../services/specialty.service';
 import { AppointmentFieldService } from '../../../services/appointment-field.service';
 import { AIService, AIResponse } from '../../../core/services/ai.service';
+import { CadsusService, CadsusCidadao } from '../../../core/services/cadsus.service';
 import { SpecialtyFieldDto } from '../../../models/specialty.model';
 import { AppointmentFieldValueDto, SaveAppointmentFieldValueDto } from '../../../models/appointment-field.model';
 
@@ -16,14 +17,27 @@ export type TabMode = 'hidden' | 'sidebar' | 'fullscreen';
 export type ActiveTab = 'patient' | 'soap' | 'custom-fields' | 'biometric' | 'prescription' | 'exams' | 'transcription' | 'ai-analysis';
 
 interface PatientInfo {
-  name: string;
+  cns: string;
   cpf: string;
-  age: number | null;
-  gender: string;
+  name: string;
   birthDate: string;
-  phone: string;
-  email: string;
-  address: string;
+  registrationStatus: string;
+  motherName: string;
+  fatherName: string;
+  gender: string;
+  raceColor: string;
+  streetType: string;
+  street: string;
+  number: string;
+  complement: string;
+  city: string;
+  country: string;
+  zipCode: string;
+  fullAddress: string;
+  birthCity: string;
+  birthCountry: string;
+  phones: string;
+  emails: string;
 }
 
 interface SOAPData {
@@ -87,8 +101,8 @@ declare global {
 @Component({
   selector: 'app-medical-record-tabs',
   standalone: true,
-  imports: [CommonModule, FormsModule],
-  providers: [AIService],
+  imports: [CommonModule, FormsModule, NgIf, NgForOf, NgClass],
+  providers: [AIService, CadsusService],
   templateUrl: './medical-record-tabs.component.html',
   styleUrls: ['./medical-record-tabs.component.scss']
 })
@@ -108,14 +122,27 @@ export class MedicalRecordTabsComponent implements OnInit {
 
   // Dados das tabs
   patientInfo: PatientInfo = {
-    name: '',
+    cns: '',
     cpf: '',
-    age: null,
-    gender: '',
+    name: '',
     birthDate: '',
-    phone: '',
-    email: '',
-    address: ''
+    registrationStatus: '',
+    motherName: '',
+    fatherName: '',
+    gender: '',
+    raceColor: '',
+    streetType: '',
+    street: '',
+    number: '',
+    complement: '',
+    city: '',
+    country: '',
+    zipCode: '',
+    fullAddress: '',
+    birthCity: '',
+    birthCountry: '',
+    phones: '',
+    emails: ''
   };
 
   soapData: SOAPData = {
@@ -183,10 +210,16 @@ export class MedicalRecordTabsComponent implements OnInit {
   aiAnalysisResult: AIResponse | null = null;
   aiError: string | null = null;
 
+  // CADSUS
+  isConsultingCadsus = false;
+  cadsusError: string | null = null;
+  cadsusSuccess: string | null = null;
+
   constructor(
     private specialtyService: SpecialtyService,
     private appointmentFieldService: AppointmentFieldService,
-    private aiService: AIService
+    private aiService: AIService,
+    private cadsusService: CadsusService
   ) {}
 
   ngOnInit(): void {
@@ -531,10 +564,13 @@ export class MedicalRecordTabsComponent implements OnInit {
       const patientData = [
         `Nome: ${this.patientInfo.name}`,
         `CPF: ${this.patientInfo.cpf}`,
-        `Idade: ${this.patientInfo.age || 'N/A'}`,
+        `CNS: ${this.patientInfo.cns}`,
+        `Data de Nascimento: ${this.patientInfo.birthDate}`,
         `Sexo: ${this.patientInfo.gender}`,
-        `Telefone: ${this.patientInfo.phone}`,
-        `Email: ${this.patientInfo.email}`
+        `Raça/Cor: ${this.patientInfo.raceColor}`,
+        `Telefones: ${this.patientInfo.phones}`,
+        `Emails: ${this.patientInfo.emails}`,
+        `Endereço: ${this.patientInfo.fullAddress}`
       ];
 
       patientData.forEach(line => {
@@ -1450,7 +1486,100 @@ export class MedicalRecordTabsComponent implements OnInit {
     }
   }
 
+  // ============================================
+  // CADSUS - Consulta de Dados do Cidadão
+  // ============================================
+
+  consultarCadsus(): void {
+    if (!this.patientInfo.cpf) {
+      this.cadsusError = 'Digite um CPF para consultar';
+      return;
+    }
+
+    this.isConsultingCadsus = true;
+    this.cadsusError = null;
+    this.cadsusSuccess = null;
+
+    this.cadsusService.consultarCpf(this.patientInfo.cpf).subscribe({
+      next: (cidadao: CadsusCidadao) => {
+        console.log('✅ Dados recebidos do CADSUS:', cidadao);
+        console.log('📋 patientInfo antes:', JSON.parse(JSON.stringify(this.patientInfo)));
+        
+        // Preencher todos os campos automaticamente
+        if (cidadao.cns) this.patientInfo.cns = cidadao.cns;
+        if (cidadao.cpf) this.patientInfo.cpf = cidadao.cpf;
+        if (cidadao.nome) this.patientInfo.name = cidadao.nome;
+        if (cidadao.dataNascimento) this.patientInfo.birthDate = this.convertDateToBrowserFormat(cidadao.dataNascimento);
+        if (cidadao.statusCadastro) this.patientInfo.registrationStatus = cidadao.statusCadastro;
+        if (cidadao.nomeMae) this.patientInfo.motherName = cidadao.nomeMae;
+        if (cidadao.nomePai) this.patientInfo.fatherName = cidadao.nomePai;
+        if (cidadao.sexo) this.patientInfo.gender = cidadao.sexo;
+        if (cidadao.racaCor) this.patientInfo.raceColor = cidadao.racaCor;
+        if (cidadao.tipoLogradouro) this.patientInfo.streetType = cidadao.tipoLogradouro;
+        if (cidadao.logradouro) this.patientInfo.street = cidadao.logradouro;
+        if (cidadao.numero) this.patientInfo.number = cidadao.numero;
+        if (cidadao.complemento) this.patientInfo.complement = cidadao.complemento;
+        if (cidadao.cidade) this.patientInfo.city = cidadao.cidade;
+        if (cidadao.paisEnderecoAtual) this.patientInfo.country = cidadao.paisEnderecoAtual;
+        if (cidadao.cep) this.patientInfo.zipCode = cidadao.cep;
+        if (cidadao.enderecoCompleto) this.patientInfo.fullAddress = cidadao.enderecoCompleto;
+        if (cidadao.cidadeNascimento) this.patientInfo.birthCity = cidadao.cidadeNascimento;
+        if (cidadao.paisNascimento) this.patientInfo.birthCountry = cidadao.paisNascimento;
+        if (cidadao.telefones && cidadao.telefones.length > 0) {
+          this.patientInfo.phones = cidadao.telefones.join(', ');
+        }
+        if (cidadao.emails && cidadao.emails.length > 0) {
+          this.patientInfo.emails = cidadao.emails.join(', ');
+        }
+
+        console.log('📋 patientInfo depois:', JSON.parse(JSON.stringify(this.patientInfo)));
+
+        this.isConsultingCadsus = false;
+        this.cadsusSuccess = `Dados carregados com sucesso do CADSUS para ${cidadao.nome}`;
+        
+        // Limpar mensagem de sucesso após 5 segundos
+        setTimeout(() => {
+          this.cadsusSuccess = null;
+        }, 5000);
+      },
+      error: (error) => {
+        console.error('Erro ao consultar CADSUS:', error);
+        this.isConsultingCadsus = false;
+        
+        let errorMessage = 'Erro ao consultar CADSUS';
+        
+        if (error.status === 401 || error.status === 403) {
+          errorMessage = 'Acesso negado. Verifique suas credenciais.';
+        } else if (error.status === 404) {
+          errorMessage = 'CPF não encontrado no CADSUS';
+        } else if (error.status === 500) {
+          errorMessage = error.error?.message || 'Erro no servidor. Verifique a configuração do certificado.';
+        } else if (error.status === 0) {
+          errorMessage = 'Erro de conexão. Verifique se o backend está rodando.';
+        } else if (error.error?.message) {
+          errorMessage = error.error.message;
+        }
+        
+        this.cadsusError = errorMessage;
+      }
+    });
+  }
+
+  /**
+   * Converte data do formato DD/MM/YYYY para YYYY-MM-DD (formato do input date do navegador)
+   */
+  private convertDateToBrowserFormat(dataBr: string): string {
+    if (!dataBr || dataBr.length !== 10) return '';
+    
+    const parts = dataBr.split('/');
+    if (parts.length !== 3) return '';
+    
+    const [day, month, year] = parts;
+    return `${year}-${month}-${day}`;
+  }
+
   close(): void {
+
     this.tabMode = 'hidden';
     this.onModeChange.emit(this.tabMode);
   }

@@ -43,7 +43,7 @@ Reformular campos de dados dos users:
 
 Não permitir usar o mesmo numero ou cpf
 
-Integrar os dois sistemas do meu pai
+Integrar Jitsi e Receita
 
 Transcrição
 Formulário

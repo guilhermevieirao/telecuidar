@@ -31,6 +31,8 @@ else
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+// Garantir que variáveis de ambiente sejam lidas
+builder.Configuration.AddEnvironmentVariables();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
@@ -92,6 +94,7 @@ builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IPdfExportService, PdfExportService>();
 builder.Services.AddScoped<IExcelExportService, ExcelExportService>();
+builder.Services.AddScoped<ICadsusService, CadsusService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient(); // Adicionar HttpClientFactory
 

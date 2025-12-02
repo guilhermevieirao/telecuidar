@@ -92,19 +92,38 @@
       <div class="tab-panel" *ngIf="activeTab === 'patient'">
         <div class="panel-header">
           <h3>👤 Informações do Paciente</h3>
+          <button 
+            class="btn-cadsus" 
+            (click)="consultarCadsus()"
+            [disabled]="isConsultingCadsus || !patientInfo.cpf"
+            title="Consultar dados no CADSUS">
+            {{ isConsultingCadsus ? '⏳ Consultando...' : '🔍 Consultar CADSUS' }}
+          </button>
+        </div>
+
+        <div *ngIf="cadsusError" class="error-message">
+          ⚠️ {{ cadsusError }}
+          <button class="btn-close-error" (click)="cadsusError = null">✕</button>
+        </div>
+
+        <div *ngIf="cadsusSuccess" class="success-message">
+          ✅ {{ cadsusSuccess }}
+          <button class="btn-close-success" (click)="cadsusSuccess = null">✕</button>
         </div>
         
         <div class="form-grid">
-          <div class="form-group full-width">
-            <label for="patientName">Nome Completo *</label>
+          <!-- CNS -->
+          <div class="form-group">
+            <label for="patientCNS">CNS (Cartão Nacional de Saúde)</label>
             <input 
-              id="patientName"
+              id="patientCNS"
               type="text" 
-              [(ngModel)]="patientInfo.name"
-              placeholder="Nome completo do paciente"
+              [(ngModel)]="patientInfo.cns"
+              placeholder="000 0000 0000 0000"
               class="form-control">
           </div>
 
+          <!-- CPF -->
           <div class="form-group">
             <label for="patientCPF">CPF</label>
             <input 
@@ -115,6 +134,18 @@
               class="form-control">
           </div>
 
+          <!-- Nome Completo -->
+          <div class="form-group full-width">
+            <label for="patientName">Nome Completo *</label>
+            <input 
+              id="patientName"
+              type="text" 
+              [(ngModel)]="patientInfo.name"
+              placeholder="Nome completo do paciente"
+              class="form-control">
+          </div>
+
+          <!-- Data de Nascimento -->
           <div class="form-group">
             <label for="patientBirthDate">Data de Nascimento</label>
             <input 
@@ -124,16 +155,43 @@
               class="form-control">
           </div>
 
+          <!-- Status Cadastro -->
           <div class="form-group">
-            <label for="patientAge">Idade</label>
+            <label for="patientRegistrationStatus">Status Cadastro</label>
+            <select 
+              id="patientRegistrationStatus"
+              [(ngModel)]="patientInfo.registrationStatus"
+              class="form-control">
+              <option value="">Selecione</option>
+              <option value="Ativo">Ativo</option>
+              <option value="Pendente">Pendente</option>
+              <option value="Inativo">Inativo</option>
+            </select>
+          </div>
+
+          <!-- Nome da Mãe -->
+          <div class="form-group full-width">
+            <label for="patientMotherName">Nome da Mãe</label>
             <input 
-              id="patientAge"
-              type="number" 
-              [(ngModel)]="patientInfo.age"
-              placeholder="Idade"
+              id="patientMotherName"
+              type="text" 
+              [(ngModel)]="patientInfo.motherName"
+              placeholder="Nome completo da mãe"
               class="form-control">
           </div>
 
+          <!-- Nome do Pai -->
+          <div class="form-group full-width">
+            <label for="patientFatherName">Nome do Pai</label>
+            <input 
+              id="patientFatherName"
+              type="text" 
+              [(ngModel)]="patientInfo.fatherName"
+              placeholder="Nome completo do pai"
+              class="form-control">
+          </div>
+
+          <!-- Sexo -->
           <div class="form-group">
             <label for="patientGender">Sexo</label>
             <select 
@@ -147,34 +205,158 @@
             </select>
           </div>
 
+          <!-- Raça/Cor -->
           <div class="form-group">
-            <label for="patientPhone">Telefone</label>
+            <label for="patientRaceColor">Raça/Cor</label>
+            <select 
+              id="patientRaceColor"
+              [(ngModel)]="patientInfo.raceColor"
+              class="form-control">
+              <option value="">Selecione</option>
+              <option value="Branca">Branca</option>
+              <option value="Preta">Preta</option>
+              <option value="Parda">Parda</option>
+              <option value="Amarela">Amarela</option>
+              <option value="Indígena">Indígena</option>
+            </select>
+          </div>
+
+          <!-- Tipo Logradouro -->
+          <div class="form-group">
+            <label for="patientStreetType">Tipo Logradouro</label>
+            <select 
+              id="patientStreetType"
+              [(ngModel)]="patientInfo.streetType"
+              class="form-control">
+              <option value="">Selecione</option>
+              <option value="Rua">Rua</option>
+              <option value="Avenida">Avenida</option>
+              <option value="Travessa">Travessa</option>
+              <option value="Alameda">Alameda</option>
+              <option value="Praça">Praça</option>
+              <option value="Rodovia">Rodovia</option>
+            </select>
+          </div>
+
+          <!-- Logradouro -->
+          <div class="form-group">
+            <label for="patientStreet">Logradouro</label>
             <input 
-              id="patientPhone"
-              type="tel" 
-              [(ngModel)]="patientInfo.phone"
-              placeholder="(00) 00000-0000"
+              id="patientStreet"
+              type="text" 
+              [(ngModel)]="patientInfo.street"
+              placeholder="Nome da rua/avenida"
               class="form-control">
           </div>
 
-          <div class="form-group full-width">
-            <label for="patientEmail">E-mail</label>
+          <!-- Número -->
+          <div class="form-group">
+            <label for="patientNumber">Número</label>
             <input 
-              id="patientEmail"
-              type="email" 
-              [(ngModel)]="patientInfo.email"
-              placeholder="email@exemplo.com"
+              id="patientNumber"
+              type="text" 
+              [(ngModel)]="patientInfo.number"
+              placeholder="Número"
               class="form-control">
           </div>
 
+          <!-- Complemento -->
+          <div class="form-group">
+            <label for="patientComplement">Complemento</label>
+            <input 
+              id="patientComplement"
+              type="text" 
+              [(ngModel)]="patientInfo.complement"
+              placeholder="Apto, bloco, etc."
+              class="form-control">
+          </div>
+
+          <!-- Cidade -->
+          <div class="form-group">
+            <label for="patientCity">Cidade</label>
+            <input 
+              id="patientCity"
+              type="text" 
+              [(ngModel)]="patientInfo.city"
+              placeholder="Cidade"
+              class="form-control">
+          </div>
+
+          <!-- País -->
+          <div class="form-group">
+            <label for="patientCountry">País</label>
+            <input 
+              id="patientCountry"
+              type="text" 
+              [(ngModel)]="patientInfo.country"
+              placeholder="País"
+              class="form-control">
+          </div>
+
+          <!-- CEP -->
+          <div class="form-group">
+            <label for="patientZipCode">CEP</label>
+            <input 
+              id="patientZipCode"
+              type="text" 
+              [(ngModel)]="patientInfo.zipCode"
+              placeholder="00000-000"
+              class="form-control">
+          </div>
+
+          <!-- Endereço Completo -->
           <div class="form-group full-width">
-            <label for="patientAddress">Endereço</label>
+            <label for="patientFullAddress">Endereço Completo</label>
             <textarea 
-              id="patientAddress"
-              [(ngModel)]="patientInfo.address"
-              placeholder="Endereço completo"
+              id="patientFullAddress"
+              [(ngModel)]="patientInfo.fullAddress"
+              placeholder="Endereço completo formatado"
               rows="2"
               class="form-control"></textarea>
+          </div>
+
+          <!-- Cidade de Nascimento -->
+          <div class="form-group">
+            <label for="patientBirthCity">Cidade de Nascimento</label>
+            <input 
+              id="patientBirthCity"
+              type="text" 
+              [(ngModel)]="patientInfo.birthCity"
+              placeholder="Cidade de nascimento"
+              class="form-control">
+          </div>
+
+          <!-- País de Nascimento -->
+          <div class="form-group">
+            <label for="patientBirthCountry">País de Nascimento</label>
+            <input 
+              id="patientBirthCountry"
+              type="text" 
+              [(ngModel)]="patientInfo.birthCountry"
+              placeholder="País de nascimento"
+              class="form-control">
+          </div>
+
+          <!-- Telefones -->
+          <div class="form-group full-width">
+            <label for="patientPhones">Telefones</label>
+            <input 
+              id="patientPhones"
+              type="text" 
+              [(ngModel)]="patientInfo.phones"
+              placeholder="(00) 00000-0000, (00) 0000-0000"
+              class="form-control">
+          </div>
+
+          <!-- E-mails -->
+          <div class="form-group full-width">
+            <label for="patientEmails">E-mails</label>
+            <input 
+              id="patientEmails"
+              type="text" 
+              [(ngModel)]="patientInfo.emails"
+              placeholder="email@exemplo.com, outro@exemplo.com"
+              class="form-control">
           </div>
         </div>
       </div>
