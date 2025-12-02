@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using app.Application.Appointments.Commands;
 using app.Application.Appointments.Queries;
+using app.Application.Appointments.DTOs;
 
 namespace app.Api.Controllers;
 
@@ -218,6 +219,33 @@ public class AppointmentsController : ControllerBase
         
         // Vou criar uma query especial para debug
         return Ok("Endpoint de debug - implementar se necessário");
+    }
+
+    /// <summary>
+    /// Buscar valores dos campos personalizados de um agendamento
+    /// </summary>
+    [HttpGet("{appointmentId}/field-values")]
+    public async Task<IActionResult> GetFieldValues(int appointmentId)
+    {
+        var query = new GetAppointmentFieldValuesQuery(appointmentId);
+        var result = await _mediator.Send(query);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Salvar valores dos campos personalizados de um agendamento
+    /// </summary>
+    [HttpPost("{appointmentId}/field-values")]
+    public async Task<IActionResult> SaveFieldValues(int appointmentId, [FromBody] List<SaveAppointmentFieldValueDto> fieldValues)
+    {
+        var dto = new BulkSaveAppointmentFieldValuesDto
+        {
+            AppointmentId = appointmentId,
+            FieldValues = fieldValues
+        };
+        var command = new SaveAppointmentFieldValuesCommand(dto);
+        var result = await _mediator.Send(command);
+        return Ok(result);
     }
 }
 

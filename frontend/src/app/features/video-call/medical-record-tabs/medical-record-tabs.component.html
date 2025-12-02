@@ -35,6 +35,14 @@
       </button>
       <button 
         class="tab-btn" 
+        [class.active]="activeTab === 'custom-fields'"
+        (click)="setActiveTab('custom-fields')"
+        *ngIf="customFields.length > 0">
+        <span class="tab-icon">📋</span>
+        <span class="tab-label">Campos</span>
+      </button>
+      <button 
+        class="tab-btn" 
         [class.active]="activeTab === 'biometric'"
         (click)="setActiveTab('biometric')">
         <span class="tab-icon">📊</span>
@@ -219,6 +227,125 @@
               rows="6"
               class="form-control"></textarea>
           </div>
+        </div>
+      </div>
+
+      <!-- Tab: Campos Personalizados -->
+      <div class="tab-panel" *ngIf="activeTab === 'custom-fields'">
+        <div class="panel-header">
+          <h3>📋 Campos Personalizados</h3>
+          <p class="panel-description">Campos específicos da especialidade</p>
+        </div>
+
+        <div *ngIf="loadingCustomFields" class="loading-state">
+          <p>Carregando campos...</p>
+        </div>
+
+        <div *ngIf="!loadingCustomFields && customFields.length > 0" class="form-grid">
+          <div *ngFor="let field of customFields" 
+               [class.full-width]="field.fieldType === 'textarea'"
+               class="form-group">
+            <label [for]="'field-' + field.id">
+              {{ field.label }}
+              <span *ngIf="field.isRequired" class="required">*</span>
+            </label>
+            <p *ngIf="field.description" class="field-description">{{ field.description }}</p>
+
+            <!-- Text input -->
+            <input 
+              *ngIf="field.fieldType === 'text'"
+              [id]="'field-' + field.id"
+              type="text"
+              [(ngModel)]="customFieldValues[field.id]"
+              [placeholder]="field.placeholder || ''"
+              [required]="field.isRequired"
+              class="form-control"
+            />
+
+            <!-- Textarea -->
+            <textarea 
+              *ngIf="field.fieldType === 'textarea'"
+              [id]="'field-' + field.id"
+              [(ngModel)]="customFieldValues[field.id]"
+              [placeholder]="field.placeholder || ''"
+              [required]="field.isRequired"
+              rows="4"
+              class="form-control"
+            ></textarea>
+
+            <!-- Number input -->
+            <input 
+              *ngIf="field.fieldType === 'number'"
+              [id]="'field-' + field.id"
+              type="number"
+              [(ngModel)]="customFieldValues[field.id]"
+              [placeholder]="field.placeholder || ''"
+              [required]="field.isRequired"
+              class="form-control"
+            />
+
+            <!-- Date input -->
+            <input 
+              *ngIf="field.fieldType === 'date'"
+              [id]="'field-' + field.id"
+              type="date"
+              [(ngModel)]="customFieldValues[field.id]"
+              [required]="field.isRequired"
+              class="form-control"
+            />
+
+            <!-- Select -->
+            <select 
+              *ngIf="field.fieldType === 'select' && field.options"
+              [id]="'field-' + field.id"
+              [(ngModel)]="customFieldValues[field.id]"
+              [required]="field.isRequired"
+              class="form-control"
+            >
+              <option value="">Selecione...</option>
+              <option *ngFor="let option of field.options" [value]="option">{{ option }}</option>
+            </select>
+
+            <!-- Checkbox -->
+            <div *ngIf="field.fieldType === 'checkbox'" class="checkbox-wrapper">
+              <input 
+                [id]="'field-' + field.id"
+                type="checkbox"
+                [(ngModel)]="customFieldValues[field.id]"
+                [required]="field.isRequired"
+              />
+              <label [for]="'field-' + field.id" class="checkbox-label">
+                {{ field.label }}
+              </label>
+            </div>
+
+            <!-- Radio options -->
+            <div *ngIf="field.fieldType === 'radio' && field.options" class="radio-group">
+              <div *ngFor="let option of field.options; let i = index" class="radio-wrapper">
+                <input 
+                  [id]="'field-' + field.id + '-' + i"
+                  type="radio"
+                  [name]="'field-' + field.id"
+                  [value]="option"
+                  [(ngModel)]="customFieldValues[field.id]"
+                  [required]="field.isRequired"
+                />
+                <label [for]="'field-' + field.id + '-' + i" class="radio-label">
+                  {{ option }}
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="!loadingCustomFields && customFields.length > 0" class="panel-actions">
+          <button (click)="saveCustomFields()" class="btn-primary">
+            Salvar Campos
+          </button>
+        </div>
+
+        <div *ngIf="!loadingCustomFields && customFields.length === 0" class="empty-state">
+          <p>Nenhum campo personalizado configurado para esta especialidade.</p>
         </div>
       </div>
 

@@ -2,7 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { SpecialtyDto, CreateSpecialtyCommand, UpdateSpecialtyCommand } from '../models/specialty.model';
+import { 
+  SpecialtyDto, 
+  CreateSpecialtyCommand, 
+  UpdateSpecialtyCommand,
+  SpecialtyFieldDto,
+  CreateSpecialtyFieldDto,
+  UpdateSpecialtyFieldDto
+} from '../models/specialty.model';
 
 interface UserDto {
   id: number;
@@ -47,5 +54,22 @@ export class SpecialtyService {
 
   removeFromProfessional(specialtyId: number, userId: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${specialtyId}/professionals/${userId}`);
+  }
+
+  // Métodos para campos personalizados
+  getFields(specialtyId: number): Observable<SpecialtyFieldDto[]> {
+    return this.http.get<SpecialtyFieldDto[]>(`${this.apiUrl}/${specialtyId}/fields`);
+  }
+
+  createField(specialtyId: number, field: CreateSpecialtyFieldDto): Observable<SpecialtyFieldDto> {
+    return this.http.post<SpecialtyFieldDto>(`${this.apiUrl}/${specialtyId}/fields`, field);
+  }
+
+  updateField(fieldId: number, field: UpdateSpecialtyFieldDto): Observable<SpecialtyFieldDto> {
+    return this.http.put<SpecialtyFieldDto>(`${this.apiUrl}/fields/${fieldId}`, field);
+  }
+
+  deleteField(fieldId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/fields/${fieldId}`);
   }
 }

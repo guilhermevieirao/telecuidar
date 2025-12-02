@@ -8,4 +8,5 @@ public class Specialty : BaseEntity
     
     // Navigation properties
     public ICollection<UserSpecialty> UserSpecialties { get; set; } = new List<UserSpecialty>();
+    public ICollection<SpecialtyField> SpecialtyFields { get; set; } = new List<SpecialtyField>();
 }

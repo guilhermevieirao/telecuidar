@@ -4,11 +4,15 @@ import { FormsModule } from '@angular/forms';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { SpecialtyService } from '../../../services/specialty.service';
+import { AppointmentFieldService } from '../../../services/appointment-field.service';
+import { SpecialtyFieldDto } from '../../../models/specialty.model';
+import { AppointmentFieldValueDto, SaveAppointmentFieldValueDto } from '../../../models/appointment-field.model';
 
 Chart.register(...registerables);
 
 export type TabMode = 'hidden' | 'sidebar' | 'fullscreen';
-export type ActiveTab = 'patient' | 'soap' | 'biometric' | 'prescription' | 'exams' | 'transcription';
+export type ActiveTab = 'patient' | 'soap' | 'custom-fields' | 'biometric' | 'prescription' | 'exams' | 'transcription';
 
 interface PatientInfo {
   name: string;
@@ -89,6 +93,7 @@ declare global {
 export class MedicalRecordTabsComponent implements OnInit {
   @Input() appointmentId: number = 0;
   @Input() patientName: string = '';
+  @Input() specialtyId: number = 0; // ID da especialidade da consulta
   @Input() jitsiApi: any = null; // Referência para API do Jitsi
   @Input() isDarkTheme: boolean = true; // Receber tema do componente pai
   @Output() onClose = new EventEmitter<void>();
@@ -142,6 +147,11 @@ export class MedicalRecordTabsComponent implements OnInit {
     isPaused: false
   };
 
+  // Campos personalizados
+  customFields: SpecialtyFieldDto[] = [];
+  customFieldValues: { [fieldId: number]: any } = {};
+  loadingCustomFields = false;
+
   // Sistema de transcrição dual
   private recognitionProfessional: any = null; // Microfone local
   private recognitionPatient: any = null; // Áudio do paciente (Jitsi)
@@ -158,10 +168,16 @@ export class MedicalRecordTabsComponent implements OnInit {
   private bloodPressureChart: Chart | null = null;
   private oxygenChart: Chart | null = null;
 
+  constructor(
+    private specialtyService: SpecialtyService,
+    private appointmentFieldService: AppointmentFieldService
+  ) {}
+
   ngOnInit(): void {
     this.patientInfo.name = this.patientName;
     this.generateMockBiometricData();
     this.initializeSpeechRecognition();
+    this.loadCustomFieldsForAppointment();
     // Emitir estado inicial do modo
     this.onModeChange.emit(this.tabMode);
   }
@@ -551,10 +567,61 @@ export class MedicalRecordTabsComponent implements OnInit {
         yPosition = 20;
       }
 
+      // Campos Personalizados
+      if (this.customFields.length > 0) {
+        pdf.setFontSize(14);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('2. Campos Personalizados', 15, yPosition);
+        yPosition += 8;
+
+        this.customFields.forEach((field, index) => {
+          // Verificar se precisa de nova página
+          if (yPosition > pageHeight - 30) {
+            pdf.addPage();
+            yPosition = 20;
+          }
+
+          pdf.setFontSize(10);
+          pdf.setFont('helvetica', 'bold');
+          pdf.text(`${field.label}:`, 20, yPosition);
+          yPosition += 5;
+
+          pdf.setFont('helvetica', 'normal');
+          let value = this.customFieldValues[field.id];
+          
+          // Formatar valor de acordo com o tipo
+          if (value === undefined || value === null || value === '') {
+            value = 'N/A';
+          } else if (field.fieldType === 'checkbox') {
+            value = value ? 'Sim' : 'Não';
+          } else if (field.fieldType === 'date') {
+            try {
+              const date = new Date(value);
+              value = date.toLocaleDateString('pt-BR');
+            } catch (e) {
+              // Manter valor original se não for data válida
+            }
+          }
+
+          const valueLines = pdf.splitTextToSize(String(value), pageWidth - 30);
+          pdf.text(valueLines, 20, yPosition);
+          yPosition += valueLines.length * 5 + 5;
+        });
+
+        yPosition += 5;
+      }
+
+      // Nova página se necessário
+      if (yPosition > pageHeight - 40) {
+        pdf.addPage();
+        yPosition = 20;
+      }
+
       // Prescrição
       pdf.setFontSize(14);
       pdf.setFont('helvetica', 'bold');
-      pdf.text('3. Prescrição Médica', 15, yPosition);
+      const prescriptionNumber = this.customFields.length > 0 ? '3' : '2';
+      pdf.text(`${prescriptionNumber}. Prescrição Médica`, 15, yPosition);
       yPosition += 8;
 
       if (this.prescription.medications.length > 0) {
@@ -592,7 +659,8 @@ export class MedicalRecordTabsComponent implements OnInit {
       // Exames
       pdf.setFontSize(14);
       pdf.setFont('helvetica', 'bold');
-      pdf.text('4. Solicitação de Exames', 15, yPosition);
+      const examsNumber = this.customFields.length > 0 ? '4' : '3';
+      pdf.text(`${examsNumber}. Solicitação de Exames`, 15, yPosition);
       yPosition += 8;
 
       if (this.examRequests.exams.length > 0) {
@@ -632,7 +700,8 @@ export class MedicalRecordTabsComponent implements OnInit {
       if (this.transcriptionData.entries.length > 0) {
         pdf.setFontSize(14);
         pdf.setFont('helvetica', 'bold');
-        pdf.text('5. Transcrição da Consulta', 15, yPosition);
+        const transcriptionNumber = this.customFields.length > 0 ? '5' : '4';
+        pdf.text(`${transcriptionNumber}. Transcrição da Consulta`, 15, yPosition);
         yPosition += 8;
 
         this.transcriptionData.entries.forEach((entry, index) => {
@@ -1051,6 +1120,88 @@ export class MedicalRecordTabsComponent implements OnInit {
   close(): void {
     this.tabMode = 'hidden';
     this.onModeChange.emit(this.tabMode);
+  }
+
+  // Campos personalizados
+  async loadCustomFieldsForAppointment(): Promise<void> {
+    if (!this.specialtyId) {
+      console.warn('Specialty ID não fornecido');
+      return;
+    }
+
+    this.loadingCustomFields = true;
+
+    // Buscar campos da especialidade
+    this.specialtyService.getFields(this.specialtyId).subscribe({
+      next: (fields) => {
+        this.customFields = fields.sort((a, b) => a.displayOrder - b.displayOrder);
+        
+        // Buscar valores salvos se houver appointmentId
+        if (this.appointmentId) {
+          this.loadSavedFieldValues();
+        } else {
+          this.loadingCustomFields = false;
+        }
+      },
+      error: (error) => {
+        console.error('Erro ao carregar campos personalizados:', error);
+        this.loadingCustomFields = false;
+      }
+    });
+  }
+
+  private loadSavedFieldValues(): void {
+    this.appointmentFieldService.getFieldValues(this.appointmentId).subscribe({
+      next: (values) => {
+        // Mapear valores para o objeto de valores
+        values.forEach(value => {
+          this.customFieldValues[value.specialtyFieldId] = value.fieldValue;
+        });
+        this.loadingCustomFields = false;
+      },
+      error: (error) => {
+        console.error('Erro ao carregar valores dos campos:', error);
+        this.loadingCustomFields = false;
+      }
+    });
+  }
+
+  saveCustomFields(): void {
+    const fieldValues: SaveAppointmentFieldValueDto[] = [];
+
+    // Converter valores do objeto para array
+    this.customFields.forEach(field => {
+      const value = this.customFieldValues[field.id];
+      if (value !== undefined && value !== null && value !== '') {
+        fieldValues.push({
+          specialtyFieldId: field.id,
+          fieldValue: typeof value === 'string' ? value : JSON.stringify(value)
+        });
+      }
+    });
+
+    this.appointmentFieldService.saveFieldValues(this.appointmentId, fieldValues).subscribe({
+      next: () => {
+        alert('Campos salvos com sucesso!');
+      },
+      error: (error) => {
+        console.error('Erro ao salvar campos:', error);
+        alert('Erro ao salvar campos');
+      }
+    });
+  }
+
+  getFieldTypeLabel(type: string): string {
+    const labels: { [key: string]: string } = {
+      'text': 'Texto',
+      'textarea': 'Texto Longo',
+      'number': 'Número',
+      'date': 'Data',
+      'select': 'Seleção',
+      'checkbox': 'Checkbox',
+      'radio': 'Opções'
+    };
+    return labels[type] || type;
   }
 
   // Métodos auxiliares para cálculos no template

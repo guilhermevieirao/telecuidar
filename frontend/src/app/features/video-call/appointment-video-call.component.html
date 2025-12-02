@@ -68,6 +68,7 @@
     *ngIf="user?.role === 2 && appointment && !isLoading"
     [appointmentId]="appointmentId"
     [patientName]="appointment.patientName"
+    [specialtyId]="appointment.specialtyId"
     [jitsiApi]="jitsiApi"
     [isDarkTheme]="isDarkTheme"
     (onModeChange)="onMedicalRecordModeChange($event)">

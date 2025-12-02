@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using app.Application.Specialties.Commands;
 using app.Application.Specialties.Queries;
+using app.Application.Specialties.DTOs;
 
 namespace app.Api.Controllers;
 
@@ -122,6 +123,40 @@ public class SpecialtiesController : ControllerBase
         if (!result.IsSuccess)
             return BadRequest(new { result.Message, result.Errors });
 
+        return NoContent();
+    }
+
+    // Endpoints para campos personalizados
+    [HttpGet("{specialtyId}/fields")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetFields(int specialtyId)
+    {
+        var query = new GetSpecialtyFieldsQuery(specialtyId);
+        var result = await _mediator.Send(query);
+        return Ok(result);
+    }
+
+    [HttpPost("{specialtyId}/fields")]
+    public async Task<IActionResult> CreateField(int specialtyId, [FromBody] CreateSpecialtyFieldDto fieldDto)
+    {
+        var command = new CreateSpecialtyFieldCommand(specialtyId, fieldDto);
+        var result = await _mediator.Send(command);
+        return CreatedAtAction(nameof(GetFields), new { specialtyId }, result);
+    }
+
+    [HttpPut("fields/{fieldId}")]
+    public async Task<IActionResult> UpdateField(int fieldId, [FromBody] UpdateSpecialtyFieldDto fieldDto)
+    {
+        var command = new UpdateSpecialtyFieldCommand(fieldId, fieldDto);
+        var result = await _mediator.Send(command);
+        return Ok(result);
+    }
+
+    [HttpDelete("fields/{fieldId}")]
+    public async Task<IActionResult> DeleteField(int fieldId)
+    {
+        var command = new DeleteSpecialtyFieldCommand(fieldId);
+        await _mediator.Send(command);
         return NoContent();
     }
 }

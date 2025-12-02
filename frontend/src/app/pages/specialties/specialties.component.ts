@@ -7,6 +7,7 @@ import { SpecialtyService } from '../../services/specialty.service';
 import { SpecialtyDto, CreateSpecialtyCommand, UpdateSpecialtyCommand } from '../../models/specialty.model';
 import { ModalService } from '../../services/modal.service';
 import { environment } from '../../../environments/environment';
+import { SpecialtyFieldsModalComponent } from '../../components/specialty-fields-modal/specialty-fields-modal.component';
 
 interface Professional {
   id: number;
@@ -20,7 +21,7 @@ interface Professional {
 @Component({
   selector: 'app-specialties',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, SpecialtyFieldsModalComponent],
   templateUrl: './specialties.component.html',
   styleUrls: ['./specialties.component.scss']
 })
@@ -34,6 +35,7 @@ export class SpecialtiesComponent implements OnInit {
   showEditModal = false;
   showAssignModal = false;
   showUnassignModal = false;
+  showFieldsModal = false;
   professionalsWithSpecialty: any[] = [];
   loading = false;
 
@@ -283,5 +285,15 @@ export class SpecialtiesComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  openFieldsModal(specialty: SpecialtyDto): void {
+    this.selectedSpecialty = specialty;
+    this.showFieldsModal = true;
+  }
+
+  closeFieldsModal(): void {
+    this.showFieldsModal = false;
+    this.selectedSpecialty = null;
   }
 }

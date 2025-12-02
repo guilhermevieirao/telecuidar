@@ -22,4 +22,7 @@ public class Appointment : BaseEntity
     public string? MeetingRoomId { get; set; } // ID da sala de videochamada Jitsi
     
     public string? Notes { get; set; }
+    
+    // Navigation properties
+    public ICollection<AppointmentFieldValue> FieldValues { get; set; } = new List<AppointmentFieldValue>();
 }

@@ -32,6 +32,8 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<ScheduleDay> ScheduleDays { get; set; }
     public DbSet<Appointment> Appointments { get; set; }
     public DbSet<ScheduleBlock> ScheduleBlocks { get; set; }
+    public DbSet<SpecialtyField> SpecialtyFields { get; set; }
+    public DbSet<AppointmentFieldValue> AppointmentFieldValues { get; set; }
 
     public void SetAuditInfo(int? userId, string? ipAddress = null, string? userAgent = null)
     {
