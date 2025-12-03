@@ -16,7 +16,7 @@ services:
       - Jwt__Issuer=TeleCuidar
       - Jwt__Audience=TeleCuidar-Users
       - Jwt__ExpirationHours=24
-      - AdminUser__Enabled=${ADMIN_ENABLED:-false}
+      - AdminUser__Enabled=${ADMIN_ENABLED:-true}
       - AdminUser__Email=${ADMIN_EMAIL:-adm@adm.com}
       - AdminUser__Password=${ADMIN_PASSWORD:-zxcasd}
       - AdminUser__FirstName=adm
