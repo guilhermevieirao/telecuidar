@@ -143,11 +143,32 @@ builder.Services.AddAuthorization();
 
 // Configure CORS
 var frontendUrl = builder.Configuration["FrontendUrl"] ?? "http://localhost:4200";
+var allowedOrigins = new List<string> { "http://localhost:4200" };
+
+// Adicionar FrontendUrl se for diferente de localhost
+if (!string.IsNullOrEmpty(frontendUrl) && !frontendUrl.Contains("localhost"))
+{
+    allowedOrigins.Add(frontendUrl);
+    
+    // Adicionar variações do domínio
+    if (frontendUrl.StartsWith("https://www."))
+    {
+        // Adicionar sem www
+        allowedOrigins.Add(frontendUrl.Replace("https://www.", "https://"));
+    }
+    else if (frontendUrl.StartsWith("https://"))
+    {
+        // Adicionar com www
+        var domain = frontendUrl.Replace("https://", "");
+        allowedOrigins.Add($"https://www.{domain}");
+    }
+}
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular",
         policy => policy
-            .WithOrigins(frontendUrl, "http://localhost:4200")
+            .WithOrigins(allowedOrigins.ToArray())
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials()); // Permite credenciais para cookies CSRF
