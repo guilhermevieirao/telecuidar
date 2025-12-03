@@ -428,6 +428,12 @@ using (var scope = app.Services.CreateScope())
                     {
                         var appointmentDate = new DateTime(2026, 3, 15); // 15 de março de 2026
                         var appointmentTime = new TimeSpan(14, 30, 0); // 14:30
+                        
+                        // Gerar MeetingRoomId usando a mesma lógica do CreateAppointmentCommandHandler
+                        var dateStr = appointmentDate.ToString("yyyyMMdd");
+                        var timeStr = appointmentTime.ToString(@"hhmm");
+                        var meetingRoomId = $"TC-{guiUser.Id}-{medUser.Id}-{dateStr}-{timeStr}";
+                        
                         var testAppointment = new Appointment
                         {
                             PatientId = guiUser.Id,
@@ -437,11 +443,12 @@ using (var scope = app.Services.CreateScope())
                             AppointmentTime = appointmentTime,
                             DurationMinutes = 30,
                             Status = "Agendado",
+                            MeetingRoomId = meetingRoomId,
                             Notes = "Consulta de teste - Cardiologia"
                         };
                         context.Appointments.Add(testAppointment);
                         context.SaveChanges();
-                        Console.WriteLine($"✅ Consulta criada para {guiUser.Email} em Cardiologia - {appointmentDate:dd/MM/yyyy} {appointmentTime:hh\\:mm}");
+                        Console.WriteLine($"✅ Consulta criada para {guiUser.Email} em Cardiologia - {appointmentDate:dd/MM/yyyy} {appointmentTime:hh\\:mm} (Sala: {meetingRoomId})");
                     }
                 }
             }
