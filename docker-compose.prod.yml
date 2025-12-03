@@ -4,7 +4,7 @@ services:
     ports: []
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - FrontendUrl=${FRONTEND_URL:-https://www.telecuidar.com.br}
+      - FrontendUrl=${FRONTEND_URL}
 
   frontend:
     # Em produção, não expõe porta direta; acesso via Caddy (TLS)
@@ -21,7 +21,7 @@ services:
       - "443:443"
     environment:
       - ACME_AGREE=true
-      - EMAIL=${SSL_EMAIL:-adm@adm.com.br}
+      - EMAIL=${SSL_EMAIL}
     volumes:
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy-data:/data

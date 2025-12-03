@@ -163,16 +163,25 @@ public class CreateAppointmentCommandHandler : IRequestHandler<CreateAppointment
         }
 
         // Verificar se já existe um agendamento neste horário para o profissional
-        var existingAppointment = await _appointmentRepository.GetQueryable()
-            .AnyAsync(a => a.ProfessionalId == request.ProfessionalId.Value &&
-                          a.AppointmentDate.Date == targetDate &&
-                          a.AppointmentTime == request.AppointmentTime &&
-                          a.Status != "Cancelado",
-                     cancellationToken);
-
-        if (existingAppointment)
+        if (request.ProfessionalId.HasValue)
         {
-            return Result<int>.Failure("Este horário já está ocupado");
+            var existingAppointment = await _appointmentRepository.GetQueryable()
+                .AnyAsync(a => a.ProfessionalId == request.ProfessionalId.Value &&
+                              a.AppointmentDate.Date == targetDate &&
+                              a.AppointmentTime == request.AppointmentTime &&
+                              a.Status != "Cancelado",
+                         cancellationToken);
+
+            if (existingAppointment)
+            {
+                return Result<int>.Failure("Este horário já está ocupado");
+            }
+        }
+
+        // Garantir que scheduleDay não é null
+        if (scheduleDay == null)
+        {
+            return Result<int>.Failure("Não foi possível determinar a agenda do profissional");
         }
 
         // Criar o agendamento
@@ -186,7 +195,9 @@ public class CreateAppointmentCommandHandler : IRequestHandler<CreateAppointment
             DurationMinutes = scheduleDay.AppointmentDuration,
             Status = "Agendado",
             Notes = request.Notes,
-            MeetingRoomId = GenerateMeetingRoomId(request.PatientId, request.ProfessionalId.Value, targetDate, request.AppointmentTime),
+            MeetingRoomId = request.ProfessionalId.HasValue 
+                ? GenerateMeetingRoomId(request.PatientId, request.ProfessionalId.Value, targetDate, request.AppointmentTime)
+                : null,
             CreatedAt = DateTime.UtcNow,
             IsActive = true
         };

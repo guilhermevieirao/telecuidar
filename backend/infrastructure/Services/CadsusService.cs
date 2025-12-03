@@ -129,8 +129,8 @@ public class CadsusService : ICadsusService
 
         try
         {
-            // Carregar certificado
-            var certificate = new X509Certificate2(certPath, certPassword);
+            // Carregar certificado usando X509CertificateLoader (recomendado para .NET 9+)
+            var certificate = X509CertificateLoader.LoadPkcs12FromFile(certPath, certPassword);
             _logger.LogInformation($"✅ Certificate loaded: {certificate.Subject}");
 
             // Criar handler com certificado
@@ -246,8 +246,8 @@ public class CadsusService : ICadsusService
 
         try
         {
-            // Carregar certificado
-            var certificate = new X509Certificate2(certPath, certPassword);
+            // Carregar certificado usando X509CertificateLoader (recomendado para .NET 9+)
+            var certificate = X509CertificateLoader.LoadPkcs12FromFile(certPath, certPassword);
 
             // Criar handler com certificado
             using var handler = new HttpClientHandler();

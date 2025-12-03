@@ -38,7 +38,7 @@ public class GetAuditLogsReportQueryHandler : IRequestHandler<GetAuditLogsReport
             LogDetails = logs.Select(l => new AuditLogDetailDto
             {
                 Id = l.Id,
-                UserName = l.User?.FullName ?? null,
+                UserName = l.User?.FullName ?? "Sistema",
                 Action = l.Action,
                 EntityName = l.EntityName,
                 EntityId = l.EntityId,

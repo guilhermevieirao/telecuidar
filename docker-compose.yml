@@ -8,22 +8,16 @@ services:
     container_name: telecuidar-backend
     ports:
       - "5058:5058"
+    env_file:
+      - ./backend/api/.env
     environment:
-      - ASPNETCORE_URLS=http://+:5058
-      - ASPNETCORE_ENVIRONMENT=Production
-      - ConnectionStrings__DefaultConnection=Data Source=/data/telecuidar.db
-      - Jwt__Secret=${JWT_SECRET:-CHANGE-THIS-SECRET-KEY-IN-PRODUCTION-MIN-32-CHARACTERS-REQUIRED-FOR-SECURITY}
-      - Jwt__Issuer=TeleCuidar
-      - Jwt__Audience=TeleCuidar-Users
-      - Jwt__ExpirationHours=24
-      - AdminUser__Enabled=${ADMIN_ENABLED:-true}
-      - AdminUser__Email=${ADMIN_EMAIL:-adm@adm.com}
-      - AdminUser__Password=${ADMIN_PASSWORD:-zxcasd}
-      - AdminUser__FirstName=adm
-      - AdminUser__LastName=adm
-      - FrontendUrl=http://localhost:4200
+      - ASPNETCORE_URLS=${ASPNETCORE_URLS:-http://+:5058}
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
+      - ConnectionStrings__DefaultConnection=${ConnectionStrings__DefaultConnection_Docker:-Data Source=/data/telecuidar.db}
+      - FrontendUrl=${FrontendUrl:-http://localhost:4200}
     volumes:
       - db-data:/data
+      - ./backend/api/certificado.pfx:/app/certificado.pfx:ro
     restart: unless-stopped
     networks:
       - telecuidar-network
