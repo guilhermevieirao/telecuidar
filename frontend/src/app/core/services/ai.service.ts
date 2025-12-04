@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface AIRequest {
   patientData: any;
@@ -21,7 +22,7 @@ export interface AIResponse {
   providedIn: 'root'
 })
 export class AIService {
-  private apiUrl = 'http://localhost:5058/api/AI/analyze'; // Proxy no backend
+  private apiUrl = `${environment.apiUrl}/AI/analyze`;
 
   constructor(private http: HttpClient) {}
 

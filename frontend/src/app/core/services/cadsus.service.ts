@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface CadsusCidadao {
     // Identificação Principal
@@ -53,7 +54,7 @@ export interface CadsusTokenStatus {
   providedIn: 'root'
 })
 export class CadsusService {
-    private readonly apiUrl = 'http://localhost:5058/api/Cadsus';
+    private readonly apiUrl = `${environment.apiUrl}/Cadsus`;
 
     constructor(private http: HttpClient) { }
 
