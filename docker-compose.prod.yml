@@ -2,9 +2,11 @@ services:
   backend:
     # Não expõe porta para fora; acessível via rede Docker pelo Nginx do frontend
     ports: []
+    env_file:
+      - ./backend/api/.env
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - FrontendUrl=${FRONTEND_URL}
+      - FrontendUrl=${FRONTEND_URL:-https://www.telecuidar.com.br}
 
   frontend:
     # Em produção, não expõe porta direta; acesso via Caddy (TLS)
@@ -19,9 +21,11 @@ services:
     ports:
       - "80:80"
       - "443:443"
+    env_file:
+      - ./backend/api/.env
     environment:
       - ACME_AGREE=true
-      - EMAIL=${SSL_EMAIL}
+      - EMAIL=${SSL_EMAIL:-contato@telecuidar.com}
     volumes:
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy-data:/data

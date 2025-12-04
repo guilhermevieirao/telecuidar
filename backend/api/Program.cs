@@ -142,27 +142,53 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 
 // Configure CORS
-var frontendUrl = builder.Configuration["FrontendUrl"] ?? "http://localhost:4200";
-var allowedOrigins = new List<string> { "http://localhost:4200" };
+var frontendUrl = builder.Configuration["FrontendUrl"] 
+    ?? Environment.GetEnvironmentVariable("FrontendUrl")
+    ?? Environment.GetEnvironmentVariable("FRONTEND_URL")
+    ?? "http://localhost:4200";
+
+var allowedOrigins = new List<string> 
+{ 
+    "http://localhost:4200",
+    "http://localhost:4200",
+};
+
+Console.WriteLine($"🌐 FrontendUrl configurado: {frontendUrl}");
 
 // Adicionar FrontendUrl se for diferente de localhost
 if (!string.IsNullOrEmpty(frontendUrl) && !frontendUrl.Contains("localhost"))
 {
     allowedOrigins.Add(frontendUrl);
     
+    Console.WriteLine($"✅ Adicionado origin: {frontendUrl}");
+    
     // Adicionar variações do domínio
     if (frontendUrl.StartsWith("https://www."))
     {
         // Adicionar sem www
-        allowedOrigins.Add(frontendUrl.Replace("https://www.", "https://"));
+        var withoutWww = frontendUrl.Replace("https://www.", "https://");
+        allowedOrigins.Add(withoutWww);
+        Console.WriteLine($"✅ Adicionado origin (sem www): {withoutWww}");
     }
     else if (frontendUrl.StartsWith("https://"))
     {
         // Adicionar com www
         var domain = frontendUrl.Replace("https://", "");
-        allowedOrigins.Add($"https://www.{domain}");
+        var withWww = $"https://www.{domain}";
+        allowedOrigins.Add(withWww);
+        Console.WriteLine($"✅ Adicionado origin (com www): {withWww}");
+    }
+    
+    // Adicionar também versão HTTP para desenvolvimento
+    if (frontendUrl.StartsWith("https://"))
+    {
+        var httpVersion = frontendUrl.Replace("https://", "http://");
+        allowedOrigins.Add(httpVersion);
+        Console.WriteLine($"✅ Adicionado origin (http): {httpVersion}");
     }
 }
+
+Console.WriteLine($"🔓 CORS configurado com {allowedOrigins.Count} origins permitidos");
 
 builder.Services.AddCors(options =>
 {
