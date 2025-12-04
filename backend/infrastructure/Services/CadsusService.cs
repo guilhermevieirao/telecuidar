@@ -129,17 +129,102 @@ public class CadsusService : ICadsusService
 
         try
         {
-            // Carregar certificado usando X509CertificateLoader (recomendado para .NET 9+)
-            var certificate = X509CertificateLoader.LoadPkcs12FromFile(certPath, certPassword);
-            _logger.LogInformation($"✅ Certificate loaded: {certificate.Subject}");
+            // Carregar certificado com toda a cadeia usando X509CertificateLoader
+            X509Certificate2Collection certificates;
+            
+            try 
+            {
+                // Carregar toda a coleção PKCS12 com flags de compatibilidade Linux
+                certificates = X509CertificateLoader.LoadPkcs12CollectionFromFile(
+                    certPath, 
+                    certPassword,
+                    X509KeyStorageFlags.Exportable | 
+                    X509KeyStorageFlags.MachineKeySet | 
+                    X509KeyStorageFlags.PersistKeySet);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning($"⚠️ Failed to load certificate collection with flags: {ex.Message}");
+                // Fallback: carregar sem flags
+                certificates = X509CertificateLoader.LoadPkcs12CollectionFromFile(certPath, certPassword);
+            }
 
-            // Criar handler com certificado
+            // Encontrar o certificado com chave privada (certificado do cliente)
+            X509Certificate2? clientCertificate = null;
+            foreach (var cert in certificates)
+            {
+                if (cert.HasPrivateKey)
+                {
+                    clientCertificate = cert;
+                    break;
+                }
+            }
+
+            if (clientCertificate == null)
+            {
+                throw new InvalidOperationException("Nenhum certificado com chave privada encontrado no arquivo .pfx");
+            }
+            
+            _logger.LogInformation($"✅ Certificate loaded: {clientCertificate.Subject}");
+            _logger.LogInformation($"🔐 Has Private Key: {clientCertificate.HasPrivateKey}");
+            _logger.LogInformation($"📅 Valid Until: {clientCertificate.NotAfter:dd/MM/yyyy}");
+            _logger.LogInformation($"📦 Total certificates in chain: {certificates.Count}");
+
+            // Adicionar certificado ao store do sistema para validação da cadeia
+            try
+            {
+                using var store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
+                store.Open(OpenFlags.ReadWrite);
+                foreach (var cert in certificates)
+                {
+                    if (!store.Certificates.Contains(cert))
+                    {
+                        store.Add(cert);
+                        _logger.LogInformation($"📥 Added certificate to store: {cert.Subject}");
+                    }
+                }
+                store.Close();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning($"⚠️ Failed to add certificates to store: {ex.Message}");
+            }
+
+            // Criar handler com certificado e cadeia completa
             using var handler = new HttpClientHandler();
-            handler.ClientCertificates.Add(certificate);
+            
+            // Adicionar o certificado cliente e toda a cadeia
+            handler.ClientCertificates.Add(clientCertificate);
+            foreach (var cert in certificates)
+            {
+                if (cert != clientCertificate)
+                {
+                    handler.ClientCertificates.Add(cert);
+                }
+            }
+            
+            handler.ClientCertificateOptions = ClientCertificateOption.Manual;
             
             // Configurar SSL/TLS
             handler.SslProtocols = System.Security.Authentication.SslProtocols.Tls12 | System.Security.Authentication.SslProtocols.Tls13;
-            handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+            
+            // Validação personalizada que aceita certificados governamentais
+            handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) =>
+            {
+                if (errors != System.Net.Security.SslPolicyErrors.None)
+                {
+                    _logger.LogWarning($"⚠️ SSL Policy Errors: {errors}");
+                    if (chain != null)
+                    {
+                        _logger.LogInformation($"🔗 Chain status: {chain.ChainStatus.Length} status items");
+                        foreach (var status in chain.ChainStatus)
+                        {
+                            _logger.LogWarning($"   - {status.Status}: {status.StatusInformation}");
+                        }
+                    }
+                }
+                return true;
+            };
 
             using var client = new HttpClient(handler);
             client.Timeout = TimeSpan.FromMinutes(2); // Aumentar timeout para 2 minutos
@@ -246,16 +331,54 @@ public class CadsusService : ICadsusService
 
         try
         {
-            // Carregar certificado usando X509CertificateLoader (recomendado para .NET 9+)
-            var certificate = X509CertificateLoader.LoadPkcs12FromFile(certPath, certPassword);
+            // Carregar certificado com toda a cadeia
+            var certificates = X509CertificateLoader.LoadPkcs12CollectionFromFile(
+                certPath, 
+                certPassword,
+                X509KeyStorageFlags.Exportable | 
+                X509KeyStorageFlags.MachineKeySet | 
+                X509KeyStorageFlags.PersistKeySet);
 
-            // Criar handler com certificado
+            // Encontrar o certificado com chave privada
+            X509Certificate2? clientCertificate = null;
+            foreach (var cert in certificates)
+            {
+                if (cert.HasPrivateKey)
+                {
+                    clientCertificate = cert;
+                    break;
+                }
+            }
+
+            if (clientCertificate == null)
+            {
+                throw new InvalidOperationException("Nenhum certificado com chave privada encontrado");
+            }
+
+            // Criar handler com certificado e cadeia completa
             using var handler = new HttpClientHandler();
-            handler.ClientCertificates.Add(certificate);
+            handler.ClientCertificates.Add(clientCertificate);
+            foreach (var cert in certificates)
+            {
+                if (cert != clientCertificate)
+                {
+                    handler.ClientCertificates.Add(cert);
+                }
+            }
+            handler.ClientCertificateOptions = ClientCertificateOption.Manual;
             
             // Configurar SSL/TLS
             handler.SslProtocols = System.Security.Authentication.SslProtocols.Tls12 | System.Security.Authentication.SslProtocols.Tls13;
-            handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+            
+            // Validação personalizada
+            handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) =>
+            {
+                if (errors != System.Net.Security.SslPolicyErrors.None)
+                {
+                    _logger.LogWarning($"⚠️ SSL Policy Errors: {errors}");
+                }
+                return true;
+            };
 
             using var client = new HttpClient(handler);
             client.Timeout = TimeSpan.FromMinutes(2); // Aumentar timeout para 2 minutos

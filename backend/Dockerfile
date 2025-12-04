@@ -26,6 +26,23 @@ RUN dotnet publish "app.Api.csproj" -c Release -o /app/publish /p:UseAppHost=fal
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
 
+# Install ca-certificates and OpenSSL for certificate handling
+RUN apt-get update && apt-get install -y \
+    ca-certificates \
+    openssl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Configure OpenSSL for better certificate compatibility
+RUN echo "[default_conf]" > /etc/ssl/openssl_custom.cnf && \
+    echo "ssl_conf = ssl_sect" >> /etc/ssl/openssl_custom.cnf && \
+    echo "[ssl_sect]" >> /etc/ssl/openssl_custom.cnf && \
+    echo "system_default = system_default_sect" >> /etc/ssl/openssl_custom.cnf && \
+    echo "[system_default_sect]" >> /etc/ssl/openssl_custom.cnf && \
+    echo "MinProtocol = TLSv1.2" >> /etc/ssl/openssl_custom.cnf && \
+    echo "CipherString = DEFAULT@SECLEVEL=1" >> /etc/ssl/openssl_custom.cnf
+
+ENV OPENSSL_CONF=/etc/ssl/openssl_custom.cnf
+
 # Copy published files
 COPY --from=publish /app/publish .
 

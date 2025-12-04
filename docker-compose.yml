@@ -18,6 +18,7 @@ services:
     volumes:
       - db-data:/data
       - ./backend/api/certificado.pfx:/app/certificado.pfx:ro
+      - ./backend/api/.env:/app/.env:ro
     restart: unless-stopped
     networks:
       - telecuidar-network
