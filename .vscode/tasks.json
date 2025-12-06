@@ -66,8 +66,36 @@
       }
     },
     {
+      "label": "Start Jitsi Containers",
+      "type": "shell",
+      "command": "docker-compose",
+      "args": [
+        "up",
+        "-d",
+        "jitsi-prosody",
+        "jitsi-web",
+        "jitsi-jicofo",
+        "jitsi-jvb"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": true,
+        "clear": false,
+        "group": "dev"
+      }
+    },
+    {
       "label": "Start Full Application",
       "dependsOn": [
+        "Start Jitsi Containers",
         "Start Backend API",
         "Start Frontend Angular"
       ],
@@ -105,6 +133,30 @@
       },
       "group": "build",
       "problemMatcher": []
+    },
+    {
+      "label": "Stop Jitsi Containers",
+      "type": "shell",
+      "command": "docker-compose",
+      "args": [
+        "stop",
+        "jitsi-prosody",
+        "jitsi-web",
+        "jitsi-jicofo",
+        "jitsi-jvb"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": true,
+        "clear": false
+      }
     },
     {
       "label": "Start SusAtende Laravel",

@@ -7,6 +7,7 @@ export const environment = {
   apiUrl: isProduction ? '/api' : 'http://localhost:5058/api',
   apiTimeout: 30000,
   enableDebugMode: !isProduction,
-  jitsiDomain: isProduction ? 'meet.telecuidar.com.br' : 'localhost:8000',
-  jitsiExternalApiUrl: isProduction ? 'https://meet.telecuidar.com.br/external_api.js' : 'http://localhost:8000/external_api.js'
+  // Em desenvolvimento, usar localhost:8443 (Jitsi via HTTPS)
+  jitsiDomain: isProduction ? 'meet.telecuidar.com.br' : 'localhost:8443',
+  jitsiExternalApiUrl: isProduction ? 'https://meet.telecuidar.com.br/external_api.js' : 'https://localhost:8443/external_api.js'
 };

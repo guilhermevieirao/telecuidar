@@ -1,3 +1,6 @@
+Transcrição
+Chat de Anexos com QRCODE
+
 Organizar pastas arquivos
 Remover Inutilidades
 Ajustar Migrations
@@ -43,17 +46,15 @@ Reformular campos de dados dos users:
 
 Não permitir usar o mesmo numero ou cpf
 
-Integrar Jitsi e Receita
+Integrar Receita
+Emissão de Receita
+Certificação Digital
 
-Transcrição
 Formulário
 Biométricos
 IA Analisando info resumindo e sugerindo
-Emissão de Receita
 Solicitação de Exame
 Solicitação de Encaminhamento ou Retorno
 PACS
-Certificação Digital
 Importação de dados do paciente
-Exportação 
-Chat de Anexos com QRCODE
+Exportação
