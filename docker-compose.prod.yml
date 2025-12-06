@@ -14,6 +14,94 @@ services:
     depends_on:
       - backend
 
+  jitsi-prosody:
+    image: jitsi/prosody:stable
+    container_name: jitsi-prosody
+    restart: unless-stopped
+    networks:
+      - telecuidar-network
+    volumes:
+      - ./jitsi/config/prosody:/config
+      - ./jitsi/config/prosody/prosody-plugins-custom:/prosody-plugins-custom
+    env_file:
+      - ./backend/api/.env
+    environment:
+      - XMPP_DOMAIN
+      - XMPP_AUTH_DOMAIN
+      - XMPP_INTERNAL_MUC_DOMAIN
+      - XMPP_MUC_DOMAIN
+      - PUBLIC_URL=${PUBLIC_URL:-https://telecuidar.com.br}
+      - TZ
+
+  jitsi-web:
+    image: jitsi/web:stable
+    container_name: jitsi-web
+    restart: unless-stopped
+    depends_on:
+      - jitsi-prosody
+      - jitsi-jicofo
+      - jitsi-jvb
+    networks:
+      - telecuidar-network
+    volumes:
+      - ./jitsi/config/web:/config
+      - ./jitsi/config/transcripts:/usr/share/jitsi-meet/transcripts
+    env_file:
+      - ./backend/api/.env
+    environment:
+      - ENABLE_LETSENCRYPT=0
+      - ENABLE_HTTP_REDIRECT=1
+      - ENABLE_XMPP_WEBSOCKET
+      - ENABLE_STUN
+      - DISABLE_3RD_PARTY_REQUESTS
+      - PUBLIC_URL=${PUBLIC_URL:-https://telecuidar.com.br}
+      - TZ
+      - XMPP_SERVER=xmpp.meet.jitsi
+      - XMPP_DOMAIN
+      - XMPP_BOSH_URL_BASE=http://xmpp.meet.jitsi:5280
+      - XMPP_AUTH_DOMAIN
+      - XMPP_MUC_DOMAIN
+      - XMPP_INTERNAL_MUC_DOMAIN
+
+  jitsi-jicofo:
+    image: jitsi/jicofo:stable
+    container_name: jitsi-jicofo
+    restart: unless-stopped
+    depends_on:
+      - jitsi-prosody
+    networks:
+      - telecuidar-network
+    volumes:
+      - ./jitsi/config/jicofo:/config
+    env_file:
+      - ./backend/api/.env
+    environment:
+      - XMPP_DOMAIN
+      - XMPP_AUTH_DOMAIN
+      - XMPP_SERVER=xmpp.meet.jitsi
+      - JICOFO_AUTH_USER=focus
+      - TZ
+
+  jitsi-jvb:
+    image: jitsi/jvb:stable
+    container_name: jitsi-jvb
+    restart: unless-stopped
+    depends_on:
+      - jitsi-prosody
+    networks:
+      - telecuidar-network
+    volumes:
+      - ./jitsi/config/jvb:/config
+    env_file:
+      - ./backend/api/.env
+    environment:
+      - XMPP_SERVER=xmpp.meet.jitsi
+      - XMPP_DOMAIN
+      - JVB_AUTH_USER=jvb
+      - JVB_BREWERY_MUC=jvbbrewery
+      - JVB_PORT=10000
+      - TZ
+
   caddy:
     image: caddy:2
     container_name: telecuidar-caddy

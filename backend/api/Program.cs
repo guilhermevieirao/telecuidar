@@ -261,7 +261,12 @@ app.Use(async (context, next) =>
     await next();
 });
 
-app.UseHttpsRedirection();
+var enableHttpsRedirect = (Environment.GetEnvironmentVariable("ENABLE_HTTPS_REDIRECT")
+    ?? builder.Configuration["ENABLE_HTTPS_REDIRECT"] ?? "true").ToLower() == "true";
+if (enableHttpsRedirect)
+{
+    app.UseHttpsRedirection();
+}
 app.UseCors("AllowAngular");
 app.UseAuthentication();
 app.UseAuthorization();

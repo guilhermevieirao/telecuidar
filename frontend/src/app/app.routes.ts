@@ -128,10 +128,6 @@ export const routes: Routes = [
     canActivate: [authGuard],
     data: { breadcrumbParent: '/painel' }
   },
-  {
-    path: 'teste',
-    loadComponent: () => import('./features/video-call/video-call-simple.component').then(m => m.VideoCallSimpleComponent)
-  },
   // Rotas legais
   {
     path: 'privacidade',

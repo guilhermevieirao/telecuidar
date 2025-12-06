@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AppointmentService, Appointment } from '../../core/services/appointment.service';
 import { ModalService } from '../../services/modal.service';
 import { MedicalRecordTabsComponent } from './medical-record-tabs/medical-record-tabs.component';
+import { environment } from '../../../environments/environment';
 
 declare var JitsiMeetExternalAPI: any;
 
@@ -114,24 +115,33 @@ export class AppointmentVideoCallComponent implements OnInit, OnDestroy, AfterVi
   }
 
   private loadJitsiScript(): void {
-    // Verificar se o script já está carregado
     if (typeof JitsiMeetExternalAPI !== 'undefined') {
       this.initializeJitsi();
       return;
     }
-
-    // Carregar o script da API do Jitsi
-    const script = document.createElement('script');
-    script.src = 'https://jitsi.riot.im/external_api.js';
-    script.async = true;
-    script.onload = () => {
-      this.initializeJitsi();
+    const urls = [
+      environment.jitsiExternalApiUrl,
+      'http://localhost:8000/external_api.js',
+      'https://localhost:8443/external_api.js'
+    ];
+    const tryLoad = (index: number) => {
+      if (index >= urls.length) {
+        this.errorMessage = 'Erro ao carregar o Jitsi Meet. Verifique sua conexão.';
+        this.isLoading = false;
+        return;
+      }
+      const script = document.createElement('script');
+      script.src = urls[index];
+      script.async = true;
+      script.onload = () => {
+        this.initializeJitsi();
+      };
+      script.onerror = () => {
+        tryLoad(index + 1);
+      };
+      document.head.appendChild(script);
     };
-    script.onerror = () => {
-      this.errorMessage = 'Erro ao carregar o Jitsi Meet. Verifique sua conexão.';
-      this.isLoading = false;
-    };
-    document.head.appendChild(script);
+    tryLoad(0);
   }
 
   private initializeJitsi(): void {
@@ -151,7 +161,7 @@ export class AppointmentVideoCallComponent implements OnInit, OnDestroy, AfterVi
       return;
     }
 
-    const domain = 'jitsi.riot.im';
+    const domain = environment.jitsiDomain || 'localhost:8000';
     const options = {
       roomName: this.roomName,
       width: '100%',
