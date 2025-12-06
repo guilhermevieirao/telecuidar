@@ -144,18 +144,6 @@ config.roomPasswordNumberOfDigits = false;
 // Advanced.
 //
 
-// Transcriptions (subtitles and buttons can be configured in interface_config)
-config.transcription = {
-    enabled: false,
-    disableClosedCaptions: true,
-    translationLanguages: [],
-    translationLanguagesHead: ['en'],
-    useAppLanguage: true,
-    preferredLanguage: 'en-US',
-    disableStartForAll: false,
-    autoCaptionOnRecord: false,
-};
-
 // Dynamic branding
 // Deployment information.
 //

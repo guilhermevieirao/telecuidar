@@ -11,10 +11,18 @@ import { CadsusService, CadsusCidadao } from '../../../core/services/cadsus.serv
 import { SpecialtyFieldDto } from '../../../models/specialty.model';
 import { AppointmentFieldValueDto, SaveAppointmentFieldValueDto } from '../../../models/appointment-field.model';
 
+// Declaração para Web Speech API (usada no sistema de ditado por voz)
+declare global {
+  interface Window {
+    SpeechRecognition: any;
+    webkitSpeechRecognition: any;
+  }
+}
+
 Chart.register(...registerables);
 
 export type TabMode = 'hidden' | 'sidebar' | 'fullscreen';
-export type ActiveTab = 'patient' | 'soap' | 'custom-fields' | 'biometric' | 'prescription' | 'exams' | 'transcription' | 'ai-analysis';
+export type ActiveTab = 'patient' | 'soap' | 'custom-fields' | 'biometric' | 'prescription' | 'exams' | 'ai-analysis';
 
 interface PatientInfo {
   cns: string;
@@ -74,28 +82,6 @@ interface ExamRequest {
     notes: string;
   }>;
   generalNotes: string;
-}
-
-interface TranscriptionEntry {
-  id: number;
-  speaker: 'professional' | 'patient';
-  text: string;
-  timestamp: Date;
-  confidence: number;
-}
-
-interface TranscriptionData {
-  entries: TranscriptionEntry[];
-  isRecording: boolean;
-  isPaused: boolean;
-}
-
-// Declaração para Web Speech API
-declare global {
-  interface Window {
-    SpeechRecognition: any;
-    webkitSpeechRecognition: any;
-  }
 }
 
 @Component({
@@ -170,12 +156,6 @@ export class MedicalRecordTabsComponent implements OnInit {
     generalNotes: ''
   };
 
-  transcriptionData: TranscriptionData = {
-    entries: [],
-    isRecording: false,
-    isPaused: false
-  };
-
   // Campos personalizados
   customFields: SpecialtyFieldDto[] = [];
   customFieldValues: { [fieldId: number]: any } = {};
@@ -188,16 +168,6 @@ export class MedicalRecordTabsComponent implements OnInit {
   private currentFocusedFieldId: string | null = null;
   private lastInterimText = ''; // Armazena o último texto intermediário
   private baseTextBeforeDictation = ''; // Texto base antes de começar a ditar
-
-  // Sistema de transcrição dual
-  private recognitionProfessional: any = null; // Microfone local
-  private recognitionPatient: any = null; // Áudio do paciente (Jitsi)
-  private recognitionActive = false;
-  private entryIdCounter = 1;
-  private microphoneStream: MediaStream | null = null;
-  private audioContext: AudioContext | null = null;
-  private remoteAudioDestination: MediaStreamAudioDestinationNode | null = null;
-  private jitsiAudioMonitoring = false;
 
   // Gráficos
   private heartRateChart: Chart | null = null;
@@ -225,7 +195,6 @@ export class MedicalRecordTabsComponent implements OnInit {
   ngOnInit(): void {
     this.patientInfo.name = this.patientName;
     this.generateMockBiometricData();
-    this.initializeSpeechRecognition();
     this.initializeVoiceDictation();
     this.loadCustomFieldsForAppointment();
     // Emitir estado inicial do modo
@@ -246,7 +215,6 @@ export class MedicalRecordTabsComponent implements OnInit {
 
   ngOnDestroy(): void {
     this.destroyCharts();
-    this.stopTranscription();
     this.stopVoiceDictation();
   }
 
@@ -747,42 +715,6 @@ export class MedicalRecordTabsComponent implements OnInit {
         pdf.text('Nenhum exame solicitado', 20, yPosition);
       }
 
-      // Nova página se necessário
-      if (yPosition > pageHeight - 40) {
-        pdf.addPage();
-        yPosition = 20;
-      }
-
-      // Transcrição
-      if (this.transcriptionData.entries.length > 0) {
-        pdf.setFontSize(14);
-        pdf.setFont('helvetica', 'bold');
-        const transcriptionNumber = this.customFields.length > 0 ? '5' : '4';
-        pdf.text(`${transcriptionNumber}. Transcrição da Consulta`, 15, yPosition);
-        yPosition += 8;
-
-        this.transcriptionData.entries.forEach((entry, index) => {
-          // Verificar se precisa de nova página
-          if (yPosition > pageHeight - 40) {
-            pdf.addPage();
-            yPosition = 20;
-          }
-
-          const time = entry.timestamp.toLocaleTimeString('pt-BR');
-          const speaker = entry.speaker === 'professional' ? 'Profissional' : 'Paciente';
-          
-          pdf.setFontSize(9);
-          pdf.setFont('helvetica', 'bold');
-          pdf.text(`[${time}] ${speaker}:`, 20, yPosition);
-          yPosition += 5;
-          
-          pdf.setFont('helvetica', 'normal');
-          const textLines = pdf.splitTextToSize(entry.text, pageWidth - 35);
-          pdf.text(textLines, 25, yPosition);
-          yPosition += textLines.length * 4 + 3;
-        });
-      }
-
       // Salvar PDF
       pdf.save(`prontuario_${this.patientInfo.name.replace(/\s+/g, '_')}_${new Date().getTime()}.pdf`);
       
@@ -802,376 +734,12 @@ export class MedicalRecordTabsComponent implements OnInit {
       biometric: this.biometricData,
       prescription: this.prescription,
       examRequests: this.examRequests,
-      transcription: this.transcriptionData,
       timestamp: new Date().toISOString()
     };
 
     console.log('Salvando dados:', data);
     // Aqui você implementaria a chamada ao backend
     alert('Dados salvos com sucesso!');
-  }
-
-  // Inicialização do sistema dual de reconhecimento de voz
-  private initializeSpeechRecognition(): void {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    
-    if (!SpeechRecognition) {
-      console.warn('Web Speech API não suportada neste navegador');
-      return;
-    }
-
-    // Reconhecedor para o profissional (microfone local)
-    this.recognitionProfessional = this.createRecognizer('professional');
-    
-    // Reconhecedor para o paciente (áudio do sistema)
-    this.recognitionPatient = this.createRecognizer('patient');
-    
-    console.log('Sistema dual de reconhecimento inicializado');
-  }
-
-  // Criar instância de reconhecedor
-  private createRecognizer(speaker: 'professional' | 'patient'): any {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
-    
-    recognition.continuous = true;
-    recognition.interimResults = false;
-    recognition.lang = 'pt-BR';
-    recognition.maxAlternatives = 1;
-
-    recognition.onresult = (event: any) => {
-      const last = event.results.length - 1;
-      const transcript = event.results[last][0].transcript;
-      const confidence = event.results[last][0].confidence;
-
-      this.addTranscriptionEntry(speaker, transcript, confidence);
-    };
-
-    recognition.onerror = (event: any) => {
-      console.error(`Erro no reconhecimento (${speaker}):`, event.error);
-      if (event.error === 'no-speech') {
-        // Reiniciar se não detectar fala
-        if (this.recognitionActive && !this.transcriptionData.isPaused) {
-          setTimeout(() => {
-            if (this.recognitionActive) {
-              try {
-                recognition.start();
-              } catch (e) {
-                // Ignorar erro se já estiver rodando
-              }
-            }
-          }, 100);
-        }
-      }
-    };
-
-    recognition.onend = () => {
-      // Reiniciar automaticamente se ainda estiver ativo
-      if (this.recognitionActive && !this.transcriptionData.isPaused) {
-        try {
-          recognition.start();
-        } catch (e) {
-          console.error(`Erro ao reiniciar reconhecimento (${speaker}):`, e);
-        }
-      }
-    };
-
-    return recognition;
-  }
-
-  // Capturar áudio do microfone (profissional)
-  private async captureMicrophoneAudio(): Promise<boolean> {
-    try {
-      this.microphoneStream = await navigator.mediaDevices.getUserMedia({ 
-        audio: {
-          echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true
-        } 
-      });
-      console.log('✅ Microfone capturado (Profissional)');
-      return true;
-    } catch (error) {
-      console.error('❌ Erro ao capturar microfone:', error);
-      alert('Não foi possível acessar o microfone. Verifique as permissões.');
-      return false;
-    }
-  }
-
-  // Capturar áudio remoto do Jitsi automaticamente (paciente)
-  private async captureJitsiRemoteAudio(): Promise<boolean> {
-    try {
-      // Criar AudioContext para processar áudio
-      this.audioContext = new AudioContext();
-      this.remoteAudioDestination = this.audioContext.createMediaStreamDestination();
-
-      // Buscar todos os elementos de áudio remoto do Jitsi
-      const remoteAudioElements = document.querySelectorAll('audio[id^="remoteAudio"]');
-      
-      if (remoteAudioElements.length === 0) {
-        console.warn('⚠️ Nenhum áudio remoto detectado ainda');
-        // Tentar novamente após delay
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        const retry = document.querySelectorAll('audio[id^="remoteAudio"]');
-        if (retry.length === 0) {
-          console.warn('💡 Paciente ainda não entrou na chamada');
-          return false;
-        }
-      }
-
-      // Conectar todos os áudios remotos ao destino
-      document.querySelectorAll('audio[id^="remoteAudio"]').forEach((audioElement: any) => {
-        if (audioElement.srcObject) {
-          const source = this.audioContext!.createMediaStreamSource(audioElement.srcObject);
-          source.connect(this.remoteAudioDestination!);
-          console.log('🔗 Áudio remoto conectado:', audioElement.id);
-        }
-      });
-
-      // Monitorar novos participantes
-      this.startJitsiAudioMonitoring();
-
-      console.log('✅ Captura de áudio do Jitsi configurada (Paciente)');
-      return true;
-    } catch (error) {
-      console.error('❌ Erro ao capturar áudio do Jitsi:', error);
-      return false;
-    }
-  }
-
-  // Monitorar novos participantes entrando no Jitsi
-  private startJitsiAudioMonitoring(): void {
-    if (this.jitsiAudioMonitoring) return;
-    
-    this.jitsiAudioMonitoring = true;
-    
-    // Observar mudanças no DOM para detectar novos áudios remotos
-    const observer = new MutationObserver(() => {
-      if (this.audioContext && this.remoteAudioDestination) {
-        document.querySelectorAll('audio[id^="remoteAudio"]').forEach((audioElement: any) => {
-          if (audioElement.srcObject && !audioElement.dataset.connected) {
-            try {
-              const source = this.audioContext!.createMediaStreamSource(audioElement.srcObject);
-              source.connect(this.remoteAudioDestination!);
-              audioElement.dataset.connected = 'true';
-              console.log('🔗 Novo participante conectado:', audioElement.id);
-            } catch (e) {
-              // Áudio já conectado
-            }
-          }
-        });
-      }
-    });
-
-    // Observar o container do Jitsi
-    const jitsiContainer = document.getElementById('jitsi-meet-container');
-    if (jitsiContainer) {
-      observer.observe(jitsiContainer, {
-        childList: true,
-        subtree: true
-      });
-    }
-  }
-
-  // Adicionar entrada de transcrição
-  private addTranscriptionEntry(speaker: 'professional' | 'patient', text: string, confidence: number): void {
-    const entry: TranscriptionEntry = {
-      id: this.entryIdCounter++,
-      speaker: speaker,
-      text: text.trim(),
-      timestamp: new Date(),
-      confidence: confidence
-    };
-
-    this.transcriptionData.entries.push(entry);
-    
-    // Auto-scroll para o final
-    setTimeout(() => {
-      const container = document.querySelector('.transcription-list');
-      if (container) {
-        container.scrollTop = container.scrollHeight;
-      }
-    }, 50);
-  }
-
-  // Iniciar transcrição dual
-  async startTranscription(): Promise<void> {
-    if (!this.recognitionProfessional) {
-      alert('Reconhecimento de voz não disponível neste navegador.');
-      return;
-    }
-
-    try {
-      // Capturar microfone (profissional) - obrigatório
-      const micOk = await this.captureMicrophoneAudio();
-      if (!micOk) {
-        return;
-      }
-
-      // Capturar áudio remoto do Jitsi automaticamente (paciente) - opcional
-      const jitsiOk = await this.captureJitsiRemoteAudio();
-
-      this.recognitionActive = true;
-      this.transcriptionData.isRecording = true;
-      this.transcriptionData.isPaused = false;
-
-      // Iniciar reconhecimento do profissional (microfone)
-      this.recognitionProfessional.start();
-      console.log('🎙️ Transcrição do profissional iniciada');
-
-      // Iniciar reconhecimento do paciente (se áudio do Jitsi disponível)
-      if (jitsiOk && this.recognitionPatient && this.remoteAudioDestination) {
-        // Nota: Web Speech API não suporta diretamente MediaStream customizado
-        // Como fallback, vamos marcar transcrições baseado no volume/timing
-        console.log('✅ Monitoramento de áudio remoto ativo');
-        console.log('💡 Transcrições serão detectadas pelo microfone local');
-        console.log('ℹ️ Use entrada manual para fala do paciente se necessário');
-      } else {
-        console.log('ℹ️ Modo profissional apenas (paciente ainda não entrou)');
-      }
-    } catch (e) {
-      console.error('Erro ao iniciar transcrição:', e);
-      alert('Erro ao iniciar transcrição. Verifique as permissões.');
-    }
-  }
-
-  // Pausar transcrição
-  pauseTranscription(): void {
-    if (this.recognitionActive) {
-      this.transcriptionData.isPaused = true;
-      
-      if (this.recognitionProfessional) {
-        this.recognitionProfessional.stop();
-      }
-      if (this.recognitionPatient) {
-        this.recognitionPatient.stop();
-      }
-      
-      console.log('Transcrição pausada');
-    }
-  }
-
-  // Retomar transcrição
-  resumeTranscription(): void {
-    if (this.recognitionActive && this.transcriptionData.isPaused) {
-      this.transcriptionData.isPaused = false;
-      
-      if (this.recognitionProfessional) {
-        try {
-          this.recognitionProfessional.start();
-          console.log('🎙️ Transcrição do profissional retomada');
-        } catch (e) {
-          console.error('Erro ao retomar profissional:', e);
-        }
-      }
-      
-      if (this.recognitionPatient) {
-        try {
-          this.recognitionPatient.start();
-          console.log('🔊 Transcrição do paciente retomada');
-        } catch (e) {
-          console.warn('Não foi possível retomar paciente:', e);
-        }
-      }
-    }
-  }
-
-  // Parar transcrição
-  stopTranscription(): void {
-    if (this.recognitionActive) {
-      this.recognitionActive = false;
-      this.transcriptionData.isRecording = false;
-      this.transcriptionData.isPaused = false;
-      
-      // Parar reconhecedores
-      if (this.recognitionProfessional) {
-        try {
-          this.recognitionProfessional.stop();
-        } catch (e) {
-          // Ignorar erro se já estiver parado
-        }
-      }
-      if (this.recognitionPatient) {
-        try {
-          this.recognitionPatient.stop();
-        } catch (e) {
-          // Ignorar erro se já estiver parado
-        }
-      }
-      
-      // Liberar streams de áudio
-      if (this.microphoneStream) {
-        this.microphoneStream.getTracks().forEach(track => track.stop());
-        this.microphoneStream = null;
-      }
-      
-      // Limpar AudioContext
-      if (this.audioContext) {
-        this.audioContext.close();
-        this.audioContext = null;
-        this.remoteAudioDestination = null;
-      }
-      
-      this.jitsiAudioMonitoring = false;
-      
-      console.log('🛑 Transcrição parada e recursos liberados');
-    }
-  }
-
-  // Limpar transcrição
-  clearTranscription(): void {
-    if (confirm('Deseja realmente limpar toda a transcrição?')) {
-      this.transcriptionData.entries = [];
-      this.entryIdCounter = 1;
-    }
-  }
-
-  // Exportar transcrição para texto
-  exportTranscriptionToText(): string {
-    let text = '=== TRANSCRIÇÃO DA CONSULTA ===\n\n';
-    text += `Paciente: ${this.patientInfo.name}\n`;
-    text += `Data: ${new Date().toLocaleString('pt-BR')}\n\n`;
-    text += '--- DIÁLOGO ---\n\n';
-
-    this.transcriptionData.entries.forEach(entry => {
-      const time = entry.timestamp.toLocaleTimeString('pt-BR');
-      const speaker = entry.speaker === 'professional' ? 'Profissional' : 'Paciente';
-      text += `[${time}] ${speaker}: ${entry.text}\n\n`;
-    });
-
-    return text;
-  }
-
-  // Download transcrição como arquivo .txt
-  downloadTranscription(): void {
-    const text = this.exportTranscriptionToText();
-    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `transcricao_${this.patientInfo.name.replace(/\s+/g, '_')}_${new Date().getTime()}.txt`;
-    link.click();
-    window.URL.revokeObjectURL(url);
-  }
-
-  // Adicionar entrada manual
-  addManualEntry(speaker: 'professional' | 'patient', text: string): void {
-    if (text.trim()) {
-      this.addTranscriptionEntry(speaker, text, 1.0);
-    }
-  }
-
-  // Remover entrada
-  removeTranscriptionEntry(id: number): void {
-    this.transcriptionData.entries = this.transcriptionData.entries.filter(e => e.id !== id);
-  }
-
-  // Editar entrada
-  editTranscriptionEntry(id: number, newText: string): void {
-    const entry = this.transcriptionData.entries.find(e => e.id === id);
-    if (entry) {
-      entry.text = newText;
-    }
   }
 
   // ==========================================
@@ -1322,14 +890,6 @@ export class MedicalRecordTabsComponent implements OnInit {
         target.tagName === 'TEXTAREA' || 
         target.tagName === 'SELECT'
       )) {
-        // Verificar se NÃO é campo de transcrição manual (evitar conflito)
-        const isTranscriptionField = target.closest('.transcription-panel');
-        if (isTranscriptionField) {
-          this.currentFocusedField = null;
-          this.currentFocusedFieldId = null;
-          return;
-        }
-
         // Armazenar referência ao campo focado
         this.currentFocusedField = target;
         const name = (target as HTMLInputElement).name || '';
@@ -1718,7 +1278,6 @@ export class MedicalRecordTabsComponent implements OnInit {
         respiratoryRate: { current: null }
       },
       customFields: customFieldsWithLabels,
-      transcription: this.transcriptionData.entries,
       prescription: this.prescription,
       examRequests: this.examRequests
     };

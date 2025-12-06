@@ -114,7 +114,7 @@ export class LandingComponent implements OnInit {
         'Videochamada HD com baixa latência',
         'Prontuário eletrônico integrado',
         'Painel de dados vitais em tempo real',
-        'Transcrição automática de consultas'
+        'Prontuário eletrônico completo'
       ]
     },
     {

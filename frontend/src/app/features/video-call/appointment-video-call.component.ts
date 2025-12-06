@@ -174,22 +174,13 @@ export class AppointmentVideoCallComponent implements OnInit, OnDestroy, AfterVi
       configOverwrite: {
         prejoinPageEnabled: true,
         defaultLanguage: 'pt',
-        transcription: {
-          enabled: true,
-          preferredLanguage: 'pt',
-          translationLanguages: ['pt'],
-          useAppLanguage: true
-        },
-        transcribingEnabled: true,
         disableChat: false,
         startWithAudioMuted: false,
         startWithVideoMuted: false,
         disableDeepLinking: true,
-        enableClosedCaptions: true,
         toolbarButtons: [
           'camera',
           'chat',
-          'closedcaptions',
           'desktop',
           'download',
           'embedmeeting',

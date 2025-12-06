@@ -72,13 +72,6 @@
       </button>
       <button 
         class="tab-btn" 
-        [class.active]="activeTab === 'transcription'"
-        (click)="setActiveTab('transcription')">
-        <span class="tab-icon">🎙️</span>
-        <span class="tab-label">Transcrição</span>
-      </button>
-      <button 
-        class="tab-btn" 
         [class.active]="activeTab === 'ai-analysis'"
         (click)="setActiveTab('ai-analysis')">
         <span class="tab-icon">🤖</span>
@@ -797,124 +790,6 @@
             placeholder="Observações gerais sobre os exames solicitados..."
             rows="4"
             class="form-control"></textarea>
-        </div>
-      </div>
-
-      <!-- Tab: Transcrição -->
-      <div class="tab-panel" *ngIf="activeTab === 'transcription'">
-        <div class="panel-header">
-          <h3>🎙️ Transcrição da Consulta</h3>
-          <div class="transcription-controls">
-            <button 
-              *ngIf="!transcriptionData.isRecording" 
-              class="btn-control btn-start" 
-              (click)="startTranscription()"
-              title="Iniciar transcrição">
-              ▶️ Iniciar
-            </button>
-            <button 
-              *ngIf="transcriptionData.isRecording && !transcriptionData.isPaused" 
-              class="btn-control btn-pause" 
-              (click)="pauseTranscription()"
-              title="Pausar transcrição">
-              ⏸️ Pausar
-            </button>
-            <button 
-              *ngIf="transcriptionData.isRecording && transcriptionData.isPaused" 
-              class="btn-control btn-resume" 
-              (click)="resumeTranscription()"
-              title="Retomar transcrição">
-              ▶️ Retomar
-            </button>
-            <button 
-              *ngIf="transcriptionData.isRecording" 
-              class="btn-control btn-stop" 
-              (click)="stopTranscription()"
-              title="Parar transcrição">
-              ⏹️ Parar
-            </button>
-            <button 
-              class="btn-control btn-download" 
-              (click)="downloadTranscription()"
-              title="Baixar transcrição"
-              [disabled]="transcriptionData.entries.length === 0">
-              💾 Baixar
-            </button>
-            <button 
-              class="btn-control btn-clear" 
-              (click)="clearTranscription()"
-              title="Limpar transcrição"
-              [disabled]="transcriptionData.entries.length === 0">
-              🗑️ Limpar
-            </button>
-          </div>
-        </div>
-
-        <div class="transcription-status" *ngIf="transcriptionData.isRecording">
-          <span class="status-indicator" [class.paused]="transcriptionData.isPaused">
-            <span class="pulse-dot"></span>
-            {{ transcriptionData.isPaused ? 'Pausado' : 'Gravando...' }}
-          </span>
-        </div>
-
-        <div class="transcription-list" *ngIf="transcriptionData.entries.length > 0">
-          <div 
-            *ngFor="let entry of transcriptionData.entries" 
-            class="transcription-entry"
-            [class.professional]="entry.speaker === 'professional'"
-            [class.patient]="entry.speaker === 'patient'">
-            <div class="entry-header">
-              <span class="speaker-badge">
-                {{ entry.speaker === 'professional' ? '👨‍⚕️ Profissional' : '👤 Paciente' }}
-              </span>
-              <span class="entry-time">{{ entry.timestamp | date:'HH:mm:ss' }}</span>
-              <button class="btn-remove-entry" (click)="removeTranscriptionEntry(entry.id)" title="Remover">
-                ✕
-              </button>
-            </div>
-            <div class="entry-text">
-              {{ entry.text }}
-            </div>
-            <div class="entry-confidence" *ngIf="entry.confidence < 0.8">
-              <small>Confiança: {{ (entry.confidence * 100).toFixed(0) }}%</small>
-            </div>
-          </div>
-        </div>
-
-        <div class="empty-transcription" *ngIf="transcriptionData.entries.length === 0">
-          <div class="empty-icon">🎙️</div>
-          <p>Nenhuma transcrição ainda</p>
-          <p class="hint">Clique em "Iniciar" para começar a transcrever a conversa em tempo real.</p>
-          <div class="transcription-info">
-            <h4>ℹ️ Como funciona:</h4>
-            <ul>
-              <li>A transcrição captura automaticamente o áudio do seu microfone</li>
-              <li>O sistema identifica quem está falando (Profissional)</li>
-              <li>Todo o diálogo é registrado com data e hora</li>
-              <li>Você pode pausar, retomar e baixar a transcrição a qualquer momento</li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- Adicionar entrada manual -->
-        <div class="manual-entry-section" *ngIf="transcriptionData.entries.length > 0">
-          <h4>✍️ Adicionar Entrada Manual</h4>
-          <div class="manual-entry-form">
-            <select #manualSpeaker class="form-control speaker-select">
-              <option value="professional">👨‍⚕️ Profissional</option>
-              <option value="patient">👤 Paciente</option>
-            </select>
-            <textarea 
-              #manualText
-              placeholder="Digite o texto da entrada manual..."
-              rows="2"
-              class="form-control manual-text"></textarea>
-            <button 
-              class="btn-add-manual" 
-              (click)="addManualEntry(manualSpeaker.value === 'professional' ? 'professional' : 'patient', manualText.value); manualText.value = ''">
-              ➕ Adicionar
-            </button>
-          </div>
         </div>
       </div>
 

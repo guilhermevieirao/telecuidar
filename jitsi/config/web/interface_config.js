@@ -42,14 +42,6 @@ var interfaceConfig = {
     DISABLE_PRESENCE_STATUS: false,
 
     /**
-     * Whether the speech to text transcription subtitles panel is disabled.
-     * If {@code undefined}, defaults to {@code false}.
-     *
-     * @type {boolean}
-     */
-    DISABLE_TRANSCRIPTION_SUBTITLES: false,
-
-    /**
      * Whether or not the blurred video background for large video should be
      * displayed on browsers that can support it.
      */

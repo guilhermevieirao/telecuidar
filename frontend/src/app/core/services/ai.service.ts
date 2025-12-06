@@ -8,7 +8,6 @@ export interface AIRequest {
   soapData: any;
   biometricData: any;
   customFields: any;
-  transcription: any;
   prescription: any;
   examRequests: any;
 }
@@ -101,16 +100,6 @@ export class AIService {
       for (const [fieldName, value] of Object.entries(data.customFields)) {
         prompt += `${fieldName}: ${value}\n`;
       }
-      prompt += '\n';
-    }
-
-    // Transcrição
-    if (data.transcription && data.transcription.length > 0) {
-      prompt += '## TRANSCRIÇÃO DA CONSULTA\n';
-      data.transcription.forEach((entry: any) => {
-        const speaker = entry.speaker === 'professional' ? 'Profissional' : 'Paciente';
-        prompt += `${speaker}: ${entry.text}\n`;
-      });
       prompt += '\n';
     }
 
