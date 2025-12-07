@@ -46,7 +46,7 @@ export class ThemeService {
     // Aplica atributo data-theme para CSS variables
     document.documentElement.setAttribute('data-theme', theme);
     
-    // Aplica classe 'dark' para Tailwind CSS
+    // Aplica classe 'dark' para suporte adicional
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
     } else {

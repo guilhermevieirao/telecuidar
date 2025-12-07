@@ -1,0 +1,306 @@
+@import 'variables';
+
+// ===================================
+// MIXINS DE RESPONSIVIDADE
+// ===================================
+
+@mixin sm {
+  @media (min-width: $breakpoint-sm) {
+    @content;
+  }
+}
+
+@mixin md {
+  @media (min-width: $breakpoint-md) {
+    @content;
+  }
+}
+
+@mixin lg {
+  @media (min-width: $breakpoint-lg) {
+    @content;
+  }
+}
+
+@mixin xl {
+  @media (min-width: $breakpoint-xl) {
+    @content;
+  }
+}
+
+@mixin xxl {
+  @media (min-width: $breakpoint-2xl) {
+    @content;
+  }
+}
+
+// ===================================
+// MIXINS DE FLEXBOX
+// ===================================
+
+@mixin flex($direction: row, $justify: flex-start, $align: stretch, $wrap: nowrap) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: $justify;
+  align-items: $align;
+  flex-wrap: $wrap;
+}
+
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+// ===================================
+// MIXINS DE GRID
+// ===================================
+
+@mixin grid($columns: 1, $gap: $spacing-4) {
+  display: grid;
+  grid-template-columns: repeat($columns, 1fr);
+  gap: $gap;
+}
+
+// ===================================
+// MIXINS DE SPACING
+// ===================================
+
+@mixin padding($value) {
+  padding: $value;
+}
+
+@mixin padding-x($value) {
+  padding-left: $value;
+  padding-right: $value;
+}
+
+@mixin padding-y($value) {
+  padding-top: $value;
+  padding-bottom: $value;
+}
+
+@mixin margin($value) {
+  margin: $value;
+}
+
+@mixin margin-x($value) {
+  margin-left: $value;
+  margin-right: $value;
+}
+
+@mixin margin-y($value) {
+  margin-top: $value;
+  margin-bottom: $value;
+}
+
+// ===================================
+// MIXINS DE TIPOGRAFIA
+// ===================================
+
+@mixin text($size, $weight: $font-normal, $line-height: $leading-normal) {
+  font-size: $size;
+  font-weight: $weight;
+  line-height: $line-height;
+}
+
+@mixin truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin line-clamp($lines: 2) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+// ===================================
+// MIXINS DE BORDER
+// ===================================
+
+@mixin border($width: $border, $color: $gray-200, $style: solid) {
+  border: $width $style $color;
+}
+
+@mixin border-radius($radius) {
+  border-radius: $radius;
+}
+
+// ===================================
+// MIXINS DE SHADOW
+// ===================================
+
+@mixin shadow($shadow: $shadow) {
+  box-shadow: $shadow;
+}
+
+// ===================================
+// MIXINS DE TRANSIÇÃO
+// ===================================
+
+@mixin transition($property: all, $duration: $transition-base, $timing: $transition-ease) {
+  transition: $property $duration $timing;
+}
+
+// ===================================
+// MIXINS DE BOTÕES
+// ===================================
+
+@mixin button-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-2 $spacing-4;
+  border-radius: $rounded-md;
+  font-weight: $font-medium;
+  font-size: $text-sm;
+  line-height: $leading-normal;
+  cursor: pointer;
+  user-select: none;
+  @include transition(all);
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+@mixin button-primary {
+  @include button-base;
+  background-color: $primary-600;
+  color: white;
+  border: none;
+  
+  &:hover:not(:disabled) {
+    background-color: $primary-700;
+  }
+  
+  &:focus {
+    outline: 2px solid $primary-500;
+    outline-offset: 2px;
+  }
+}
+
+@mixin button-secondary {
+  @include button-base;
+  background-color: $secondary-100;
+  color: $secondary-900;
+  border: $border solid $secondary-200;
+  
+  &:hover:not(:disabled) {
+    background-color: $secondary-200;
+  }
+  
+  &:focus {
+    outline: 2px solid $secondary-500;
+    outline-offset: 2px;
+  }
+}
+
+@mixin button-outline {
+  @include button-base;
+  background-color: transparent;
+  color: $primary-600;
+  border: $border solid $primary-600;
+  
+  &:hover:not(:disabled) {
+    background-color: $primary-50;
+  }
+  
+  &:focus {
+    outline: 2px solid $primary-500;
+    outline-offset: 2px;
+  }
+}
+
+// ===================================
+// MIXINS DE INPUTS
+// ===================================
+
+@mixin input-base {
+  display: block;
+  width: 100%;
+  padding: $spacing-2 $spacing-3;
+  font-size: $text-sm;
+  line-height: $leading-normal;
+  color: $gray-900;
+  background-color: white;
+  border: $border solid $gray-300;
+  border-radius: $rounded-md;
+  @include transition(border-color);
+  
+  &:focus {
+    outline: none;
+    border-color: $primary-500;
+    box-shadow: 0 0 0 3px rgba($primary-500, 0.1);
+  }
+  
+  &:disabled {
+    background-color: $gray-100;
+    cursor: not-allowed;
+  }
+  
+  &::placeholder {
+    color: $gray-400;
+  }
+}
+
+// ===================================
+// MIXINS DE CARD
+// ===================================
+
+@mixin card {
+  background-color: white;
+  border-radius: $rounded-lg;
+  @include shadow($shadow-md);
+  padding: $spacing-6;
+}
+
+// ===================================
+// MIXINS DE BADGE
+// ===================================
+
+@mixin badge($bg-color: $gray-100, $text-color: $gray-800) {
+  display: inline-flex;
+  align-items: center;
+  padding: $spacing-1 $spacing-2;
+  font-size: $text-xs;
+  font-weight: $font-medium;
+  border-radius: $rounded;
+  background-color: $bg-color;
+  color: $text-color;
+}
+
+// ===================================
+// MIXINS DE OVERLAY
+// ===================================
+
+@mixin overlay($opacity: 0.5) {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, $opacity);
+  z-index: 40;
+}
+
+// ===================================
+// MIXINS DE DARK MODE
+// ===================================
+
+@mixin dark-mode {
+  html[data-theme="dark"] &,
+  html.dark & {
+    @content;
+  }
+}

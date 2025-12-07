@@ -7,7 +7,7 @@ Ajustar Migrations
 
 Copiar SusAtende
 
-Refatorar a estilização remover o tailwind
+Refatorar a estilização 
 
 copiar ADM > MED > PAC
 

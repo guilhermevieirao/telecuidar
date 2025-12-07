@@ -1,86 +1,19 @@
-/* Import Tailwind CSS */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* Dark Mode Overrides - Deve vir DEPOIS do Tailwind */
-@layer utilities {
-  html[data-theme="dark"],
-  html.dark {
-    & .bg-white {
-      background-color: #1f2937 !important;
-    }
-    
-    & .bg-gray-50 {
-      background-color: #111827 !important;
-    }
-    
-    & .bg-gray-100 {
-      background-color: #1f2937 !important;
-    }
-
-    & .bg-gray-200 {
-      background-color: #374151 !important;
-    }
-    
-    & .text-gray-900 {
-      color: #f9fafb !important;
-    }
-    
-    & .text-gray-800 {
-      color: #f9fafb !important;
-    }
-    
-    & .text-gray-700 {
-      color: #d1d5db !important;
-    }
-    
-    & .text-gray-600 {
-      color: #d1d5db !important;
-    }
-    
-    & .text-gray-500 {
-      color: #9ca3af !important;
-    }
-
-    & .text-gray-400 {
-      color: #9ca3af !important;
-    }
-    
-    & .border-gray-200 {
-      border-color: #374151 !important;
-    }
-    
-    & .border-gray-300 {
-      border-color: #4b5563 !important;
-    }
-
-    & header {
-      background-color: #1f2937 !important;
-    }
-
-    & input,
-    & textarea,
-    & select {
-      background-color: #374151 !important;
-      border-color: #4b5563 !important;
-      color: #f9fafb !important;
-    }
-
-    & .hover\:bg-blue-50:hover {
-      background-color: #1e40af !important;
-    }
-
-    & .hover\:bg-gray-50:hover {
-      background-color: #374151 !important;
-    }
-  }
-}
+/* ===================================
+   TELECUIDAR - ESTILOS GLOBAIS
+   ================================== */
 
 /* Import Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Lexend:wght@300;400;500;600;700;800&display=swap');
 
-/* Custom CSS Variables */
+/* Import SCSS partials */
+@import 'scss/variables';
+@import 'scss/mixins';
+@import 'scss/utilities';
+
+/* ===================================
+   VARIÁVEIS CSS CUSTOMIZADAS
+   ================================== */
+
 :root {
   /* Brand Colors */
   --primary-50: #eff6ff;
@@ -123,8 +56,12 @@
   --warning-color: #f59e0b;
 }
 
-/* Dark Theme */
-[data-theme="dark"] {
+/* ===================================
+   DARK THEME
+   ================================== */
+
+[data-theme="dark"],
+html.dark {
   --bg-primary: #111827;
   --bg-secondary: #1f2937;
   --bg-tertiary: #374151;
@@ -144,14 +81,81 @@
   --card-bg: #1f2937;
   --input-bg: #374151;
   --input-border: #4b5563;
-  /* Cores auxiliares mantêm suas cores originais no dark mode */
-  --primary-color: #3b82f6;
-  --danger-color: #ef4444;
-  --success-color: #10b981;
-  --warning-color: #f59e0b;
+  
+  /* Overrides para classes utilitárias */
+  .bg-white {
+    background-color: #1f2937 !important;
+  }
+  
+  .bg-gray-50 {
+    background-color: #111827 !important;
+  }
+  
+  .bg-gray-100 {
+    background-color: #1f2937 !important;
+  }
+
+  .bg-gray-200 {
+    background-color: #374151 !important;
+  }
+  
+  .text-gray-900 {
+    color: #f9fafb !important;
+  }
+  
+  .text-gray-800 {
+    color: #f9fafb !important;
+  }
+  
+  .text-gray-700 {
+    color: #d1d5db !important;
+  }
+  
+  .text-gray-600 {
+    color: #d1d5db !important;
+  }
+  
+  .text-gray-500 {
+    color: #9ca3af !important;
+  }
+
+  .text-gray-400 {
+    color: #9ca3af !important;
+  }
+  
+  .border-gray-200 {
+    border-color: #374151 !important;
+  }
+  
+  .border-gray-300 {
+    border-color: #4b5563 !important;
+  }
+
+  header {
+    background-color: #1f2937 !important;
+  }
+
+  input,
+  textarea,
+  select {
+    background-color: #374151 !important;
+    border-color: #4b5563 !important;
+    color: #f9fafb !important;
+  }
+
+  .hover\:bg-blue-50:hover {
+    background-color: #1e40af !important;
+  }
+
+  .hover\:bg-gray-50:hover {
+    background-color: #374151 !important;
+  }
 }
 
-/* Global Styles */
+/* ===================================
+   ESTILOS GLOBAIS
+   ================================== */
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -168,10 +172,14 @@ body {
   color: var(--text-primary);
   background-color: var(--bg-primary);
   overflow-x: hidden;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  @include transition(background-color);
+  @include transition(color);
 }
 
-/* Custom Utility Classes */
+/* ===================================
+   CLASSES UTILITÁRIAS CUSTOMIZADAS
+   ================================== */
+
 .gradient-text {
   background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
   -webkit-background-clip: text;
@@ -186,15 +194,19 @@ body {
 }
 
 .hover-lift {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  @include transition(transform);
+  @include transition(box-shadow);
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.15);
+  }
 }
 
-.hover-lift:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.15);
-}
+/* ===================================
+   ANIMAÇÕES
+   ================================== */
 
-/* Animations */
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-10px); }
@@ -213,7 +225,10 @@ body {
   animation: pulse-glow 2s ease-in-out infinite;
 }
 
-/* Custom Scrollbar */
+/* ===================================
+   SCROLLBAR CUSTOMIZADA
+   ================================== */
+
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -231,7 +246,10 @@ body {
   background: var(--primary-600);
 }
 
-/* Acessibilidade - Foco Visível */
+/* ===================================
+   ACESSIBILIDADE - FOCO VISÍVEL
+   ================================== */
+
 *:focus {
   outline: 2px solid var(--primary-color);
   outline-offset: 2px;
@@ -246,19 +264,20 @@ select:focus {
   outline-offset: 2px;
 }
 
-/* Remove outline apenas se usar mouse (não teclado) */
 *:focus:not(:focus-visible) {
   outline: none;
 }
 
-/* Garante foco visível para navegação por teclado */
 *:focus-visible {
   outline: 2px solid var(--primary-color);
   outline-offset: 2px;
   box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
 }
 
-/* Dark Mode Utility Classes */
+/* ===================================
+   CLASSES DE TEMA
+   ================================== */
+
 .bg-theme-primary {
   background-color: var(--bg-primary);
 }
@@ -287,7 +306,10 @@ select:focus {
   background-color: var(--hover-bg);
 }
 
-/* Universal autofill fix para modo escuro */
+/* ===================================
+   AUTOFILL FIX PARA DARK MODE
+   ================================== */
+
 html[data-theme="dark"] input:-webkit-autofill,
 html[data-theme="dark"] input:-webkit-autofill:focus,
 html[data-theme="dark"] input:-webkit-autofill:hover,
@@ -329,7 +351,10 @@ html[data-theme="dark"] input:-ms-input-autofill {
   color: #f9fafb !important;
 }
 
-/* Universal: Scroll do modal sempre dentro do modal, com bordas arredondadas preservadas */
+/* ===================================
+   MODAL SCROLLBAR
+   ================================== */
+
 .fixed.inset-0 .modal-scrollable-content {
   max-height: 70vh;
   overflow-y: auto;
@@ -343,12 +368,12 @@ html[data-theme="dark"] input:-ms-input-autofill {
   border-radius: 8px;
   background: #1f2937;
 }
+
 .fixed.inset-0 .modal-scrollable-content::-webkit-scrollbar-thumb {
   background: #6b7280;
   border-radius: 8px;
 }
 
-/* Garante que o conteúdo do modal use a classe modal-scrollable-content */
 .fixed.inset-0 .modal-content > .modal-body,
 .fixed.inset-0 .modal-content > form,
 .fixed.inset-0 .modal-content > div[ngcontent] {
@@ -358,6 +383,7 @@ html[data-theme="dark"] input:-ms-input-autofill {
   scrollbar-width: thin;
   scrollbar-color: #6b7280 #1f2937;
 }
+
 .fixed.inset-0 .modal-content > .modal-body::-webkit-scrollbar,
 .fixed.inset-0 .modal-content > form::-webkit-scrollbar,
 .fixed.inset-0 .modal-content > div[ngcontent]::-webkit-scrollbar {
@@ -365,6 +391,7 @@ html[data-theme="dark"] input:-ms-input-autofill {
   border-radius: 8px;
   background: #1f2937;
 }
+
 .fixed.inset-0 .modal-content > .modal-body::-webkit-scrollbar-thumb,
 .fixed.inset-0 .modal-content > form::-webkit-scrollbar-thumb,
 .fixed.inset-0 .modal-content > div[ngcontent]::-webkit-scrollbar-thumb {
