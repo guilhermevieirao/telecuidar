@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ConfirmModalComponent } from '../confirm-modal/confirm-modal.component';
-import { ModalService, AlertModalOptions, ConfirmModalOptions } from '../../../services/modal.service';
+import { ModalService, AlertModalOptions, ConfirmModalOptions } from '../../../../core/services/modal.service';
 
 @Component({
   selector: 'app-modal-manager',

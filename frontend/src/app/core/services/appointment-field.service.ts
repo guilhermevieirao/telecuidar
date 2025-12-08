@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
-import { AppointmentFieldValueDto, SaveAppointmentFieldValueDto } from '../models/appointment-field.model';
+import { environment } from '../../../environments/environment';
+import { AppointmentFieldValueDto, SaveAppointmentFieldValueDto } from '../../shared/models/appointment-field.model';
 
 @Injectable({
   providedIn: 'root'

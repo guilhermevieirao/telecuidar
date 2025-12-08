@@ -1,9 +1,0 @@
-export interface User {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  fullName: string;
-  avatarUrl?: string;
-  lastLoginAt?: Date;
-}

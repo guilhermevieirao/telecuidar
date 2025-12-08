@@ -3,9 +3,8 @@ export interface AppointmentFieldValueDto {
   appointmentId: number;
   specialtyFieldId: number;
   fieldValue: string;
-  fieldName?: string;
-  label?: string;
-  fieldType?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface SaveAppointmentFieldValueDto {

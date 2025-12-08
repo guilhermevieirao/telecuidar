@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppointmentService, Appointment } from '../../core/services/appointment.service';
-import { ModalService } from '../../services/modal.service';
+import { ModalService } from '../../core/services/modal.service';
 import { MedicalRecordTabsComponent } from './medical-record-tabs/medical-record-tabs.component';
 import { environment } from '../../../environments/environment';
 

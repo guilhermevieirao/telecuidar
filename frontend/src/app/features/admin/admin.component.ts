@@ -5,19 +5,19 @@ import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { NgxMaskDirective } from 'ngx-mask';
 import { ToastService } from '../../core/services/toast.service';
-import { ConfirmModalComponent } from '../../shared/components/confirm-modal/confirm-modal.component';
-import { PaginationComponent, PageInfo } from '../../shared/components/pagination/pagination.component';
+import { ConfirmModalComponent } from '../../shared/components/organisms/confirm-modal/confirm-modal.component';
+import { PaginationComponent, PageInfo } from '../../shared/components/molecules/pagination/pagination.component';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
-import { PagedResult } from '../../core/models/paged-result.model';
+import { PagedResult } from '../../shared/models/paged-result.model';
 import { NotificationsComponent } from '../notifications/notifications.component';
-import { ThemeToggleComponent } from '../../shared/components/theme-toggle/theme-toggle.component';
-import { MobileMenu, MenuItem } from '../../shared/components/mobile-menu/mobile-menu';
+import { ThemeToggleComponent } from '../../shared/components/atoms/theme-toggle/theme-toggle.component';
+import { MobileMenu, MenuItem } from '../../shared/components/organisms/mobile-menu/mobile-menu';
 import { FilesComponent } from '../files/files.component';
 import { ReportsComponent } from '../reports/reports.component';
 import { ProfileComponent } from '../profile/profile.component';
-import { SpecialtiesComponent } from '../../pages/specialties/specialties.component';
-import { SchedulesComponent } from '../../pages/schedules/schedules.component';
+import { SpecialtiesComponent } from './specialties.component';
+import { SchedulesComponent } from './schedules.component';
 import { AdminBlocksComponent } from '../schedule-blocks/admin-blocks.component';
 import { environment } from '../../../environments/environment';
 
@@ -449,7 +449,7 @@ export class AdminComponent implements OnInit {
             this.filteredUsers = pagedResult.items;
             this.usersPageInfo = {
               items: pagedResult.items,
-              pageNumber: pagedResult.pageNumber,
+              pageNumber: pagedResult.currentPage,
               pageSize: pagedResult.pageSize,
               totalCount: pagedResult.totalCount,
               totalPages: pagedResult.totalPages,
@@ -790,7 +790,7 @@ export class AdminComponent implements OnInit {
             this.auditLogs = pagedResult.items;
             this.auditLogsPageInfo = {
               items: pagedResult.items,
-              pageNumber: pagedResult.pageNumber,
+              pageNumber: pagedResult.currentPage,
               pageSize: pagedResult.pageSize,
               totalCount: pagedResult.totalCount,
               totalPages: pagedResult.totalPages,

@@ -4,8 +4,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { ScheduleBlocksService, RequestBlockPayload } from './schedule-blocks.service';
-import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcrumb.component';
-import { DashboardNavbarComponent } from '../../shared/components/dashboard-navbar/dashboard-navbar.component';
+import { BreadcrumbComponent } from '../../shared/components/molecules/breadcrumb/breadcrumb.component';
+import { DashboardNavbarComponent } from '../../shared/components/organisms/dashboard-navbar/dashboard-navbar.component';
 
 @Component({
   selector: 'app-request-block',

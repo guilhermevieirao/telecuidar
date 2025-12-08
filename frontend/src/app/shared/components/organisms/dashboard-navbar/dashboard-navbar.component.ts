@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ThemeToggleComponent } from '../theme-toggle/theme-toggle.component';
+import { ThemeToggleComponent } from '../../atoms/theme-toggle/theme-toggle.component';
 import { MobileMenu, MenuItem } from '../mobile-menu/mobile-menu';
 
 @Component({

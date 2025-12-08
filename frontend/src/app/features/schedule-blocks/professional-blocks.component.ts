@@ -4,9 +4,9 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ScheduleBlocksService, ScheduleBlock } from './schedule-blocks.service';
 
-import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcrumb.component';
-import { MenuItem } from '../../shared/components/mobile-menu/mobile-menu';
-import { DashboardNavbarComponent } from '../../shared/components/dashboard-navbar/dashboard-navbar.component';
+import { BreadcrumbComponent } from '../../shared/components/molecules/breadcrumb/breadcrumb.component';
+import { MenuItem } from '../../shared/components/organisms/mobile-menu/mobile-menu';
+import { DashboardNavbarComponent } from '../../shared/components/organisms/dashboard-navbar/dashboard-navbar.component';
 
 @Component({
   selector: 'app-professional-blocks',

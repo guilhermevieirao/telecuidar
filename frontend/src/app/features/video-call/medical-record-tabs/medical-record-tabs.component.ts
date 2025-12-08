@@ -4,12 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { SpecialtyService } from '../../../services/specialty.service';
-import { AppointmentFieldService } from '../../../services/appointment-field.service';
+import { SpecialtyService } from '../../../core/services/specialty.service';
+import { AppointmentFieldService } from '../../../core/services/appointment-field.service';
 import { AIService, AIResponse } from '../../../core/services/ai.service';
 import { CadsusService, CadsusCidadao } from '../../../core/services/cadsus.service';
-import { SpecialtyFieldDto } from '../../../models/specialty.model';
-import { AppointmentFieldValueDto, SaveAppointmentFieldValueDto } from '../../../models/appointment-field.model';
+import { SpecialtyFieldDto } from '../../../shared/models/specialty.model';
+import { AppointmentFieldValueDto, SaveAppointmentFieldValueDto } from '../../../shared/models/appointment-field.model';
 
 // Declaração para Web Speech API (usada no sistema de ditado por voz)
 declare global {

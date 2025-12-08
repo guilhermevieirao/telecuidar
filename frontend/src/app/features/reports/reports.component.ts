@@ -5,9 +5,9 @@ import { HttpClient } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { ToastService } from '../../core/services/toast.service';
-import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcrumb.component';
+import { BreadcrumbComponent } from '../../shared/components/molecules/breadcrumb/breadcrumb.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
-import { ThemeToggleComponent } from '../../shared/components/theme-toggle/theme-toggle.component';
+import { ThemeToggleComponent } from '../../shared/components/atoms/theme-toggle/theme-toggle.component';
 
 interface ReportSummary {
   totalUsers?: number;

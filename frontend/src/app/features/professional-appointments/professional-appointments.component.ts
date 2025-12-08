@@ -3,12 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcrumb.component';
+import { BreadcrumbComponent } from '../../shared/components/molecules/breadcrumb/breadcrumb.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
-import { ThemeToggleComponent } from '../../shared/components/theme-toggle/theme-toggle.component';
-import { MobileMenu, MenuItem } from '../../shared/components/mobile-menu/mobile-menu';
+import { ThemeToggleComponent } from '../../shared/components/atoms/theme-toggle/theme-toggle.component';
+import { MobileMenu, MenuItem } from '../../shared/components/organisms/mobile-menu/mobile-menu';
 import { AppointmentService, Appointment } from '../../core/services/appointment.service';
-import { ModalService } from '../../services/modal.service';
+import { ModalService } from '../../core/services/modal.service';
 
 type FilterStatus = 'all' | 'upcoming' | 'past' | 'cancelled';
 

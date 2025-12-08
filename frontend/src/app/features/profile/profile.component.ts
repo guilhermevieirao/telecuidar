@@ -6,8 +6,8 @@ import { HttpClient } from '@angular/common/http';
 import { ToastService } from '../../core/services/toast.service';
 import { environment } from '../../../environments/environment';
 import { NgxMaskDirective } from 'ngx-mask';
-import { ImageCropModalComponent } from '../../shared/components/image-crop-modal/image-crop-modal.component';
-import { ThemeToggleComponent } from '../../shared/components/theme-toggle/theme-toggle.component';
+import { ImageCropModalComponent } from '../../shared/components/organisms/image-crop-modal/image-crop-modal.component';
+import { ThemeToggleComponent } from '../../shared/components/atoms/theme-toggle/theme-toggle.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
 
 @Component({

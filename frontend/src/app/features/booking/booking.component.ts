@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcrumb.component';
+import { BreadcrumbComponent } from '../../shared/components/molecules/breadcrumb/breadcrumb.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
-import { ThemeToggleComponent } from '../../shared/components/theme-toggle/theme-toggle.component';
-import { MobileMenu, MenuItem } from '../../shared/components/mobile-menu/mobile-menu';
+import { ThemeToggleComponent } from '../../shared/components/atoms/theme-toggle/theme-toggle.component';
+import { MobileMenu, MenuItem } from '../../shared/components/organisms/mobile-menu/mobile-menu';
 import {
   AppointmentService,
   AvailableSpecialty,

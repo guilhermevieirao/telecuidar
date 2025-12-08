@@ -1,9 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
-import { ToastComponent } from './shared/components/toast/toast.component';
-import { CookieConsentComponent } from './shared/components/cookie-consent/cookie-consent.component';
-import { ModalManagerComponent } from './shared/components/modal-manager/modal-manager.component';
+import { ToastComponent } from './shared/components/molecules/toast/toast.component';
+import { CookieConsentComponent } from './shared/components/molecules/cookie-consent/cookie-consent.component';
+import { ModalManagerComponent } from './shared/components/organisms/modal-manager/modal-manager.component';
 import { ThemeService } from './core/services/theme.service';
 
 @Component({

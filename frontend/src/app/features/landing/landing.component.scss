@@ -658,8 +658,9 @@
 
     .tag {
       padding: 0.5rem 1rem;
-      background: #eff6ff;
-      color: #2563eb;
+      background: rgba(37, 99, 235, 0.15);
+      color: #60a5fa;
+      border: 1px solid rgba(37, 99, 235, 0.3);
       border-radius: 2rem;
       font-size: 0.875rem;
       font-weight: 600;
@@ -667,23 +668,27 @@
   }
 
   &:nth-child(2) .step-tags .tag {
-    background: #fef2f2;
-    color: #dc2626;
+    background: rgba(220, 38, 38, 0.15);
+    color: #f87171;
+    border-color: rgba(220, 38, 38, 0.3);
   }
 
   &:nth-child(3) .step-tags .tag {
-    background: #f0fdf4;
-    color: #16a34a;
+    background: rgba(22, 163, 74, 0.15);
+    color: #4ade80;
+    border-color: rgba(22, 163, 74, 0.3);
   }
 
   &:nth-child(4) .step-tags .tag {
-    background: #eff6ff;
-    color: #2563eb;
+    background: rgba(37, 99, 235, 0.15);
+    color: #60a5fa;
+    border-color: rgba(37, 99, 235, 0.3);
   }
 
   &:nth-child(5) .step-tags .tag {
-    background: #fef2f2;
-    color: #dc2626;
+    background: rgba(220, 38, 38, 0.15);
+    color: #f87171;
+    border-color: rgba(220, 38, 38, 0.3);
   }
 }
 
@@ -890,9 +895,17 @@
 
 .footer-content {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 3rem;
   margin-bottom: 3rem;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .footer-section {
