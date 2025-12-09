@@ -19,7 +19,7 @@
   position: relative;
 
   &:hover {
-    background: rgba(0, 0, 0, 0.05);
+    background: var(--black-alpha-05);
   }
 
   @media (max-width: 768px) {
@@ -29,7 +29,7 @@
   .hamburger-line {
     width: 100%;
     height: 3px;
-    background: #1a202c;
+    background: var(--gray-900);
     border-radius: 2px;
     transition: all 0.3s ease;
     transform-origin: center;
@@ -61,7 +61,7 @@
   left: 0;
   width: 100%;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--overlay);
   z-index: 9999; // Logo abaixo do drawer
   animation: fadeIn 0.3s ease;
 
@@ -81,7 +81,7 @@
   height: 100vh; // Altura total da viewport
   max-height: 100vh;
   background: white;
-  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: -2px 0 10px var(--black-alpha-10);
   z-index: 10000; // Z-index muito alto para ficar acima de tudo
   transition: right 0.3s ease;
   overflow-y: auto;
@@ -102,8 +102,8 @@
   align-items: center;
   gap: 1rem;
   padding: 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  border-bottom: 1px solid var(--gray-200);
+  background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
   color: white;
 
   .mobile-avatar {
@@ -126,7 +126,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(255, 255, 255, 0.2);
+      background: var(--white-alpha-20);
       font-size: 1.25rem;
       font-weight: 700;
     }
@@ -159,7 +159,7 @@
   .menu-divider {
     margin: 0.5rem 0;
     border: none;
-    border-top: 1px solid #e5e7eb;
+    border-top: 1px solid var(--gray-200);
   }
 
   .mobile-menu-item {
@@ -172,22 +172,22 @@
     border: none;
     text-align: left;
     font-size: 1rem;
-    color: #1a202c;
+    color: var(--gray-900);
     cursor: pointer;
     transition: all 0.2s;
     text-decoration: none;
 
     &:hover {
-      background: #f3f4f6;
+      background: var(--gray-100);
     }
 
     &:active {
-      background: #e5e7eb;
+      background: var(--gray-200);
     }
 
     &.logout-item {
       color: white;
-      background: #dc2626;
+      background: var(--danger-600);
       font-weight: 600;
       margin: 0.5rem 1rem;
       padding: 0.875rem 1rem;
@@ -195,11 +195,11 @@
       width: calc(100% - 2rem);
 
       &:hover {
-        background: #b91c1c;
+        background: var(--danger-700);
       }
 
       &:active {
-        background: #991b1b;
+        background: var(--danger-800);
       }
     }
 
@@ -222,59 +222,5 @@
   }
   to {
     opacity: 1;
-  }
-}
-
-// Dark Mode
-:host-context(html[data-theme="dark"]),
-:host-context(html.dark) {
-  .hamburger-btn {
-    &:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    .hamburger-line {
-      background: #f9fafb;
-    }
-  }
-
-  .mobile-drawer {
-    background: #1f2937;
-    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.5);
-  }
-
-  .mobile-user-section {
-    border-color: #374151;
-  }
-
-  .mobile-menu-items {
-    .menu-divider {
-      border-color: #374151;
-    }
-
-    .mobile-menu-item {
-      color: #f9fafb;
-
-      &:hover {
-        background: #374151;
-      }
-
-      &:active {
-        background: #4b5563;
-      }
-
-      &.logout-item {
-        color: white;
-        background: #dc2626;
-
-        &:hover {
-          background: #b91c1c;
-        }
-
-        &:active {
-          background: #991b1b;
-        }
-      }
-    }
   }
 }

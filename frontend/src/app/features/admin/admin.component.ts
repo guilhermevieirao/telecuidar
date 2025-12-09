@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgIf, NgFor } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -11,7 +11,6 @@ import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
 import { PagedResult } from '../../shared/models/paged-result.model';
 import { NotificationsComponent } from '../notifications/notifications.component';
-import { ThemeToggleComponent } from '../../shared/components/atoms/theme-toggle/theme-toggle.component';
 import { MobileMenu, MenuItem } from '../../shared/components/organisms/mobile-menu/mobile-menu';
 import { FilesComponent } from '../files/files.component';
 import { ReportsComponent } from '../reports/reports.component';
@@ -20,6 +19,12 @@ import { SpecialtiesComponent } from './specialties.component';
 import { SchedulesComponent } from './schedules.component';
 import { AdminBlocksComponent } from '../schedule-blocks/admin-blocks.component';
 import { environment } from '../../../environments/environment';
+import { TabsComponent, Tab } from '../../shared/components/organisms/tabs/tabs.component';
+import { StatCardComponent } from '../../shared/components/molecules/stat-card/stat-card.component';
+import { DataTableComponent, TableColumn, TableAction } from '../../shared/components/organisms/data-table/data-table.component';
+import { SearchBarComponent } from '../../shared/components/molecules/search-bar/search-bar.component';
+import { ButtonComponent } from '../../shared/components/atoms/button/button.component';
+import { BadgeComponent } from '../../shared/components/atoms/badge/badge.component';
 
 interface User {
   id: number;
@@ -78,6 +83,8 @@ interface Statistics {
   standalone: true,
   imports: [
     CommonModule,
+    NgIf,
+    NgFor,
     ReactiveFormsModule,
     FormsModule,
     ConfirmModalComponent,
@@ -85,14 +92,18 @@ interface Statistics {
     BaseChartDirective,
     PaginationComponent,
     NotificationsComponent,
-    ThemeToggleComponent,
     MobileMenu,
     FilesComponent,
     ReportsComponent,
     ProfileComponent,
     SpecialtiesComponent,
     SchedulesComponent,
-    AdminBlocksComponent
+    AdminBlocksComponent,
+    TabsComponent,
+    StatCardComponent,
+    SearchBarComponent,
+    ButtonComponent,
+    BadgeComponent
   ],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss']
@@ -101,6 +112,20 @@ export class AdminComponent implements OnInit {
   activeTab: 'dashboard' | 'users' | 'audit-logs' | 'invitations' | 'files' | 'reports' | 'profile' | 'specialties' | 'schedules' | 'blocks' = 'dashboard';
   menuItems: MenuItem[] = [];
   adminUser: any = null;
+  
+  // Admin Tabs for navigation
+  adminTabs: Tab[] = [
+    { id: 'dashboard', label: 'Painel', icon: '📊' },
+    { id: 'users', label: 'Usuários', icon: '👥' },
+    { id: 'blocks', label: 'Bloqueios de Agenda', icon: '⛔' },
+    { id: 'audit-logs', label: 'Logs de Auditoria', icon: '📋' },
+    { id: 'invitations', label: 'Convites', icon: '✉️' },
+    { id: 'files', label: 'Arquivos', icon: '📁' },
+    { id: 'reports', label: 'Relatórios', icon: '📈' },
+    { id: 'specialties', label: 'Especialidades', icon: '🩺' },
+    { id: 'schedules', label: 'Agendas', icon: '📅' },
+    { id: 'profile', label: 'Perfil', icon: '👤' }
+  ];
   
   // Dashboard
   statistics: Statistics | null = null;
@@ -159,13 +184,26 @@ export class AdminComponent implements OnInit {
   loading = false;
   currentUser: any = null;
 
+  // Helper to get CSS variable colors
+  private getCssColor(variable: string): string {
+    return getComputedStyle(document.documentElement).getPropertyValue(variable).trim();
+  }
+
   // Chart.js Configuration
   public userRolesChartData: ChartData<'doughnut'> = {
     labels: ['Pacientes', 'Profissionais', 'Administradores'],
     datasets: [{
       data: [0, 0, 0],
-      backgroundColor: ['#10b981', '#8b5cf6', '#ef4444'],
-      hoverBackgroundColor: ['#059669', '#7c3aed', '#dc2626']
+      backgroundColor: [
+        this.getCssColor('--success-500') || 'rgb(16, 185, 129)',
+        this.getCssColor('--purple-500') || 'rgb(139, 92, 246)',
+        this.getCssColor('--danger-500') || 'rgb(239, 68, 68)'
+      ],
+      hoverBackgroundColor: [
+        this.getCssColor('--success-600') || 'rgb(5, 150, 105)',
+        this.getCssColor('--purple-600') || 'rgb(124, 58, 237)',
+        this.getCssColor('--danger-600') || 'rgb(220, 38, 38)'
+      ]
     }]
   };
 
@@ -201,8 +239,8 @@ export class AdminComponent implements OnInit {
     datasets: [{
       label: 'Cadastros',
       data: [],
-      borderColor: '#3b82f6',
-      backgroundColor: 'rgba(59, 130, 246, 0.1)',
+      borderColor: this.getCssColor('--primary-500') || 'rgb(59, 130, 246)',
+      backgroundColor: this.getCssColor('--primary-500-alpha-10') || 'rgba(59, 130, 246, 0.1)',
       tension: 0.4,
       fill: true
     }]
@@ -238,8 +276,14 @@ export class AdminComponent implements OnInit {
     datasets: [{
       label: 'Usuários',
       data: [0, 0],
-      backgroundColor: ['#10b981', '#ef4444'],
-      borderColor: ['#059669', '#dc2626'],
+      backgroundColor: [
+        this.getCssColor('--success-500') || 'rgb(16, 185, 129)',
+        this.getCssColor('--danger-500') || 'rgb(239, 68, 68)'
+      ],
+      borderColor: [
+        this.getCssColor('--success-600') || 'rgb(5, 150, 105)',
+        this.getCssColor('--danger-600') || 'rgb(220, 38, 38)'
+      ],
       borderWidth: 1
     }]
   };
@@ -384,8 +428,8 @@ export class AdminComponent implements OnInit {
     ];
   }
 
-  setActiveTab(tab: 'dashboard' | 'users' | 'audit-logs' | 'invitations' | 'files' | 'reports' | 'profile' | 'specialties' | 'schedules' | 'blocks'): void {
-    this.activeTab = tab;
+  setActiveTab(tab: string): void {
+    this.activeTab = tab as any;
     
     if (tab === 'invitations') {
       this.loadInvitations();
@@ -499,8 +543,8 @@ export class AdminComponent implements OnInit {
     this.loadUsers();
   }
 
-  onSearchChange(event: Event): void {
-    this.searchTerm = (event.target as HTMLInputElement).value;
+  onSearchChange(searchValue: string): void {
+    this.searchTerm = searchValue;
     this.currentUsersPage = 1; // Reset para primeira página ao buscar
     this.loadUsers();
   }
@@ -527,6 +571,15 @@ export class AdminComponent implements OnInit {
       case 2: return 'badge-profissional';
       case 3: return 'badge-admin';
       default: return '';
+    }
+  }
+
+  getRoleBadgeVariant(role: number): 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' {
+    switch (role) {
+      case 1: return 'success';      // Paciente - verde
+      case 2: return 'primary';      // Profissional - azul
+      case 3: return 'danger';       // Admin - vermelho
+      default: return 'secondary';
     }
   }
 
@@ -874,6 +927,12 @@ export class AdminComponent implements OnInit {
     return 'bg-yellow-100 text-yellow-800';
   }
 
+  getInvitationStatusVariant(invitation: Invitation): 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' {
+    if (invitation.isUsed) return 'success';
+    if (this.isInvitationExpired(invitation.expiresAt)) return 'danger';
+    return 'warning';
+  }
+
   getInvitationStatusText(invitation: Invitation): string {
     if (invitation.isUsed) return 'Utilizado';
     if (this.isInvitationExpired(invitation.expiresAt)) return 'Expirado';
@@ -987,8 +1046,16 @@ export class AdminComponent implements OnInit {
           this.statistics.totalProfissionais,
           this.statistics.totalAdministradores
         ],
-        backgroundColor: ['#10b981', '#8b5cf6', '#ef4444'],
-        hoverBackgroundColor: ['#059669', '#7c3aed', '#dc2626']
+        backgroundColor: [
+          this.getCssColor('--success-500') || 'rgb(16, 185, 129)',
+          this.getCssColor('--purple-500') || 'rgb(139, 92, 246)',
+          this.getCssColor('--danger-500') || 'rgb(239, 68, 68)'
+        ],
+        hoverBackgroundColor: [
+          this.getCssColor('--success-600') || 'rgb(5, 150, 105)',
+          this.getCssColor('--purple-600') || 'rgb(124, 58, 237)',
+          this.getCssColor('--danger-600') || 'rgb(220, 38, 38)'
+        ]
       }]
     };
 
@@ -998,8 +1065,14 @@ export class AdminComponent implements OnInit {
       datasets: [{
         label: 'Usuários',
         data: [this.statistics.activeUsers, this.statistics.inactiveUsers],
-        backgroundColor: ['#10b981', '#ef4444'],
-        borderColor: ['#059669', '#dc2626'],
+        backgroundColor: [
+          this.getCssColor('--success-500') || 'rgb(16, 185, 129)',
+          this.getCssColor('--danger-500') || 'rgb(239, 68, 68)'
+        ],
+        borderColor: [
+          this.getCssColor('--success-600') || 'rgb(5, 150, 105)',
+          this.getCssColor('--danger-600') || 'rgb(220, 38, 38)'
+        ],
         borderWidth: 1
       }]
     };
@@ -1011,8 +1084,8 @@ export class AdminComponent implements OnInit {
       datasets: [{
         label: 'Cadastros',
         data: last7Days.map(d => Math.floor(Math.random() * 5)), // Simular dados - substituir com dados reais
-        borderColor: '#3b82f6',
-        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+        borderColor: this.getCssColor('--primary-500') || 'rgb(59, 130, 246)',
+        backgroundColor: 'var(--primary-500-alpha-10)',
         tension: 0.4,
         fill: true
       }]

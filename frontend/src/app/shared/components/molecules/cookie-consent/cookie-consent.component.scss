@@ -4,9 +4,9 @@
   left: 0;
   right: 0;
   z-index: 9999;
-  background: white;
-  border-top: 3px solid #2563eb;
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+  background: var(--white);
+  border-top: 3px solid var(--primary-600);
+  box-shadow: 0 -4px 20px var(--black-alpha-15);
   animation: slideUp 0.4s ease-out;
 }
 
@@ -37,19 +37,19 @@
   h3 {
     font-size: 1.125rem;
     font-weight: 700;
-    color: #1a202c;
+    color: var(--text-primary);
     margin: 0 0 0.5rem 0;
   }
 
   p {
     font-size: 0.9rem;
-    color: #4a5568;
+    color: var(--gray-600);
     margin: 0;
     line-height: 1.6;
   }
 
   .cookie-link {
-    color: #2563eb;
+    color: var(--primary-600);
     font-weight: 600;
     text-decoration: none;
     
@@ -75,22 +75,22 @@
   }
 
   .btn-accept {
-    background: #2563eb;
-    color: white;
+    background: var(--primary-600);
+    color: var(--white);
 
     &:hover {
-      background: #1d4ed8;
+      background: var(--primary-700);
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+      box-shadow: 0 4px 12px var(--primary-600-alpha-30);
     }
   }
 
   .btn-reject {
-    background: #f3f4f6;
-    color: #4b5563;
+    background: var(--gray-100);
+    color: var(--gray-600);
 
     &:hover {
-      background: #e5e7eb;
+      background: var(--gray-200);
     }
   }
 }
@@ -113,38 +113,6 @@
 
     button {
       width: 100%;
-    }
-  }
-}
-
-/* Dark Mode */
-:host-context(html[data-theme="dark"]),
-:host-context(html.dark) {
-  .cookie-banner {
-    background: #1f2937;
-    border-top-color: #3b82f6;
-  }
-
-  .cookie-text {
-    h3 {
-      color: #f9fafb;
-    }
-
-    p {
-      color: #d1d5db;
-    }
-
-    .cookie-link {
-      color: #60a5fa;
-    }
-  }
-
-  .cookie-actions .btn-reject {
-    background: #374151;
-    color: #d1d5db;
-
-    &:hover {
-      background: #4b5563;
     }
   }
 }

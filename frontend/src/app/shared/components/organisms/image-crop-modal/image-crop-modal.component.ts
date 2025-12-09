@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+﻿import { Component, EventEmitter, Input, Output, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 interface CropArea {
@@ -94,7 +94,9 @@ export class ImageCropModalComponent implements OnInit, AfterViewInit {
     this.ctx.drawImage(this.image, 0, 0, canvas.width, canvas.height);
     
     // Draw overlay (darken area outside crop)
-    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+    // Use CSS variable or fallback to black with 50% opacity
+    const overlay = getComputedStyle(document.documentElement).getPropertyValue('--black-alpha-50').trim() || 'rgba(0, 0, 0, 0.5)';
+    this.ctx.fillStyle = overlay;
     this.ctx.fillRect(0, 0, canvas.width, canvas.height);
     
     // Clear crop area
@@ -119,7 +121,7 @@ export class ImageCropModalComponent implements OnInit, AfterViewInit {
     );
     
     // Draw crop border
-    this.ctx.strokeStyle = '#2563eb';
+    this.ctx.strokeStyle = 'var(--primary-700)';
     this.ctx.lineWidth = 2;
     this.ctx.strokeRect(
       this.cropArea.x,
@@ -142,7 +144,7 @@ export class ImageCropModalComponent implements OnInit, AfterViewInit {
     ];
 
     handles.forEach(handle => {
-      this.ctx.fillStyle = '#2563eb';
+      this.ctx.fillStyle = 'var(--primary-700)';
       this.ctx.fillRect(
         handle.x - handleSize / 2,
         handle.y - handleSize / 2,

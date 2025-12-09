@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgIf, NgFor } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { BreadcrumbComponent } from '../../shared/components/molecules/breadcrumb/breadcrumb.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
-import { ThemeToggleComponent } from '../../shared/components/atoms/theme-toggle/theme-toggle.component';
 import { MobileMenu, MenuItem } from '../../shared/components/organisms/mobile-menu/mobile-menu';
 import {
   AppointmentService,
@@ -18,7 +17,7 @@ import {
 @Component({
   selector: 'app-booking',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, BreadcrumbComponent, NotificationsComponent, ThemeToggleComponent, MobileMenu],
+  imports: [CommonModule, NgIf, NgFor, FormsModule, RouterLink, BreadcrumbComponent, NotificationsComponent, MobileMenu],
   templateUrl: './booking.component.html',
   styleUrls: ['./booking.component.scss']
 })

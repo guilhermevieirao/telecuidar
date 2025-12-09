@@ -144,6 +144,18 @@ config.roomPasswordNumberOfDigits = false;
 // Advanced.
 //
 
+// Transcriptions (subtitles and buttons can be configured in interface_config)
+config.transcription = {
+    enabled: false,
+    disableClosedCaptions: true,
+    translationLanguages: [],
+    translationLanguagesHead: ['en'],
+    useAppLanguage: true,
+    preferredLanguage: 'en-US',
+    disableStartForAll: false,
+    autoCaptionOnRecord: false,
+};
+
 // Dynamic branding
 // Deployment information.
 //
@@ -178,6 +190,7 @@ config.disablePolls = false;
 
 // Configure toolbar buttons
 // Hides the buttons at pre-join screen
+config.hiddenPremeetingButtons = [ 'true' ];
 // Configure remote participant video menu
 config.remoteVideoMenu = {
     disabled: false,

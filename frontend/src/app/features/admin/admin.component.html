@@ -9,7 +9,6 @@
         </div>
         <!-- Desktop Navigation -->
         <div class="flex items-center gap-4 desktop-only">
-          <app-theme-toggle></app-theme-toggle>
           <app-notifications></app-notifications>
           <button
             (click)="setActiveTab('profile')"
@@ -28,7 +27,6 @@
 
         <!-- Mobile Navigation -->
         <div class="mobile-nav-section">
-          <app-theme-toggle></app-theme-toggle>
           <app-notifications></app-notifications>
           <app-mobile-menu 
             [items]="menuItems"
@@ -44,67 +42,12 @@
   <!-- Navigation Tabs -->
   <div class="bg-white border-b border-gray-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <nav class="flex space-x-8 desktop-only" aria-label="Tabs">
-        <button
-          (click)="setActiveTab('dashboard')"
-          [class]="activeTab === 'dashboard' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-          class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
-          📊 Painel
-        </button>
-        <button
-          (click)="setActiveTab('users')"
-          [class]="activeTab === 'users' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-          class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
-          👥 Usuários
-        </button>
-        <button
-          (click)="setActiveTab('blocks')"
-          [class]="activeTab === 'blocks' ? 'border-orange-500 text-orange-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-          class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
-          ⛔ Bloqueios de Agenda
-        </button>
-        <button
-          (click)="setActiveTab('audit-logs')"
-          [class]="activeTab === 'audit-logs' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-          class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
-          📋 Logs de Auditoria
-        </button>
-        <button
-          (click)="setActiveTab('invitations')"
-          [class]="activeTab === 'invitations' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-          class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
-          ✉️ Convites
-        </button>
-        <button
-          (click)="setActiveTab('files')"
-          [class]="activeTab === 'files' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-          class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
-          📁 Arquivos
-        </button>
-        <button
-          (click)="setActiveTab('reports')"
-          [class]="activeTab === 'reports' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-          class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
-          📈 Relatórios
-        </button>
-        <button
-          (click)="setActiveTab('specialties')"
-          [class]="activeTab === 'specialties' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-          class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
-          🩺 Especialidades
-        </button>
-        <button
-          (click)="setActiveTab('schedules')"
-          [class]="activeTab === 'schedules' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-          class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
-          📅 Agendas
-        </button>
-        <button
-          (click)="setActiveTab('profile')"
-          [class]="activeTab === 'profile' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-          class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
-          👤 Perfil
-        </button>
+      <nav class="desktop-only">
+        <app-tabs
+          [tabs]="adminTabs"
+          [activeTab]="activeTab"
+          (tabChange)="setActiveTab($event)"
+        ></app-tabs>
       </nav>
     </div>
   </div>
@@ -116,80 +59,39 @@
     <div *ngIf="activeTab === 'dashboard'" class="space-y-6">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <!-- Total Users Card -->
-        <div class="bg-white rounded-lg shadow p-6">
-          <div class="flex items-center">
-            <div class="flex-shrink-0 bg-blue-500 rounded-md p-3">
-              <span class="text-2xl">👥</span>
-            </div>
-            <div class="ml-5 w-0 flex-1">
-              <dl>
-                <dt class="text-sm font-medium text-gray-500 truncate">Total de Usuários</dt>
-                <dd class="text-3xl font-semibold text-gray-900">{{ statistics?.totalUsers || 0 }}</dd>
-              </dl>
-            </div>
-          </div>
-        </div>
+        <app-stat-card
+          [data]="{label: 'Total de Usuários', value: statistics?.totalUsers || 0, icon: '👥'}"
+        ></app-stat-card>
 
         <!-- Pacientes Card -->
-        <div class="bg-white rounded-lg shadow p-6">
-          <div class="flex items-center">
-            <div class="flex-shrink-0 bg-green-500 rounded-md p-3">
-              <span class="text-2xl">🏥</span>
-            </div>
-            <div class="ml-5 w-0 flex-1">
-              <dl>
-                <dt class="text-sm font-medium text-gray-500 truncate">Pacientes</dt>
-                <dd class="text-3xl font-semibold text-gray-900">{{ statistics?.totalPacientes || 0 }}</dd>
-              </dl>
-            </div>
-          </div>
-        </div>
+        <app-stat-card
+          [data]="{label: 'Pacientes', value: statistics?.totalPacientes || 0, icon: '🏥'}"
+        ></app-stat-card>
 
         <!-- Profissionais Card -->
-        <div class="bg-white rounded-lg shadow p-6">
-          <div class="flex items-center">
-            <div class="flex-shrink-0 bg-purple-500 rounded-md p-3">
-              <span class="text-2xl">👨‍⚕️</span>
-            </div>
-            <div class="ml-5 w-0 flex-1">
-              <dl>
-                <dt class="text-sm font-medium text-gray-500 truncate">Profissionais</dt>
-                <dd class="text-3xl font-semibold text-gray-900">{{ statistics?.totalProfissionais || 0 }}</dd>
-              </dl>
-            </div>
-          </div>
-        </div>
+        <app-stat-card
+          [data]="{label: 'Profissionais', value: statistics?.totalProfissionais || 0, icon: '👨‍⚕️'}"
+        ></app-stat-card>
 
         <!-- Admins Card -->
-        <div class="bg-white rounded-lg shadow p-6">
-          <div class="flex items-center">
-            <div class="flex-shrink-0 bg-red-500 rounded-md p-3">
-              <span class="text-2xl">🔑</span>
-            </div>
-            <div class="ml-5 w-0 flex-1">
-              <dl>
-                <dt class="text-sm font-medium text-gray-500 truncate">Administradores</dt>
-                <dd class="text-3xl font-semibold text-gray-900">{{ statistics?.totalAdministradores || 0 }}</dd>
-              </dl>
-            </div>
-          </div>
-        </div>
+        <app-stat-card
+          [data]="{label: 'Administradores', value: statistics?.totalAdministradores || 0, icon: '🔑'}"
+        ></app-stat-card>
       </div>
 
       <!-- Activity Stats -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-white rounded-lg shadow p-6">
-          <h3 class="text-lg font-medium text-gray-900 mb-2">Usuários Ativos</h3>
-          <p class="text-3xl font-bold text-green-600">{{ statistics?.activeUsers || 0 }}</p>
-        </div>
-        <div class="bg-white rounded-lg shadow p-6">
-          <h3 class="text-lg font-medium text-gray-900 mb-2">Cadastros Esta Semana</h3>
-          <p class="text-3xl font-bold text-blue-600">{{ statistics?.usersThisWeek || 0 }}</p>
-        </div>
-        <div class="bg-white rounded-lg shadow p-6">
-          <h3 class="text-lg font-medium text-gray-900 mb-2">Cadastros Este Mês</h3>
-          <p class="text-3xl font-bold text-purple-600">{{ statistics?.usersThisMonth || 0 }}</p>
-        </div>
+        <app-stat-card
+          [data]="{label: 'Usuários Ativos', value: statistics?.activeUsers || 0}"
+        ></app-stat-card>
+        
+        <app-stat-card
+          [data]="{label: 'Cadastros Esta Semana', value: statistics?.usersThisWeek || 0}"
+        ></app-stat-card>
+        
+        <app-stat-card
+          [data]="{label: 'Cadastros Este Mês', value: statistics?.usersThisMonth || 0}"
+        ></app-stat-card>
       </div>
 
       <!-- Charts Section -->
@@ -238,11 +140,11 @@
       <div class="bg-white rounded-lg shadow p-6">
         <div class="flex flex-col md:flex-row gap-4 justify-between items-center">
           <div class="flex-1 flex gap-4">
-            <input
-              type="text"
+            <app-search-bar
               placeholder="Buscar por ID, nome ou email..."
-              (input)="onSearchChange($event)"
-              class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              (search)="onSearchChange($event)"
+              class="flex-1">
+            </app-search-bar>
             
             <select
               (change)="onRoleFilterChange($any($event.target).value === 'all' ? null : +$any($event.target).value)"
@@ -254,12 +156,11 @@
             </select>
           </div>
 
-          <button
+          <app-button
             (click)="openCreateUserModal()"
-            class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
-            <span class="text-xl">➕</span>
-            Criar Usuário
-          </button>
+            variant="primary">
+            ➕ Criar Usuário
+          </app-button>
         </div>
       </div>
 
@@ -308,14 +209,14 @@
                   <div class="text-sm text-gray-500">{{ user.email }}</div>
                 </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <span [class]="'px-2 inline-flex text-xs leading-5 font-semibold rounded-full ' + getRoleBadgeClass(user.role)">
+                <app-badge [variant]="getRoleBadgeVariant(user.role)">
                   {{ getRoleName(user.role) }}
-                </span>
+                </app-badge>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <span [class]="user.isActive ? 'text-green-600' : 'text-red-600'" class="text-sm">
+                <app-badge [variant]="user.isActive ? 'success' : 'danger'">
                   {{ user.isActive ? 'Ativo' : 'Inativo' }}
-                </span>
+                </app-badge>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm">
                 <button 
@@ -448,14 +349,14 @@
                   </div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                  <app-badge variant="primary">
                     {{ invitation.roleName }}
-                  </span>
+                  </app-badge>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <span [class]="'px-2 inline-flex text-xs leading-5 font-semibold rounded-full ' + getInvitationStatusClass(invitation)">
+                  <app-badge [variant]="getInvitationStatusVariant(invitation)">
                     {{ getInvitationStatusText(invitation) }}
-                  </span>
+                  </app-badge>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ invitation.expiresAt | date:'dd/MM/yyyy HH:mm' }}
@@ -482,11 +383,12 @@
                   <div class="flex flex-col items-center gap-2">
                     <span class="text-3xl">✉️</span>
                     <p>Nenhum convite criado ainda</p>
-                    <button
+                    <app-button
                       (click)="openCreateUserModal()"
-                      class="mt-2 text-blue-600 hover:text-blue-800 font-medium">
+                      variant="outline"
+                      class="mt-2">
                       Criar primeiro convite
-                    </button>
+                    </app-button>
                   </div>
                 </td>
               </tr>

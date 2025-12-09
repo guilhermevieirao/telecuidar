@@ -1,4 +1,4 @@
-<div class="medical-record-container" [ngClass]="['mode-' + tabMode, isDarkTheme ? 'theme-dark' : 'theme-light']">
+<div class="medical-record-container" [ngClass]="'mode-' + tabMode">
   <!-- Conteúdo do prontuário -->
   <div class="medical-record-content" *ngIf="tabMode !== 'hidden'" #contentToPrint>
     <!-- Header -->
@@ -876,7 +876,6 @@
 <!-- Botão flutuante para mostrar painel quando oculto -->
 <button 
   class="btn-show-panel"
-  [class.theme-light]="!isDarkTheme"
   *ngIf="tabMode === 'hidden'" 
   (click)="cycleTabMode()"
   title="Mostrar prontuário">

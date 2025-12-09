@@ -17,10 +17,10 @@
       top: 0;
       bottom: 0;
       width: 450px;
-      background: rgba(26, 26, 26, 0.98);
+      background: var(--gray-900-alpha-95);
       backdrop-filter: blur(20px);
-      border-left: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: -8px 0 32px rgba(0, 0, 0, 0.5);
+      border-left: 1px solid var(--white-alpha-10);
+      box-shadow: -8px 0 32px var(--black-alpha-50);
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -34,7 +34,7 @@
     .medical-record-content {
       position: fixed;
       inset: 0;
-      background: rgba(26, 26, 26, 0.98);
+      background: var(--gray-900-alpha-95);
       backdrop-filter: blur(20px);
       display: flex;
       flex-direction: column;
@@ -51,7 +51,7 @@
   }
 }
 
-// Animações
+// Anima��es
 @keyframes slideInRight {
   from {
     transform: translateX(100%);
@@ -70,7 +70,7 @@
   }
 }
 
-// Conteúdo do prontuário
+// Conte�do do prontu�rio
 .medical-record-content {
   display: flex;
   flex-direction: column;
@@ -85,10 +85,10 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px 24px;
-  background: rgba(31, 31, 31, 0.8);
+  background: var(--gray-800-alpha-40);
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  color: white;
+  border-bottom: 1px solid var(--white-alpha-08);
+  color: var(--text-inverse);
   flex-shrink: 0;
 
   h2 {
@@ -96,7 +96,7 @@
     font-size: 18px;
     font-weight: 600;
     letter-spacing: -0.01em;
-    color: rgba(255, 255, 255, 0.95);
+    color: var(--white-alpha-95);
   }
 
   .header-actions {
@@ -106,9 +106,9 @@
 }
 
 .btn-action {
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--white-alpha-08);
+  color: var(--white-alpha-90);
+  border: 1px solid var(--white-alpha-12);
   padding: 8px 14px;
   border-radius: 8px;
   font-size: 15px;
@@ -116,8 +116,8 @@
   transition: all 0.2s ease;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.12);
-    border-color: rgba(255, 255, 255, 0.2);
+    background: var(--white-alpha-12);
+    border-color: var(--white-alpha-20);
     transform: translateY(-1px);
   }
 
@@ -134,13 +134,13 @@
     position: relative;
     
     &.active {
-      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-      border-color: #ef4444;
+      background: linear-gradient(135deg, var(--danger-500) 0%, var(--danger-600) 100%);
+      border-color: var(--danger-500);
       animation: pulse-voice 1.5s ease-in-out infinite;
-      box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+      box-shadow: 0 0 20px var(--danger-500-alpha-50);
       
       &:hover {
-        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+        background: linear-gradient(135deg, var(--danger-600) 0%, var(--danger-700) 100%);
       }
     }
   }
@@ -148,18 +148,18 @@
 
 @keyframes pulse-voice {
   0%, 100% {
-    box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+    box-shadow: 0 0 20px var(--danger-500-alpha-50);
   }
   50% {
-    box-shadow: 0 0 30px rgba(239, 68, 68, 0.8);
+    box-shadow: 0 0 30px var(--danger-500-alpha-80);
   }
 }
 
-// Navegação de tabs
+// Navega�o de tabs
 .tabs-navigation {
   display: flex;
-  background: rgba(31, 31, 31, 0.6);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--gray-800-alpha-40);
+  border-bottom: 1px solid var(--white-alpha-08);
   flex-shrink: 0;
   overflow-x: auto;
   padding: 0 8px;
@@ -169,16 +169,16 @@
   }
 
   &::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--white-alpha-05);
     border-radius: 4px;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.3);
+    background: var(--white-alpha-30);
     border-radius: 4px;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.4);
+      background: var(--white-alpha-40);
     }
   }
 }
@@ -190,7 +190,7 @@
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--white-alpha-60);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -211,9 +211,9 @@
   }
 
   &:hover {
-    background: rgba(255, 255, 255, 0.05);
-    color: rgba(255, 255, 255, 0.9);
-    border-bottom-color: rgba(255, 255, 255, 0.2);
+    background: var(--white-alpha-05);
+    color: var(--white-alpha-90);
+    border-bottom-color: var(--white-alpha-20);
 
     .tab-icon {
       transform: scale(1.08);
@@ -221,9 +221,9 @@
   }
 
   &.active {
-    color: rgba(255, 255, 255, 0.95);
-    background: rgba(255, 255, 255, 0.08);
-    border-bottom-color: #667eea;
+    color: var(--white-alpha-95);
+    background: var(--white-alpha-08);
+    border-bottom-color: var(--primary-500);
 
     &::after {
       content: '';
@@ -232,33 +232,33 @@
       left: 0;
       right: 0;
       height: 2px;
-      background: #667eea;
-      box-shadow: 0 0 8px rgba(102, 126, 234, 0.5);
+      background: var(--primary-500);
+      box-shadow: 0 0 8px var(--indigo-500-alpha-50);
     }
   }
 }
 
-// Conteúdo das tabs
+// Conte�do das tabs
 .tabs-content {
   flex: 1;
   overflow-y: auto;
   padding: 24px;
-  background: rgba(20, 20, 20, 0.4);
+  background: var(--gray-900-alpha-40);
 
   &::-webkit-scrollbar {
     width: 8px;
   }
 
   &::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--white-alpha-03);
   }
 
   &::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.15);
+    background: var(--white-alpha-15);
     border-radius: 4px;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.25);
+      background: var(--white-alpha-25);
     }
   }
 }
@@ -274,13 +274,13 @@
     margin: 0 0 8px 0;
     font-size: 18px;
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.95);
+    color: var(--white-alpha-95);
     letter-spacing: -0.01em;
   }
 
   .panel-description {
     margin: 0;
-    color: rgba(255, 255, 255, 0.5);
+    color: var(--white-alpha-50);
     font-size: 14px;
   }
 
@@ -292,19 +292,19 @@
 
   .btn-cadsus {
     padding: 10px 20px;
-    background: linear-gradient(135deg, #4CAF50, #45a049);
-    color: white;
+    background: linear-gradient(135deg, var(--success-500), var(--success-700));
+    color: var(--text-inverse);
     border: none;
     border-radius: 8px;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+    box-shadow: 0 2px 8px var(--md-green-alpha-30);
 
     &:hover:not(:disabled) {
-      background: linear-gradient(135deg, #45a049, #3d8b40);
-      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+      background: linear-gradient(135deg, var(--success-700), var(--success-700));
+      box-shadow: 0 4px 12px var(--md-green-alpha-40);
       transform: translateY(-2px);
     }
 
@@ -316,7 +316,7 @@
 
     &:active:not(:disabled) {
       transform: translateY(0);
-      box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);
+      box-shadow: 0 2px 4px var(--md-green-alpha-30);
     }
   }
 }
@@ -352,15 +352,15 @@
 }
 
 .error-message {
-  background: rgba(244, 67, 54, 0.15);
-  color: #ff5252;
-  border: 1px solid rgba(244, 67, 54, 0.3);
+  background: var(--danger-red-alpha-15);
+  color: var(--danger-500);
+  border: 1px solid var(--danger-red-alpha-30);
 }
 
 .success-message {
-  background: rgba(76, 175, 80, 0.15);
-  color: #4CAF50;
-  border: 1px solid rgba(76, 175, 80, 0.3);
+  background: var(--md-green-alpha-15);
+  color: var(--success-500);
+  border: 1px solid var(--md-green-alpha-30);
 }
 
 @keyframes slideIn {
@@ -374,7 +374,7 @@
   }
 }
 
-// Formulários
+// Formul�rios
 .form-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -393,7 +393,7 @@
 
   label {
     font-weight: 500;
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--white-alpha-70);
     font-size: 13px;
     letter-spacing: 0.01em;
   }
@@ -401,24 +401,24 @@
 
 .form-control {
   padding: 10px 14px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--white-alpha-10);
   border-radius: 8px;
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.9);
-  background: rgba(255, 255, 255, 0.05);
+  color: var(--white-alpha-90);
+  background: var(--white-alpha-05);
   backdrop-filter: blur(10px);
   transition: all 0.2s ease;
   font-family: inherit;
 
   &:focus {
     outline: none;
-    border-color: #667eea;
-    background: rgba(255, 255, 255, 0.08);
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+    border-color: var(--primary-500);
+    background: var(--white-alpha-08);
+    box-shadow: 0 0 0 3px var(--indigo-500-alpha-15);
   }
 
   &::placeholder {
-    color: rgba(255, 255, 255, 0.3);
+    color: var(--white-alpha-30);
   }
 }
 
@@ -427,7 +427,7 @@ textarea.form-control {
   min-height: 80px;
 }
 
-// SOAP específico
+// SOAP espec�fico
 .soap-section {
   display: flex;
   flex-direction: column;
@@ -435,12 +435,12 @@ textarea.form-control {
 }
 
 .soap-item {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--white-alpha-05);
   backdrop-filter: blur(10px);
   padding: 20px;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--white-alpha-08);
+  box-shadow: 0 4px 16px var(--black-alpha-20);
 }
 
 .soap-header {
@@ -452,33 +452,33 @@ textarea.form-control {
   .soap-letter {
     width: 40px;
     height: 40px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: linear-gradient(135deg, var(--primary-500) 0%, var(--purple-700) 100%);
+    color: var(--text-inverse);
     border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 18px;
     font-weight: 600;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 12px var(--indigo-500-alpha-30);
   }
 
   label {
     font-size: 16px;
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.95);
+    color: var(--white-alpha-95);
     margin: 0;
   }
 }
 
 .soap-hint {
   margin: 0 0 12px 52px;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--white-alpha-50);
   font-size: 13px;
   font-style: italic;
 }
 
-// Biométricos
+// Biom�tricos
 .biometric-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -487,18 +487,18 @@ textarea.form-control {
 }
 
 .biometric-card {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--white-alpha-05);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--white-alpha-08);
   border-radius: 12px;
   padding: 20px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 16px var(--black-alpha-20);
   transition: all 0.2s ease;
 
   &:hover {
     transform: translateY(-2px);
-    border-color: rgba(255, 255, 255, 0.12);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    border-color: var(--white-alpha-12);
+    box-shadow: 0 6px 20px var(--black-alpha-30);
   }
 
   .card-header {
@@ -516,7 +516,7 @@ textarea.form-control {
         margin: 0;
         font-size: 13px;
         font-weight: 500;
-        color: rgba(255, 255, 255, 0.6);
+        color: var(--white-alpha-60);
         text-transform: uppercase;
         letter-spacing: 0.05em;
       }
@@ -525,7 +525,7 @@ textarea.form-control {
         margin: 4px 0 0 0;
         font-size: 24px;
         font-weight: 600;
-        color: rgba(255, 255, 255, 0.95);
+        color: var(--white-alpha-95);
       }
     }
   }
@@ -537,18 +537,18 @@ textarea.form-control {
 }
 
 .biometric-stats {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--white-alpha-05);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--white-alpha-08);
   padding: 20px;
   border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 16px var(--black-alpha-20);
 
   h4 {
     margin: 0 0 16px 0;
     font-size: 16px;
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.95);
+    color: var(--white-alpha-95);
   }
 
   .stats-grid {
@@ -561,28 +561,28 @@ textarea.form-control {
     display: flex;
     justify-content: space-between;
     padding: 12px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: var(--white-alpha-03);
+    border: 1px solid var(--white-alpha-06);
     border-radius: 8px;
 
     .stat-label {
       font-size: 13px;
-      color: rgba(255, 255, 255, 0.6);
+      color: var(--white-alpha-60);
       font-weight: 500;
     }
 
     .stat-value {
       font-size: 16px;
-      color: rgba(255, 255, 255, 0.95);
+      color: var(--white-alpha-95);
       font-weight: 600;
     }
   }
 }
 
-// Prescrição e Exames
+// Prescri��o e Exames
 .btn-add {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--success-500) 0%, var(--success-600) 100%);
+  color: var(--text-inverse);
   border: none;
   padding: 10px 20px;
   border-radius: 8px;
@@ -590,11 +590,11 @@ textarea.form-control {
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 2px 8px var(--success-600-alpha-30);
 
   &:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    box-shadow: 0 4px 12px var(--success-green-alpha-40);
   }
 
   &:active {
@@ -612,13 +612,13 @@ textarea.form-control {
 
 .medication-item,
 .exam-item {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--white-alpha-05);
   backdrop-filter: blur(10px);
   padding: 20px;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-left: 3px solid #667eea;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--white-alpha-08);
+  border-left: 3px solid var(--primary-500);
+  box-shadow: 0 4px 16px var(--black-alpha-20);
 }
 
 .medication-header,
@@ -632,14 +632,14 @@ textarea.form-control {
     margin: 0;
     font-size: 16px;
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.95);
+    color: var(--white-alpha-95);
   }
 }
 
 .btn-remove {
-  background: rgba(220, 38, 38, 0.1);
-  color: #ef4444;
-  border: 1px solid rgba(220, 38, 38, 0.2);
+  background: var(--danger-600-alpha-10);
+  color: var(--danger-500);
+  border: 1px solid var(--danger-600-alpha-20);
   padding: 6px 12px;
   border-radius: 6px;
   font-size: 15px;
@@ -647,8 +647,8 @@ textarea.form-control {
   transition: all 0.2s ease;
 
   &:hover {
-    background: rgba(220, 38, 38, 0.2);
-    border-color: rgba(220, 38, 38, 0.3);
+    background: var(--danger-600-alpha-20);
+    border-color: var(--danger-600-alpha-30);
   }
 
   &:active {
@@ -659,34 +659,34 @@ textarea.form-control {
 .empty-state {
   text-align: center;
   padding: 48px 24px;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--white-alpha-50);
 
   p {
     margin: 8px 0;
-    color: rgba(255, 255, 255, 0.6);
+    color: var(--white-alpha-60);
   }
 
   .hint {
     font-size: 13px;
-    color: rgba(255, 255, 255, 0.4);
+    color: var(--white-alpha-40);
   }
 }
 
-// Botão flutuante
+// Bot�o flutuante
 .btn-show-panel {
   position: fixed;
   bottom: 24px;
   right: 24px;
   width: 56px;
   height: 56px;
-  background: rgba(55, 65, 81, 0.95);
+  background: var(--gray-700-alpha-95);
   backdrop-filter: blur(10px);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--text-inverse);
+  border: 1px solid var(--white-alpha-20);
   border-radius: 12px;
   font-size: 24px;
   cursor: pointer;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 16px var(--black-alpha-30);
   transition: all 0.3s ease;
   z-index: 999;
   display: flex;
@@ -694,27 +694,14 @@ textarea.form-control {
   justify-content: center;
 
   &:hover {
-    background: rgba(17, 24, 39, 0.95);
-    border-color: rgba(255, 255, 255, 0.3);
+    background: var(--gray-900-alpha-95);
+    border-color: var(--white-alpha-30);
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 6px 20px var(--black-alpha-40);
   }
 
   &:active {
     transform: translateY(0);
-  }
-
-  &.theme-light {
-    background: rgba(255, 255, 255, 0.95);
-    color: #1e293b;
-    border: 1px solid rgba(0, 0, 0, 0.15);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-
-    &:hover {
-      background: rgba(248, 249, 250, 0.95);
-      border-color: rgba(0, 0, 0, 0.2);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-    }
   }
 }
 
@@ -784,219 +771,8 @@ textarea.form-control {
   }
 }
 
-// ========================================
-// TEMA CLARO
-// ========================================
-.medical-record-container.theme-light {
-  // Backgrounds principais
-  &.mode-sidebar .medical-record-content {
-    background: rgba(255, 255, 255, 0.98);
-    border-left: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: -8px 0 32px rgba(0, 0, 0, 0.15);
-  }
-
-  &.mode-fullscreen .medical-record-content {
-    background: rgba(255, 255, 255, 0.98);
-  }
-
-  // Header
-  .record-header {
-    background: rgba(248, 249, 250, 0.95);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-
-    h2 {
-      color: #1e293b;
-    }
-  }
-
-  .btn-action {
-    background: rgba(0, 0, 0, 0.05);
-    color: #1e293b;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-
-    &:hover {
-      background: rgba(0, 0, 0, 0.1);
-      border-color: rgba(0, 0, 0, 0.15);
-    }
-  }
-
-  // Tabs
-  .tabs-navigation {
-    background: rgba(248, 249, 250, 0.8);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-
-    &::-webkit-scrollbar-track {
-      background: rgba(0, 0, 0, 0.03);
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: rgba(0, 0, 0, 0.2);
-
-      &:hover {
-        background: rgba(0, 0, 0, 0.3);
-      }
-    }
-  }
-
-  .tab-btn {
-    color: #64748b;
-
-    &:hover {
-      background: rgba(0, 0, 0, 0.03);
-      color: #1e293b;
-      border-bottom-color: rgba(0, 0, 0, 0.15);
-    }
-
-    &.active {
-      color: #667eea;
-      background: rgba(102, 126, 234, 0.05);
-    }
-  }
-
-  // Conteúdo
-  .tabs-content {
-    background: #f8f9fa;
-
-    &::-webkit-scrollbar-track {
-      background: #f1f1f1;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: #cbd5e0;
-
-      &:hover {
-        background: #a0aec0;
-      }
-    }
-  }
-
-  // Panel header
-  .panel-header {
-    h3 {
-      color: #1e293b;
-    }
-
-    .panel-description {
-      color: #64748b;
-    }
-  }
-
-  // Formulários
-  .form-group label {
-    color: #334155;
-  }
-
-  .form-control {
-    background: white;
-    border: 2px solid #e2e8f0;
-    color: #1e293b;
-
-    &:focus {
-      border-color: #667eea;
-      background: white;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    }
-
-    &::placeholder {
-      color: #94a3b8;
-    }
-  }
-
-  // SOAP
-  .soap-item {
-    background: white;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  }
-
-  .soap-header label {
-    color: #1e293b;
-  }
-
-  .soap-hint {
-    color: #64748b;
-  }
-
-  // Cards biométricos
-  .biometric-card {
-    background: white;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-
-    &:hover {
-      border-color: #cbd5e0;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-    }
-
-    .card-info h4 {
-      color: #64748b;
-    }
-
-    .card-info .current-value {
-      color: #1e293b;
-    }
-  }
-
-  .biometric-stats {
-    background: white;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-
-    h4 {
-      color: #1e293b;
-    }
-
-    .stat-item {
-      background: #f8f9fa;
-      border: 1px solid #e9ecef;
-
-      .stat-label {
-        color: #64748b;
-      }
-
-      .stat-value {
-        color: #1e293b;
-      }
-    }
-  }
-
-  // Prescrição e Exames
-  .medication-item,
-  .exam-item {
-    background: white;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-
-    h4 {
-      color: #1e293b;
-    }
-  }
-
-  .btn-remove {
-    background: #fee;
-    color: #dc2626;
-    border: 1px solid #fecaca;
-
-    &:hover {
-      background: #fecaca;
-    }
-  }
-
-  .empty-state {
-    color: #64748b;
-
-    p {
-      color: #64748b;
-    }
-
-    .hint {
-      color: #94a3b8;
-    }
-  }
-}
-
 // ==========================================
-// ABA DE IA MÉDICA
+// ABA DE IA M�DICA
 // ==========================================
 
 .ai-analysis-container {
@@ -1015,17 +791,17 @@ textarea.form-control {
   padding: 16px 32px;
   font-size: 16px;
   font-weight: 600;
-  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  background: linear-gradient(135deg, var(--purple-500) 0%, var(--purple-600) 100%);
   border: none;
   border-radius: 12px;
-  color: white;
+  color: var(--text-inverse);
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+  box-shadow: 0 4px 12px var(--purple-500-alpha-30);
 
   &:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(139, 92, 246, 0.4);
+    box-shadow: 0 6px 16px var(--purple-500-alpha-40);
   }
 
   &:disabled {
@@ -1041,8 +817,8 @@ textarea.form-control {
 }
 
 .ai-section {
-  background: rgba(139, 92, 246, 0.05);
-  border: 1px solid rgba(139, 92, 246, 0.2);
+  background: var(--purple-500-alpha-05);
+  border: 1px solid var(--purple-500-alpha-20);
   border-radius: 12px;
   padding: 20px;
 }
@@ -1055,34 +831,34 @@ textarea.form-control {
 
   h4 {
     margin: 0;
-    color: rgba(255, 255, 255, 0.95);
+    color: var(--white-alpha-95);
     font-size: 18px;
     font-weight: 600;
   }
 
   .btn-copy {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: var(--white-alpha-10);
+    border: 1px solid var(--white-alpha-20);
     padding: 8px 16px;
     border-radius: 8px;
-    color: rgba(255, 255, 255, 0.9);
+    color: var(--white-alpha-90);
     cursor: pointer;
     font-size: 14px;
     transition: all 0.2s ease;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.15);
+      background: var(--white-alpha-15);
       transform: translateY(-1px);
     }
   }
 }
 
 .ai-content {
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--black-alpha-20);
   border-radius: 8px;
   padding: 16px;
   line-height: 1.7;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--white-alpha-90);
   
   p {
     margin: 0;
@@ -1091,7 +867,7 @@ textarea.form-control {
   }
 
   strong {
-    color: rgba(255, 255, 255, 1);
+    color: var(--white);
     font-weight: 600;
   }
 }
@@ -1099,7 +875,7 @@ textarea.form-control {
 .ai-empty-state {
   text-align: center;
   padding: 60px 20px;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--white-alpha-60);
 
   .empty-icon {
     font-size: 64px;
@@ -1109,20 +885,20 @@ textarea.form-control {
 
   h4 {
     margin: 0 0 8px 0;
-    color: rgba(255, 255, 255, 0.8);
+    color: var(--white-alpha-80);
     font-size: 20px;
   }
 
   p {
     margin: 0;
-    color: rgba(255, 255, 255, 0.5);
+    color: var(--white-alpha-50);
     font-size: 14px;
   }
 }
 
 .ai-error {
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: var(--danger-500-alpha-10);
+  border: 1px solid var(--danger-500-alpha-30);
   border-radius: 12px;
   padding: 24px;
   text-align: center;
@@ -1134,18 +910,18 @@ textarea.form-control {
 
   h4 {
     margin: 0 0 8px 0;
-    color: #fca5a5;
+    color: var(--danger-300);
     font-size: 18px;
   }
 
   p {
     margin: 0 0 16px 0;
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--white-alpha-70);
     font-size: 14px;
   }
 
   .error-details {
-    background: rgba(0, 0, 0, 0.2);
+    background: var(--black-alpha-20);
     border-radius: 8px;
     padding: 12px;
     margin-bottom: 16px;
@@ -1154,92 +930,31 @@ textarea.form-control {
     small {
       font-size: 12px;
       line-height: 1.5;
-      color: rgba(255, 255, 255, 0.6);
+      color: var(--white-alpha-60);
       
       strong {
-        color: rgba(255, 255, 255, 0.8);
+        color: var(--white-alpha-80);
       }
     }
   }
 
   .btn-secondary {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: var(--white-alpha-10);
+    border: 1px solid var(--white-alpha-20);
     padding: 8px 24px;
     border-radius: 8px;
-    color: white;
+    color: var(--text-inverse);
     cursor: pointer;
     transition: all 0.2s ease;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.15);
+      background: var(--white-alpha-15);
     }
   }
 }
 
-// Tema claro para IA
-.theme-light {
-  .ai-section {
-    background: rgba(139, 92, 246, 0.08);
-    border-color: rgba(139, 92, 246, 0.25);
 
-    h4 {
-      color: #1e293b;
-    }
 
-    .btn-copy {
-      background: rgba(139, 92, 246, 0.1);
-      border-color: rgba(139, 92, 246, 0.25);
-      color: #1e293b;
 
-      &:hover {
-        background: rgba(139, 92, 246, 0.15);
-      }
-    }
-  }
 
-  .ai-content {
-    background: white;
-    border: 1px solid rgba(139, 92, 246, 0.15);
-    color: #1e293b;
 
-    strong {
-      color: #7c3aed;
-    }
-  }
-
-  .ai-empty-state {
-    color: #64748b;
-
-    h4 {
-      color: #1e293b;
-    }
-
-    p {
-      color: #64748b;
-    }
-  }
-
-  .ai-error {
-    background: rgba(239, 68, 68, 0.05);
-    border-color: rgba(239, 68, 68, 0.2);
-
-    h4 {
-      color: #dc2626;
-    }
-
-    p {
-      color: #64748b;
-    }
-
-    .btn-secondary {
-      background: white;
-      border-color: #cbd5e1;
-      color: #1e293b;
-
-      &:hover {
-        background: #f1f5f9;
-      }
-    }
-  }
-}

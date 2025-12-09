@@ -1,4 +1,4 @@
-@use '../login/login.component.scss' as *;
+﻿@use '../login/login.component.scss' as *;
 
 .form-row {
   display: grid;
@@ -16,26 +16,16 @@
 }
 
 .success-alert {
-  background: #f0fdf4;
-  color: #16a34a;
+  background: var(--success-50);
+  color: var(--success-600);
   padding: 1rem;
   border-radius: 0.5rem;
-  border: 1px solid #86efac;
+  border: 1px solid var(--success-300);
   font-size: 0.875rem;
 }
 
 @media (max-width: 640px) {
   .form-row {
     grid-template-columns: 1fr;
-  }
-}
-
-/* Dark Mode Styles */
-:host-context(html[data-theme="dark"]),
-:host-context(html.dark) {
-  .success-alert {
-    background: #064e3b;
-    color: #6ee7b7;
-    border-color: #047857;
   }
 }

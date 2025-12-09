@@ -7,7 +7,7 @@
       </div>
       
       <div class="nav-right">
-        <app-theme-toggle></app-theme-toggle>
+
         <app-notifications></app-notifications>
         
         <!-- Desktop User Section -->
@@ -21,9 +21,12 @@
             <span class="user-role">{{ getUserRoleName() }}</span>
           </div>
         </div>
-        <button class="btn-logout desktop-only" (click)="logout()">
+        <app-button
+          variant="danger"
+          (click)="logout()"
+          class="desktop-only">
           Sair
-        </button>
+        </app-button>
 
         <!-- Mobile Menu -->
         <app-mobile-menu
@@ -46,9 +49,11 @@
           <h1>Minhas Consultas</h1>
           <p class="subtitle">Acompanhe todas as suas consultas agendadas</p>
         </div>
-        <button class="btn btn-primary" routerLink="/agendar">
-          <span>+ Agendar Nova Consulta</span>
-        </button>
+        <app-button
+          variant="primary"
+          routerLink="/agendar">
+          + Agendar Nova Consulta
+        </app-button>
       </div>
 
       <!-- Filtros -->

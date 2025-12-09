@@ -1,156 +1,14 @@
+/* Import SCSS partials - MUST BE FIRST */
+@use 'scss/variables' as *;
+@use 'scss/mixins' as *;
+@use 'scss/utilities' as *;
+
 /* ===================================
    TELECUIDAR - ESTILOS GLOBAIS
    ================================== */
 
 /* Import Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Lexend:wght@300;400;500;600;700;800&display=swap');
-
-/* Import SCSS partials */
-@import 'scss/variables';
-@import 'scss/mixins';
-@import 'scss/utilities';
-
-/* ===================================
-   VARIÁVEIS CSS CUSTOMIZADAS
-   ================================== */
-
-:root {
-  /* Brand Colors */
-  --primary-50: #eff6ff;
-  --primary-100: #dbeafe;
-  --primary-500: #3b82f6;
-  --primary-600: #2563eb;
-  --primary-700: #1d4ed8;
-  
-  --secondary-50: #f8fafc;
-  --secondary-100: #f1f5f9;
-  --secondary-500: #64748b;
-  --secondary-700: #334155;
-  
-  --accent-400: #facc15;
-  --accent-500: #eab308;
-
-  /* Theme Variables - Light Mode (Default) */
-  --bg-primary: #ffffff;
-  --bg-secondary: #f9fafb;
-  --bg-tertiary: #f3f4f6;
-  
-  --text-primary: #111827;
-  --text-secondary: #6b7280;
-  --text-tertiary: #9ca3af;
-  
-  --border-color: #e5e7eb;
-  --hover-bg: #f3f4f6;
-  
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-  
-  /* Component-specific */
-  --card-bg: #ffffff;
-  --input-bg: #ffffff;
-  --input-border: #d1d5db;
-  --primary-color: #3b82f6;
-  --danger-color: #ef4444;
-  --success-color: #10b981;
-  --warning-color: #f59e0b;
-}
-
-/* ===================================
-   DARK THEME
-   ================================== */
-
-[data-theme="dark"],
-html.dark {
-  --bg-primary: #111827;
-  --bg-secondary: #1f2937;
-  --bg-tertiary: #374151;
-  
-  --text-primary: #f9fafb;
-  --text-secondary: #d1d5db;
-  --text-tertiary: #9ca3af;
-  
-  --border-color: #374151;
-  --hover-bg: #374151;
-  
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5);
-  
-  /* Component-specific */
-  --card-bg: #1f2937;
-  --input-bg: #374151;
-  --input-border: #4b5563;
-  
-  /* Overrides para classes utilitárias */
-  .bg-white {
-    background-color: #1f2937 !important;
-  }
-  
-  .bg-gray-50 {
-    background-color: #111827 !important;
-  }
-  
-  .bg-gray-100 {
-    background-color: #1f2937 !important;
-  }
-
-  .bg-gray-200 {
-    background-color: #374151 !important;
-  }
-  
-  .text-gray-900 {
-    color: #f9fafb !important;
-  }
-  
-  .text-gray-800 {
-    color: #f9fafb !important;
-  }
-  
-  .text-gray-700 {
-    color: #d1d5db !important;
-  }
-  
-  .text-gray-600 {
-    color: #d1d5db !important;
-  }
-  
-  .text-gray-500 {
-    color: #9ca3af !important;
-  }
-
-  .text-gray-400 {
-    color: #9ca3af !important;
-  }
-  
-  .border-gray-200 {
-    border-color: #374151 !important;
-  }
-  
-  .border-gray-300 {
-    border-color: #4b5563 !important;
-  }
-
-  header {
-    background-color: #1f2937 !important;
-  }
-
-  input,
-  textarea,
-  select {
-    background-color: #374151 !important;
-    border-color: #4b5563 !important;
-    color: #f9fafb !important;
-  }
-
-  .hover\:bg-blue-50:hover {
-    background-color: #1e40af !important;
-  }
-
-  .hover\:bg-gray-50:hover {
-    background-color: #374151 !important;
-  }
-}
 
 /* ===================================
    ESTILOS GLOBAIS
@@ -189,8 +47,8 @@ body {
 
 .glass-effect {
   backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: var(--white-alpha-10);
+  border: 1px solid var(--white-alpha-20);
 }
 
 .hover-lift {
@@ -199,7 +57,7 @@ body {
   
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 10px 40px -10px var(--black-alpha-15);
   }
 }
 
@@ -213,7 +71,7 @@ body {
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+  0%, 100% { box-shadow: 0 0 20px var(--primary-500-alpha-30); }
   50% { box-shadow: 0 0 30px rgba(59, 130, 246, 0.6); }
 }
 
@@ -271,7 +129,7 @@ select:focus {
 *:focus-visible {
   outline: 2px solid var(--primary-color);
   outline-offset: 2px;
-  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+  box-shadow: 0 0 0 4px var(--primary-600-alpha-10);
 }
 
 /* ===================================
@@ -307,51 +165,6 @@ select:focus {
 }
 
 /* ===================================
-   AUTOFILL FIX PARA DARK MODE
-   ================================== */
-
-html[data-theme="dark"] input:-webkit-autofill,
-html[data-theme="dark"] input:-webkit-autofill:focus,
-html[data-theme="dark"] input:-webkit-autofill:hover,
-html[data-theme="dark"] textarea:-webkit-autofill,
-html[data-theme="dark"] textarea:-webkit-autofill:focus,
-html[data-theme="dark"] textarea:-webkit-autofill:hover,
-html[data-theme="dark"] select:-webkit-autofill,
-html[data-theme="dark"] select:-webkit-autofill:focus,
-html[data-theme="dark"] select:-webkit-autofill:hover {
-  box-shadow: 0 0 0 1000px #374151 inset !important;
-  -webkit-box-shadow: 0 0 0 1000px #374151 inset !important;
-  color: #f9fafb !important;
-  -webkit-text-fill-color: #f9fafb !important;
-  border-color: #4b5563 !important;
-  caret-color: #f9fafb !important;
-  transition: background-color 9999s ease-in-out 0s;
-}
-
-html[data-theme="dark"] input:-webkit-autofill::first-line {
-  color: #f9fafb !important;
-}
-
-html[data-theme="dark"] input:-internal-autofill-selected {
-  background-color: #374151 !important;
-  color: #f9fafb !important;
-}
-
-html[data-theme="dark"] input:-moz-autofill,
-html[data-theme="dark"] textarea:-moz-autofill,
-html[data-theme="dark"] select:-moz-autofill {
-  box-shadow: 0 0 0 1000px #374151 inset !important;
-  color: #f9fafb !important;
-  border-color: #4b5563 !important;
-  caret-color: #f9fafb !important;
-}
-
-html[data-theme="dark"] input:-ms-input-autofill {
-  background-color: #374151 !important;
-  color: #f9fafb !important;
-}
-
-/* ===================================
    MODAL SCROLLBAR
    ================================== */
 
@@ -360,17 +173,17 @@ html[data-theme="dark"] input:-ms-input-autofill {
   overflow-y: auto;
   border-radius: inherit;
   scrollbar-width: thin;
-  scrollbar-color: #6b7280 #1f2937;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
 
 .fixed.inset-0 .modal-scrollable-content::-webkit-scrollbar {
   width: 8px;
   border-radius: 8px;
-  background: #1f2937;
+  background: var(--scrollbar-track);
 }
 
 .fixed.inset-0 .modal-scrollable-content::-webkit-scrollbar-thumb {
-  background: #6b7280;
+  background: var(--scrollbar-thumb);
   border-radius: 8px;
 }
 
@@ -381,7 +194,7 @@ html[data-theme="dark"] input:-ms-input-autofill {
   overflow-y: auto;
   border-radius: inherit;
   scrollbar-width: thin;
-  scrollbar-color: #6b7280 #1f2937;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
 
 .fixed.inset-0 .modal-content > .modal-body::-webkit-scrollbar,
@@ -389,12 +202,12 @@ html[data-theme="dark"] input:-ms-input-autofill {
 .fixed.inset-0 .modal-content > div[ngcontent]::-webkit-scrollbar {
   width: 8px;
   border-radius: 8px;
-  background: #1f2937;
+  background: var(--scrollbar-track);
 }
 
 .fixed.inset-0 .modal-content > .modal-body::-webkit-scrollbar-thumb,
 .fixed.inset-0 .modal-content > form::-webkit-scrollbar-thumb,
 .fixed.inset-0 .modal-content > div[ngcontent]::-webkit-scrollbar-thumb {
-  background: #6b7280;
+  background: var(--scrollbar-thumb);
   border-radius: 8px;
 }

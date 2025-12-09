@@ -20,8 +20,6 @@
           <a (click)="scrollToSection('solucao')" class="nav-link">Solução</a>
           <a (click)="scrollToSection('impacto')" class="nav-link">Impacto</a>
           
-          <app-theme-toggle></app-theme-toggle>
-          
           <ng-container *ngIf="!isLoggedIn">
             <a routerLink="/entrar" class="btn-secondary">Entrar</a>
             <a routerLink="/cadastrar" class="btn-primary">Cadastrar</a>
@@ -35,7 +33,6 @@
 
         <!-- Mobile Menu -->
         <div class="mobile-nav-section">
-          <app-theme-toggle></app-theme-toggle>
           <app-mobile-menu
             [items]="menuItems"
             [userName]="isLoggedIn ? userName : undefined"

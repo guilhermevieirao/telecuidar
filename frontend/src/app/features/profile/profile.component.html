@@ -9,21 +9,22 @@
         </div>
         <!-- Desktop Navigation -->
         <div class="flex items-center gap-4 desktop-only">
-          <app-theme-toggle></app-theme-toggle>
           <app-notifications></app-notifications>
           <a routerLink="/perfil" class="profile-button" title="Meu Perfil">
             <svg class="profile-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
           </a>
-          <a routerLink="/painel" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+          <app-button
+            variant="danger"
+            size="md"
+            routerLink="/painel">
             ← Voltar
-          </a>
+          </app-button>
         </div>
 
         <!-- Mobile Navigation -->
         <div class="mobile-nav-section">
-          <app-theme-toggle></app-theme-toggle>
           <app-notifications></app-notifications>
         </div>
       </div>
@@ -36,14 +37,12 @@
         <h1>Meu Perfil</h1>
         <p>{{ isEditMode ? 'Edite suas informações pessoais' : 'Visualize suas informações pessoais' }}</p>
       </div>
-      <button 
-        *ngIf="!isEditMode" 
-        type="button" 
-        class="btn btn-primary"
-        (click)="enableEditMode()"
-      >
+      <app-button
+        *ngIf="!isEditMode"
+        variant="primary"
+        (click)="enableEditMode()">
         ✏️ Editar Perfil
-      </button>
+      </app-button>
     </div>
 
     <div class="profile-content">
@@ -78,21 +77,21 @@
             <div class="info-row">
               <label>Perfil</label>
               <p>
-                <span class="role-badge" *ngIf="user?.role === 1">👤 Paciente</span>
-                <span class="role-badge professional" *ngIf="user?.role === 2">👨‍⚕️ Profissional</span>
-                <span class="role-badge admin" *ngIf="user?.role === 3">⚙️ Administrador</span>
+                <app-badge variant="success" *ngIf="user?.role === 1">👤 Paciente</app-badge>
+                <app-badge variant="primary" *ngIf="user?.role === 2">👨‍⚕️ Profissional</app-badge>
+                <app-badge variant="danger" *ngIf="user?.role === 3">⚙️ Administrador</app-badge>
               </p>
             </div>
 
             <div class="info-row">
               <label>Status do E-mail</label>
               <p>
-                <span class="email-status verified" *ngIf="user?.emailConfirmed">
+                <app-badge variant="success" *ngIf="user?.emailConfirmed">
                   ✓ E-mail Verificado
-                </span>
-                <span class="email-status unverified" *ngIf="!user?.emailConfirmed">
+                </app-badge>
+                <app-badge variant="warning" *ngIf="!user?.emailConfirmed">
                   ⚠ E-mail Não Verificado
-                </span>
+                </app-badge>
               </p>
             </div>
 

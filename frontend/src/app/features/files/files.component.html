@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+<div class="min-h-screen bg-gray-50">
   <!-- Header -->
   <header *ngIf="!embeddedMode" class="bg-white shadow-sm border-b border-gray-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -10,7 +10,6 @@
         
         <!-- Desktop Navigation -->
         <div class="flex items-center gap-4 desktop-only">
-          <app-theme-toggle></app-theme-toggle>
           <app-notifications></app-notifications>
           <a routerLink="/perfil" class="profile-button" title="Meu Perfil">
             <svg class="profile-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -27,7 +26,6 @@
 
         <!-- Mobile Navigation -->
         <div class="mobile-nav-section">
-          <app-theme-toggle></app-theme-toggle>
           <app-notifications></app-notifications>
           <app-mobile-menu 
             [items]="menuItems"

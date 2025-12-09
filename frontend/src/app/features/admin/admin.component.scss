@@ -1,69 +1,16 @@
-/* Modal de Criação Manual - Dark mode fix */
-:host-context(html[data-theme="dark"]),
-:host-context(html.dark) {
-  .modal-create-user-bg {
-    background-color: #1f2937 !important;
-    border-color: #374151 !important;
-    color: #f9fafb;
-  }
-  .modal-create-user-title {
-    color: #f9fafb;
-  }
-  .modal-create-user-section-title {
-    color: #d1d5db;
-  }
-  .modal-create-user-btn {
-    background-color: #4b5563;
-    color: #f9fafb;
-  }
-  .modal-create-user-btn:hover:not(:disabled) {
-    background-color: #2563eb;
-  }
-  .modal-create-user-input {
-    background-color: #374151;
-    border-color: #4b5563;
-    color: #f9fafb;
-  }
-  .modal-create-user-input:focus {
-    border-color: #2563eb;
-    background-color: #1f2937;
-  }
-}
-/* Modal de Especialidades - Dark mode fix */
-:host-context(html[data-theme="dark"]),
-:host-context(html.dark) {
-  .modal-specialty-bg {
-    background-color: #1f2937 !important;
-    border-color: #374151 !important;
-    color: #f9fafb;
-  }
-  .modal-specialty-title {
-    color: #f9fafb;
-  }
-  .modal-specialty-section-title {
-    color: #d1d5db;
-  }
-  .modal-specialty-btn {
-    background-color: #4b5563;
-    color: #f9fafb;
-  }
-  .modal-specialty-btn:hover:not(:disabled) {
-    background-color: #6d28d9;
-  }
-}
-.badge-paciente {
-  background-color: #d1fae5; /* bg-green-100 */
-  color: #065f46; /* text-green-800 */
+﻿.badge-paciente {
+  background-color: var(--success-200); /* bg-green-100 */
+  color: var(--success-800); /* text-green-800 */
 }
 
 .badge-profissional {
-  background-color: #ede9fe; /* bg-purple-100 */
-  color: #6d28d9; /* text-purple-800 */
+  background-color: var(--primary-100); /* bg-purple-100 */
+  color: var(--primary-700); /* text-purple-800 */
 }
 
 .badge-admin {
-  background-color: #fee2e2; /* bg-red-100 */
-  color: #991b1b; /* text-red-800 */
+  background-color: var(--danger-100); /* bg-red-100 */
+  color: var(--danger-700); /* text-red-800 */
 }
 
 /* Profile Button - Padronizado com Theme e Notifications */
@@ -74,7 +21,7 @@
   width: 2.5rem;
   height: 2.5rem;
   padding: 0;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--text-secondary);
   background: transparent;
   border-radius: 0.5rem;
   cursor: pointer;
@@ -82,14 +29,14 @@
 
   &:hover {
     .profile-icon {
-      color: #374151;
+      color: var(--input-bg);
     }
   }
 
   .profile-icon {
     width: 1.25rem;
     height: 1.25rem;
-    color: #6b7280;
+    color: var(--text-secondary);
     stroke-width: 2;
     transition: color 0.2s;
   }
@@ -112,20 +59,4 @@
   }
 }
 
-/* Dark Mode */
-:host-context(html[data-theme="dark"]),
-:host-context(html.dark) {
-  .profile-button {
-    border-color: #4b5563;
 
-    &:hover {
-      .profile-icon {
-        color: #d1d5db;
-      }
-    }
-
-    .profile-icon {
-      color: #9ca3af;
-    }
-  }
-}

@@ -1,12 +1,11 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ThemeToggleComponent } from '../../atoms/theme-toggle/theme-toggle.component';
 import { MobileMenu, MenuItem } from '../mobile-menu/mobile-menu';
 
 @Component({
   selector: 'app-dashboard-navbar',
   standalone: true,
-  imports: [CommonModule, ThemeToggleComponent, MobileMenu],
+  imports: [CommonModule, MobileMenu],
   templateUrl: './dashboard-navbar.component.html',
   styleUrls: ['./dashboard-navbar.component.scss']
 })

@@ -13,7 +13,7 @@ import { ModalService, AlertModalOptions, ConfirmModalOptions } from '../../../.
       <div class="modal-content" (click)="$event.stopPropagation()">
         <div class="modal-header" [ngClass]="'modal-' + currentAlert.type">
           <h3>{{ currentAlert.title }}</h3>
-          <button class="close-btn" (click)="closeAlert()">✕</button>
+          <button class="close-btn" (click)="closeAlert()">?</button>
         </div>
         <div class="modal-body">
           <p>{{ currentAlert.message }}</p>
@@ -43,7 +43,7 @@ import { ModalService, AlertModalOptions, ConfirmModalOptions } from '../../../.
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.5);
+      background: var(--overlay);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -52,9 +52,9 @@ import { ModalService, AlertModalOptions, ConfirmModalOptions } from '../../../.
     }
 
     .modal-content {
-      background: white;
+      background: var(--card-bg);
       border-radius: 0.75rem;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 20px 60px var(--black-alpha-30);
       max-width: 500px;
       width: 90%;
       animation: slideUp 0.3s ease-out;
@@ -62,29 +62,29 @@ import { ModalService, AlertModalOptions, ConfirmModalOptions } from '../../../.
 
     .modal-header {
       padding: 1.5rem;
-      border-bottom: 1px solid #e5e7eb;
+      border-bottom: 1px solid var(--border-primary);
       display: flex;
       justify-content: space-between;
       align-items: center;
 
       &.modal-success {
-        background: #f0fdf4;
-        border-bottom-color: #dcfce7;
+        background: var(--success-50);
+        border-bottom-color: var(--success-100);
       }
 
       &.modal-error {
-        background: #fef2f2;
-        border-bottom-color: #fee2e2;
+        background: var(--danger-50);
+        border-bottom-color: var(--danger-100);
       }
 
       &.modal-info {
-        background: #f0f9ff;
-        border-bottom-color: #e0f2fe;
+        background: var(--info-50);
+        border-bottom-color: var(--info-100);
       }
 
       &.modal-warning {
-        background: #fffbeb;
-        border-bottom-color: #fef3c7;
+        background: var(--warning-50);
+        border-bottom-color: var(--warning-100);
       }
 
       h3 {
@@ -98,14 +98,14 @@ import { ModalService, AlertModalOptions, ConfirmModalOptions } from '../../../.
       
       p {
         margin: 0;
-        color: #374151;
+        color: var(--text-secondary);
         line-height: 1.6;
       }
     }
 
     .modal-footer {
       padding: 1rem 1.5rem;
-      border-top: 1px solid #e5e7eb;
+      border-top: 1px solid var(--border-primary);
       display: flex;
       justify-content: flex-end;
       gap: 0.75rem;
@@ -125,11 +125,11 @@ import { ModalService, AlertModalOptions, ConfirmModalOptions } from '../../../.
     }
 
     .btn-primary {
-      background: #3b82f6;
-      color: white;
+      background: var(--primary-600);
+      color: var(--text-inverse);
 
       &:hover {
-        background: #2563eb;
+        background: var(--primary-700);
       }
     }
 
@@ -138,10 +138,10 @@ import { ModalService, AlertModalOptions, ConfirmModalOptions } from '../../../.
       border: none;
       cursor: pointer;
       font-size: 1.5rem;
-      color: #6b7280;
+      color: var(--text-secondary);
 
       &:hover {
-        color: #374151;
+        color: var(--text-secondary);
       }
     }
 
@@ -165,56 +165,49 @@ import { ModalService, AlertModalOptions, ConfirmModalOptions } from '../../../.
       }
     }
 
-    :host-context(html[data-theme="dark"]),
-    :host-context(html.dark) {
-      .modal-content {
-        background: #1f2937;
+    .modal-header {
+      border-bottom-color: var(--text-secondary);
+
+      &.modal-success {
+        background: var(--success-900);
+        border-bottom-color: var(--success-500);
       }
 
-      .modal-header {
-        border-bottom-color: #374151;
-
-        &.modal-success {
-          background: #064e3b;
-          border-bottom-color: #10b981;
-        }
-
-        &.modal-error {
-          background: #7f1d1d;
-          border-bottom-color: #f87171;
-        }
-
-        &.modal-info {
-          background: #0c4a6e;
-          border-bottom-color: #06b6d4;
-        }
-
-        &.modal-warning {
-          background: #78350f;
-          border-bottom-color: #fbbf24;
-        }
-
-        h3 {
-          color: #f9fafb;
-        }
+      &.modal-error {
+        background: var(--danger-900);
+        border-bottom-color: var(--danger-400);
       }
 
-      .modal-body {
-        p {
-          color: #d1d5db;
-        }
+      &.modal-info {
+        background: var(--info-900);
+        border-bottom-color: var(--info-500);
       }
 
-      .modal-footer {
-        border-top-color: #374151;
+      &.modal-warning {
+        background: var(--warning-900);
+        border-bottom-color: var(--warning-400);
       }
 
-      .close-btn {
-        color: #9ca3af;
+      h3 {
+        color: var(--bg-secondary);
+      }
+    }
 
-        &:hover {
-          color: #f9fafb;
-        }
+    .modal-body {
+      p {
+        color: var(--text-secondary);
+      }
+    }
+
+    .modal-footer {
+      border-top-color: var(--text-secondary);
+    }
+
+    .close-btn {
+      color: var(--text-tertiary);
+
+      &:hover {
+        color: var(--bg-secondary);
       }
     }
   `]
@@ -225,9 +218,9 @@ export class ModalManagerComponent implements OnInit {
   currentAlert: AlertModalOptions = { message: '' };
   currentConfirm: ConfirmModalOptions = { message: '' };
 
-  // Getters para valores padrão
+  // Getters para valores padr�o
   get confirmTitle(): string {
-    return this.currentConfirm.title || 'Confirmar ação';
+    return this.currentConfirm.title || 'Confirmar a��o';
   }
 
   get confirmText(): string {

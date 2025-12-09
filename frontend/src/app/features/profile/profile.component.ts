@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgIf, NgFor } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -7,13 +7,14 @@ import { ToastService } from '../../core/services/toast.service';
 import { environment } from '../../../environments/environment';
 import { NgxMaskDirective } from 'ngx-mask';
 import { ImageCropModalComponent } from '../../shared/components/organisms/image-crop-modal/image-crop-modal.component';
-import { ThemeToggleComponent } from '../../shared/components/atoms/theme-toggle/theme-toggle.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
+import { ButtonComponent } from '../../shared/components/atoms/button/button.component';
+import { BadgeComponent } from '../../shared/components/atoms/badge/badge.component';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, NgxMaskDirective, ImageCropModalComponent, ThemeToggleComponent, NotificationsComponent],
+  imports: [CommonModule, NgIf, ReactiveFormsModule, RouterLink, NgxMaskDirective, ImageCropModalComponent, NotificationsComponent, ButtonComponent, BadgeComponent],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss']
 })

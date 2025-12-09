@@ -1,11 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgIf, NgFor } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { ToastService } from '../../core/services/toast.service';
 import { PaginationComponent, PageInfo } from '../../shared/components/molecules/pagination/pagination.component';
-import { ThemeToggleComponent } from '../../shared/components/atoms/theme-toggle/theme-toggle.component';
 import { BreadcrumbComponent } from '../../shared/components/molecules/breadcrumb/breadcrumb.component';
 import { MobileMenu, MenuItem } from '../../shared/components/organisms/mobile-menu/mobile-menu';
 import { NotificationsComponent } from '../../features/notifications/notifications.component';
@@ -33,10 +32,11 @@ interface FileUpload {
   selector: 'app-files',
   standalone: true,
   imports: [
-    CommonModule, 
+    CommonModule,
+    NgIf,
+    NgFor,
     FormsModule, 
-    PaginationComponent, 
-    ThemeToggleComponent,
+    PaginationComponent,
     BreadcrumbComponent,
     MobileMenu,
     NotificationsComponent

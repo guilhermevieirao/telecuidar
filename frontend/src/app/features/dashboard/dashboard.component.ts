@@ -1,15 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgIf } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { BreadcrumbComponent } from '../../shared/components/molecules/breadcrumb/breadcrumb.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
-import { ThemeToggleComponent } from '../../shared/components/atoms/theme-toggle/theme-toggle.component';
 import { MobileMenu, MenuItem } from '../../shared/components/organisms/mobile-menu/mobile-menu';
+import { CardComponent } from '../../shared/components/organisms/card/card.component';
+import { BadgeComponent } from '../../shared/components/atoms/badge/badge.component';
+import { ButtonComponent } from '../../shared/components/atoms/button/button.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, BreadcrumbComponent, NotificationsComponent, ThemeToggleComponent, MobileMenu],
+  imports: [CommonModule, NgIf, RouterLink, BreadcrumbComponent, NotificationsComponent, MobileMenu, BadgeComponent, ButtonComponent],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })

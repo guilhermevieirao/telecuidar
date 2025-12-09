@@ -1,22 +1,4 @@
-@media (prefers-color-scheme: dark) {
-  .specialty-grid > .specialty-card {
-    color: #f3f4f6;
-    background: #23272f;
-    border-color: #374151;
-  }
-  .specialty-grid h3,
-  .specialty-grid p,
-  .specialty-grid .badge {
-    color: #f3f4f6;
-  }
-  .specialty-grid .badge {
-    background: #374151;
-  }
-  .specialty-grid .specialty-icon {
-    color: #60a5fa;
-  }
-}
-// SCSS LIMPO: seletores aninhados invÃ¡lidos removidos. Ajuste os estilos conforme necessÃ¡rio.
+// SCSS LIMPO: seletores aninhados inválidos removidos. Ajuste os estilos conforme necessário.
 .dashboard-page {
   min-height: 100vh;
   background: var(--bg-secondary);
@@ -28,7 +10,7 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 3px var(--black-alpha-05);
 }
 .navbar-content {
   max-width: 1200px;
@@ -64,7 +46,7 @@
   height: 45px;
   border-radius: 50%;
   overflow: hidden;
-  border: 2px solid #2563eb;
+  border: 2px solid var(--primary-600);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -74,7 +56,7 @@
 }
 .user-avatar:hover {
   transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 4px 12px var(--primary-600-alpha-30);
 }
 .user-avatar img {
   width: 100%;
@@ -82,7 +64,7 @@
   object-fit: cover;
 }
 .avatar-initials {
-  color: white;
+  color: var(--text-inverse);
   font-size: 1rem;
   font-weight: 700;
 }
@@ -100,7 +82,7 @@
 .button-danger {
   padding: 0.5rem 1.5rem;
   background: var(--danger-color);
-  color: white;
+  color: var(--text-inverse);
   border: none;
   border-radius: 0.5rem;
   font-weight: 600;
@@ -108,7 +90,7 @@
   transition: all 0.2s;
 }
 .button-danger:hover {
-  background: #b91c1c;
+  background: var(--danger-700);
 }
 .desktop-only {
   display: flex;
@@ -167,7 +149,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: #ecf0f1;
+  background: var(--border-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -175,13 +157,13 @@
   transition: all 0.3s ease;
 }
 .step.active .step-number {
-  background: #3498db;
-  color: white;
+  background: var(--primary-500);
+  color: var(--text-inverse);
   transform: scale(1.1);
 }
 .step.completed .step-number {
-  background: #27ae60;
-  color: white;
+  background: var(--green-bright);
+  color: var(--text-inverse);
 }
 .step span {
   font-size: 0.9rem;
@@ -196,14 +178,14 @@
   gap: 0.75rem;
 }
 .alert-error {
-  background: #fee;
-  color: #c33;
-  border: 1px solid #fcc;
+  background: var(--danger-50);
+  color: var(--danger-600);
+  border: 1px solid var(--danger-200);
 }
 .alert-success {
-  background: #efe;
-  color: #3c3;
-  border: 1px solid #cfc;
+  background: var(--green-light-bg);
+  color: var(--green-light-text);
+  border: 1px solid var(--green-light-border);
 }
 .loading-container {
   padding: 3rem;
@@ -211,7 +193,7 @@
 .spinner {
   width: 50px;
   height: 50px;
-  border: 4px solid #ecf0f1;
+  border: 4px solid var(--border-primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 0 auto 1rem;
@@ -225,11 +207,11 @@
 }
 .step-content h2 {
   font-size: 1.8rem;
-  color: #2c3e50;
+  color: var(--text-primary);
   margin-bottom: 1.5rem;
 }
 .step-content .selected-info {
-  color: #7f8c8d;
+  color: var(--text-secondary);
   margin-bottom: 2rem;
   font-size: 1.05rem;
 }
@@ -270,12 +252,12 @@
 .specialty-grid > .specialty-card:hover {
   border-color: var(--primary-color);
   transform: translateY(-5px);
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 5px 20px var(--black-alpha-10);
 }
 .specialty-grid:hover {
   border-color: var(--primary-color);
   transform: translateY(-5px);
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 5px 20px var(--black-alpha-10);
 }
 .specialty-icon {
   font-size: 3rem;
@@ -283,17 +265,17 @@
 }
 .specialty-grid h3 {
   font-size: 1.3rem;
-  color: #2c3e50;
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
 }
 .specialty-grid p {
-  color: #7f8c8d;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   margin-bottom: 1rem;
 }
 .badge {
   display: inline-block;
-  background: #e8f4f8;
+  background: var(--info-100);
   color: var(--primary-color);
   padding: 0.4rem 0.8rem;
   font-size: 0.85rem;
@@ -341,25 +323,25 @@
   background: transparent;
 }
 .calendar-day.unavailable {
-  color: #adb5bd;
+  color: var(--gray-500);
   cursor: not-allowed;
 }
 .calendar-day.unavailable .day-number {
   opacity: 0.3;
 }
 .calendar-day.available {
-  background: #e8f4f8;
+  background: var(--info-100);
   border: 2px solid var(--primary-color);
   color: var(--text-primary);
 }
 .calendar-day.available:hover {
   background: var(--primary-color);
-  color: white;
+  color: var(--text-inverse);
   transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+  box-shadow: 0 4px 12px var(--primary-500-alpha-30);
 }
 .calendar-day.available:hover .day-slots {
-  color: white;
+  color: var(--text-inverse);
 }
 .calendar-day .day-number {
   font-size: 1.1rem;
@@ -393,7 +375,7 @@
   padding: 0.3rem 0.6rem;
   border-radius: 15px;
   font-size: 0.8rem;
-  background: #e8f4f8;
+  background: var(--info-100);
   color: var(--primary-color);
 }
 .confirmation-card {
@@ -447,7 +429,7 @@
 .btn-back {
   background: none;
   border: none;
-  color: #3498db;
+  color: var(--primary-500);
   font-size: 1rem;
   cursor: pointer;
   padding: 0.5rem 0;
@@ -455,30 +437,30 @@
   transition: color 0.3s ease;
 }
 .btn-back.alert-error {
-  background: #fee;
-  color: #c33;
-  border: 1px solid #fcc;
+  background: var(--danger-50);
+  color: var(--danger-600);
+  border: 1px solid var(--danger-200);
 }
 .btn-back.alert-success {
-  background: #efe;
-  color: #3c3;
-  border: 1px solid #cfc;
+  background: var(--green-light-bg);
+  color: var(--green-light-text);
+  border: 1px solid var(--green-light-border);
 }
 .btn-primary {
   background: var(--primary-color);
-  color: white;
+  color: var(--text-inverse);
 }
 .btn-primary:hover {
-  background: #2980b9;
+  background: var(--primary-600);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+  box-shadow: 0 4px 12px var(--primary-500-alpha-30);
 }
 .btn-secondary {
   background: var(--bg-tertiary);
   color: var(--text-primary);
 }
 .btn-secondary:hover {
-  background: #dde4e6;
+  background: var(--gray-750);
   transform: translateY(-2px);
 }
 @media (max-width: 768px) {
@@ -527,3 +509,4 @@
     width: 100%;
   }
 }
+

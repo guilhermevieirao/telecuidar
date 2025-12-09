@@ -18,7 +18,6 @@ declare var JitsiMeetExternalAPI: any;
 })
 export class AppointmentVideoCallComponent implements OnInit, OnDestroy, AfterViewInit {
     showHeader = true;
-    isDarkTheme = true; // Controlar tema do header
     toggleHeader() {
       this.showHeader = !this.showHeader;
     }
@@ -37,13 +36,8 @@ export class AppointmentVideoCallComponent implements OnInit, OnDestroy, AfterVi
     private router: Router,
     private appointmentService: AppointmentService,
     private modalService: ModalService
-  ) {
-    // Carregar preferência de tema do localStorage
-    const savedTheme = localStorage.getItem('themePreference');
-    if (savedTheme !== null) {
-      this.isDarkTheme = savedTheme === 'dark';
-    }
-  }
+  ) {}
+
 
   ngOnInit(): void {
     const userStr = localStorage.getItem('user');
@@ -120,8 +114,8 @@ export class AppointmentVideoCallComponent implements OnInit, OnDestroy, AfterVi
       return;
     }
     const urls = [
-      environment.jitsiExternalApiUrl,
       'http://localhost:8000/external_api.js',
+      environment.jitsiExternalApiUrl,
       'https://localhost:8443/external_api.js'
     ];
     const tryLoad = (index: number) => {
@@ -178,6 +172,7 @@ export class AppointmentVideoCallComponent implements OnInit, OnDestroy, AfterVi
         startWithAudioMuted: false,
         startWithVideoMuted: false,
         disableDeepLinking: true,
+        HIDE_PREJOIN_LOGO: true,
         toolbarButtons: [
           'camera',
           'chat',
@@ -233,8 +228,12 @@ export class AppointmentVideoCallComponent implements OnInit, OnDestroy, AfterVi
         ],
         SHOW_JITSI_WATERMARK: false,
         SHOW_WATERMARK_FOR_GUESTS: false,
+        SHOW_BRAND_WATERMARK: false,
+        SHOW_POWERED_BY: false,
         HIDE_INVITE_MORE_HEADER: false,
-        DISABLE_VIDEO_BACKGROUND: false
+        DISABLE_VIDEO_BACKGROUND: false,
+        DEFAULT_LOGO_URL: '',
+        DEFAULT_WELCOME_PAGE_LOGO_URL: ''
       }
     };
 
@@ -292,11 +291,5 @@ export class AppointmentVideoCallComponent implements OnInit, OnDestroy, AfterVi
 
   onMedicalRecordModeChange(mode: string): void {
     this.hasSidebar = mode === 'sidebar';
-  }
-
-  toggleTheme(): void {
-    this.isDarkTheme = !this.isDarkTheme;
-    // Salvar preferência no localStorage
-    localStorage.setItem('themePreference', this.isDarkTheme ? 'dark' : 'light');
   }
 }

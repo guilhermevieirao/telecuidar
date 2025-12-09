@@ -97,7 +97,6 @@ export class MedicalRecordTabsComponent implements OnInit {
   @Input() patientName: string = '';
   @Input() specialtyId: number = 0; // ID da especialidade da consulta
   @Input() jitsiApi: any = null; // Referência para API do Jitsi
-  @Input() isDarkTheme: boolean = true; // Receber tema do componente pai
   @Output() onClose = new EventEmitter<void>();
   @Output() onModeChange = new EventEmitter<TabMode>();
 
@@ -174,6 +173,11 @@ export class MedicalRecordTabsComponent implements OnInit {
   private temperatureChart: Chart | null = null;
   private bloodPressureChart: Chart | null = null;
   private oxygenChart: Chart | null = null;
+
+  // Helper to get CSS variable colors
+  private getCssColor(variable: string): string {
+    return getComputedStyle(document.documentElement).getPropertyValue(variable).trim();
+  }
 
   // IA Médica
   isGeneratingAI = false;
@@ -328,8 +332,8 @@ export class MedicalRecordTabsComponent implements OnInit {
         datasets: [{
           label: 'BPM',
           data: this.biometricData.heartRate,
-          borderColor: 'rgb(239, 68, 68)',
-          backgroundColor: 'rgba(239, 68, 68, 0.1)',
+          borderColor: this.getCssColor('--danger-600') || 'rgb(220, 38, 38)',
+          backgroundColor: 'var(--danger-500-alpha-10)',
           tension: 0.4,
           fill: true
         }]
@@ -365,8 +369,8 @@ export class MedicalRecordTabsComponent implements OnInit {
         datasets: [{
           label: '°C',
           data: this.biometricData.temperature,
-          borderColor: 'rgb(34, 197, 94)',
-          backgroundColor: 'rgba(34, 197, 94, 0.1)',
+          borderColor: this.getCssColor('--success-600') || 'rgb(22, 163, 74)',
+          backgroundColor: 'var(--success-500-alpha-10)',
           tension: 0.4,
           fill: true
         }]
@@ -403,15 +407,15 @@ export class MedicalRecordTabsComponent implements OnInit {
           {
             label: 'Sistólica',
             data: this.biometricData.bloodPressure.map(bp => bp.systolic),
-            borderColor: 'rgb(59, 130, 246)',
-            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            borderColor: this.getCssColor('--primary-600') || 'rgb(37, 99, 235)',
+            backgroundColor: 'var(--primary-500-alpha-10)',
             tension: 0.4
           },
           {
             label: 'Diastólica',
             data: this.biometricData.bloodPressure.map(bp => bp.diastolic),
-            borderColor: 'rgb(147, 51, 234)',
-            backgroundColor: 'rgba(147, 51, 234, 0.1)',
+            borderColor: this.getCssColor('--purple-600') || 'rgb(124, 58, 237)',
+            backgroundColor: 'var(--purple-600-alpha-10)',
             tension: 0.4
           }
         ]
@@ -447,8 +451,8 @@ export class MedicalRecordTabsComponent implements OnInit {
         datasets: [{
           label: 'SpO2 %',
           data: this.biometricData.oxygenSaturation,
-          borderColor: 'rgb(14, 165, 233)',
-          backgroundColor: 'rgba(14, 165, 233, 0.1)',
+          borderColor: this.getCssColor('--sky-500') || 'rgb(14, 165, 233)',
+          backgroundColor: 'var(--sky-500-alpha-10)',
           tension: 0.4,
           fill: true
         }]

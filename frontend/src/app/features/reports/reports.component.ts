@@ -1,5 +1,5 @@
 import { Component, OnInit, signal, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgIf, NgFor } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
@@ -7,7 +7,6 @@ import { environment } from '../../../environments/environment';
 import { ToastService } from '../../core/services/toast.service';
 import { BreadcrumbComponent } from '../../shared/components/molecules/breadcrumb/breadcrumb.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
-import { ThemeToggleComponent } from '../../shared/components/atoms/theme-toggle/theme-toggle.component';
 
 interface ReportSummary {
   totalUsers?: number;
@@ -23,7 +22,7 @@ interface ReportSummary {
 @Component({
   selector: 'app-reports',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, BreadcrumbComponent, NotificationsComponent, ThemeToggleComponent],
+  imports: [CommonModule, NgIf, FormsModule, RouterLink, BreadcrumbComponent, NotificationsComponent],
   templateUrl: './reports.component.html',
   styleUrls: ['./reports.component.scss']
 })

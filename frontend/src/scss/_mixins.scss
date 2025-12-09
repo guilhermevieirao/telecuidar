@@ -1,4 +1,4 @@
-@import 'variables';
+@use 'variables' as *;
 
 // ===================================
 // MIXINS DE RESPONSIVIDADE
@@ -295,12 +295,5 @@
 }
 
 // ===================================
-// MIXINS DE DARK MODE
+// ANIMATION MIXINS
 // ===================================
-
-@mixin dark-mode {
-  html[data-theme="dark"] &,
-  html.dark & {
-    @content;
-  }
-}

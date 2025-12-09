@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgIf, NgFor } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '../../shared/components/molecules/breadcrumb/breadcrumb.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
-import { ThemeToggleComponent } from '../../shared/components/atoms/theme-toggle/theme-toggle.component';
 import { MobileMenu, MenuItem } from '../../shared/components/organisms/mobile-menu/mobile-menu';
 import { AppointmentService, Appointment } from '../../core/services/appointment.service';
 import { ModalService } from '../../core/services/modal.service';
@@ -15,7 +14,7 @@ type FilterStatus = 'all' | 'upcoming' | 'past' | 'cancelled';
 @Component({
   selector: 'app-professional-appointments',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, BreadcrumbComponent, NotificationsComponent, ThemeToggleComponent, MobileMenu],
+  imports: [CommonModule, NgIf, NgFor, RouterLink, FormsModule, BreadcrumbComponent, NotificationsComponent, MobileMenu],
   templateUrl: './professional-appointments.component.html',
   styleUrls: ['./professional-appointments.component.scss']
 })

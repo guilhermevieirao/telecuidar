@@ -7,7 +7,6 @@
       </div>
       
       <div class="nav-right">
-        <app-theme-toggle></app-theme-toggle>
         <app-notifications></app-notifications>
         
         <!-- Desktop User Section -->
@@ -21,9 +20,13 @@
             <span class="user-role">{{ getUserRoleName() }}</span>
           </div>
         </div>
-        <button class="btn-logout desktop-only" (click)="logout()">
+        <app-button
+          variant="danger"
+          size="md"
+          (click)="logout()"
+          class="desktop-only">
           Sair
-        </button>
+        </app-button>
 
         <!-- Mobile Menu -->
         <app-mobile-menu
@@ -156,9 +159,9 @@
         </div>
         <div class="info-item">
           <label>E-mail Confirmado:</label>
-          <span [class.confirmed]="user?.emailConfirmed" [class.pending]="!user?.emailConfirmed">
+          <app-badge [variant]="user?.emailConfirmed ? 'success' : 'warning'">
             {{ user?.emailConfirmed ? '✓ Confirmado' : '⚠ Pendente' }}
-          </span>
+          </app-badge>
         </div>
         <div class="info-item">
           <label>Último Acesso:</label>
@@ -170,26 +173,21 @@
     <div class="quick-actions">
       <h2>Ações Rápidas</h2>
       <div class="actions-grid">
-        <a routerLink="#" class="action-btn primary">
-          <span class="action-icon">🎥</span>
-          <span>Iniciar Consulta Online</span>
-        </a>
-        <button class="action-btn">
-          <span class="action-icon">📅</span>
-          <span>Agendar Consulta</span>
-        </button>
-        <a routerLink="/profile" class="action-btn">
-          <span class="action-icon">👤</span>
-          <span>Editar Perfil</span>
-        </a>
-        <button class="action-btn">
-          <span class="action-icon">💬</span>
-          <span>Mensagens</span>
-        </button>
-        <button class="action-btn">
-          <span class="action-icon">⚙️</span>
-          <span>Configurações</span>
-        </button>
+        <app-button variant="primary" size="md" routerLink="#">
+          🎥 Iniciar Consulta Online
+        </app-button>
+        <app-button variant="primary" size="md">
+          📅 Agendar Consulta
+        </app-button>
+        <app-button variant="secondary" size="md" routerLink="/profile">
+          👤 Editar Perfil
+        </app-button>
+        <app-button variant="secondary" size="md">
+          💬 Mensagens
+        </app-button>
+        <app-button variant="secondary" size="md">
+          ⚙️ Configurações
+        </app-button>
       </div>
     </div>
   </div>

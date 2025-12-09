@@ -1,13 +1,12 @@
 import { Component, OnInit, HostListener } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterLink, Router } from '@angular/router';
-import { ThemeToggleComponent } from '../../shared/components/atoms/theme-toggle/theme-toggle.component';
+import { CommonModule, NgIf, NgFor } from '@angular/common';
+import { Router, RouterLink } from '@angular/router';
 import { MobileMenu, MenuItem } from '../../shared/components/organisms/mobile-menu/mobile-menu';
 
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [CommonModule, RouterLink, ThemeToggleComponent, MobileMenu],
+  imports: [CommonModule, NgIf, NgFor, RouterLink, MobileMenu],
   templateUrl: './landing.component.html',
   styleUrls: ['./landing.component.scss']
 })

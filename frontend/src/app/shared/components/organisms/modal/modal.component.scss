@@ -1,34 +1,17 @@
 .modal-content {
-  background: white;
-  color: #1a202c;
-}
-
-:host-context(html[data-theme="dark"]),
-:host-context(html.dark) {
-  .modal-content {
-    background: #1f2937;
-    color: #f9fafb;
-  }
-  .modal-header {
-    background: #111827;
-    color: #f9fafb;
-    border-bottom: 1px solid #374151;
-  }
-  .modal-footer {
-    background: #111827;
-    border-top: 1px solid #374151;
-  }
+  background: var(--white);
+  color: var(--text-primary);
 }
 
 .modal-header, .modal-footer {
-  background: #f9fafb;
-  color: #1a202c;
+  background: var(--gray-50);
+  color: var(--text-primary);
 }
 
 .modal-header {
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--gray-200);
 }
 
 .modal-footer {
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--gray-200);
 }

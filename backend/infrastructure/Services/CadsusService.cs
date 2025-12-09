@@ -331,13 +331,25 @@ public class CadsusService : ICadsusService
 
         try
         {
-            // Carregar certificado com toda a cadeia
-            var certificates = X509CertificateLoader.LoadPkcs12CollectionFromFile(
-                certPath, 
-                certPassword,
-                X509KeyStorageFlags.Exportable | 
-                X509KeyStorageFlags.MachineKeySet | 
-                X509KeyStorageFlags.PersistKeySet);
+            // Carregar certificado com toda a cadeia (com fallback para evitar "Acesso negado")
+            X509Certificate2Collection certificates;
+            
+            try 
+            {
+                // Tentar carregar com flags de compatibilidade Windows
+                certificates = X509CertificateLoader.LoadPkcs12CollectionFromFile(
+                    certPath, 
+                    certPassword,
+                    X509KeyStorageFlags.Exportable | 
+                    X509KeyStorageFlags.MachineKeySet | 
+                    X509KeyStorageFlags.PersistKeySet);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning($"⚠️ Failed to load certificate collection with flags: {ex.Message}");
+                // Fallback: carregar sem flags (funciona na maioria dos casos)
+                certificates = X509CertificateLoader.LoadPkcs12CollectionFromFile(certPath, certPassword);
+            }
 
             // Encontrar o certificado com chave privada
             X509Certificate2? clientCertificate = null;

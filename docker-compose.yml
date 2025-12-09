@@ -87,6 +87,13 @@ services:
       - XMPP_AUTH_DOMAIN
       - XMPP_MUC_DOMAIN
       - XMPP_INTERNAL_MUC_DOMAIN
+      - HIDE_PREMEETING_BUTTONS=true
+      - ENABLE_PREJOIN_PAGE=true
+      - BRAND_WATERMARK_LINK=""
+      - DEFAULT_LOGO_URL=""
+      - DEFAULT_WELCOME_PAGE_LOGO_URL=""
+      - SHOW_JITSI_WATERMARK=false
+      - SHOW_WATERMARK_FOR_GUESTS=false
 
   jitsi-jicofo:
     image: jitsi/jicofo:stable

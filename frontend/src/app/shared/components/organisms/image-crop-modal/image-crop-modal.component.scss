@@ -4,7 +4,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.75);
+  background: var(--black-alpha-90);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -29,7 +29,7 @@
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 20px 60px var(--black-alpha-30);
   animation: slideUp 0.3s ease-out;
 }
 
@@ -49,12 +49,12 @@
   align-items: center;
   justify-content: space-between;
   padding: 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--gray-200);
 
   h2 {
     margin: 0;
     font-size: 1.5rem;
-    color: #1f2937;
+    color: var(--gray-800);
     font-weight: 600;
   }
 
@@ -62,7 +62,7 @@
     background: none;
     border: none;
     font-size: 1.5rem;
-    color: #6b7280;
+    color: var(--gray-500);
     cursor: pointer;
     width: 32px;
     height: 32px;
@@ -73,8 +73,8 @@
     transition: all 0.2s;
 
     &:hover {
-      background: #f3f4f6;
-      color: #1f2937;
+      background: var(--gray-100);
+      color: var(--gray-800);
     }
   }
 }
@@ -99,7 +99,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #f9fafb;
+  background: var(--gray-50);
   border-radius: 8px;
   padding: 1rem;
   min-height: 300px;
@@ -109,7 +109,7 @@
     height: auto;
     cursor: move;
     border-radius: 4px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px var(--black-alpha-10);
   }
 }
 
@@ -118,13 +118,13 @@
   flex-direction: column;
   align-items: center;
   padding: 1rem;
-  background: #f9fafb;
+  background: var(--gray-50);
   border-radius: 8px;
 
   h3 {
     margin: 0 0 1rem 0;
     font-size: 1rem;
-    color: #1f2937;
+    color: var(--gray-800);
     font-weight: 600;
   }
 
@@ -132,7 +132,7 @@
     background: white;
     border-radius: 50%;
     padding: 0.5rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px var(--black-alpha-10);
     margin-bottom: 0.75rem;
 
     canvas {
@@ -144,7 +144,7 @@
   .preview-hint {
     margin: 0;
     font-size: 0.875rem;
-    color: #6b7280;
+    color: var(--gray-500);
     text-align: center;
   }
 
@@ -156,14 +156,14 @@
 .instructions {
   margin-top: 1.5rem;
   padding: 1rem;
-  background: #eff6ff;
-  border-left: 4px solid #2563eb;
+  background: var(--primary-50);
+  border-left: 4px solid var(--primary-600);
   border-radius: 6px;
 
   p {
     margin: 0;
     font-size: 0.875rem;
-    color: #1e40af;
+    color: var(--primary-700);
     line-height: 1.5;
 
     strong {
@@ -177,7 +177,7 @@
   justify-content: flex-end;
   gap: 1rem;
   padding: 1.5rem;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--gray-200);
 
   .btn {
     padding: 0.625rem 1.5rem;
@@ -189,20 +189,20 @@
     transition: all 0.2s;
 
     &.btn-secondary {
-      background: #f3f4f6;
-      color: #374151;
+      background: var(--gray-100);
+      color: var(--gray-700);
 
       &:hover {
-        background: #e5e7eb;
+        background: var(--gray-200);
       }
     }
 
     &.btn-primary {
-      background: #2563eb;
+      background: var(--primary-600);
       color: white;
 
       &:hover {
-        background: #1d4ed8;
+        background: var(--primary-700);
       }
     }
   }
@@ -223,105 +223,16 @@
   }
 
   &::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: var(--gray-100);
   }
 
   &::-webkit-scrollbar-thumb {
-    background: #888;
+    background: var(--gray-400);
     border-radius: 4px;
 
     &:hover {
-      background: #555;
+      background: var(--gray-600);
     }
   }
 }
 
-// Dark mode support
-:host-context(html.dark) {
-  .modal-content {
-    background: #1f2937;
-
-    &::-webkit-scrollbar-track {
-      background: #111827;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: #4b5563;
-
-      &:hover {
-        background: #6b7280;
-      }
-    }
-  }
-
-  .modal-header {
-    border-bottom-color: #374151;
-
-    h2 {
-      color: #f9fafb;
-    }
-
-    .btn-close {
-      color: #9ca3af;
-
-      &:hover {
-        background: #374151;
-        color: #f9fafb;
-      }
-    }
-  }
-
-  .canvas-wrapper {
-    background: #111827;
-  }
-
-  .preview-section {
-    background: #111827;
-
-    h3 {
-      color: #f9fafb;
-    }
-
-    .preview-wrapper {
-      background: #1f2937;
-    }
-
-    .preview-hint {
-      color: #9ca3af;
-    }
-  }
-
-  .instructions {
-    background: #1e3a8a;
-    border-left-color: #3b82f6;
-
-    p {
-      color: #93c5fd;
-
-      strong {
-        color: #dbeafe;
-      }
-    }
-  }
-
-  .modal-footer {
-    border-top-color: #374151;
-
-    .btn-secondary {
-      background: #374151;
-      color: #d1d5db;
-
-      &:hover {
-        background: #4b5563;
-      }
-    }
-
-    .btn-primary {
-      background: #3b82f6;
-
-      &:hover {
-        background: #2563eb;
-      }
-    }
-  }
-}
