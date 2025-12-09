@@ -196,10 +196,11 @@
   font-weight: 800;
   line-height: 1.2;
   margin-bottom: 1.5rem;
+  color: var(--white); // Cor clara para o título
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, var(--card-bg) 0%, var(--primary-300) 100%);
+  background: linear-gradient(135deg, var(--white) 0%, var(--gray-100) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -210,6 +211,7 @@
   line-height: 1.8;
   margin-bottom: 2rem;
   opacity: 0.95;
+  color: var(--white); // Cor clara para a descrição
 }
 
 .hero-stats {
@@ -232,6 +234,7 @@
   font-size: 2rem;
   font-weight: 800;
   margin-bottom: 0.5rem;
+  color: var(--white); // Cor clara para valores das estatísticas
 }
 
 .stat-label {
@@ -239,6 +242,7 @@
   opacity: 0.9;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  color: var(--white); // Cor clara para labels das estatísticas
 }
 
 .hero-actions {
@@ -271,11 +275,12 @@
 
 .btn-hero-secondary {
   background: transparent;
-  color: var(--text-inverse);
+  color: var(--white);
   border: 2px solid white;
 
   &:hover {
     background: var(--white-alpha-10);
+    color: var(--white);
   }
 }
 
@@ -418,12 +423,14 @@
     font-size: 2rem;
     font-weight: 700;
     margin-bottom: 1rem;
+    color: var(--white); // Cor clara para o título
   }
 
   p {
     font-size: 1.125rem;
     line-height: 1.8;
     opacity: 0.95;
+    color: var(--white); // Cor clara para o parágrafo
   }
 }
 
@@ -801,6 +808,7 @@
     font-size: 2rem;
     font-weight: 700;
     margin-bottom: 1.5rem;
+    color: var(--white); // Cor clara para o título
   }
 
   p {
@@ -808,6 +816,7 @@
     line-height: 1.8;
     margin-bottom: 2rem;
     opacity: 0.95;
+    color: var(--white); // Cor clara para o parágrafo
   }
 
   blockquote {
@@ -818,6 +827,7 @@
     font-style: italic;
     font-size: 1.125rem;
     line-height: 1.8;
+    color: var(--white); // Cor clara para a citação
   }
 }
 
@@ -836,6 +846,7 @@
     font-size: 2.5rem;
     font-weight: 800;
     margin-bottom: 1.5rem;
+    color: var(--white); // Cor clara para o título
   }
 
   .cta-description {
@@ -843,6 +854,7 @@
     line-height: 1.8;
     margin-bottom: 2.5rem;
     opacity: 0.95;
+    color: var(--white); // Cor clara para a descrição
   }
 }
 
@@ -878,11 +890,12 @@
 
 .btn-cta-secondary {
   background: transparent;
-  color: var(--text-inverse);
+  color: var(--white);
   border: 2px solid white;
 
   &:hover {
     background: var(--white-alpha-10);
+    color: var(--white);
   }
 }
 
@@ -913,6 +926,7 @@
     font-size: 1.25rem;
     font-weight: 700;
     margin-bottom: 1.5rem;
+    color: var(--white);
   }
 }
 
@@ -923,6 +937,7 @@
   font-size: 1.5rem;
   font-weight: 700;
   margin-bottom: 1rem;
+  color: var(--white);
 
   .logo-icon {
     font-size: 2rem;
@@ -930,7 +945,7 @@
 }
 
 .footer-tagline {
-  color: var(--slate-400);
+  color: var(--white);
   line-height: 1.8;
   margin-bottom: 1.5rem;
 }
@@ -958,19 +973,19 @@
     margin-bottom: 0.75rem;
 
     a {
-      color: var(--slate-400);
+      color: var(--white);
       transition: color 0.3s;
       cursor: pointer;
 
       &:hover {
-        color: var(--text-inverse);
+        color: var(--gray-200);
       }
     }
   }
 }
 
 .footer-contact li {
-  color: var(--slate-400);
+  color: var(--white);
 }
 
 .footer-bottom {
