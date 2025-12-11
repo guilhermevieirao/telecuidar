@@ -1,0 +1,41 @@
+@if (isOpen && config) {
+  <div class="modal-backdrop" (click)="onBackdropClick()">
+    <div class="modal" (click)="$event.stopPropagation()" [class]="'modal--' + (config.variant || 'info')">
+      <div class="modal__header">
+        <div class="modal__icon" [style.color]="iconColor">
+          <app-icon [name]="icon" [size]="32" />
+        </div>
+        <button
+          type="button"
+          class="modal__close"
+          (click)="onCancel()"
+          aria-label="Fechar"
+        >
+          <app-icon name="close" [size]="20" />
+        </button>
+      </div>
+
+      <div class="modal__content">
+        <h2 class="modal__title">{{ config.title }}</h2>
+        <p class="modal__message">{{ config.message }}</p>
+      </div>
+
+      <div class="modal__actions">
+        @if (config.type === 'confirm') {
+          <app-button
+            variant="outline"
+            (click)="onCancel()"
+          >
+            {{ config.cancelText || 'Cancelar' }}
+          </app-button>
+        }
+        <app-button
+          [variant]="config.variant === 'danger' ? 'danger' : 'primary'"
+          (click)="onConfirm()"
+        >
+          {{ config.confirmText || 'OK' }}
+        </app-button>
+      </div>
+    </div>
+  </div>
+}

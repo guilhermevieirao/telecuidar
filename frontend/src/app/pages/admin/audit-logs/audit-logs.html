@@ -1,0 +1,192 @@
+<div class="audit-logs">
+  <div class="audit-logs__header">
+    <div class="audit-logs__header-content">
+      <app-icon name="activity" [size]="32" />
+      <div>
+        <h1 class="audit-logs__title">Logs de Auditoria</h1>
+        <p class="audit-logs__subtitle">Histórico de ações realizadas no sistema</p>
+      </div>
+    </div>
+    <div class="audit-logs__header-actions">
+      <app-button
+        variant="primary"
+        (click)="onExportPDF()"
+        [disabled]="isLoading"
+      >
+        <app-icon name="download" [size]="20" />
+        Exportar PDF
+      </app-button>
+    </div>
+  </div>
+
+  <div class="audit-logs__filters">
+    <app-search-input
+      [(ngModel)]="searchTerm"
+      (search)="onSearch($event)"
+      placeholder="Buscar por usuário, descrição, IP..."
+      icon="search"
+    />
+
+    <div class="audit-logs__filter-row">
+      <div class="audit-logs__filter-group">
+        <div class="audit-logs__filter-item">
+          <label class="audit-logs__filter-label">Ação</label>
+          <app-filter-select
+            [(ngModel)]="selectedAction"
+            (change)="onFilterChange()"
+            [options]="actionOptions"
+          />
+        </div>
+
+        <div class="audit-logs__filter-item">
+          <label class="audit-logs__filter-label">Tipo de Entidade</label>
+          <app-filter-select
+            [(ngModel)]="selectedEntityType"
+            (change)="onFilterChange()"
+            [options]="entityTypeOptions"
+          />
+        </div>
+
+        <div class="audit-logs__filter-item">
+          <label class="audit-logs__filter-label">Data Inicial</label>
+          <input
+            type="datetime-local"
+            class="audit-logs__date-input"
+            [(ngModel)]="startDate"
+            (change)="onFilterChange()"
+          />
+        </div>
+
+        <div class="audit-logs__filter-item">
+          <label class="audit-logs__filter-label">Data Final</label>
+          <input
+            type="datetime-local"
+            class="audit-logs__date-input"
+            [(ngModel)]="endDate"
+            (change)="onFilterChange()"
+          />
+        </div>
+      </div>
+
+      <button
+        type="button"
+        class="audit-logs__clear-filters"
+        (click)="clearFilters()"
+      >
+        Limpar Filtros
+      </button>
+    </div>
+  </div>
+
+  <div class="audit-logs__table-container">
+    @if (isLoading) {
+      <div class="audit-logs__loading">
+        <p>Carregando logs...</p>
+      </div>
+    } @else if (logs.length === 0) {
+      <div class="audit-logs__empty">
+        <app-icon name="alert-circle" [size]="48" />
+        <p>Nenhum log encontrado</p>
+      </div>
+    } @else {
+      <table class="audit-logs__table">
+        <thead>
+          <tr>
+            <th>
+              <app-table-header
+                label="Data/Hora"
+                field="timestamp"
+                [sortable]="true"
+                [currentSortField]="sortField"
+                [currentSortDirection]="sortDirection"
+                (sort)="onSort($event)"
+              />
+            </th>
+            <th>
+              <app-table-header
+                label="Usuário"
+                field="userName"
+                [sortable]="true"
+                [currentSortField]="sortField"
+                [currentSortDirection]="sortDirection"
+                (sort)="onSort($event)"
+              />
+            </th>
+            <th>
+              <app-table-header
+                label="Ação"
+                field="action"
+                [sortable]="true"
+                [currentSortField]="sortField"
+                [currentSortDirection]="sortDirection"
+                (sort)="onSort($event)"
+              />
+            </th>
+            <th>
+              <app-table-header
+                label="Tipo"
+                field="entityType"
+                [sortable]="true"
+                [currentSortField]="sortField"
+                [currentSortDirection]="sortDirection"
+                (sort)="onSort($event)"
+              />
+            </th>
+            <th>Descrição</th>
+            <th>
+              <app-table-header
+                label="IP"
+                field="ipAddress"
+                [sortable]="true"
+                [currentSortField]="sortField"
+                [currentSortDirection]="sortDirection"
+                (sort)="onSort($event)"
+              />
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (log of logs; track log.id) {
+            <tr>
+              <td>
+                <div class="audit-logs__timestamp">
+                  {{ log.timestamp | date:'dd/MM/yyyy' }}<br>
+                  <span class="audit-logs__time">{{ log.timestamp | date:'HH:mm:ss' }}</span>
+                </div>
+              </td>
+              <td>
+                <div class="audit-logs__user">
+                  <strong>{{ log.userName }}</strong>
+                  <span class="audit-logs__role">{{ log.userRole }}</span>
+                </div>
+              </td>
+              <td>
+                <span class="action-badge" [ngClass]="getActionClass(log.action)">
+                  {{ log.action | auditAction }}
+                </span>
+              </td>
+              <td>
+                <span class="audit-logs__entity-type">{{ log.entityType }}</span>
+              </td>
+              <td>{{ log.description }}</td>
+              <td>
+                <code class="audit-logs__ip">{{ log.ipAddress }}</code>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+
+  @if (!isLoading && logs.length > 0) {
+    <app-pagination
+      [currentPage]="currentPage"
+      [totalPages]="totalPages"
+      [pageSize]="pageSize"
+      [total]="totalItems"
+      (pageChange)="onPageChange($event)"
+      (pageSizeChange)="onPageSizeChange($event)"
+    />
+  }
+</div>

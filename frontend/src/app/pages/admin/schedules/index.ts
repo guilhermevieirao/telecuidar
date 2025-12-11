@@ -1,0 +1,1 @@
+export { SchedulesComponent } from './schedules';

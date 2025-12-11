@@ -1,0 +1,122 @@
+<div class="notifications">
+  <div class="notifications__header">
+    <div>
+      <h1 class="notifications__title">Notificações</h1>
+      <p class="notifications__subtitle">Acompanhe as atualizações do sistema</p>
+    </div>
+    <button
+      type="button"
+      class="notifications__mark-all-btn"
+      (click)="markAllAsRead()"
+      [disabled]="!hasUnreadNotifications"
+    >
+      <app-icon name="check-circle" [size]="20" />
+      Marcar todas como lidas
+    </button>
+  </div>
+
+  <div class="notifications__filters">
+    <div class="filter-group">
+      <label class="filter-label" for="status-filter">Status</label>
+      <select 
+        id="status-filter"
+        class="filter-select"
+        [(ngModel)]="statusFilter"
+        (change)="onFilterChange()"
+      >
+        <option value="all">Todas</option>
+        <option value="unread">Não lidas @if (unreadCount > 0) { ({{ unreadCount }}) }</option>
+        <option value="read">Lidas</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label class="filter-label" for="type-filter">Tipo</label>
+      <select 
+        id="type-filter"
+        class="filter-select"
+        [(ngModel)]="typeFilter"
+        (change)="onFilterChange()"
+      >
+        <option value="all">Todas</option>
+        <option value="info">Informação</option>
+        <option value="warning">Avisos</option>
+        <option value="error">Erros</option>
+        <option value="success">Sucesso</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="notifications__list">
+    @if (loading) {
+      <div class="notifications__loading">
+        <p>Carregando notificações...</p>
+      </div>
+    } @else if (notifications.length === 0) {
+      <div class="notifications__empty">
+        <app-icon name="bell" [size]="48" />
+        <p>Nenhuma notificação encontrada</p>
+      </div>
+    } @else {
+      @for (notification of notifications; track notification.id) {
+        <div
+          class="notification-card"
+          [class.notification-card--unread]="notification.status === 'unread'"
+          [class.notification-card--info]="notification.type === 'info'"
+          [class.notification-card--warning]="notification.type === 'warning'"
+          [class.notification-card--error]="notification.type === 'error'"
+          [class.notification-card--success]="notification.type === 'success'"
+        >
+          <div class="notification-card__icon">
+            @switch (notification.type) {
+              @case ('info') {
+                <app-icon name="alert-circle" [size]="24" />
+              }
+              @case ('warning') {
+                <app-icon name="alert-circle" [size]="24" />
+              }
+              @case ('error') {
+                <app-icon name="x-circle" [size]="24" />
+              }
+              @case ('success') {
+                <app-icon name="check-circle" [size]="24" />
+              }
+            }
+          </div>
+
+          <div class="notification-card__content">
+            <div class="notification-card__header">
+              <h3 class="notification-card__title">{{ notification.title }}</h3>
+              @if (notification.status === 'unread') {
+                <span class="notification-card__unread-badge"></span>
+              }
+            </div>
+            <p class="notification-card__message">{{ notification.message }}</p>
+            <span class="notification-card__timestamp">{{ formatTimestamp(notification.timestamp) }}</span>
+          </div>
+
+          <div class="notification-card__actions">
+            @if (notification.status === 'unread') {
+              <button
+                type="button"
+                class="notification-card__action-btn"
+                (click)="markAsRead(notification.id)"
+                title="Marcar como lida"
+              >
+                <app-icon name="check" [size]="18" />
+              </button>
+            }
+            <button
+              type="button"
+              class="notification-card__action-btn notification-card__action-btn--delete"
+              (click)="deleteNotification(notification.id)"
+              title="Excluir"
+            >
+              <app-icon name="close" [size]="18" />
+            </button>
+          </div>
+        </div>
+      }
+    }
+  </div>
+</div>

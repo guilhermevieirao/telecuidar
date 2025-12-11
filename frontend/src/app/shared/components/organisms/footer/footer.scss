@@ -1,0 +1,99 @@
+@use '../../../../../styles/variables' as *;
+@use '../../../../../styles/mixins' as *;
+
+.footer {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: $spacing-4xl 0 $spacing-xl;
+
+  @include mobile {
+    padding: $spacing-3xl 0 $spacing-lg;
+  }
+
+  &__content {
+    display: grid;
+    grid-template-columns: 2fr 3fr;
+    gap: $spacing-4xl;
+    margin-bottom: $spacing-3xl;
+
+    @include max-width($breakpoint-tablet) {
+      grid-template-columns: 1fr;
+      gap: $spacing-3xl;
+    }
+  }
+
+  &__brand {
+    @include flex-column;
+    gap: $spacing-lg;
+  }
+
+  &__description {
+    color: var(--text-secondary);
+    line-height: $line-height-relaxed;
+    max-width: 400px;
+  }
+
+  &__links {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: $spacing-2xl;
+
+    @include mobile {
+      grid-template-columns: 1fr;
+      gap: $spacing-xl;
+    }
+  }
+
+  &__links-group {
+    @include flex-column;
+    gap: $spacing-md;
+  }
+
+  &__links-title {
+    font-size: $font-size-base;
+    font-weight: $font-weight-semibold;
+    color: var(--text-primary);
+    margin-bottom: $spacing-sm;
+  }
+
+  &__links-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    @include flex-column;
+    gap: $spacing-sm;
+  }
+
+  &__link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: $font-size-sm;
+    @include transition(color);
+
+    &:hover {
+      color: var(--primary-600);
+    }
+  }
+
+  &__contact-item {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+  }
+
+  &__contact-icon {
+    font-size: $font-size-base;
+    flex-shrink: 0;
+  }
+
+  &__bottom {
+    padding-top: $spacing-xl;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+
+  &__copyright {
+    color: var(--text-secondary);
+    font-size: $font-size-sm;
+  }
+}

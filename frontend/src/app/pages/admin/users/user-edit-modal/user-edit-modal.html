@@ -1,0 +1,159 @@
+@if (isOpen && user) {
+  <div class="modal-backdrop" (click)="onBackdropClick()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal__header">
+        <div class="modal__header-content">
+          <app-icon name="user" [size]="24" />
+          <h2 class="modal__title">Editar Usuário</h2>
+        </div>
+        <button
+          type="button"
+          class="modal__close"
+          (click)="onCancel()"
+          aria-label="Fechar"
+        >
+          <app-icon name="close" [size]="24" />
+        </button>
+      </div>
+
+      <div class="modal__body">
+        <div class="modal__avatar-section">
+          <app-avatar 
+            [name]="editedUser.name || ''" 
+            [imageUrl]="editedUser.avatar"
+            size="xl"
+          />
+        </div>
+
+        <form class="user-form">
+          <div class="user-form__row">
+            <div class="user-form__field">
+              <label for="user-name" class="user-form__label">Nome Completo</label>
+              <input
+                id="user-name"
+                type="text"
+                class="user-form__input"
+                [(ngModel)]="editedUser.name"
+                name="name"
+                placeholder="Digite o nome completo"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="user-form__row">
+            <div class="user-form__field">
+              <label for="user-email" class="user-form__label">E-mail</label>
+              <input
+                id="user-email"
+                type="email"
+                class="user-form__input"
+                [(ngModel)]="editedUser.email"
+                name="email"
+                placeholder="Digite o e-mail"
+                appEmailValidator
+                required
+              />
+            </div>
+          </div>
+
+          <div class="user-form__row user-form__row--two-cols">
+            <div class="user-form__field">
+              <label for="user-cpf" class="user-form__label">CPF</label>
+              <input
+                id="user-cpf"
+                type="text"
+                class="user-form__input"
+                [(ngModel)]="editedUser.cpf"
+                name="cpf"
+                placeholder="000.000.000-00"
+                appCpfMask
+                required
+              />
+            </div>
+
+            <div class="user-form__field">
+              <label for="user-phone" class="user-form__label">Telefone</label>
+              <input
+                id="user-phone"
+                type="tel"
+                class="user-form__input"
+                [(ngModel)]="editedUser.phone"
+                name="phone"
+                placeholder="(00) 00000-0000"
+                appPhoneMask
+                required
+              />
+            </div>
+          </div>
+
+          <div class="user-form__row user-form__row--two-cols">
+            <div class="user-form__field">
+              <label for="user-role" class="user-form__label">Perfil</label>
+              <select
+                id="user-role"
+                class="user-form__select"
+                [(ngModel)]="editedUser.role"
+                name="role"
+                required
+              >
+                <option value="patient">Paciente</option>
+                <option value="professional">Profissional</option>
+                <option value="admin">Administrador</option>
+              </select>
+            </div>
+
+            <div class="user-form__field">
+              <label for="user-status" class="user-form__label">Status</label>
+              <select
+                id="user-status"
+                class="user-form__select"
+                [(ngModel)]="editedUser.status"
+                name="status"
+                required
+              >
+                <option value="active">Ativo</option>
+                <option value="inactive">Inativo</option>
+              </select>
+            </div>
+          </div>
+
+          @if (editedUser.role === 'professional') {
+            <div class="user-form__row">
+              <div class="user-form__field">
+                <label for="user-specialty" class="user-form__label">Especialidade</label>
+                <select
+                  id="user-specialty"
+                  class="user-form__select"
+                  [(ngModel)]="editedUser.specialtyId"
+                  name="specialtyId"
+                >
+                  <option [value]="undefined">Selecione uma especialidade</option>
+                  @for (specialty of specialties; track specialty.id) {
+                    <option [value]="specialty.id">{{ specialty.name }}</option>
+                  }
+                </select>
+              </div>
+            </div>
+          }
+        </form>
+      </div>
+
+      <div class="modal__footer">
+        <app-button
+          [variant]="'outline'"
+          (click)="onCancel()"
+        >
+          Cancelar
+        </app-button>
+        <app-button
+          [variant]="'primary'"
+          (click)="onSave()"
+          [disabled]="!isFormValid()"
+        >
+          Salvar Alterações
+        </app-button>
+      </div>
+    </div>
+  </div>
+}

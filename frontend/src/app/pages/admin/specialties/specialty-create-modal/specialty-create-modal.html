@@ -1,0 +1,80 @@
+@if (isOpen) {
+  <div class="modal-backdrop" (click)="onBackdropClick()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal__header">
+        <div class="modal__header-content">
+          <app-icon name="plus" [size]="24" />
+          <h2 class="modal__title">Criar Nova Especialidade</h2>
+        </div>
+        <button
+          type="button"
+          class="modal__close"
+          (click)="onCancel()"
+          aria-label="Fechar"
+        >
+          <app-icon name="close" [size]="24" />
+        </button>
+      </div>
+
+      <div class="modal__body">
+        <form class="specialty-form">
+          <div class="specialty-form__field">
+            <label for="specialty-name" class="specialty-form__label">Nome da Especialidade</label>
+            <input
+              id="specialty-name"
+              type="text"
+              class="specialty-form__input"
+              [(ngModel)]="specialtyData.name"
+              name="name"
+              placeholder="Ex: Cardiologia"
+            />
+          </div>
+
+          <div class="specialty-form__field">
+            <label for="specialty-description" class="specialty-form__label">Descrição</label>
+            <textarea
+              id="specialty-description"
+              class="specialty-form__textarea"
+              [(ngModel)]="specialtyData.description"
+              name="description"
+              rows="4"
+              placeholder="Descreva a especialidade..."
+            ></textarea>
+          </div>
+
+          <div class="specialty-form__field">
+            <label class="specialty-form__checkbox-label">
+              <input
+                type="checkbox"
+                class="specialty-form__checkbox"
+                [(ngModel)]="specialtyData.status"
+                [ngModelOptions]="{standalone: true}"
+                [checked]="specialtyData.status === 'active'"
+                (change)="specialtyData.status = specialtyData.status === 'active' ? 'inactive' : 'active'"
+              />
+              <span class="specialty-form__checkbox-text">Especialidade ativa</span>
+            </label>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal__footer">
+        <app-button
+          [variant]="'outline'"
+          (click)="onCancel()"
+        >
+          Cancelar
+        </app-button>
+
+        <app-button
+          [variant]="'primary'"
+          (click)="onCreate()"
+          [disabled]="!isFormValid()"
+        >
+          <app-icon name="check" [size]="18" />
+          Criar Especialidade
+        </app-button>
+      </div>
+    </div>
+  </div>
+}

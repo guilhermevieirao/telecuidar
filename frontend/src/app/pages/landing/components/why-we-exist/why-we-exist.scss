@@ -1,0 +1,129 @@
+@use '../../../../../styles/variables' as *;
+@use '../../../../../styles/mixins' as *;
+
+.why-exist {
+  padding: $spacing-4xl 0;
+  background: var(--surface-secondary);
+
+  @include mobile {
+    padding: $spacing-3xl 0;
+  }
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: $spacing-4xl;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+
+  @include mobile {
+    margin-bottom: $spacing-3xl;
+  }
+}
+
+.section-title {
+  @include heading-2;
+  margin: 0 0 $spacing-md 0;
+  color: var(--text-primary);
+}
+
+.section-subtitle {
+  font-size: $font-size-lg;
+  color: var(--text-secondary);
+  line-height: $line-height-relaxed;
+  margin: 0;
+
+  @include mobile {
+    font-size: $font-size-base;
+  }
+}
+
+.challenges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: $spacing-xl;
+  margin-bottom: $spacing-4xl;
+
+  @include mobile {
+    grid-template-columns: 1fr;
+    gap: $spacing-lg;
+    margin-bottom: $spacing-3xl;
+  }
+}
+
+.challenge-card {
+  background: var(--surface-primary);
+  padding: $spacing-2xl;
+  border-radius: $radius-xl;
+  @include shadow-medium;
+  border: 2px solid transparent;
+  transition: transform $transition-base, box-shadow $transition-base, border-color $transition-base;
+
+  &:hover {
+    transform: translateY(-8px);
+    @include shadow-elevated;
+    border-color: var(--primary-600);
+  }
+
+  &:nth-child(2):hover {
+    border-color: var(--blue-600);
+  }
+
+  &:nth-child(3):hover {
+    border-color: var(--green-600);
+  }
+
+  &__icon {
+    font-size: 3rem;
+    margin-bottom: $spacing-lg;
+  }
+
+  &__title {
+    @include heading-4;
+    margin: 0 0 $spacing-md 0;
+    color: var(--text-primary);
+  }
+
+  &__description {
+    font-size: $font-size-base;
+    line-height: $line-height-relaxed;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+}
+
+.solution-banner {
+  background: linear-gradient(135deg, var(--primary-600), var(--blue-600));
+  padding: $spacing-3xl;
+  border-radius: $radius-2xl;
+  @include shadow-elevated;
+
+  @include mobile {
+    padding: $spacing-2xl;
+  }
+
+  &__content {
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  &__title {
+    @include heading-3;
+    margin: 0 0 $spacing-lg 0;
+    color: var(--white);
+  }
+
+  &__text {
+    font-size: $font-size-lg;
+    line-height: $line-height-relaxed;
+    color: var(--white);
+    margin: 0;
+    opacity: 0.95;
+
+    @include mobile {
+      font-size: $font-size-base;
+    }
+  }
+}

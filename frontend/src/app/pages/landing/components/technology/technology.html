@@ -1,0 +1,29 @@
+<section class="technology">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Tecnologia de Ponta a Serviço da Vida</h2>
+      <p class="section-subtitle">
+        Combinamos as mais avançadas tecnologias para criar uma experiência de cuidado único e eficaz
+      </p>
+    </div>
+
+    <div class="tech-grid">
+      @for (category of categories; track category.title) {
+        <div class="tech-card">
+          <div class="tech-card__header">
+            <span class="tech-card__icon">{{ category.icon }}</span>
+            <h3 class="tech-card__title">{{ category.title }}</h3>
+          </div>
+          <ul class="tech-card__list">
+            @for (item of category.items; track item) {
+              <li class="tech-card__item">
+                <span class="tech-card__check">✓</span>
+                <span>{{ item }}</span>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+    </div>
+  </div>
+</section>

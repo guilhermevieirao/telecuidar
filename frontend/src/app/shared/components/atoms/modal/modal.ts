@@ -1,0 +1,76 @@
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { ModalService, ModalConfig } from '../../../../core/services/modal.service';
+import { IconComponent, IconName } from '../icon/icon';
+import { ButtonComponent } from '../button/button';
+
+@Component({
+  selector: 'app-modal',
+  imports: [IconComponent, ButtonComponent],
+  templateUrl: './modal.html',
+  styleUrl: './modal.scss'
+})
+export class ModalComponent implements OnInit, OnDestroy {
+  private modalService = inject(ModalService);
+  
+  isOpen = false;
+  config: ModalConfig | null = null;
+  private subscription?: Subscription;
+
+  ngOnInit(): void {
+    this.subscription = this.modalService.modal$.subscribe((config: ModalConfig) => {
+      this.config = config;
+      this.isOpen = true;
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
+  }
+
+  onConfirm(): void {
+    this.modalService.close({ confirmed: true });
+    this.isOpen = false;
+  }
+
+  onCancel(): void {
+    this.modalService.close({ confirmed: false });
+    this.isOpen = false;
+  }
+
+  onBackdropClick(): void {
+    if (this.config?.type === 'alert') {
+      this.onConfirm();
+    } else {
+      this.onCancel();
+    }
+  }
+
+  get icon(): IconName {
+    switch (this.config?.variant) {
+      case 'danger':
+        return 'x-circle';
+      case 'warning':
+        return 'alert-circle';
+      case 'success':
+        return 'check-circle';
+      case 'info':
+      default:
+        return 'alert-circle';
+    }
+  }
+
+  get iconColor(): string {
+    switch (this.config?.variant) {
+      case 'danger':
+        return 'var(--red-600)';
+      case 'warning':
+        return '#f59e0b';
+      case 'success':
+        return 'var(--green-600)';
+      case 'info':
+      default:
+        return 'var(--blue-600)';
+    }
+  }
+}

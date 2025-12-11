@@ -1,0 +1,133 @@
+@use '../../../../../styles/variables' as *;
+@use '../../../../../styles/mixins' as *;
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: $z-index-sticky;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(10px);
+  transform: translateY(0);
+  @include transition(all);
+
+  &.header--hidden {
+    transform: translateY(-100%);
+  }
+
+  &__content {
+    @include flex-between;
+    padding: $spacing-lg 0;
+    gap: $spacing-xl;
+
+    @include mobile {
+      padding: $spacing-md 0;
+    }
+  }
+
+  &__nav {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xl;
+
+    @include max-width($breakpoint-tablet) {
+      position: fixed;
+      top: 73px;
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: $spacing-xl;
+      gap: $spacing-lg;
+      transform: translateY(-100%);
+      opacity: 0;
+      visibility: hidden;
+      @include transition(all);
+
+      &--open {
+        transform: translateY(0);
+        opacity: 1;
+        visibility: visible;
+      }
+    }
+  }
+
+  &__nav-actions {
+    display: none;
+
+    @include max-width($breakpoint-tablet) {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-md;
+      width: 100%;
+      margin-top: $spacing-md;
+
+      app-button {
+        width: 100%;
+      }
+    }
+  }
+
+  &__link {
+    font-size: $font-size-base;
+    font-weight: $font-weight-medium;
+    color: var(--text-secondary);
+    text-decoration: none;
+    position: relative;
+    @include transition(color);
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--primary-600);
+      @include transition(width);
+    }
+
+    &:hover {
+      color: var(--primary-600);
+
+      &::after {
+        width: 100%;
+      }
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+
+    app-button {
+      @include max-width($breakpoint-tablet) {
+        display: none;
+      }
+    }
+  }
+
+  &__menu-btn {
+    display: none;
+
+    @include max-width($breakpoint-tablet) {
+      display: flex;
+      @include flex-center;
+      padding: $spacing-sm;
+      background: transparent;
+      border: none;
+      color: var(--text-primary);
+      cursor: pointer;
+      border-radius: $radius-md;
+      @include transition(background);
+
+      &:hover {
+        background: var(--neutral-100);
+      }
+    }
+  }
+}

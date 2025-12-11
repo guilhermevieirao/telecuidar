@@ -1,0 +1,117 @@
+@if (isOpen && user) {
+  <div class="modal-backdrop" (click)="onBackdropClick()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal__header">
+        <div class="modal__header-content">
+          <app-icon name="edit" [size]="24" />
+          <h2 class="modal__title">Editar Perfil</h2>
+        </div>
+        <button
+          type="button"
+          class="modal__close"
+          (click)="onCancel()"
+          aria-label="Fechar"
+        >
+          <app-icon name="close" [size]="24" />
+        </button>
+      </div>
+
+      <div class="modal__body">
+        <div class="modal__avatar-section">
+          <app-avatar-upload
+            [name]="editedUser.name || ''"
+            [currentAvatar]="editedUser.avatar"
+            (avatarChange)="onAvatarChange($event)"
+          />
+        </div>
+
+        <form class="user-form">
+          <div class="user-form__field">
+            <label for="profile-name" class="user-form__label">Nome Completo</label>
+            <input
+              id="profile-name"
+              type="text"
+              class="user-form__input"
+              [(ngModel)]="editedUser.name"
+              name="name"
+              placeholder="Digite o nome completo"
+              required
+            />
+          </div>
+
+          <div class="user-form__field">
+            <label for="profile-email" class="user-form__label">E-mail</label>
+            <input
+              id="profile-email"
+              type="email"
+              class="user-form__input"
+              [(ngModel)]="editedUser.email"
+              name="email"
+              placeholder="Digite o e-mail"
+              appEmailValidator
+              required
+            />
+          </div>
+
+          <div class="user-form__row">
+            <div class="user-form__field">
+              <label for="profile-cpf" class="user-form__label">CPF</label>
+              <input
+                id="profile-cpf"
+                type="text"
+                class="user-form__input"
+                [(ngModel)]="editedUser.cpf"
+                name="cpf"
+                placeholder="000.000.000-00"
+                appCpfMask
+                required
+              />
+            </div>
+
+            <div class="user-form__field">
+              <label for="profile-phone" class="user-form__label">Telefone</label>
+              <input
+                id="profile-phone"
+                type="tel"
+                class="user-form__input"
+                [(ngModel)]="editedUser.phone"
+                name="phone"
+                placeholder="(00) 00000-0000"
+                appPhoneMask
+                required
+              />
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal__footer">
+        <div class="modal__footer-left">
+          <app-button
+            [variant]="'outline'"
+            (click)="onChangePassword()"
+          >
+            <app-icon name="shield" [size]="18" />
+            Trocar Senha
+          </app-button>
+        </div>
+        <div class="modal__footer-right">
+          <app-button
+            [variant]="'outline'"
+            (click)="onCancel()"
+          >
+            Cancelar
+          </app-button>
+          <app-button
+            [variant]="'primary'"
+            (click)="onSave()"
+            [disabled]="!isFormValid()"
+          >
+            <app-icon name="check" [size]="18" />
+            Salvar Alterações
+          </app-button>
+        </div>
+      </div>
+    </div>
+  </div>
+}

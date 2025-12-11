@@ -1,0 +1,55 @@
+import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+export type IconName =
+  | 'heart'
+  | 'stethoscope'
+  | 'calendar'
+  | 'user'
+  | 'users'
+  | 'video'
+  | 'check'
+  | 'arrow-right'
+  | 'shield'
+  | 'clock'
+  | 'file'
+  | 'download'
+  | 'moon'
+  | 'sun'
+  | 'menu'
+  | 'close'
+  | 'google'
+  | 'arrow-left'
+  | 'alert-circle'
+  | 'check-circle'
+  | 'x-circle'
+  | 'home'
+  | 'mail'
+  | 'bell'
+  | 'settings'
+  | 'bar-chart'
+  | 'activity'
+  | 'book'
+  | 'plus'
+  | 'search'
+  | 'edit'
+  | 'trash'
+  | 'chevrons-up-down'
+  | 'chevron-up'
+  | 'chevron-down'
+  | 'camera'
+  | 'minus'
+  | 'eye'
+  | 'eye-off';
+
+@Component({
+  selector: 'app-icon',
+  imports: [CommonModule],
+  templateUrl: './icon.html',
+  styleUrl: './icon.scss'
+})
+export class IconComponent {
+  @Input() name!: IconName;
+  @Input() size: number = 24;
+  @Input() color?: string;
+}

@@ -1,0 +1,13 @@
+<div class="avatar" [ngClass]="sizeClass">
+  @if (imageUrl) {
+    <img 
+      [src]="imageUrl" 
+      [alt]="name"
+      class="avatar__image"
+    />
+  } @else {
+    <div class="avatar__initials">
+      {{ initials }}
+    </div>
+  }
+</div>

@@ -1,0 +1,100 @@
+@use '../../../../../styles/variables' as *;
+@use '../../../../../styles/mixins' as *;
+
+.stat-card {
+  @include flex-column-center;
+  padding: $spacing-xl;
+  border-radius: $radius-lg;
+  @include transition(all);
+  border: 2px solid transparent;
+
+  &:hover {
+    transform: translateY(-8px);
+  }
+
+  &__value {
+    font-size: $font-size-5xl;
+    font-weight: $font-weight-extrabold;
+    font-family: $font-heading;
+    line-height: 1;
+    margin-bottom: $spacing-sm;
+
+    @include mobile {
+      font-size: $font-size-4xl;
+    }
+  }
+
+  &__label {
+    font-size: $font-size-base;
+    font-weight: $font-weight-medium;
+    text-align: center;
+  }
+
+  &-primary {
+    background: var(--primary-100);
+
+    .stat-card__value {
+      color: var(--primary-700);
+    }
+
+    .stat-card__label {
+      color: var(--primary-600);
+    }
+
+    &:hover {
+      border-color: var(--primary-600);
+      box-shadow: 0 8px 24px rgba(var(--primary-rgb), 0.2);
+    }
+  }
+
+  &-red {
+    background: var(--red-100);
+
+    .stat-card__value {
+      color: var(--red-700);
+    }
+
+    .stat-card__label {
+      color: var(--red-600);
+    }
+
+    &:hover {
+      border-color: var(--red-600);
+      box-shadow: 0 8px 24px rgba(220, 38, 38, 0.2);
+    }
+  }
+
+  &-green {
+    background: var(--green-100);
+
+    .stat-card__value {
+      color: var(--green-700);
+    }
+
+    .stat-card__label {
+      color: var(--green-600);
+    }
+
+    &:hover {
+      border-color: var(--green-600);
+      box-shadow: 0 8px 24px rgba(22, 163, 74, 0.2);
+    }
+  }
+
+  &-blue {
+    background: var(--blue-100);
+
+    .stat-card__value {
+      color: var(--blue-700);
+    }
+
+    .stat-card__label {
+      color: var(--blue-600);
+    }
+
+    &:hover {
+      border-color: var(--blue-600);
+      box-shadow: 0 8px 24px rgba(37, 99, 235, 0.2);
+    }
+  }
+}

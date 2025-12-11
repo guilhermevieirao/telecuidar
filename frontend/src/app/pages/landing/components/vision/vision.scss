@@ -1,0 +1,106 @@
+@use '../../../../../styles/variables' as *;
+@use '../../../../../styles/mixins' as *;
+
+.vision {
+  padding: $spacing-4xl 0;
+  background: var(--surface-secondary);
+
+  @include mobile {
+    padding: $spacing-3xl 0;
+  }
+}
+
+.vision-card {
+  max-width: 1000px;
+  margin: 0 auto;
+  background: linear-gradient(135deg, var(--primary-600) 0%, var(--blue-600) 50%, var(--green-600) 100%);
+  padding: $spacing-4xl;
+  border-radius: $radius-2xl;
+  @include shadow-elevated;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+
+  @include mobile {
+    padding: $spacing-2xl;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  &__title {
+    @include heading-2;
+    margin: 0 0 $spacing-xl 0;
+    color: var(--white);
+    position: relative;
+    z-index: 1;
+  }
+
+  &__text {
+    font-size: $font-size-lg;
+    line-height: $line-height-relaxed;
+    color: var(--white);
+    margin: 0 0 $spacing-2xl 0;
+    opacity: 0.95;
+    position: relative;
+    z-index: 1;
+
+    @include mobile {
+      font-size: $font-size-base;
+    }
+  }
+
+  &__quote {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border-left: 4px solid var(--white);
+    padding: $spacing-xl;
+    border-radius: $radius-lg;
+    margin: 0;
+    position: relative;
+    z-index: 1;
+
+    @include mobile {
+      padding: $spacing-lg;
+    }
+  }
+
+  &__quote-text {
+    font-size: $font-size-lg;
+    line-height: $line-height-relaxed;
+    color: var(--white);
+    margin: 0;
+    font-style: italic;
+    font-weight: $font-weight-medium;
+
+    @include mobile {
+      font-size: $font-size-base;
+    }
+
+    &::before {
+      content: '"';
+      font-size: 3rem;
+      line-height: 0;
+      vertical-align: -0.4em;
+      margin-right: $spacing-xs;
+      opacity: 0.5;
+    }
+
+    &::after {
+      content: '"';
+      font-size: 3rem;
+      line-height: 0;
+      vertical-align: -0.4em;
+      margin-left: $spacing-xs;
+      opacity: 0.5;
+    }
+  }
+}

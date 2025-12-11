@@ -1,0 +1,115 @@
+<div class="dashboard">
+  <div class="dashboard__header">
+    <div>
+      <h1 class="dashboard__title">Dashboard</h1>
+      <p class="dashboard__subtitle">Bem-vindo de volta, {{ user?.name }}!</p>
+    </div>
+  </div>
+
+  <div class="dashboard__user-card">
+    <div class="user-card">
+      <app-avatar 
+        [name]="user?.name || ''" 
+        [imageUrl]="user?.avatar"
+        size="xl"
+      />
+      <div class="user-card__info">
+        <h2 class="user-card__name">{{ user?.name }}</h2>
+        <p class="user-card__email">{{ user?.email }}</p>
+        <app-badge [variant]="'primary'" [label]="'Administrador'" size="sm" />
+      </div>
+      <div class="user-card__meta">
+        <div class="user-card__meta-item">
+          <span class="user-card__meta-label">Membro desde</span>
+          <span class="user-card__meta-value">{{ user?.memberSince }}</span>
+        </div>
+        <div class="user-card__meta-item">
+          <span class="user-card__meta-label">Último acesso</span>
+          <span class="user-card__meta-value">{{ user?.lastAccess }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dashboard__stats">
+    <h2 class="dashboard__section-title">Estatísticas da Plataforma</h2>
+    <div class="dashboard__stats-grid">
+      <app-stat-card
+        title="Total de Usuários"
+        [value]="stats?.totalUsers || 0"
+        icon="users"
+        [trend]="stats?.usersTrend?.direction"
+        [trendValue]="stats?.usersTrend?.value"
+        description="Usuários registrados"
+      />
+
+      <app-stat-card
+        title="Consultas Agendadas"
+        [value]="stats?.appointmentsScheduled || 0"
+        icon="calendar"
+        [trend]="stats?.appointmentsTrend?.direction"
+        [trendValue]="stats?.appointmentsTrend?.value"
+        description="Próximos 7 dias"
+      />
+
+      <app-stat-card
+        title="Taxa de Ocupação"
+        [value]="(stats?.occupancyRate || 0) + '%'"
+        icon="activity"
+        [trend]="stats?.occupancyTrend?.direction"
+        [trendValue]="stats?.occupancyTrend?.value"
+        description="Média semanal"
+      />
+
+      <app-stat-card
+        title="Avaliação Média"
+        [value]="stats?.averageRating || 0"
+        icon="check-circle"
+        [trend]="stats?.ratingTrend?.direction"
+        [trendValue]="stats?.ratingTrend?.value"
+        description="Satisfação dos pacientes"
+      />
+    </div>
+  </div>
+
+  <div class="dashboard__overview">
+    <h2 class="dashboard__section-title">Visão Geral</h2>
+    <div class="dashboard__overview-grid">
+      <div class="overview-card">
+        <div class="overview-card__header">
+          <h3 class="overview-card__title">Profissionais Ativos</h3>
+          <app-icon name="users" [size]="20" />
+        </div>
+        <div class="overview-card__value">{{ stats?.activeProfessionals || 0 }}</div>
+        <p class="overview-card__description">Profissionais disponíveis hoje</p>
+      </div>
+
+      <div class="overview-card">
+        <div class="overview-card__header">
+          <h3 class="overview-card__title">Pacientes Ativos</h3>
+          <app-icon name="user" [size]="20" />
+        </div>
+        <div class="overview-card__value">{{ stats?.activePatients || 0 }}</div>
+        <p class="overview-card__description">Pacientes com consultas ativas</p>
+      </div>
+
+      <div class="overview-card">
+        <div class="overview-card__header">
+          <h3 class="overview-card__title">Consultas Hoje</h3>
+          <app-icon name="video" [size]="20" />
+        </div>
+        <div class="overview-card__value">{{ stats?.todayAppointments || 0 }}</div>
+        <p class="overview-card__description">Consultas agendadas para hoje</p>
+      </div>
+
+      <div class="overview-card">
+        <div class="overview-card__header">
+          <h3 class="overview-card__title">Tempo Médio</h3>
+          <app-icon name="clock" [size]="20" />
+        </div>
+        <div class="overview-card__value">{{ stats?.averageConsultationTime || 0 }}min</div>
+        <p class="overview-card__description">Duração média das consultas</p>
+      </div>
+    </div>
+  </div>
+</div>

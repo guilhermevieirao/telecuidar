@@ -1,0 +1,59 @@
+@use '../../../../../styles/variables' as *;
+@use '../../../../../styles/mixins' as *;
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  border-radius: $radius-full;
+  font-weight: $font-weight-medium;
+  white-space: nowrap;
+
+  // Sizes
+  &--sm {
+    padding: 2px 8px;
+    font-size: $font-size-xs;
+  }
+
+  &--md {
+    padding: $spacing-xs $spacing-md;
+    font-size: $font-size-sm;
+  }
+
+  &--lg {
+    padding: $spacing-sm $spacing-lg;
+    font-size: $font-size-base;
+  }
+
+  // Variants
+  &--primary {
+    background: var(--primary-100);
+    color: var(--primary-700);
+  }
+
+  &--success {
+    background: var(--green-100);
+    color: var(--green-700);
+  }
+
+  &--warning {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  &--error {
+    background: var(--red-100);
+    color: var(--red-700);
+  }
+
+  &--info {
+    background: var(--blue-100);
+    color: var(--blue-700);
+  }
+
+  &--neutral {
+    background: var(--neutral-200);
+    color: var(--neutral-700);
+  }
+}

@@ -1,0 +1,274 @@
+@if (isOpen) {
+  <div class="modal-backdrop" (click)="onBackdropClick()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <!-- Etapa 1: Seleção do tipo de usuário -->
+      @if (step === 1) {
+        <div class="modal__header">
+          <div class="modal__header-content">
+            <app-icon name="user" [size]="24" />
+            <h2 class="modal__title">Criar Novo Usuário</h2>
+          </div>
+          <button
+            type="button"
+            class="modal__close"
+            (click)="onCancel()"
+            aria-label="Fechar"
+          >
+            <app-icon name="close" [size]="24" />
+          </button>
+        </div>
+
+        <div class="modal__body">
+          <p class="modal__description">Selecione o tipo de usuário que deseja criar:</p>
+
+          <div class="role-cards">
+            <button
+              type="button"
+              class="role-card"
+              (click)="selectRole('patient')"
+            >
+              <div class="role-card__icon role-card__icon--patient">
+                <app-icon name="user" [size]="32" />
+              </div>
+              <h3 class="role-card__title">Paciente</h3>
+              <p class="role-card__description">{{ getRoleDescription('patient') }}</p>
+            </button>
+
+            <button
+              type="button"
+              class="role-card"
+              (click)="selectRole('professional')"
+            >
+              <div class="role-card__icon role-card__icon--professional">
+                <app-icon name="users" [size]="32" />
+              </div>
+              <h3 class="role-card__title">Profissional</h3>
+              <p class="role-card__description">{{ getRoleDescription('professional') }}</p>
+            </button>
+
+            <button
+              type="button"
+              class="role-card"
+              (click)="selectRole('admin')"
+            >
+              <div class="role-card__icon role-card__icon--admin">
+                <app-icon name="shield" [size]="32" />
+              </div>
+              <h3 class="role-card__title">Administrador</h3>
+              <p class="role-card__description">{{ getRoleDescription('admin') }}</p>
+            </button>
+          </div>
+        </div>
+
+        <div class="modal__footer">
+          <app-button
+            [variant]="'outline'"
+            (click)="onCancel()"
+          >
+            Cancelar
+          </app-button>
+        </div>
+      }
+
+      <!-- Etapa 2: Preenchimento dos dados -->
+      @if (step === 2 && selectedRole) {
+        <div class="modal__header">
+          <div class="modal__header-content">
+            <button
+              type="button"
+              class="modal__back"
+              (click)="goBackToRoleSelection()"
+              aria-label="Voltar"
+            >
+              <app-icon name="arrow-left" [size]="20" />
+            </button>
+            <div class="modal__header-icon" [class]="'modal__header-icon--' + selectedRole">
+              <app-icon [name]="getRoleIcon(selectedRole)" [size]="20" />
+            </div>
+            <h2 class="modal__title">Criar {{ getRoleLabel(selectedRole) }}</h2>
+          </div>
+          <button
+            type="button"
+            class="modal__close"
+            (click)="onCancel()"
+            aria-label="Fechar"
+          >
+            <app-icon name="close" [size]="24" />
+          </button>
+        </div>
+
+        <div class="modal__body">
+          <p class="modal__description">
+            Preencha os dados do novo usuário. Todos os campos são opcionais.
+          </p>
+
+          <form class="user-form">
+            <div class="user-form__field">
+              <label for="create-user-name" class="user-form__label">Nome Completo</label>
+              <input
+                id="create-user-name"
+                type="text"
+                class="user-form__input"
+                [(ngModel)]="userData.name"
+                name="name"
+                placeholder="Digite o nome completo"
+              />
+            </div>
+
+            <div class="user-form__field">
+              <label for="create-user-email" class="user-form__label">
+                E-mail
+                @if (userData.email?.trim()) {
+                  <span class="user-form__label-badge">Habilita envio por email</span>
+                }
+              </label>
+              <input
+                id="create-user-email"
+                type="email"
+                class="user-form__input"
+                [(ngModel)]="userData.email"
+                name="email"
+                placeholder="Digite o e-mail"
+                appEmailValidator
+              />
+            </div>
+
+            <div class="user-form__row">
+              <div class="user-form__field">
+                <label for="create-user-cpf" class="user-form__label">CPF</label>
+                <input
+                  id="create-user-cpf"
+                  type="text"
+                  class="user-form__input"
+                  [(ngModel)]="userData.cpf"
+                  name="cpf"
+                  placeholder="000.000.000-00"
+                  appCpfMask
+                />
+              </div>
+
+              <div class="user-form__field">
+                <label for="create-user-phone" class="user-form__label">Telefone</label>
+                <input
+                  id="create-user-phone"
+                  type="tel"
+                  class="user-form__input"
+                  [(ngModel)]="userData.phone"
+                  name="phone"
+                  placeholder="(00) 00000-0000"
+                  appPhoneMask
+                />
+              </div>
+            </div>
+
+            <div class="user-form__row">
+              <div class="user-form__field">
+                <label for="create-user-password" class="user-form__label">Senha</label>
+                <input
+                  id="create-user-password"
+                  type="password"
+                  class="user-form__input"
+                  [(ngModel)]="password"
+                  name="password"
+                  placeholder="Digite a senha"
+                />
+              </div>
+
+              <div class="user-form__field">
+                <label for="create-user-confirm-password" class="user-form__label">
+                  Confirmar Senha
+                  @if (confirmPassword && !passwordsMatch()) {
+                    <span class="user-form__label-error">Senhas não coincidem</span>
+                  }
+                </label>
+                <input
+                  id="create-user-confirm-password"
+                  type="password"
+                  class="user-form__input"
+                  [class.user-form__input--error]="confirmPassword && !passwordsMatch()"
+                  [(ngModel)]="confirmPassword"
+                  name="confirmPassword"
+                  placeholder="Confirme a senha"
+                />
+              </div>
+            </div>
+
+            <!-- Switch de Modo de Criação -->
+            <div class="user-form__mode-switch">
+              <label class="mode-switch">
+                <span class="mode-switch__label" [class.mode-switch__label--active]="creationMode === 'manual'">Criação Manual</span>
+                <button
+                  type="button"
+                  class="mode-switch__toggle"
+                  [class.mode-switch__toggle--active]="creationMode === 'link'"
+                  (click)="toggleCreationMode()"
+                  aria-label="Alternar modo de criação"
+                >
+                  <span class="mode-switch__slider"></span>
+                </button>
+                <span class="mode-switch__label" [class.mode-switch__label--active]="creationMode === 'link'">Criação por Link</span>
+              </label>
+            </div>
+
+            <!-- Campo de Validade do Link -->
+            @if (creationMode === 'link') {
+              <div class="user-form__field">
+                <label for="link-validity" class="user-form__label">Validade do Link (dias)</label>
+                <input
+                  id="link-validity"
+                  type="number"
+                  class="user-form__input"
+                  [(ngModel)]="linkValidity"
+                  name="linkValidity"
+                  min="1"
+                  max="365"
+                  placeholder="7"
+                />
+                <span class="user-form__hint">O link expirará após {{ linkValidity }} {{ linkValidity === 1 ? 'dia' : 'dias' }}</span>
+              </div>
+            }
+          </form>
+        </div>
+
+        <div class="modal__footer modal__footer--multi">
+          <app-button
+            [variant]="'outline'"
+            (click)="onCancel()"
+          >
+            Cancelar
+          </app-button>
+
+          <div class="modal__footer-actions">
+            @if (creationMode === 'manual') {
+              <app-button
+                [variant]="'primary'"
+                (click)="onCreate()"
+                [disabled]="!isFormValid()"
+              >
+                <app-icon name="user" [size]="18" />
+                Criar Usuário
+              </app-button>
+            } @else {
+              <app-button
+                [variant]="'secondary'"
+                (click)="onGenerateLink()"
+              >
+                <app-icon name="arrow-right" [size]="18" />
+                Gerar Link
+              </app-button>
+
+              <app-button
+                [variant]="'secondary'"
+                (click)="onSendEmail()"
+                [disabled]="!canSendEmail()"
+              >
+                <app-icon name="mail" [size]="18" />
+                Enviar Link
+              </app-button>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+}

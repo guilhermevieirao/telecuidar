@@ -1,0 +1,123 @@
+
+<div class="schedule-blocks">
+  <div class="schedule-blocks__header">
+    <div>
+      <h1 class="schedule-blocks__title">Bloqueios de Agenda</h1>
+      <p class="schedule-blocks__subtitle">Solicitações de bloqueio feitas pelos profissionais</p>
+    </div>
+  </div>
+
+  <div class="schedule-blocks__filters">
+    <app-search-input
+      placeholder="Buscar por profissional ou email..."
+      (search)="onSearch($event)"
+    />
+    <app-filter-select
+      label="Status"
+      [options]="statusOptions"
+      (change)="onStatusFilterChange($event)"
+    />
+  </div>
+
+  @if (isLoading && blocks.length === 0) {
+    <div class="schedule-blocks__loading">
+      <app-icon name="clock" [size]="40" />
+      <p>Carregando bloqueios...</p>
+    </div>
+  } @else if (blocks.length === 0) {
+    <div class="schedule-blocks__empty">
+      <app-icon name="clock" [size]="48" />
+      <p>Nenhuma solicitação de bloqueio encontrada</p>
+    </div>
+  } @else {
+    <div class="schedule-blocks__table-wrapper">
+      <table class="schedule-blocks__table">
+        <thead>
+          <tr>
+            <th class="schedule-blocks__table-header">
+              <app-table-header label="Profissional" field="professionalName" [sortable]="true" [currentSortField]="sortField" [currentSortDirection]="sortDirection" (sort)="onSort($event)" />
+            </th>
+            <th class="schedule-blocks__table-header">
+              <app-table-header label="Data do Bloqueio" [sortable]="false" />
+            </th>
+            <th class="schedule-blocks__table-header">
+              <app-table-header label="Motivo" [sortable]="false" />
+            </th>
+            <th class="schedule-blocks__table-header">
+              <app-table-header label="Status" field="status" [sortable]="true" [currentSortField]="sortField" [currentSortDirection]="sortDirection" (sort)="onSort($event)" />
+            </th>
+            <th class="schedule-blocks__table-header">
+              <app-table-header label="Data da Solicitação" [sortable]="false" />
+            </th>
+            <th class="schedule-blocks__table-header">
+              <app-table-header label="Tempo de Espera" [sortable]="false" />
+            </th>
+            <th class="schedule-blocks__table-header schedule-blocks__table-header--actions">
+              <app-table-header label="Ações" [sortable]="false" />
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (block of blocks; track block.id) {
+            <tr class="schedule-blocks__table-row">
+              <td class="schedule-blocks__table-cell schedule-blocks__table-cell--professional">
+                <div class="schedule-blocks__professional-info">
+                  <p class="schedule-blocks__professional-name">{{ block.professional.name }}</p>
+                  <p class="schedule-blocks__professional-email">{{ block.professional.email }}</p>
+                </div>
+              </td>
+              <td class="schedule-blocks__table-cell">
+                <div class="schedule-blocks__cell-content">
+                  <ng-container *ngIf="block.blockDate.type === 'single'; else range">
+                    {{ block.blockDate.weekday }}<br>
+                    {{ block.blockDate.date }}
+                  </ng-container>
+                  <ng-template #range>
+                    {{ block.blockDate.start }} até {{ block.blockDate.end }}
+                  </ng-template>
+                </div>
+              </td>
+              <td class="schedule-blocks__table-cell">
+                {{ block.reason }}
+              </td>
+              <td class="schedule-blocks__table-cell">
+                <app-badge [variant]="getStatusBadge(block.status).variant" [label]="getStatusBadge(block.status).label" size="sm" />
+              </td>
+              <td class="schedule-blocks__table-cell">
+                {{ block.requestDate }}
+              </td>
+              <td class="schedule-blocks__table-cell">
+                {{ block.waitTime | waitTime }}
+              </td>
+              <td class="schedule-blocks__table-cell schedule-blocks__table-cell--actions">
+                <div class="schedule-blocks__actions">
+                  <button type="button" class="schedule-blocks__action-btn schedule-blocks__action-btn--approve" title="Aprovar" (click)="approveBlock(block)" *ngIf="block.status === 'pendente'">
+                    <app-icon name="check-circle" [size]="18" />
+                  </button>
+                  <button type="button" class="schedule-blocks__action-btn schedule-blocks__action-btn--deny" title="Negar" (click)="denyBlock(block)" *ngIf="block.status === 'pendente'">
+                    <app-icon name="x-circle" [size]="18" />
+                  </button>
+                  <button type="button" class="schedule-blocks__action-btn schedule-blocks__action-btn--view" title="Visualizar" (click)="openDetails(block)">
+                    <app-icon name="eye" [size]="18" />
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    @if (totalPages > 1) {
+      <div class="schedule-blocks__pagination">
+        <app-pagination
+          [currentPage]="currentPage"
+          [totalPages]="totalPages"
+          [total]="totalItems"
+          [pageSize]="pageSize"
+          (pageChange)="onPageChange($event)"
+        />
+      </div>
+    }
+  }
+</div>

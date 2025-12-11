@@ -1,0 +1,132 @@
+@use '../../../../../styles/variables' as *;
+@use '../../../../../styles/mixins' as *;
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: $z-index-modal-backdrop;
+  @include flex-center;
+  padding: $spacing-lg;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal {
+  background: var(--surface);
+  border-radius: $radius-2xl;
+  box-shadow: $shadow-2xl;
+  max-width: 480px;
+  width: 100%;
+  overflow: hidden;
+  animation: slideUp 0.3s ease-out;
+  z-index: $z-index-modal;
+
+  @include mobile {
+    max-width: 100%;
+  }
+
+  &__header {
+    padding: $spacing-xl $spacing-xl $spacing-lg;
+    @include flex-between;
+    align-items: flex-start;
+    position: relative;
+  }
+
+  &__icon {
+    width: 56px;
+    height: 56px;
+    border-radius: $radius-full;
+    @include flex-center;
+    flex-shrink: 0;
+  }
+
+  &--danger &__icon {
+    background: var(--red-50);
+  }
+
+  &--warning &__icon {
+    background: #fef3c7;
+  }
+
+  &--success &__icon {
+    background: var(--green-50);
+  }
+
+  &--info &__icon {
+    background: var(--blue-50);
+  }
+
+  &__close {
+    position: absolute;
+    top: $spacing-lg;
+    right: $spacing-lg;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: $spacing-xs;
+    border-radius: $radius-md;
+    @include transition(all);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      background: var(--neutral-100);
+      color: var(--text-primary);
+    }
+  }
+
+  &__content {
+    padding: 0 $spacing-xl $spacing-xl;
+    @include flex-column;
+    gap: $spacing-sm;
+  }
+
+  &__title {
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-bold;
+    color: var(--text-primary);
+    margin: 0;
+    line-height: $line-height-tight;
+  }
+
+  &__message {
+    font-size: $font-size-base;
+    color: var(--text-secondary);
+    line-height: $line-height-relaxed;
+    margin: 0;
+  }
+
+  &__actions {
+    padding: $spacing-lg $spacing-xl $spacing-xl;
+    display: flex;
+    gap: $spacing-md;
+    justify-content: flex-end;
+
+    @include mobile {
+      flex-direction: column-reverse;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

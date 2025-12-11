@@ -1,0 +1,55 @@
+<div class="avatar-upload">
+  @if (!showCropper) {
+    <div class="avatar-upload__preview">
+      <app-avatar 
+        [name]="name" 
+        [imageUrl]="currentAvatar"
+        size="xl"
+      />
+      <button
+        type="button"
+        class="avatar-upload__button"
+        (click)="triggerFileInput()"
+      >
+        <app-icon name="camera" [size]="20" />
+      </button>
+      <input
+        id="avatar-file-input"
+        type="file"
+        accept="image/*"
+        (change)="onFileSelect($event)"
+        class="avatar-upload__input"
+        aria-label="Selecionar foto"
+      />
+    </div>
+    <p class="avatar-upload__hint">
+      Clique no ícone para {{ currentAvatar ? 'alterar' : 'adicionar' }} sua foto
+    </p>
+  }
+</div>
+
+@if (showCropper) {
+  <div class="crop-modal-backdrop" (click)="onCropCancel()">
+    <div class="crop-modal" (click)="$event.stopPropagation()">
+      <div class="crop-modal__header">
+        <h2 class="crop-modal__title">Ajustar Foto de Perfil</h2>
+        <button
+          type="button"
+          class="crop-modal__close"
+          (click)="onCropCancel()"
+          aria-label="Fechar"
+        >
+          <app-icon name="close" [size]="24" />
+        </button>
+      </div>
+      <div class="crop-modal__body">
+        <app-image-cropper
+          [imageUrl]="selectedImageUrl"
+          [aspectRatio]="1"
+          (crop)="onCropComplete($event)"
+          (cancel)="onCropCancel()"
+        />
+      </div>
+    </div>
+  </div>
+}
