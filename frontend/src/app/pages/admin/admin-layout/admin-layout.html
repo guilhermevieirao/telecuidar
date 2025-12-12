@@ -4,6 +4,10 @@
       <app-logo size="md" />
     </div>
     <nav class="admin-sidebar__nav">
+            <a routerLink="/admin/dashboard" routerLinkActive="admin-sidebar__link--active" class="admin-sidebar__link" (click)="closeSidebarOnMobile()">
+              <app-icon name="home" [size]="20" />
+              <span>Dashboard</span>
+            </a>
       <a routerLink="/admin/notifications" routerLinkActive="admin-sidebar__link--active" class="admin-sidebar__link" (click)="closeSidebarOnMobile()">
         <app-icon name="bell" [size]="20" />
         <span>Notificações</span>

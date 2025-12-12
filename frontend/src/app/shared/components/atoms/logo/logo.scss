@@ -3,6 +3,7 @@
 
 .logo {
   @include flex-center;
+  justify-content: flex-start;
   gap: $spacing-md;
 
   &-icon {
