@@ -1,5 +1,6 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, PLATFORM_ID, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { isPlatformBrowser } from '@angular/common';
 import { Observable, BehaviorSubject, tap, catchError, of } from 'rxjs';
 import {
   User,
@@ -34,7 +35,10 @@ export class AuthService {
   public currentUser = signal<User | null>(null);
   public isAuthenticated = signal<boolean>(false);
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
     this.loadUserFromStorage();
   }
 
@@ -142,13 +146,19 @@ export class AuthService {
 
   // Google Login (placeholder)
   loginWithGoogle(): void {
-    // Implementar OAuth2 com Google
-    window.location.href = AUTH_ENDPOINTS.GOOGLE_LOGIN;
+    if (isPlatformBrowser(this.platformId)) {
+      // Implementar OAuth2 com Google
+      window.location.href = AUTH_ENDPOINTS.GOOGLE_LOGIN;
+    }
   }
 
   // Refresh Token
   refreshToken(): Observable<LoginResponse> {
-    const refreshToken = localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
+    let refreshToken: string | null = null;
+    
+    if (isPlatformBrowser(this.platformId)) {
+      refreshToken = localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
+    }
     
     return this.http.post<LoginResponse>(AUTH_ENDPOINTS.REFRESH_TOKEN, { refreshToken }).pipe(
       tap(response => {
@@ -159,7 +169,10 @@ export class AuthService {
 
   // Get Access Token
   getAccessToken(): string | null {
-    return localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
+    }
+    return null;
   }
 
   // Private helper methods
@@ -176,19 +189,25 @@ export class AuthService {
     this.currentUser.set(response.user);
     this.isAuthenticated.set(true);
     
-    if (rememberMe) {
-      localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, response.accessToken);
-      localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, response.refreshToken);
-      localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(response.user));
-      localStorage.setItem(STORAGE_KEYS.REMEMBER_ME, 'true');
-    } else {
-      sessionStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, response.accessToken);
-      sessionStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, response.refreshToken);
-      sessionStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(response.user));
+    if (isPlatformBrowser(this.platformId)) {
+      if (rememberMe) {
+        localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, response.accessToken);
+        localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, response.refreshToken);
+        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(response.user));
+        localStorage.setItem(STORAGE_KEYS.REMEMBER_ME, 'true');
+      } else {
+        sessionStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, response.accessToken);
+        sessionStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, response.refreshToken);
+        sessionStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(response.user));
+      }
     }
   }
 
   private loadUserFromStorage(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
     const rememberMe = localStorage.getItem(STORAGE_KEYS.REMEMBER_ME) === 'true';
     const storage = rememberMe ? localStorage : sessionStorage;
     
@@ -212,14 +231,16 @@ export class AuthService {
   }
 
   private clearStorage(): void {
-    localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
-    localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
-    localStorage.removeItem(STORAGE_KEYS.USER);
-    localStorage.removeItem(STORAGE_KEYS.REMEMBER_ME);
-    
-    sessionStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
-    sessionStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
-    sessionStorage.removeItem(STORAGE_KEYS.USER);
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
+      localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
+      localStorage.removeItem(STORAGE_KEYS.USER);
+      localStorage.removeItem(STORAGE_KEYS.REMEMBER_ME);
+      
+      sessionStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
+      sessionStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
+      sessionStorage.removeItem(STORAGE_KEYS.USER);
+    }
   }
 
   private setLoading(isLoading: boolean): void {

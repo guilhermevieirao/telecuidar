@@ -40,7 +40,11 @@ export type IconName =
   | 'camera'
   | 'minus'
   | 'eye'
-  | 'eye-off';
+  | 'eye-off'
+  | 'smartphone'
+  | 'refresh-cw'
+  | 'image'
+  | 'upload-cloud';
 
 export type IconSize = 'sm' | 'md' | 'lg' | 'xl' | number;
 

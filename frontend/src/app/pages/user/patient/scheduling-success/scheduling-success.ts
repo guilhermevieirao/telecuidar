@@ -7,6 +7,7 @@ import { Specialty } from '@core/services/specialties.service';
 import { User } from '@core/services/users.service';
 
 interface AppointmentDetails {
+  id?: string; // Add optional ID
   specialty: Specialty;
   date: Date;
   time: string;
@@ -48,6 +49,15 @@ export class SchedulingSuccessComponent implements OnInit {
   }
 
   goToAppointments() {
-    this.router.navigate(['/patient/appointments']); // Assuming this route will exist
+    this.router.navigate(['/patient/appointments']);
+  }
+
+  goToPreConsultation() {
+    if (this.appointment?.id) {
+        this.router.navigate(['/patient/appointments', this.appointment.id, 'pre-consultation']);
+    } else {
+        // Fallback if ID is missing (should not happen in real scenario if passed correctly)
+        this.goToAppointments();
+    }
   }
 }

@@ -6,6 +6,47 @@ import { Specialty } from './specialties.service';
 
 export type AppointmentStatus = 'scheduled' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled';
 
+export interface PreConsultationForm {
+  personalInfo: {
+    fullName: string;
+    birthDate: string;
+    weight: string;
+    height: string;
+  };
+  medicalHistory: {
+    chronicConditions?: string;
+    medications?: string;
+    allergies?: string;
+    surgeries?: string;
+    generalObservations?: string;
+  };
+  lifestyleHabits: {
+    smoker: 'sim' | 'nao' | 'ex-fumante';
+    alcoholConsumption: 'nenhum' | 'social' | 'frequente';
+    physicalActivity: 'nenhuma' | 'leve' | 'moderada' | 'intensa';
+    generalObservations?: string;
+  };
+  vitalSigns: {
+    bloodPressure?: string;
+    heartRate?: string;
+    temperature?: string;
+    oxygenSaturation?: string;
+    generalObservations?: string;
+  };
+  currentSymptoms: {
+    mainSymptoms: string;
+    symptomOnset: string;
+    painIntensity?: number; // 0-10
+    generalObservations?: string;
+  };
+  additionalObservations?: string;
+  attachments?: {
+    title: string;
+    fileUrl: string; // Base64 or URL
+    type: string;
+  }[];
+}
+
 export interface Appointment {
   id: string;
   patientId: string;
@@ -22,6 +63,7 @@ export interface Appointment {
   createdAt: string;
   updatedAt: string;
   avatar?: string; // For display purposes (patient or professional avatar depending on context)
+  preConsultation?: PreConsultationForm;
 }
 
 export interface AppointmentsFilter {
@@ -145,6 +187,16 @@ export class AppointmentsService {
     const index = this.mockAppointments.findIndex(a => a.id === id);
     if (index !== -1) {
       this.mockAppointments[index].status = 'cancelled';
+      this.mockAppointments[index].updatedAt = new Date().toISOString();
+      return of(true).pipe(delay(500));
+    }
+    return of(false);
+  }
+
+  savePreConsultation(appointmentId: string, data: PreConsultationForm): Observable<boolean> {
+    const index = this.mockAppointments.findIndex(a => a.id === appointmentId);
+    if (index !== -1) {
+      this.mockAppointments[index].preConsultation = data;
       this.mockAppointments[index].updatedAt = new Date().toISOString();
       return of(true).pipe(delay(500));
     }

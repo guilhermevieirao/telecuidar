@@ -102,6 +102,22 @@
         <app-button variant="ghost" size="sm" (click)="openDetails(appointment)">Detalhes</app-button>
         
         <app-button 
+            *ngIf="userRole === 'patient' && (appointment.status === 'scheduled' || appointment.status === 'confirmed')" 
+            variant="outline" 
+            size="sm"
+            (click)="goToPreConsultation(appointment)">
+            Pré-consulta
+        </app-button>
+
+        <app-button 
+            *ngIf="userRole === 'professional' && appointment.preConsultation" 
+            variant="outline" 
+            size="sm"
+            (click)="viewPreConsultation(appointment)">
+            Ver Pré-consulta
+        </app-button>
+        
+        <app-button 
             *ngIf="appointment.status !== 'cancelled' && appointment.status !== 'completed'" 
             variant="ghost" 
             size="sm" 
@@ -127,3 +143,9 @@
   [appointment]="selectedAppointment"
   (close)="closeDetails()">
 </app-appointment-details-modal>
+
+<app-pre-consultation-details-modal
+  [isOpen]="isPreConsultationModalOpen"
+  [preConsultation]="selectedAppointment?.preConsultation"
+  (close)="closePreConsultationModal()">
+</app-pre-consultation-details-modal>

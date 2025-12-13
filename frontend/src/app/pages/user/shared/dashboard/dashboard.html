@@ -6,114 +6,114 @@
     </div>
   </div>
 
-  <div class="dashboard__user-card">
-    <div class="user-card">
-      <app-avatar 
-        [name]="user?.name || ''" 
-        [imageUrl]="user?.avatar"
-        size="xl"
-      />
-      <div class="user-card__info">
-        <h2 class="user-card__name">{{ user?.name }}</h2>
-        <p class="user-card__email">{{ user?.email }}</p>
-        <app-badge [variant]="'primary'" [label]="'Administrador'" size="sm" />
-      </div>
-      <div class="user-card__meta">
-        <div class="user-card__meta-item">
-          <span class="user-card__meta-label">Membro desde</span>
-          <span class="user-card__meta-value">{{ user?.memberSince }}</span>
+  @if (isAdmin()) {
+    <div class="dashboard__user-card">
+      <div class="user-card">
+        <app-avatar 
+          [name]="user?.name || ''" 
+          [imageUrl]="user?.avatar"
+          size="xl"
+        />
+        <div class="user-card__info">
+          <h2 class="user-card__name">{{ user?.name }}</h2>
+          <p class="user-card__email">{{ user?.email }}</p>
+          <app-badge [variant]="'primary'" [label]="'Administrador'" size="sm" />
         </div>
-        <div class="user-card__meta-item">
-          <span class="user-card__meta-label">Último acesso</span>
-          <span class="user-card__meta-value">{{ user?.lastAccess }}</span>
+        <div class="user-card__meta">
+          <div class="user-card__meta-item">
+            <span class="user-card__meta-label">Membro desde</span>
+            <span class="user-card__meta-value">{{ user?.memberSince }}</span>
+          </div>
+          <div class="user-card__meta-item">
+            <span class="user-card__meta-label">Último acesso</span>
+            <span class="user-card__meta-value">{{ user?.lastAccess }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dashboard__stats">
+      <h2 class="dashboard__section-title">Estatísticas da Plataforma</h2>
+      <div class="dashboard__stats-grid">
+        <app-stat-card
+          title="Total de Usuários"
+          [value]="stats?.totalUsers || 0"
+          icon="users"
+          [trend]="stats?.usersTrend?.direction"
+          [trendValue]="stats?.usersTrend?.value"
+          description="Usuários registrados"
+        />
+
+        <app-stat-card
+          title="Consultas Agendadas"
+          [value]="stats?.appointmentsScheduled || 0"
+          icon="calendar"
+          [trend]="stats?.appointmentsTrend?.direction"
+          [trendValue]="stats?.appointmentsTrend?.value"
+          description="Próximos 7 dias"
+        />
+
+        <app-stat-card
+          title="Taxa de Ocupação"
+          [value]="(stats?.occupancyRate || 0) + '%'"
+          icon="activity"
+          [trend]="stats?.occupancyTrend?.direction"
+          [trendValue]="stats?.occupancyTrend?.value"
+          description="Média semanal"
+        />
+
+        <app-stat-card
+          title="Avaliação Média"
+          [value]="stats?.averageRating || 0"
+          icon="check-circle"
+          [trend]="stats?.ratingTrend?.direction"
+          [trendValue]="stats?.ratingTrend?.value"
+          description="Satisfação dos pacientes"
+        />
+      </div>
+    </div>
+
+    <div class="dashboard__overview">
+      <h2 class="dashboard__section-title">Visão Geral</h2>
+      <div class="dashboard__overview-grid">
+        <div class="overview-card">
+          <div class="overview-card__header">
+            <h3 class="overview-card__title">Profissionais Ativos</h3>
+            <app-icon name="users" [size]="20" />
+          </div>
+          <div class="overview-card__value">{{ stats?.activeProfessionals || 0 }}</div>
+          <p class="overview-card__description">Profissionais disponíveis hoje</p>
+        </div>
+
+        <div class="overview-card">
+          <div class="overview-card__header">
+            <h3 class="overview-card__title">Pacientes Ativos</h3>
+            <app-icon name="user" [size]="20" />
+          </div>
+          <div class="overview-card__value">{{ stats?.activePatients || 0 }}</div>
+          <p class="overview-card__description">Pacientes com consultas ativas</p>
+        </div>
+
+        <div class="overview-card">
+          <div class="overview-card__header">
+            <h3 class="overview-card__title">Consultas Hoje</h3>
+            <app-icon name="video" [size]="20" />
+          </div>
+          <div class="overview-card__value">{{ stats?.todayAppointments || 0 }}</div>
+          <p class="overview-card__description">Consultas agendadas para hoje</p>
+        </div>
+
+        <div class="overview-card">
+          <div class="overview-card__header">
+            <h3 class="overview-card__title">Tempo Médio</h3>
+            <app-icon name="clock" [size]="20" />
+          </div>
+          <div class="overview-card__value">{{ stats?.averageConsultationTime || 0 }}min</div>
+          <p class="overview-card__description">Duração média das consultas</p>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="dashboard__stats">
-    <h2 class="dashboard__section-title">Estatísticas da Plataforma</h2>
-    <div class="dashboard__stats-grid">
-      <app-stat-card
-        title="Total de Usuários"
-        [value]="stats?.totalUsers || 0"
-        icon="users"
-        [trend]="stats?.usersTrend?.direction"
-        [trendValue]="stats?.usersTrend?.value"
-        description="Usuários registrados"
-      />
-
-      <app-stat-card
-        title="Consultas Agendadas"
-        [value]="stats?.appointmentsScheduled || 0"
-        icon="calendar"
-        [trend]="stats?.appointmentsTrend?.direction"
-        [trendValue]="stats?.appointmentsTrend?.value"
-        description="Próximos 7 dias"
-      />
-
-      <app-stat-card
-        title="Taxa de Ocupação"
-        [value]="(stats?.occupancyRate || 0) + '%'"
-        icon="activity"
-        [trend]="stats?.occupancyTrend?.direction"
-        [trendValue]="stats?.occupancyTrend?.value"
-        description="Média semanal"
-      />
-
-      <app-stat-card
-        title="Avaliação Média"
-        [value]="stats?.averageRating || 0"
-        icon="check-circle"
-        [trend]="stats?.ratingTrend?.direction"
-        [trendValue]="stats?.ratingTrend?.value"
-        description="Satisfação dos pacientes"
-      />
-    </div>
-  </div>
-
-  <div class="dashboard__overview">
-    <h2 class="dashboard__section-title">Visão Geral</h2>
-    <div class="dashboard__overview-grid">
-      <div class="overview-card">
-        <div class="overview-card__header">
-          <h3 class="overview-card__title">Profissionais Ativos</h3>
-          <app-icon name="users" [size]="20" />
-        </div>
-        <div class="overview-card__value">{{ stats?.activeProfessionals || 0 }}</div>
-        <p class="overview-card__description">Profissionais disponíveis hoje</p>
-      </div>
-
-      <div class="overview-card">
-        <div class="overview-card__header">
-          <h3 class="overview-card__title">Pacientes Ativos</h3>
-          <app-icon name="user" [size]="20" />
-        </div>
-        <div class="overview-card__value">{{ stats?.activePatients || 0 }}</div>
-        <p class="overview-card__description">Pacientes com consultas ativas</p>
-      </div>
-
-      <div class="overview-card">
-        <div class="overview-card__header">
-          <h3 class="overview-card__title">Consultas Hoje</h3>
-          <app-icon name="video" [size]="20" />
-        </div>
-        <div class="overview-card__value">{{ stats?.todayAppointments || 0 }}</div>
-        <p class="overview-card__description">Consultas agendadas para hoje</p>
-      </div>
-
-      <div class="overview-card">
-        <div class="overview-card__header">
-          <h3 class="overview-card__title">Tempo Médio</h3>
-          <app-icon name="clock" [size]="20" />
-        </div>
-        <div class="overview-card__value">{{ stats?.averageConsultationTime || 0 }}min</div>
-        <p class="overview-card__description">Duração média das consultas</p>
-      </div>
-    </div>
-  </div>
-
-  @if (user?.role === 'admin') {
     <div class="dashboard__charts">
       <h2 class="dashboard__section-title">Análise do Sistema</h2>
       <div class="dashboard__charts-grid">
@@ -136,6 +136,283 @@
           <div class="chart-container">
             <canvas #monthlyChart></canvas>
           </div>
+        </div>
+      </div>
+    </div>
+  } @else if (isProfessional()) {
+    <div class="dashboard__content-grid">
+      <!-- Card: Próximas Consultas (Novo) -->
+      <div class="content-card">
+        <div class="content-card__header">
+          <h3 class="content-card__title">Próximas Consultas</h3>
+          <app-icon name="calendar" [size]="20" />
+        </div>
+        
+        @if (nextAppointments.length > 0) {
+          <div class="appointment-list">
+            @for (appt of nextAppointments; track appt.id) {
+              <div class="appointment-item appointment-item--with-actions">
+                <div class="appointment-item__main">
+                  <div class="appointment-item__date">
+                    <span class="day">{{ appt.date | date:'dd' }}</span>
+                    <span class="month">{{ appt.date | date:'MMM' }}</span>
+                  </div>
+                  <div class="appointment-item__info">
+                    <span class="time">{{ appt.time }}</span>
+                    <h4 class="name">{{ appt.patientName }}</h4>
+                    <span class="specialty">{{ appt.specialtyName }}</span>
+                  </div>
+                </div>
+                
+                <div class="appointment-item__actions">
+                  <app-button 
+                    variant="outline" 
+                    size="sm" 
+                    [fullWidth]="true"
+                    [routerLink]="['/professional/appointments']" 
+                    [queryParams]="{id: appt.id}">
+                    Ver Detalhes
+                  </app-button>
+                  <app-button 
+                    variant="primary" 
+                    size="sm" 
+                    [fullWidth]="true"
+                    [routerLink]="['/professional/teleconsultation', appt.id]">
+                    <app-icon name="video" [size]="16" />
+                    Entrar
+                  </app-button>
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="empty-state">
+            <p>Nenhuma consulta agendada.</p>
+          </div>
+        }
+      </div>
+
+      <!-- Card: Bloqueios de Agenda -->
+      <div class="content-card">
+        <div class="content-card__header">
+          <h3 class="content-card__title">Solicitações de Bloqueio</h3>
+          <app-icon name="clock" [size]="20" />
+        </div>
+        
+        @if (scheduleBlocks.length > 0) {
+          <div class="appointment-list">
+            @for (block of scheduleBlocks; track block.id) {
+              <div class="appointment-item">
+                <div class="appointment-item__date">
+                  @if (block.type === 'single') {
+                    <span class="day">{{ block.date | date:'dd' }}</span>
+                    <span class="month">{{ block.date | date:'MMM' }}</span>
+                  } @else {
+                    <span class="day">{{ block.startDate | date:'dd' }}</span>
+                    <span class="month">{{ block.startDate | date:'MMM' }}</span>
+                  }
+                </div>
+                <div class="appointment-item__info">
+                  <h4 class="name">{{ block.reason }}</h4>
+                  <span class="specialty">
+                    @if (block.type === 'single') {
+                      Dia Único
+                    } @else {
+                      {{ block.startDate | date:'dd/MM' }} até {{ block.endDate | date:'dd/MM' }}
+                    }
+                  </span>
+                </div>
+                <app-badge 
+                  [variant]="block.status === 'aprovada' ? 'success' : (block.status === 'pendente' ? 'warning' : 'error')" 
+                  [label]="block.status | titlecase" 
+                  size="sm" 
+                />
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="empty-state">
+            <p>Nenhuma solicitação de bloqueio recente.</p>
+          </div>
+        }
+      </div>
+
+      <!-- Card: Notificações -->
+      <div class="content-card">
+        <div class="content-card__header">
+          <h3 class="content-card__title">Notificações</h3>
+          <app-icon name="bell" [size]="20" />
+        </div>
+        
+        @if (notifications.length > 0) {
+          <div class="appointment-list">
+            @for (notification of notifications; track notification.id) {
+              <div class="appointment-item">
+                <div class="appointment-item__date">
+                   <app-icon [name]="notification.type === 'error' ? 'alert-circle' : 'check-circle'" [size]="24" />
+                </div>
+                <div class="appointment-item__info">
+                  <h4 class="name">{{ notification.title }}</h4>
+                  <span class="specialty">{{ notification.message }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="empty-state">
+            <p>Nenhuma notificação recente.</p>
+          </div>
+        }
+      </div>
+
+      <!-- Card: Notificações -->
+      <div class="content-card">
+        <div class="content-card__header">
+          <h3 class="content-card__title">Notificações</h3>
+          <app-icon name="bell" [size]="20" />
+        </div>
+        
+        @if (notifications.length > 0) {
+          <div class="appointment-list">
+            @for (notification of notifications; track notification.id) {
+              <div class="appointment-item">
+                <div class="appointment-item__date">
+                   <app-icon [name]="notification.type === 'error' ? 'alert-circle' : 'check-circle'" [size]="24" />
+                </div>
+                <div class="appointment-item__info">
+                  <h4 class="name">{{ notification.title }}</h4>
+                  <span class="specialty">{{ notification.message }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="empty-state">
+            <p>Nenhuma notificação recente.</p>
+          </div>
+        }
+      </div>
+
+      <!-- Card: Acesso Rápido -->
+      <div class="content-card">
+        <div class="content-card__header">
+          <h3 class="content-card__title">Acesso Rápido</h3>
+          <app-icon name="activity" [size]="20" />
+        </div>
+        
+        <div class="shortcuts-grid">
+          <app-button 
+            variant="primary" 
+            [fullWidth]="true"
+            [routerLink]="['/professional/appointments']">
+            Minhas Consultas
+          </app-button>
+          
+          <app-button 
+            variant="outline" 
+            [fullWidth]="true"
+            [routerLink]="['/professional/schedule-blocks']">
+            Minhas solicitações de bloqueio
+          </app-button>
+        </div>
+      </div>
+    </div>
+  } @else {
+    <div class="dashboard__content-grid">
+      <!-- Card: Próximas Consultas -->
+      <div class="content-card">
+        <div class="content-card__header">
+          <h3 class="content-card__title">Próximas Consultas</h3>
+          <app-icon name="calendar" [size]="20" />
+        </div>
+        
+        @if (nextAppointments.length > 0) {
+          <div class="appointment-list">
+            @for (appt of nextAppointments; track appt.id) {
+              <div class="appointment-item">
+                <div class="appointment-item__date">
+                  <span class="day">{{ appt.date | date:'dd' }}</span>
+                  <span class="month">{{ appt.date | date:'MMM' }}</span>
+                </div>
+                <div class="appointment-item__info">
+                  <span class="time">{{ appt.time }}</span>
+                  <h4 class="name">
+                    {{ isPatient() ? appt.professionalName : appt.patientName }}
+                  </h4>
+                  <span class="specialty">{{ appt.specialtyName }}</span>
+                </div>
+                <app-badge [variant]="'primary'" [label]="'Agendada'" size="sm" />
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="empty-state">
+            <p>Nenhuma consulta agendada.</p>
+          </div>
+        }
+      </div>
+
+      <!-- Card: Notificações -->
+      <div class="content-card">
+        <div class="content-card__header">
+          <h3 class="content-card__title">Notificações</h3>
+          <app-icon name="bell" [size]="20" />
+        </div>
+        
+        @if (notifications.length > 0) {
+          <div class="appointment-list">
+            @for (notification of notifications; track notification.id) {
+              <div class="appointment-item">
+                <div class="appointment-item__date">
+                   <app-icon [name]="notification.type === 'error' ? 'alert-circle' : 'check-circle'" [size]="24" />
+                </div>
+                <div class="appointment-item__info">
+                  <h4 class="name">{{ notification.title }}</h4>
+                  <span class="specialty">{{ notification.message }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="empty-state">
+            <p>Nenhuma notificação recente.</p>
+          </div>
+        }
+      </div>
+
+      <!-- Card: Acesso Rápido -->
+      <div class="content-card">
+        <div class="content-card__header">
+          <h3 class="content-card__title">Acesso Rápido</h3>
+          <app-icon name="activity" [size]="20" />
+        </div>
+        
+        <div class="shortcuts-grid">
+          <app-button 
+            variant="primary" 
+            [fullWidth]="true"
+            [routerLink]="['/', getUserRolePath(), 'appointments']">
+            Minhas Consultas
+          </app-button>
+          
+          @if (isPatient()) {
+            <app-button 
+              variant="outline" 
+              [fullWidth]="true"
+              [routerLink]="['/patient/scheduling']">
+              Agendar Nova Consulta
+            </app-button>
+          } @else if (isProfessional()) {
+             <!-- Fallback or specific action for professional if needed -->
+             <!-- User requested "Schedule New" shortcut for professional too, but route is unclear.
+                  Assuming they might want to see their schedule blocks or just same button pointing to appointments -->
+             <app-button 
+              variant="outline" 
+              [fullWidth]="true"
+              [routerLink]="['/professional/appointments']">
+              Minha Agenda
+            </app-button>
+          }
         </div>
       </div>
     </div>

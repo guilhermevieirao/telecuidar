@@ -7,6 +7,7 @@ import { IconComponent } from '@shared/components/atoms/icon/icon';
 import { SearchInputComponent } from '@shared/components/atoms/search-input/search-input';
 import { AppointmentsService, Appointment, AppointmentsFilter, AppointmentStatus } from '@core/services/appointments.service';
 import { AppointmentDetailsModalComponent } from './appointment-details-modal/appointment-details-modal';
+import { PreConsultationDetailsModalComponent } from './pre-consultation-details-modal/pre-consultation-details-modal';
 import { ModalService } from '@core/services/modal.service';
 
 @Component({
@@ -19,7 +20,8 @@ import { ModalService } from '@core/services/modal.service';
     ButtonComponent,
     IconComponent,
     SearchInputComponent,
-    AppointmentDetailsModalComponent
+    AppointmentDetailsModalComponent,
+    PreConsultationDetailsModalComponent
   ],
   templateUrl: './appointments.html',
   styleUrls: ['./appointments.scss']
@@ -46,6 +48,7 @@ export class AppointmentsComponent implements OnInit {
   // Modal
   selectedAppointment: Appointment | null = null;
   isDetailsModalOpen = false;
+  isPreConsultationModalOpen = false;
 
   constructor(
     private appointmentsService: AppointmentsService,
@@ -186,5 +189,27 @@ export class AppointmentsComponent implements OnInit {
 
   scheduleNew() {
     this.router.navigate(['/patient/scheduling']);
+  }
+
+  goToPreConsultation(appointment: Appointment) {
+    this.router.navigate(['/patient/appointments', appointment.id, 'pre-consultation']);
+  }
+
+  viewPreConsultation(appointment: Appointment) {
+    if (appointment.preConsultation) {
+      this.selectedAppointment = appointment;
+      this.isPreConsultationModalOpen = true;
+    } else {
+      this.modalService.alert({
+        title: 'Aviso',
+        message: 'O paciente ainda não preencheu a pré-consulta.',
+        variant: 'info'
+      });
+    }
+  }
+
+  closePreConsultationModal() {
+    this.isPreConsultationModalOpen = false;
+    this.selectedAppointment = null;
   }
 }

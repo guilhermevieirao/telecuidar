@@ -1,0 +1,370 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+.pre-consultation-container {
+  width: 100%;
+  margin: 0 auto;
+  padding: $spacing-xl;
+
+  @include mobile {
+    padding: $spacing-md;
+  }
+}
+
+.header {
+  margin-bottom: $spacing-2xl;
+
+  .back-btn {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: $font-size-sm;
+    padding: 0;
+    margin-bottom: $spacing-md;
+
+    &:hover {
+      color: var(--primary);
+    }
+  }
+
+  .title-section {
+    h1 {
+      @include heading-2;
+      margin: 0 0 $spacing-xs 0;
+      color: var(--text-primary);
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: $font-size-lg;
+    }
+  }
+}
+
+.appointment-summary {
+  background: var(--primary-50);
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-2xl;
+  display: flex;
+  gap: $spacing-2xl;
+  flex-wrap: wrap;
+
+  .summary-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .label {
+      font-size: $font-size-xs;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      font-weight: $font-weight-semibold;
+    }
+
+    .value {
+      font-size: $font-size-base;
+      color: var(--text-primary);
+      font-weight: $font-weight-medium;
+    }
+  }
+}
+
+.form {
+  @include flex-column;
+  gap: $spacing-2xl;
+}
+
+.form-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: $radius-xl;
+  padding: $spacing-xl;
+
+  .section-title {
+    @include heading-3;
+    margin: 0 0 $spacing-xl 0;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: $spacing-md;
+  }
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: $spacing-lg;
+}
+
+.form-group {
+  @include flex-column;
+  gap: $spacing-xs;
+
+  &.full-width {
+    grid-column: 1 / -1;
+  }
+
+  label {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: var(--text-primary);
+  }
+
+  .form-input,
+  .form-textarea {
+    padding: $spacing-md;
+    border: 1px solid var(--border);
+    border-radius: $radius-md;
+    font-size: $font-size-base;
+    background: var(--background);
+    color: var(--text-primary);
+    transition: all 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px var(--primary-light);
+    }
+
+    &::placeholder {
+      color: var(--text-tertiary);
+    }
+  }
+
+  .form-textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+}
+
+.upload-placeholder {
+  border: 2px dashed var(--border);
+  border-radius: $radius-lg;
+  padding: $spacing-3xl;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-md;
+  color: var(--text-secondary);
+  background: var(--background);
+  text-align: center;
+  cursor: not-allowed; // For now
+}
+
+// Attachments Styles
+.attachments-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+
+.attachment-item {
+  border: 1px solid var(--border);
+  border-radius: $radius-md;
+  overflow: hidden;
+  background: var(--background);
+
+  .attachment-preview {
+    height: 120px;
+    width: 100%;
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .attachment-info {
+    padding: $spacing-sm;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+
+    .attachment-title {
+      font-size: $font-size-sm;
+      font-weight: $font-weight-medium;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .remove-btn {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: none;
+      border: none;
+      color: var(--danger);
+      font-size: $font-size-xs;
+      cursor: pointer;
+      padding: 0;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+.add-buttons {
+  display: flex;
+  gap: $spacing-md;
+  
+  @include mobile {
+    flex-direction: column;
+  }
+}
+
+.add-attachment-btn {
+  flex: 1;
+  padding: $spacing-lg;
+  border: 2px dashed var(--primary-light);
+  border-radius: $radius-lg;
+  background: var(--primary-50);
+  color: var(--primary);
+  font-weight: $font-weight-medium;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-md;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: var(--primary-100);
+    border-color: var(--primary);
+  }
+
+  &.mobile-btn {
+    border-color: var(--secondary-light);
+    background: var(--secondary-50);
+    color: var(--secondary);
+
+    &:hover {
+      background: var(--secondary-100);
+      border-color: var(--secondary);
+    }
+  }
+}
+
+.add-attachment-container {
+  border: 1px solid var(--border);
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  background: var(--background);
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+
+  .upload-area {
+    border: 2px dashed var(--border);
+    border-radius: $radius-md;
+    padding: $spacing-xl;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-sm;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--surface);
+
+    &:hover {
+      border-color: var(--primary);
+      background: var(--primary-50);
+    }
+
+    .preview-selected {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: $spacing-sm;
+
+      img {
+        max-width: 100%;
+        max-height: 200px;
+        border-radius: $radius-md;
+        box-shadow: $shadow-sm;
+      }
+
+      p {
+        font-size: $font-size-sm;
+        color: var(--text-secondary);
+        margin: 0;
+      }
+    }
+  }
+
+  .buttons-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-md;
+
+    .upload-btn {
+      width: 100%;
+      aspect-ratio: 1;
+      border: 2px dashed var(--border);
+      border-radius: $radius-xl;
+      background: var(--surface);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: $spacing-md;
+      color: var(--text-primary);
+      font-weight: $font-weight-medium;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &.camera {
+        grid-column: 1 / -1;
+        aspect-ratio: 2/1;
+        color: var(--primary);
+        border-color: var(--primary-light);
+        background: var(--primary-50);
+
+        &:active {
+          background: var(--primary-100);
+        }
+      }
+
+      &.gallery {
+        color: var(--secondary);
+        border-color: var(--secondary-light);
+        background: var(--secondary-50);
+      }
+
+      &.file {
+        color: var(--text-secondary);
+      }
+    }
+  }
+
+  .attachment-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: $spacing-sm;
+  }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $spacing-md;
+  margin-top: $spacing-xl;
+  padding-top: $spacing-xl;
+  border-top: 1px solid var(--border);
+}

@@ -27,6 +27,8 @@ import { AuditLogsComponent } from '@pages/user/admin/audit-logs/audit-logs';
 // Patient-specific components
 import { SchedulingComponent } from '@pages/user/patient/scheduling/scheduling';
 import { SchedulingSuccessComponent } from '@pages/user/patient/scheduling-success/scheduling-success';
+import { PreConsultationComponent } from '@pages/user/patient/pre-consultation/pre-consultation';
+import { MobileUploadComponent } from '@pages/user/patient/mobile-upload/mobile-upload';
 
 import { TeleconsultationComponent } from '@pages/user/shared/teleconsultation/teleconsultation';
 
@@ -45,6 +47,10 @@ export const routes: Routes = [
       { path: 'verify-email', component: VerifyEmailComponent },
       { path: '', redirectTo: 'login', pathMatch: 'full' }
     ]
+  },
+  {
+    path: 'mobile-upload/:token',
+    component: MobileUploadComponent
   },
   {
     path: 'admin',
@@ -73,6 +79,7 @@ export const routes: Routes = [
       { path: 'appointments', component: AppointmentsComponent },
       { path: 'scheduling', component: SchedulingComponent },
       { path: 'scheduling/success', component: SchedulingSuccessComponent },
+      { path: 'appointments/:id/pre-consultation', component: PreConsultationComponent },
       { path: 'teleconsultation/:id', component: TeleconsultationComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
