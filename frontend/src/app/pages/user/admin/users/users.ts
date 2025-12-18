@@ -61,9 +61,9 @@ export class UsersComponent implements OnInit {
 
   roleOptions: FilterOption[] = [
     { value: 'all', label: 'Todos os perfis' },
-    { value: 'patient', label: 'Pacientes' },
-    { value: 'professional', label: 'Profissionais' },
-    { value: 'admin', label: 'Administradores' }
+    { value: 'PATIENT', label: 'Pacientes' },
+    { value: 'PROFESSIONAL', label: 'Profissionais' },
+    { value: 'ADMIN', label: 'Administradores' }
   ];
 
   statusOptions: FilterOption[] = [
@@ -97,12 +97,7 @@ export class UsersComponent implements OnInit {
       status: this.statusFilter
     };
 
-    const sort: UsersSortOptions = {
-      field: this.sortField,
-      direction: this.sortDirection
-    };
-
-    this.usersService.getUsers(filter, sort, this.currentPage, this.pageSize).subscribe({
+    this.usersService.getUsers(filter, this.currentPage, this.pageSize).subscribe({
       next: (response) => {
         this.users = response.data;
         this.totalUsers = response.total;
@@ -161,9 +156,9 @@ export class UsersComponent implements OnInit {
 
   getRoleBadgeVariant(role: UserRole): BadgeVariant {
     const variantMap: Record<UserRole, BadgeVariant> = {
-      patient: 'info',
-      professional: 'primary',
-      admin: 'warning'
+      PATIENT: 'info',
+      PROFESSIONAL: 'primary',
+      ADMIN: 'warning'
     };
     return variantMap[role];
   }

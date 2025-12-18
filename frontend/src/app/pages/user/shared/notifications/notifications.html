@@ -61,24 +61,24 @@
       @for (notification of notifications; track notification.id) {
         <div
           class="notification-card"
-          [class.notification-card--unread]="notification.status === 'unread'"
-          [class.notification-card--info]="notification.type === 'info'"
-          [class.notification-card--warning]="notification.type === 'warning'"
-          [class.notification-card--error]="notification.type === 'error'"
-          [class.notification-card--success]="notification.type === 'success'"
+          [class.notification-card--unread]="!notification.isRead"
+          [class.notification-card--info]="notification.type === 'Info'"
+          [class.notification-card--warning]="notification.type === 'Warning'"
+          [class.notification-card--error]="notification.type === 'Error'"
+          [class.notification-card--success]="notification.type === 'Success'"
         >
           <div class="notification-card__icon">
             @switch (notification.type) {
-              @case ('info') {
+              @case ('Info') {
                 <app-icon name="alert-circle" [size]="24" />
               }
-              @case ('warning') {
+              @case ('Warning') {
                 <app-icon name="alert-circle" [size]="24" />
               }
-              @case ('error') {
+              @case ('Error') {
                 <app-icon name="x-circle" [size]="24" />
               }
-              @case ('success') {
+              @case ('Success') {
                 <app-icon name="check-circle" [size]="24" />
               }
             }
@@ -87,16 +87,16 @@
           <div class="notification-card__content">
             <div class="notification-card__header">
               <h3 class="notification-card__title">{{ notification.title }}</h3>
-              @if (notification.status === 'unread') {
+              @if (!notification.isRead) {
                 <span class="notification-card__unread-badge"></span>
               }
             </div>
             <p class="notification-card__message">{{ notification.message }}</p>
-            <span class="notification-card__timestamp">{{ formatTimestamp(notification.timestamp) }}</span>
+            <span class="notification-card__timestamp">{{ formatTimestamp(notification.createdAt) }}</span>
           </div>
 
           <div class="notification-card__actions">
-            @if (notification.status === 'unread') {
+            @if (!notification.isRead) {
               <button
                 type="button"
                 class="notification-card__action-btn"

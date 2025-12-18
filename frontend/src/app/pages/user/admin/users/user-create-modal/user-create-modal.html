@@ -25,37 +25,37 @@
             <button
               type="button"
               class="role-card"
-              (click)="selectRole('patient')"
+              (click)="selectRole('PATIENT')"
             >
               <div class="role-card__icon role-card__icon--patient">
                 <app-icon name="user" [size]="32" />
               </div>
               <h3 class="role-card__title">Paciente</h3>
-              <p class="role-card__description">{{ getRoleDescription('patient') }}</p>
+              <p class="role-card__description">{{ getRoleDescription('PATIENT') }}</p>
             </button>
 
             <button
               type="button"
               class="role-card"
-              (click)="selectRole('professional')"
+              (click)="selectRole('PROFESSIONAL')"
             >
               <div class="role-card__icon role-card__icon--professional">
                 <app-icon name="users" [size]="32" />
               </div>
               <h3 class="role-card__title">Profissional</h3>
-              <p class="role-card__description">{{ getRoleDescription('professional') }}</p>
+              <p class="role-card__description">{{ getRoleDescription('PROFESSIONAL') }}</p>
             </button>
 
             <button
               type="button"
               class="role-card"
-              (click)="selectRole('admin')"
+              (click)="selectRole('ADMIN')"
             >
               <div class="role-card__icon role-card__icon--admin">
                 <app-icon name="shield" [size]="32" />
               </div>
               <h3 class="role-card__title">Administrador</h3>
-              <p class="role-card__description">{{ getRoleDescription('admin') }}</p>
+              <p class="role-card__description">{{ getRoleDescription('ADMIN') }}</p>
             </button>
           </div>
         </div>

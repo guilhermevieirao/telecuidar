@@ -12,7 +12,7 @@ import { ButtonComponent } from '@shared/components/atoms/button/button';
 })
 export class SoapTabComponent implements OnInit {
   @Input() appointmentId: string | null = null;
-  @Input() userRole: 'patient' | 'professional' | 'admin' = 'patient';
+  @Input() userrole: 'PATIENT' | 'PROFESSIONAL' | 'ADMIN' = 'PATIENT';
 
   soapForm: FormGroup;
   isSaving = false;

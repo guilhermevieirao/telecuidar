@@ -93,7 +93,7 @@ export class MobileUploadComponent implements OnInit {
           // Mode 1: Chat Upload (Direct to Service)
           const newMessage: AttachmentMessage = {
             id: crypto.randomUUID(),
-            senderRole: 'patient',
+            senderRole: 'PATIENT',
             senderName: 'Upload via Mobile',
             timestamp: new Date().toISOString(),
             title: this.attachmentTitle || this.selectedFile.name,

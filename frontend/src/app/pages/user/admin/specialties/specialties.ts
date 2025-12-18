@@ -166,13 +166,13 @@ export class SpecialtiesComponent implements OnInit {
   }
 
   toggleStatus(specialty: Specialty): void {
-    const newStatus = specialty.status === 'active' ? 'inativa' : 'ativa';
+    const newStatus = specialty.status === 'Active' ? 'inativa' : 'ativa';
     this.modalService.confirm({
-      title: `${specialty.status === 'active' ? 'Desativar' : 'Ativar'} Especialidade`,
-      message: `Tem certeza que deseja ${specialty.status === 'active' ? 'desativar' : 'ativar'} a especialidade "${specialty.name}"?`,
-      confirmText: specialty.status === 'active' ? 'Desativar' : 'Ativar',
+      title: `${specialty.status === 'Active' ? 'Desativar' : 'Ativar'} Especialidade`,
+      message: `Tem certeza que deseja ${specialty.status === 'Active' ? 'desativar' : 'ativar'} a especialidade "${specialty.name}"?`,
+      confirmText: specialty.status === 'Active' ? 'Desativar' : 'Ativar',
       cancelText: 'Cancelar',
-      variant: specialty.status === 'active' ? 'warning' : 'success'
+      variant: specialty.status === 'Active' ? 'warning' : 'success'
     }).subscribe((result) => {
       if (result.confirmed) {
         this.specialtiesService.toggleSpecialtyStatus(specialty.id).subscribe({

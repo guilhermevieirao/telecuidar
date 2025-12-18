@@ -1,107 +1,116 @@
-import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { AuthService } from './auth.service';
 
-export type NotificationType = 'info' | 'warning' | 'error' | 'success';
-export type NotificationStatus = 'read' | 'unread';
+const API_BASE_URL = 'http://localhost:5239/api';
+
+export type NotificationType = 'Info' | 'Warning' | 'Error' | 'Success';
 
 export interface Notification {
   id: string;
-  type: NotificationType;
+  userId: string;
   title: string;
   message: string;
-  timestamp: string;
-  status: NotificationStatus;
+  type: NotificationType;
+  isRead: boolean;
+  createdAt: string;
+  readAt?: string;
+}
+
+export interface CreateNotificationDto {
+  userId: string;
+  title: string;
+  message: string;
+  type: NotificationType;
 }
 
 export interface NotificationsFilter {
-  status?: 'all' | NotificationStatus;
-  type?: 'all' | NotificationType;
+  isRead?: boolean;
+  type?: string;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class NotificationsService {
-  // TODO: Substituir por chamadas reais ao backend
-  getNotifications(filter?: NotificationsFilter): Observable<Notification[]> {
-    // Dados mockados para demonstração
-    const mockNotifications: Notification[] = [
-      {
-        id: '1',
-        type: 'info',
-        title: 'Nova atualização disponível',
-        message: 'Uma nova versão do sistema está disponível. Atualize para obter as últimas funcionalidades.',
-        timestamp: '2024-12-10T14:30:00',
-        status: 'unread'
-      },
-      {
-        id: '2',
-        type: 'success',
-        title: 'Backup concluído',
-        message: 'O backup automático dos dados foi concluído com sucesso.',
-        timestamp: '2024-12-10T12:00:00',
-        status: 'read'
-      },
-      {
-        id: '3',
-        type: 'warning',
-        title: 'Atenção: Limite de armazenamento',
-        message: 'Você está usando 85% do espaço de armazenamento disponível.',
-        timestamp: '2024-12-10T10:15:00',
-        status: 'unread'
-      },
-      {
-        id: '4',
-        type: 'error',
-        title: 'Falha no envio de e-mail',
-        message: 'Houve um erro ao enviar notificações por e-mail. Verifique as configurações.',
-        timestamp: '2024-12-09T16:45:00',
-        status: 'unread'
-      },
-      {
-        id: '5',
-        type: 'info',
-        title: 'Novo usuário registrado',
-        message: 'Um novo profissional de saúde se registrou na plataforma.',
-        timestamp: '2024-12-09T14:20:00',
-        status: 'read'
-      },
-      {
-        id: '6',
-        type: 'success',
-        title: 'Pagamento processado',
-        message: 'O pagamento da assinatura mensal foi processado com sucesso.',
-        timestamp: '2024-12-09T09:00:00',
-        status: 'read'
-      }
-    ];
+  private apiUrl = `${API_BASE_URL}/notifications`;
+  private authService = inject(AuthService);
 
-    let filtered = [...mockNotifications];
+  constructor(private http: HttpClient) {}
 
-    if (filter?.status && filter.status !== 'all') {
-      filtered = filtered.filter(n => n.status === filter.status);
+  getNotifications(
+    filter?: NotificationsFilter,
+    page: number = 1,
+    pageSize: number = 10
+  ): Observable<PaginatedResponse<Notification>> {
+    const user = this.authService.currentUser();
+    const userId = user?.id;
+    if (!userId) {
+      // Return empty result instead of throwing error during SSR
+      return new Observable(observer => {
+        observer.next({ data: [], total: 0, page: 1, pageSize: 10, totalPages: 0 });
+        observer.complete();
+      });
     }
 
-    if (filter?.type && filter.type !== 'all') {
-      filtered = filtered.filter(n => n.type === filter.type);
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('pageSize', pageSize.toString());
+
+    if (filter?.isRead !== undefined) {
+      params = params.set('isRead', filter.isRead.toString());
+    }
+    if (filter?.type) {
+      params = params.set('type', filter.type);
     }
 
-    return of(filtered).pipe(delay(300));
+    return this.http.get<PaginatedResponse<Notification>>(`${this.apiUrl}/user/${userId}`, { params });
   }
 
-  markAsRead(notificationId: string): Observable<void> {
-    // TODO: Implementar chamada real ao backend
-    return of(void 0).pipe(delay(200));
+  getNotificationById(id: string): Observable<Notification> {
+    return this.http.get<Notification>(`${this.apiUrl}/${id}`);
   }
 
-  markAllAsRead(): Observable<void> {
-    // TODO: Implementar chamada real ao backend
-    return of(void 0).pipe(delay(200));
+  getUnreadCount(): Observable<{ count: number }> {
+    const userId = this.authService.currentUser()?.id;
+    if (!userId) {
+      return new Observable(observer => {
+        observer.next({ count: 0 });
+        observer.complete();
+      });
+    }
+    return this.http.get<{ count: number }>(`${this.apiUrl}/user/${userId}/unread-count`);
   }
 
-  deleteNotification(notificationId: string): Observable<void> {
-    // TODO: Implementar chamada real ao backend
-    return of(void 0).pipe(delay(200));
+  markAsRead(notificationId: string): Observable<any> {
+    return this.http.patch<any>(`${this.apiUrl}/${notificationId}/read`, {});
+  }
+
+  markAllAsRead(): Observable<any> {
+    const userId = this.authService.currentUser()?.id;
+    if (!userId) {
+      return new Observable(observer => {
+        observer.next({});
+        observer.complete();
+      });
+    }
+    return this.http.patch<any>(`${this.apiUrl}/user/${userId}/read-all`, {});
+  }
+
+  deleteNotification(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  createNotification(notification: CreateNotificationDto): Observable<Notification> {
+    return this.http.post<Notification>(this.apiUrl, notification);
   }
 }

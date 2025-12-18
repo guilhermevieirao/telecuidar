@@ -8,8 +8,8 @@ import { ScheduleStatus } from '@app/core/services/schedules.service';
 export class ScheduleStatusPipe implements PipeTransform {
   transform(status: ScheduleStatus): string {
     const statusMap: Record<ScheduleStatus, string> = {
-      'active': 'Ativa',
-      'inactive': 'Inativa'
+      'Active': 'Ativa',
+      'Inactive': 'Inativa'
     };
     return statusMap[status] || status;
   }

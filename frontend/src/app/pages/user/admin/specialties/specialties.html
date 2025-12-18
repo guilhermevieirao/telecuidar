@@ -103,8 +103,8 @@
               <td class="specialties-table__cell">
                 <span 
                   class="specialties-table__badge"
-                  [class.specialties-table__badge--active]="specialty.status === 'active'"
-                  [class.specialties-table__badge--inactive]="specialty.status === 'inactive'"
+                  [class.specialties-table__badge--active]="specialty.status === 'Active'"
+                  [class.specialties-table__badge--inactive]="specialty.status === 'Inactive'"
                 >
                   {{ specialty.status | specialtyStatus }}
                 </span>
@@ -133,12 +133,12 @@
                   <button
                     type="button"
                     class="specialties-table__action-btn"
-                    [class.specialties-table__action-btn--activate]="specialty.status === 'inactive'"
-                    [class.specialties-table__action-btn--deactivate]="specialty.status === 'active'"
+                    [class.specialties-table__action-btn--activate]="specialty.status === 'Inactive'"
+                    [class.specialties-table__action-btn--deactivate]="specialty.status === 'Active'"
                     (click)="toggleStatus(specialty)"
-                    [aria-label]="specialty.status === 'active' ? 'Desativar especialidade' : 'Ativar especialidade'"
+                    [aria-label]="specialty.status === 'Active' ? 'Desativar especialidade' : 'Ativar especialidade'"
                   >
-                    <app-icon [name]="specialty.status === 'active' ? 'x-circle' : 'check'" [size]="18" />
+                    <app-icon [name]="specialty.status === 'Active' ? 'x-circle' : 'check'" [size]="18" />
                   </button>
                   <button
                     type="button"

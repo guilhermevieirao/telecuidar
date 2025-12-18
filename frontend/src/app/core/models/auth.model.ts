@@ -6,13 +6,13 @@ export interface User {
   cpf: string;
   phone?: string;
   avatar?: string;
-  role: UserRole;
+  role: userrole;
   emailVerified: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export enum UserRole {
+export enum userrole {
   PATIENT = 'PATIENT',
   PROFESSIONAL = 'PROFESSIONAL',
   ADMIN = 'ADMIN'

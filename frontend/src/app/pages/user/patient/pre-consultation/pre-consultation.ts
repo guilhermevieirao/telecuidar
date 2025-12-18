@@ -357,7 +357,7 @@ export class PreConsultationComponent implements OnInit, OnDestroy {
         type: att.type
       }));
 
-      this.appointmentsService.savePreConsultation(this.appointmentId, formData).subscribe({
+      this.appointmentsService.updateAppointment(this.appointmentId, formData).subscribe({
         next: (success) => {
           this.isSubmitting = false;
           if (success) {
@@ -366,7 +366,7 @@ export class PreConsultationComponent implements OnInit, OnDestroy {
               message: 'Pré-consulta enviada com sucesso!',
               variant: 'success'
             }).subscribe(() => {
-              this.router.navigate(['/patient/appointments']);
+              this.router.navigate(['/consultas']);
             });
           }
         },
@@ -387,6 +387,6 @@ export class PreConsultationComponent implements OnInit, OnDestroy {
   }
 
   onCancel() {
-    this.router.navigate(['/patient/appointments']);
+    this.router.navigate(['/consultas']);
   }
 }

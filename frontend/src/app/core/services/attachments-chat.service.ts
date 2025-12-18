@@ -4,7 +4,7 @@ import { isPlatformBrowser } from '@angular/common';
 
 export interface AttachmentMessage {
   id: string;
-  senderRole: 'patient' | 'professional';
+  senderRole: 'PATIENT' | 'PROFESSIONAL';
   senderName: string;
   timestamp: string;
   title: string;

@@ -42,9 +42,9 @@ export class InvitesComponent implements OnInit {
 
   roleOptions: FilterOption[] = [
     { value: 'all', label: 'Todos os perfis' },
-    { value: 'patient', label: 'Pacientes' },
-    { value: 'professional', label: 'Profissionais' },
-    { value: 'admin', label: 'Administradores' }
+    { value: 'PATIENT', label: 'Pacientes' },
+    { value: 'PROFESSIONAL', label: 'Profissionais' },
+    { value: 'ADMIN', label: 'Administradores' }
   ];
 
   statusOptions: FilterOption[] = [
@@ -141,38 +141,38 @@ export class InvitesComponent implements OnInit {
 
   getRoleBadgeVariant(role: UserRole): BadgeVariant {
     const variants: Record<UserRole, BadgeVariant> = {
-      patient: 'info',
-      professional: 'primary',
-      admin: 'warning'
+      PATIENT: 'info',
+      PROFESSIONAL: 'primary',
+      ADMIN: 'warning'
     };
     return variants[role];
   }
 
   getStatusBadgeVariant(status: InviteStatus): BadgeVariant {
     const variants: Record<InviteStatus, BadgeVariant> = {
-      pending: 'warning',
-      accepted: 'success',
-      expired: 'error',
-      cancelled: 'neutral'
+      Pending: 'warning',
+      Accepted: 'success',
+      Expired: 'error',
+      Cancelled: 'neutral'
     };
     return variants[status];
   }
 
   getStatusLabel(status: InviteStatus): string {
     const labels: Record<InviteStatus, string> = {
-      pending: 'Pendente',
-      accepted: 'Aceito',
-      expired: 'Expirado',
-      cancelled: 'Cancelado'
+      Pending: 'Pendente',
+      Accepted: 'Aceito',
+      Expired: 'Expirado',
+      Cancelled: 'Cancelado'
     };
     return labels[status];
   }
 
   getRoleLabel(role: UserRole): string {
     const labels: Record<UserRole, string> = {
-      patient: 'Paciente',
-      professional: 'Profissional',
-      admin: 'Administrador'
+      PATIENT: 'Paciente',
+      PROFESSIONAL: 'Profissional',
+      ADMIN: 'Administrador'
     };
     return labels[role];
   }
@@ -181,14 +181,18 @@ export class InvitesComponent implements OnInit {
     return new Date(invite.expiresAt) < new Date();
   }
 
-  copyInviteLink(invite: Invite): void {
-    const link = this.invitesService.copyInviteLink(invite.token);
-    navigator.clipboard.writeText(link).then(() => {
-      this.modalService.alert({
-        title: 'Link Copiado',
-        message: 'O link do convite foi copiado para a área de transferência!',
-        variant: 'success'
-      });
+  getInviteByToken(invite: Invite): void {
+    this.invitesService.getInviteByToken(invite.token).subscribe({
+      next: (inviteDetails) => {
+        const link = `${window.location.origin}/auth/register?token=${invite.token}`;
+        navigator.clipboard.writeText(link).then(() => {
+          this.modalService.alert({
+            title: 'Link Copiado',
+            message: 'O link do convite foi copiado para a área de transferência!',
+            variant: 'success'
+          });
+        });
+      }
     });
   }
 
@@ -250,36 +254,6 @@ export class InvitesComponent implements OnInit {
     });
   }
 
-  deleteInvite(invite: Invite): void {
-    this.modalService.confirm({
-      title: 'Excluir Convite',
-      message: `Tem certeza que deseja excluir o convite para ${invite.email}?`,
-      confirmText: 'Excluir',
-      cancelText: 'Cancelar',
-      variant: 'danger'
-    }).subscribe((result) => {
-      if (result.confirmed) {
-        this.invitesService.deleteInvite(invite.id).subscribe({
-          next: () => {
-            this.modalService.alert({
-              title: 'Sucesso',
-              message: 'Convite excluído com sucesso!',
-              variant: 'success'
-            });
-            this.loadInvites();
-          },
-          error: () => {
-            this.modalService.alert({
-              title: 'Erro',
-              message: 'Erro ao excluir convite. Tente novamente.',
-              variant: 'danger'
-            });
-          }
-        });
-      }
-    });
-  }
-
   openCreateModal(): void {
     this.isCreateModalOpen = true;
   }
@@ -290,7 +264,7 @@ export class InvitesComponent implements OnInit {
 
   handleCreateInvite(data: { email: string; role: UserRole }): void {
     this.isLoading = true;
-    this.invitesService.createInvite(data.email, data.role).subscribe({
+    this.invitesService.createInvite({ email: data.email, role: data.role }).subscribe({
       next: (newInvite) => {
         this.modalService.alert({
           title: 'Sucesso',

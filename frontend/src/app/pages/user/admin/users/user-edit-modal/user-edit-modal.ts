@@ -31,7 +31,7 @@ export class UserEditModalComponent implements OnChanges, OnInit {
   }
 
   loadSpecialties(): void {
-    this.specialtiesService.getSpecialties({ status: 'active' }, { field: 'name', direction: 'asc' }, 1, 100).subscribe({
+    this.specialtiesService.getSpecialties({ status: 'Active' }, { field: 'name', direction: 'asc' }, 1, 100).subscribe({
       next: (response) => {
         this.specialties = response.data;
       }
@@ -71,17 +71,17 @@ export class UserEditModalComponent implements OnChanges, OnInit {
 
   getRoleLabel(role: UserRole): string {
     const labels: Record<UserRole, string> = {
-      patient: 'Paciente',
-      professional: 'Profissional',
-      admin: 'Administrador'
+      PATIENT: 'Paciente',
+      PROFESSIONAL: 'Profissional',
+      ADMIN: 'Administrador'
     };
     return labels[role];
   }
 
   getStatusLabel(status: UserStatus): string {
     const labels: Record<UserStatus, string> = {
-      active: 'Ativo',
-      inactive: 'Inativo'
+      Active: 'Ativo',
+      Inactive: 'Inativo'
     };
     return labels[status];
   }

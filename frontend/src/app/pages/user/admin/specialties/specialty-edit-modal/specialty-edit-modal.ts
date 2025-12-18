@@ -21,7 +21,7 @@ export class SpecialtyEditModalComponent implements OnChanges {
   specialtyData = {
     name: '',
     description: '',
-    status: 'active' as SpecialtyStatus,
+    status: 'Active' as SpecialtyStatus,
     customFields: [] as CustomField[]
   };
 

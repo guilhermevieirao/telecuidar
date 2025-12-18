@@ -28,17 +28,18 @@ export class ProfileComponent implements OnInit {
     // Mock do usuário logado - em produção virá do AuthService
     this.user = {
       id: '3',
-      name: 'Pedro Costa',
+      name: 'Pedro',
+      lastName: 'Costa',
       email: 'pedro.costa@email.com',
-      role: 'admin',
+      role: 'ADMIN',
       cpf: '345.678.901-22',
       phone: '(11) 98765-4323',
-      status: 'active',
+      status: 'Active',
       createdAt: '2024-03-10T09:15:00',
       avatar: undefined,
       emailVerified: false // mock
     };
-    this.emailVerified = !!this.user.emailVerified;
+    this.emailVerified = !!this.user?.emailVerified;
   }
 
   openEditModal(): void {

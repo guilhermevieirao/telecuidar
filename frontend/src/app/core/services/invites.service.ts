@@ -1,25 +1,36 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, delay } from 'rxjs';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-export type InviteStatus = 'pending' | 'accepted' | 'expired' | 'cancelled';
-export type UserRole = 'patient' | 'professional' | 'admin';
+const API_BASE_URL = 'http://localhost:5239/api';
+
+export type InviteStatus = 'Pending' | 'Accepted' | 'Expired' | 'Cancelled';
+export type UserRole = 'PATIENT' | 'PROFESSIONAL' | 'ADMIN';
 
 export interface Invite {
-  id: number;
+  id: string;
   email: string;
   role: UserRole;
   status: InviteStatus;
-  createdAt: Date;
-  expiresAt: Date;
-  createdBy: string;
-  acceptedAt?: Date;
+  createdAt: string;
+  expiresAt: string;
+  createdByUserId: string;
+  createdByUserName?: string;
+  createdBy?: string; // Alias para createdByUserName
+  acceptedAt?: string;
   token: string;
+}
+
+export interface CreateInviteDto {
+  email: string;
+  role: UserRole;
+  expiresAt?: string;
 }
 
 export interface InvitesFilter {
   search?: string;
-  role?: UserRole | 'all';
-  status?: InviteStatus | 'all';
+  role?: string;
+  status?: string;
 }
 
 export interface InvitesSortOptions {
@@ -27,172 +38,72 @@ export interface InvitesSortOptions {
   direction: 'asc' | 'desc';
 }
 
-export interface InvitesResponse {
-  data: Invite[];
+export interface PaginatedResponse<T> {
+  data: T[];
   total: number;
+  page: number;
+  pageSize: number;
   totalPages: number;
-  currentPage: number;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class InvitesService {
-  private mockInvites: Invite[] = [
-    {
-      id: 1,
-      email: 'maria.silva@email.com',
-      role: 'professional',
-      status: 'pending',
-      createdAt: new Date('2024-12-08T10:30:00'),
-      expiresAt: new Date('2024-12-15T10:30:00'),
-      createdBy: 'Admin Sistema',
-      token: 'abc123def456'
-    },
-    {
-      id: 2,
-      email: 'joao.santos@email.com',
-      role: 'patient',
-      status: 'accepted',
-      createdAt: new Date('2024-12-05T14:20:00'),
-      expiresAt: new Date('2024-12-12T14:20:00'),
-      createdBy: 'Admin Sistema',
-      acceptedAt: new Date('2024-12-06T09:15:00'),
-      token: 'ghi789jkl012'
-    },
-    {
-      id: 3,
-      email: 'ana.costa@email.com',
-      role: 'professional',
-      status: 'expired',
-      createdAt: new Date('2024-11-20T16:45:00'),
-      expiresAt: new Date('2024-11-27T16:45:00'),
-      createdBy: 'Admin Sistema',
-      token: 'mno345pqr678'
-    },
-    {
-      id: 4,
-      email: 'carlos.mendes@email.com',
-      role: 'admin',
-      status: 'pending',
-      createdAt: new Date('2024-12-09T08:00:00'),
-      expiresAt: new Date('2024-12-16T08:00:00'),
-      createdBy: 'Admin Sistema',
-      token: 'stu901vwx234'
-    },
-    {
-      id: 5,
-      email: 'paula.oliveira@email.com',
-      role: 'patient',
-      status: 'cancelled',
-      createdAt: new Date('2024-12-01T11:30:00'),
-      expiresAt: new Date('2024-12-08T11:30:00'),
-      createdBy: 'Admin Sistema',
-      token: 'yza567bcd890'
-    },
-    {
-      id: 6,
-      email: 'roberto.lima@email.com',
-      role: 'professional',
-      status: 'pending',
-      createdAt: new Date('2024-12-10T15:00:00'),
-      expiresAt: new Date('2024-12-17T15:00:00'),
-      createdBy: 'Admin Sistema',
-      token: 'efg123hij456'
-    }
-  ];
+  private apiUrl = `${API_BASE_URL}/invites`;
+
+  constructor(private http: HttpClient) {}
 
   getInvites(
-    filter: InvitesFilter,
-    sort: InvitesSortOptions,
-    page: number,
-    pageSize: number
-  ): Observable<InvitesResponse> {
-    let filtered = [...this.mockInvites];
+    filter?: InvitesFilter,
+    sort?: InvitesSortOptions,
+    page: number = 1,
+    pageSize: number = 10
+  ): Observable<PaginatedResponse<Invite>> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('pageSize', pageSize.toString());
 
-    // Aplicar filtros
-    if (filter.search) {
-      const search = filter.search.toLowerCase();
-      filtered = filtered.filter(invite =>
-        invite.email.toLowerCase().includes(search) ||
-        invite.createdBy.toLowerCase().includes(search) ||
-        invite.id.toString().includes(search)
-      );
+    if (sort) {
+      params = params
+        .set('sortBy', sort.field)
+        .set('sortDirection', sort.direction);
     }
 
-    if (filter.role && filter.role !== 'all') {
-      filtered = filtered.filter(invite => invite.role === filter.role);
+    if (filter?.search) {
+      params = params.set('search', filter.search);
+    }
+    if (filter?.role) {
+      params = params.set('role', filter.role);
+    }
+    if (filter?.status) {
+      params = params.set('status', filter.status);
     }
 
-    if (filter.status && filter.status !== 'all') {
-      filtered = filtered.filter(invite => invite.status === filter.status);
-    }
-
-    // Aplicar ordenação
-    filtered.sort((a, b) => {
-      const aValue = a[sort.field];
-      const bValue = b[sort.field];
-
-      if (aValue === undefined || bValue === undefined) return 0;
-      
-      let comparison = 0;
-      if (aValue < bValue) comparison = -1;
-      if (aValue > bValue) comparison = 1;
-
-      return sort.direction === 'asc' ? comparison : -comparison;
-    });
-
-    // Aplicar paginação
-    const total = filtered.length;
-    const totalPages = Math.ceil(total / pageSize);
-    const start = (page - 1) * pageSize;
-    const end = start + pageSize;
-    const data = filtered.slice(start, end);
-
-    return of({
-      data,
-      total,
-      totalPages,
-      currentPage: page
-    }).pipe(delay(300));
+    return this.http.get<PaginatedResponse<Invite>>(this.apiUrl, { params });
   }
 
-  createInvite(email: string, role: UserRole): Observable<Invite> {
-    const newInvite: Invite = {
-      id: this.mockInvites.length > 0 ? Math.max(...this.mockInvites.map(i => i.id)) + 1 : 1,
-      email,
-      role,
-      status: 'pending',
-      createdAt: new Date(),
-      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
-      createdBy: 'Admin Sistema',
-      token: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
-    };
-    this.mockInvites.unshift(newInvite);
-    return of(newInvite).pipe(delay(500));
+  getInviteById(id: string): Observable<Invite> {
+    return this.http.get<Invite>(`${this.apiUrl}/${id}`);
   }
 
-  resendInvite(inviteId: number): Observable<void> {
-    return of(void 0).pipe(delay(500));
+  getInviteByToken(token: string): Observable<Invite> {
+    return this.http.get<Invite>(`${this.apiUrl}/token/${token}`);
   }
 
-  cancelInvite(inviteId: number): Observable<void> {
-    const invite = this.mockInvites.find(i => i.id === inviteId);
-    if (invite) {
-      invite.status = 'cancelled';
-    }
-    return of(void 0).pipe(delay(500));
+  createInvite(invite: CreateInviteDto): Observable<Invite> {
+    return this.http.post<Invite>(this.apiUrl, invite);
   }
 
-  deleteInvite(inviteId: number): Observable<void> {
-    const index = this.mockInvites.findIndex(i => i.id === inviteId);
-    if (index !== -1) {
-      this.mockInvites.splice(index, 1);
-    }
-    return of(void 0).pipe(delay(500));
+  resendInvite(id: string): Observable<Invite> {
+    return this.http.post<Invite>(`${this.apiUrl}/${id}/resend`, {});
   }
 
-  copyInviteLink(token: string): string {
-    return `${window.location.origin}/register?invite=${token}`;
+  cancelInvite(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  acceptInvite(token: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/accept`, { token });
   }
 }

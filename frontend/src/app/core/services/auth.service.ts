@@ -252,4 +252,16 @@ export class AuthService {
     const current = this.authState.value;
     this.authState.next({ ...current, error });
   }
+
+  // Get dashboard URL
+  getDashboardUrl(): string {
+    const user = this.currentUser();
+    if (!user) return '/auth/login';
+    return '/painel';
+  }
+
+  // Get current user safely
+  getCurrentUser(): User | null {
+    return this.currentUser();
+  }
 }

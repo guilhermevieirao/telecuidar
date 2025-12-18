@@ -4,8 +4,7 @@ import { IconComponent } from '@app/shared/components/atoms/icon/icon';
 import { 
   NotificationsService, 
   Notification, 
-  NotificationType, 
-  NotificationStatus 
+  NotificationType 
 } from '@app/core/services/notifications.service';
 
 @Component({
@@ -16,7 +15,7 @@ import {
 })
 export class NotificationsComponent implements OnInit {
   notifications: Notification[] = [];
-  statusFilter: 'all' | NotificationStatus = 'all';
+  statusFilter: 'all' | boolean = 'all';
   typeFilter: 'all' | NotificationType = 'all';
   loading = false;
   unreadCount = 0;
@@ -31,7 +30,7 @@ export class NotificationsComponent implements OnInit {
     return this.unreadCount > 0;
   }
 
-  setStatusFilter(status: 'all' | NotificationStatus): void {
+  setStatusFilter(status: 'all' | boolean): void {
     this.statusFilter = status;
     this.loadNotifications();
   }
@@ -50,7 +49,7 @@ export class NotificationsComponent implements OnInit {
       next: () => {
         const notification = this.notifications.find(n => n.id === notificationId);
         if (notification) {
-          notification.status = 'read';
+          notification.isRead = true;
           this.updateUnreadCount();
         }
       },
@@ -63,7 +62,7 @@ export class NotificationsComponent implements OnInit {
   markAllAsRead(): void {
     this.notificationsService.markAllAsRead().subscribe({
       next: () => {
-        this.notifications.forEach(n => n.status = 'read');
+        this.notifications.forEach(n => n.isRead = true);
         this.updateUnreadCount();
       },
       error: (error: Error) => {
@@ -107,12 +106,17 @@ export class NotificationsComponent implements OnInit {
 
   private loadNotifications(): void {
     this.loading = true;
-    this.notificationsService.getNotifications({
-      status: this.statusFilter,
-      type: this.typeFilter
-    }).subscribe({
-      next: (notifications: Notification[]) => {
-        this.notifications = notifications;
+    const filter: any = {};
+    if (this.statusFilter !== 'all') {
+      filter.isRead = this.statusFilter === false ? false : true;
+    }
+    if (this.typeFilter !== 'all') {
+      filter.type = this.typeFilter;
+    }
+    
+    this.notificationsService.getNotifications(filter).subscribe({
+      next: (response) => {
+        this.notifications = response.data;
         this.updateUnreadCount();
         this.loading = false;
       },
@@ -124,6 +128,6 @@ export class NotificationsComponent implements OnInit {
   }
 
   private updateUnreadCount(): void {
-    this.unreadCount = this.notifications.filter(n => n.status === 'unread').length;
+    this.unreadCount = this.notifications.filter(n => !n.isRead).length;
   }
 }

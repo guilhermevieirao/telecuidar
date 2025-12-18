@@ -4,70 +4,70 @@
       <app-logo size="md" />
     </div>
     <nav class="admin-sidebar__nav">
-      <a [routerLink]="['/' + basePath, 'dashboard']" routerLinkActive="admin-sidebar__link--active" class="admin-sidebar__link" (click)="closeSidebarOnMobile()">
+      <a routerLink="/painel" routerLinkActive="admin-sidebar__link--active" class="admin-sidebar__link" (click)="closeSidebarOnMobile()">
         <app-icon name="home" [size]="20" />
-        <span>Dashboard</span>
+        <span>Painel</span>
       </a>
-      <a [routerLink]="['/' + basePath, 'notifications']" routerLinkActive="admin-sidebar__link--active" class="admin-sidebar__link" (click)="closeSidebarOnMobile()">
+      <a routerLink="/notificacoes" routerLinkActive="admin-sidebar__link--active" class="admin-sidebar__link" (click)="closeSidebarOnMobile()">
         <app-icon name="bell" [size]="20" />
         <span>Notificações</span>
         @if (unreadNotifications > 0) {
           <span class="admin-sidebar__badge">{{ unreadNotifications }}</span>
         }
       </a>
-      @if (user?.role === 'admin') {
-        <a [routerLink]="['/' + basePath, 'users']" routerLinkActive="admin-sidebar__link--active" class="admin-sidebar__link" (click)="closeSidebarOnMobile()">
+      @if (user?.role === 'ADMIN') {
+        <a routerLink="/usuarios" routerLinkActive="admin-sidebar__link--active" class="admin-sidebar__link" (click)="closeSidebarOnMobile()">
           <app-icon name="users" [size]="20" />
           <span>Usuários</span>
         </a>
-        <a [routerLink]="['/' + basePath, 'invites']" routerLinkActive="admin-sidebar__link--active" class="admin-sidebar__link" (click)="closeSidebarOnMobile()">
+        <a routerLink="/convites" routerLinkActive="admin-sidebar__link--active" class="admin-sidebar__link" (click)="closeSidebarOnMobile()">
           <app-icon name="mail" [size]="20" />
           <span>Convites</span>
         </a>
-        <a [routerLink]="['/' + basePath, 'specialties']" routerLinkActive="admin-sidebar__link--active" class="admin-sidebar__link" (click)="closeSidebarOnMobile()">
+        <a routerLink="/especialidades" routerLinkActive="admin-sidebar__link--active" class="admin-sidebar__link" (click)="closeSidebarOnMobile()">
           <app-icon name="book" [size]="20" />
           <span>Especialidades</span>
         </a>
-        <a [routerLink]="['/' + basePath, 'schedules']" routerLinkActive="admin-sidebar__link--active" class="admin-sidebar__link" (click)="closeSidebarOnMobile()">
+        <a routerLink="/agendas" routerLinkActive="admin-sidebar__link--active" class="admin-sidebar__link" (click)="closeSidebarOnMobile()">
           <app-icon name="calendar" [size]="20" />
           <span>Agendas</span>
         </a>
-        <a [routerLink]="['/' + basePath, 'schedule-blocks']" routerLinkActive="admin-sidebar__link--active" class="admin-sidebar__link" (click)="closeSidebarOnMobile()">
+        <a routerLink="/bloqueios-agenda" routerLinkActive="admin-sidebar__link--active" class="admin-sidebar__link" (click)="closeSidebarOnMobile()">
           <app-icon name="clock" [size]="20" />
           <span>Bloqueios de Agenda</span>
         </a>
-        <a [routerLink]="['/' + basePath, 'reports']" routerLinkActive="admin-sidebar__link--active" class="admin-sidebar__link" (click)="closeSidebarOnMobile()">
+        <a routerLink="/relatorios" routerLinkActive="admin-sidebar__link--active" class="admin-sidebar__link" (click)="closeSidebarOnMobile()">
           <app-icon name="bar-chart" [size]="20" />
           <span>Relatórios</span>
         </a>
-        <a [routerLink]="['/' + basePath, 'audit-logs']" routerLinkActive="admin-sidebar__link--active" class="admin-sidebar__link" (click)="closeSidebarOnMobile()">
+        <a routerLink="/logs-auditoria" routerLinkActive="admin-sidebar__link--active" class="admin-sidebar__link" (click)="closeSidebarOnMobile()">
           <app-icon name="activity" [size]="20" />
           <span>Logs de Auditoria</span>
         </a>
       }
-      @if (user?.role === 'patient' || user?.role === 'professional') {
-        <a [routerLink]="['/' + basePath, 'appointments']" routerLinkActive="admin-sidebar__link--active" class="admin-sidebar__link" (click)="closeSidebarOnMobile()">
+      @if (user?.role === 'PATIENT' || user?.role === 'PROFESSIONAL') {
+        <a routerLink="/consultas" routerLinkActive="admin-sidebar__link--active" class="admin-sidebar__link" (click)="closeSidebarOnMobile()">
           <app-icon name="calendar" [size]="20" />
           <span>Minhas Consultas</span>
         </a>
       }
-      @if (user?.role === 'professional') {
-        <a [routerLink]="['/' + basePath, 'my-schedule']" routerLinkActive="admin-sidebar__link--active" class="admin-sidebar__link" (click)="closeSidebarOnMobile()">
+      @if (user?.role === 'PROFESSIONAL') {
+        <a routerLink="/minha-agenda" routerLinkActive="admin-sidebar__link--active" class="admin-sidebar__link" (click)="closeSidebarOnMobile()">
           <app-icon name="clock" [size]="20" />
           <span>Minha Agenda</span>
         </a>
-        <a [routerLink]="['/' + basePath, 'schedule-blocks']" routerLinkActive="admin-sidebar__link--active" class="admin-sidebar__link" (click)="closeSidebarOnMobile()">
+        <a routerLink="/bloqueios-agenda" routerLinkActive="admin-sidebar__link--active" class="admin-sidebar__link" (click)="closeSidebarOnMobile()">
           <app-icon name="slash" [size]="20" />
           <span>Bloqueios de Agenda</span>
         </a>
       }
-      @if (user?.role === 'patient') {
-        <a [routerLink]="['/' + basePath, 'scheduling']" routerLinkActive="admin-sidebar__link--active" class="admin-sidebar__link" (click)="closeSidebarOnMobile()">
+      @if (user?.role === 'PATIENT') {
+        <a routerLink="/agendar" routerLinkActive="admin-sidebar__link--active" class="admin-sidebar__link" (click)="closeSidebarOnMobile()">
           <app-icon name="plus" [size]="20" />
           <span>Agendar Consulta</span>
         </a>
       }
-      <a [routerLink]="['/' + basePath, 'profile']" routerLinkActive="admin-sidebar__link--active" class="admin-sidebar__link" (click)="closeSidebarOnMobile()">
+      <a routerLink="/perfil" routerLinkActive="admin-sidebar__link--active" class="admin-sidebar__link" (click)="closeSidebarOnMobile()">
         <app-icon name="user" [size]="20" />
         <span>Meu Perfil</span>
       </a>
@@ -100,7 +100,7 @@
 
       <div class="admin-header__center">
         <a 
-          [routerLink]="['/' + basePath, 'profile']"
+          routerLink="/perfil"
           class="admin-header__user"
         >
           <app-avatar 

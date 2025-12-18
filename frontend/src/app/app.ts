@@ -1,6 +1,7 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ModalComponent } from '@shared/components/atoms/modal/modal';
+import { TitleService } from '@core/services/title.service';
 
 @Component({
   selector: 'app-root',
@@ -9,5 +10,6 @@ import { ModalComponent } from '@shared/components/atoms/modal/modal';
   styleUrl: './app.scss'
 })
 export class App {
-  protected readonly title = signal('frontend');
+  protected readonly title = signal('TeleCuidar');
+  private titleService = inject(TitleService);
 }

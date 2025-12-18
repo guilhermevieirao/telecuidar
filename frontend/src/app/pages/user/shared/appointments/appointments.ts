@@ -32,14 +32,14 @@ export class AppointmentsComponent implements OnInit {
   appointments: Appointment[] = [];
   allAppointments: Appointment[] = []; // Store all to count
   loading = false;
-  userRole: 'patient' | 'professional' | 'admin' = 'patient';
+  userrole: 'PATIENT' | 'PROFESSIONAL' | 'ADMIN' = 'PATIENT';
   
   // Counts
   counts = {
     all: 0,
     upcoming: 0,
     past: 0,
-    cancelled: 0
+    Cancelled: 0
   };
 
   // Filters
@@ -60,18 +60,18 @@ export class AppointmentsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.determineUserRole();
+    this.determineuserrole();
     this.loadAppointments();
   }
 
-  determineUserRole() {
+  determineuserrole() {
     const url = this.router.url;
     if (url.includes('/patient')) {
-      this.userRole = 'patient';
+      this.userrole = 'PATIENT';
     } else if (url.includes('/professional')) {
-      this.userRole = 'professional';
+      this.userrole = 'PROFESSIONAL';
     } else {
-      this.userRole = 'admin';
+      this.userrole = 'ADMIN';
     }
   }
 
@@ -79,8 +79,8 @@ export class AppointmentsComponent implements OnInit {
     this.loading = true;
     
     // Load all to calculate counts
-    this.appointmentsService.getAppointments({}).subscribe(allData => {
-        this.allAppointments = allData;
+    this.appointmentsService.getAppointments({}, 1, 1000).subscribe(response => {
+        this.allAppointments = response.data;
         this.calculateCounts();
         this.filterAndSortAppointments();
         this.loading = false;
@@ -92,15 +92,15 @@ export class AppointmentsComponent implements OnInit {
     this.counts.all = this.allAppointments.length;
     
     this.counts.upcoming = this.allAppointments.filter(a => 
-        new Date(a.date) >= now && a.status !== 'cancelled' && a.status !== 'completed'
+        new Date(a.scheduledDate) >= now && a.status !== 'Cancelled' && a.status !== 'Completed'
     ).length;
 
     this.counts.past = this.allAppointments.filter(a => 
-        new Date(a.date) < now || a.status === 'completed'
+        new Date(a.scheduledDate) < now || a.status === 'Completed'
     ).length;
 
-    this.counts.cancelled = this.allAppointments.filter(a => 
-        a.status === 'cancelled'
+    this.counts.Cancelled = this.allAppointments.filter(a => 
+        a.status === 'Cancelled'
     ).length;
   }
 
@@ -110,20 +110,20 @@ export class AppointmentsComponent implements OnInit {
 
     // Filter by Tab
     if (this.activeTab === 'upcoming') {
-        filtered = filtered.filter(a => new Date(a.date) >= now && a.status !== 'cancelled' && a.status !== 'completed');
+        filtered = filtered.filter(a => new Date(a.scheduledDate) >= now && a.status !== 'Cancelled' && a.status !== 'Completed');
     } else if (this.activeTab === 'past') {
-        filtered = filtered.filter(a => new Date(a.date) < now || a.status === 'completed');
+        filtered = filtered.filter(a => new Date(a.scheduledDate) < now || a.status === 'Completed');
     } else if (this.activeTab === 'cancelled') {
-        filtered = filtered.filter(a => a.status === 'cancelled');
+        filtered = filtered.filter(a => a.status === 'Cancelled');
     }
 
     // Search
     if (this.searchQuery) {
         const searchLower = this.searchQuery.toLowerCase();
         filtered = filtered.filter(a => 
-          a.professionalName.toLowerCase().includes(searchLower) ||
-          a.specialtyName.toLowerCase().includes(searchLower) ||
-          a.patientName.toLowerCase().includes(searchLower)
+          a.professionalName?.toLowerCase().includes(searchLower) ||
+          a.specialtyName?.toLowerCase().includes(searchLower) ||
+          a.patientName?.toLowerCase().includes(searchLower)
         );
     }
 
@@ -148,8 +148,8 @@ export class AppointmentsComponent implements OnInit {
 
   sortAppointments() {
     this.appointments.sort((a, b) => {
-      const dateA = new Date(a.date).getTime();
-      const dateB = new Date(b.date).getTime();
+      const dateA = new Date(a.scheduledDate).getTime();
+      const dateB = new Date(b.scheduledDate).getTime();
       return this.sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
     });
   }
@@ -167,7 +167,7 @@ export class AppointmentsComponent implements OnInit {
 
   accessConsultation(appointment: Appointment) {
     // Navigate to teleconsultation screen within the app
-    const basePath = this.userRole === 'patient' ? 'patient' : 'professional';
+    const basePath = this.userrole === 'PATIENT' ? 'PATIENT' : 'PROFESSIONAL';
     this.router.navigate([`/${basePath}/teleconsultation`, appointment.id]);
   }
 
@@ -190,11 +190,11 @@ export class AppointmentsComponent implements OnInit {
   }
 
   scheduleNew() {
-    this.router.navigate(['/patient/scheduling']);
+    this.router.navigate(['/agendar']);
   }
 
   goToPreConsultation(appointment: Appointment) {
-    this.router.navigate(['/patient/appointments', appointment.id, 'pre-consultation']);
+    this.router.navigate(['/consultas', appointment.id, 'pre-consulta']);
   }
 
   viewPreConsultation(appointment: Appointment) {
@@ -217,22 +217,22 @@ export class AppointmentsComponent implements OnInit {
 
   getAppointmentTypeLabel(type: AppointmentType): string {
     const labels: Record<AppointmentType, string> = {
-      'first_visit': 'Primeira Consulta',
-      'return': 'Retorno',
-      'routine': 'Rotina',
-      'emergency': 'Emergencial',
-      'common': 'Comum'
+      'FirstVisit': 'Primeira Consulta',
+      'Return': 'Retorno',
+      'Routine': 'Rotina',
+      'Emergency': 'Emergencial',
+      'Common': 'Comum'
     };
     return labels[type] || 'Consulta';
   }
 
   getAppointmentTypeVariant(type: AppointmentType): BadgeVariant {
     const variants: Record<AppointmentType, BadgeVariant> = {
-      'first_visit': 'primary',
-      'return': 'info',
-      'routine': 'success',
-      'emergency': 'error',
-      'common': 'neutral'
+      'FirstVisit': 'primary',
+      'Return': 'info',
+      'Routine': 'success',
+      'Emergency': 'error',
+      'Common': 'neutral'
     };
     return variants[type] || 'neutral';
   }

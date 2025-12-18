@@ -7,8 +7,8 @@ import { UserStatus } from '@app/core/services/users.service';
 export class UserStatusPipe implements PipeTransform {
   transform(status: UserStatus): string {
     const statusMap: Record<UserStatus, string> = {
-      active: 'Ativo',
-      inactive: 'Inativo'
+      Active: 'Ativo',
+      Inactive: 'Inativo'
     };
     return statusMap[status] || status;
   }

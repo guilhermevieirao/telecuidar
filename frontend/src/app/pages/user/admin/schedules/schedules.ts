@@ -61,12 +61,7 @@ export class SchedulesComponent implements OnInit {
       status: this.statusFilter
     };
 
-    const sort: SchedulesSortOptions = {
-      field: this.sortField,
-      direction: this.sortDirection
-    };
-
-    this.schedulesService.getSchedules(filter, sort, this.currentPage, this.pageSize).subscribe({
+    this.schedulesService.getSchedules(filter, this.currentPage, this.pageSize).subscribe({
       next: (response) => {
         this.schedules = response.data;
         this.totalItems = response.total;
@@ -165,7 +160,7 @@ export class SchedulesComponent implements OnInit {
   }
 
   toggleScheduleStatus(schedule: Schedule): void {
-    const newStatus = schedule.status === 'active' ? 'Desativar' : 'Ativar';
+    const newStatus = schedule.status === 'Active' ? 'Desativar' : 'Ativar';
     
     this.modalService.confirm({
       title: `${newStatus} Agenda`,

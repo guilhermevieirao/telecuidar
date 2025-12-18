@@ -86,7 +86,7 @@ export class SchedulingComponent implements OnInit {
 
   // --- Step 1: Specialties ---
   loadSpecialties() {
-    this.specialtiesService.getSpecialties({ status: 'active' }).subscribe(response => {
+    this.specialtiesService.getSpecialties({ status: 'Active' }).subscribe(response => {
       this.specialties = response.data;
       this.filteredSpecialties = response.data;
     });
@@ -143,12 +143,13 @@ export class SchedulingComponent implements OnInit {
     // Create mock professionals
     const mockPro1: User = {
       id: '2',
-      name: 'Dr. Maria Santos',
+      name: 'Dr. Maria',
+      lastName: 'Santos',
       email: 'maria.santos@email.com',
-      role: 'professional',
+      role: 'PROFESSIONAL',
       cpf: '234.567.890-11',
       phone: '(11) 98765-4322',
-      status: 'active',
+      status: 'Active',
       createdAt: '2024-02-20T14:30:00',
       specialtyId: this.selectedSpecialty?.id || '1',
       avatar: 'assets/avatars/maria.jpg' // Mock
@@ -156,12 +157,13 @@ export class SchedulingComponent implements OnInit {
 
     const mockPro2: User = {
       id: '5',
-      name: 'Dr. Carlos Ferreira',
+      name: 'Dr. Carlos',
+      lastName: 'Ferreira',
       email: 'carlos.ferreira@email.com',
-      role: 'professional',
+      role: 'PROFESSIONAL',
       cpf: '567.890.123-44',
       phone: '(11) 98765-4325',
-      status: 'active',
+      status: 'Active',
       createdAt: '2024-05-12T11:20:00',
       specialtyId: this.selectedSpecialty?.id || '1'
     };
@@ -196,7 +198,7 @@ export class SchedulingComponent implements OnInit {
     this.loading = true;
     setTimeout(() => {
       this.loading = false;
-      this.router.navigate(['/patient/scheduling/success'], { 
+      this.router.navigate(['/agendamento-sucesso'], { 
         state: { 
           appointment: {
             specialty: this.selectedSpecialty,

@@ -7,10 +7,11 @@ import { Specialty } from '@core/services/specialties.service';
 import { User } from '@core/services/users.service';
 
 interface AppointmentDetails {
-  id?: string; // Add optional ID
+  id?: string;
   specialty: Specialty;
   date: Date;
   time: string;
+  scheduledDate: string; // ISO date string
   professional: User;
   observation?: string;
 }
@@ -40,21 +41,21 @@ export class SchedulingSuccessComponent implements OnInit {
   ngOnInit(): void {
     if (!this.appointment) {
       // Redirect back if no state (e.g. direct access)
-      this.router.navigate(['/patient/dashboard']);
+      this.router.navigate(['/painel']);
     }
   }
 
   goToDashboard() {
-    this.router.navigate(['/patient/dashboard']);
+    this.router.navigate(['/painel']);
   }
 
   goToAppointments() {
-    this.router.navigate(['/patient/appointments']);
+    this.router.navigate(['/consultas']);
   }
 
   goToPreConsultation() {
     if (this.appointment?.id) {
-        this.router.navigate(['/patient/appointments', this.appointment.id, 'pre-consultation']);
+        this.router.navigate(['/consultas', this.appointment.id, 'pre-consulta']);
     } else {
         // Fallback if ID is missing (should not happen in real scenario if passed correctly)
         this.goToAppointments();

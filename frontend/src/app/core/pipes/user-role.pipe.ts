@@ -7,9 +7,9 @@ import { UserRole } from '@app/core/services/users.service';
 export class UserRolePipe implements PipeTransform {
   transform(role: UserRole): string {
     const roleMap: Record<UserRole, string> = {
-      patient: 'Paciente',
-      professional: 'Profissional',
-      admin: 'Administrador'
+      PATIENT: 'Paciente',
+      PROFESSIONAL: 'Profissional',
+      ADMIN: 'Administrador'
     };
     return roleMap[role] || role;
   }

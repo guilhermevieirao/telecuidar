@@ -17,7 +17,7 @@ import * as QRCode from 'qrcode';
 })
 export class AttachmentsChatTabComponent implements OnInit, OnDestroy {
   @Input() appointmentId: string | null = null;
-  @Input() userRole: 'patient' | 'professional' | 'admin' = 'patient';
+  @Input() userrole: 'PATIENT' | 'PROFESSIONAL' | 'ADMIN' = 'PATIENT';
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
   @ViewChild('chatContainer') chatContainer!: ElementRef<HTMLDivElement>;
@@ -160,8 +160,8 @@ export class AttachmentsChatTabComponent implements OnInit, OnDestroy {
       
       const newMessage: AttachmentMessage = {
         id: crypto.randomUUID(),
-        senderRole: this.userRole === 'professional' ? 'professional' : 'patient',
-        senderName: this.userRole === 'professional' ? 'Profissional' : 'Você',
+        senderRole: this.userrole === 'PROFESSIONAL' ? 'PROFESSIONAL' : 'PATIENT',
+        senderName: this.userrole === 'PROFESSIONAL' ? 'Profissional' : 'Você',
         timestamp: new Date().toISOString(),
         title: this.attachmentTitle || this.selectedFile.name,
         fileName: this.selectedFile.name,

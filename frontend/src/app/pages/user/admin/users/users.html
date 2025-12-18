@@ -131,7 +131,7 @@
               <td class="users-table__cell">{{ user.cpf }}</td>
               <td class="users-table__cell">
                 <app-badge 
-                  [variant]="user.status === 'active' ? 'success' : 'neutral'"
+                  [variant]="user.status === 'Active' ? 'success' : 'neutral'"
                   [label]="user.status | userStatus"
                   size="sm"
                 />

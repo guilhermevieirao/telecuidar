@@ -4,7 +4,7 @@
       <h1>Minhas Consultas</h1>
       <p class="subtitle">Gerencie seus agendamentos e histórico de consultas</p>
     </div>
-    <div class="actions-section" *ngIf="userRole === 'patient'">
+    <div class="actions-section" *ngIf="userrole === 'PATIENT'">
       <app-button (click)="scheduleNew()">
         <app-icon name="plus" [size]="20"></app-icon>
         Nova Consulta
@@ -28,7 +28,7 @@
       </button>
       <button class="tab-btn" [class.active]="activeTab === 'cancelled'" (click)="onTabChange('cancelled')">
         Canceladas
-        <span class="count-badge">{{ counts.cancelled }}</span>
+        <span class="count-badge">{{ counts.Cancelled }}</span>
       </button>
     </div>
 
@@ -57,31 +57,31 @@
       <h3>Nenhuma consulta encontrada</h3>
       <p *ngIf="activeTab === 'upcoming'">Você não tem consultas agendadas.</p>
       <p *ngIf="activeTab !== 'upcoming'">Tente ajustar os filtros de busca.</p>
-      <app-button *ngIf="userRole === 'patient'" variant="outline" (click)="scheduleNew()">Agendar Agora</app-button>
+      <app-button *ngIf="userrole === 'PATIENT'" variant="outline" (click)="scheduleNew()">Agendar Agora</app-button>
     </div>
 
     <div class="appointment-card" *ngFor="let appointment of appointments">
       <div class="card-header">
         <div class="date-badge">
-          <span class="day">{{ appointment.date | date:'dd' }}</span>
-          <span class="month">{{ appointment.date | date:'MMM' }}</span>
+          <span class="day">{{ appointment.scheduledDate | date:'dd' }}</span>
+          <span class="month">{{ appointment.scheduledDate | date:'MMM' }}</span>
         </div>
         <div class="status-badge" [ngClass]="appointment.status">
-          {{ appointment.status === 'scheduled' ? 'Agendada' : 
-             appointment.status === 'confirmed' ? 'Confirmada' : 
-             appointment.status === 'completed' ? 'Realizada' : 
-             appointment.status === 'cancelled' ? 'Cancelada' : appointment.status }}
+          {{ appointment.status === 'Scheduled' ? 'Agendada' : 
+             appointment.status === 'Confirmed' ? 'Confirmada' : 
+             appointment.status === 'Completed' ? 'Realizada' : 
+             appointment.status === 'Cancelled' ? 'Cancelada' : appointment.status }}
         </div>
       </div>
 
       <div class="card-content">
         <div class="professional-info">
           <div class="avatar-placeholder">
-             <img *ngIf="appointment.avatar" [src]="appointment.avatar" alt="Avatar">
-             <app-icon *ngIf="!appointment.avatar" name="user" [size]="24"></app-icon>
+             <img *ngIf="appointment.patientName" [src]="appointment.patientName" alt="Avatar">
+             <app-icon *ngIf="!appointment.patientName" name="user" [size]="24"></app-icon>
           </div>
           <div class="info-text">
-            <h3>{{ userRole === 'patient' ? appointment.professionalName : appointment.patientName }}</h3>
+            <h3>{{ userrole === 'PATIENT' ? appointment.professionalName : appointment.patientName }}</h3>
             <p class="specialty">{{ appointment.specialtyName }}</p>
           </div>
         </div>
@@ -89,7 +89,7 @@
         <div class="meta-info">
             <div class="meta-item">
                 <app-icon name="clock" [size]="16"></app-icon>
-                <span>{{ appointment.time }} - {{ appointment.endTime || '...' }}</span>
+                <span>{{ (appointment.scheduledDate | date:'HH:mm') }} - {{ appointment.scheduledDate || '...' }}</span>
             </div>
             <div class="meta-item" *ngIf="appointment.type">
                 <app-badge 
@@ -102,7 +102,7 @@
                 <app-icon name="calendar" [size]="16"></app-icon>
                 <span class="text-xs text-secondary">Criado em: {{ appointment.createdAt | date:'dd/MM/yyyy' }}</span>
             </div>
-            <div class="meta-item" *ngIf="appointment.meetLink && (appointment.status === 'confirmed' || appointment.status === 'in_progress')">
+            <div class="meta-item" *ngIf="appointment.meetLink && (appointment.status === 'Confirmed' || appointment.status === 'InProgress')">
                 <app-icon name="video" [size]="16"></app-icon>
                 <span>Online</span>
             </div>
@@ -113,7 +113,7 @@
         <app-button variant="ghost" size="sm" (click)="openDetails(appointment)">Detalhes</app-button>
         
         <app-button 
-            *ngIf="userRole === 'patient' && (appointment.status === 'scheduled' || appointment.status === 'confirmed')" 
+            *ngIf="userrole === 'PATIENT' && (appointment.status === 'Scheduled' || appointment.status === 'Confirmed')" 
             variant="outline" 
             size="sm"
             (click)="goToPreConsultation(appointment)">
@@ -121,7 +121,7 @@
         </app-button>
 
         <app-button 
-            *ngIf="userRole === 'professional'" 
+            *ngIf="userrole === 'PROFESSIONAL'" 
             variant="outline" 
             size="sm"
             (click)="viewPreConsultation(appointment)">
@@ -129,7 +129,7 @@
         </app-button>
         
         <app-button 
-            *ngIf="appointment.status !== 'cancelled' && appointment.status !== 'completed'" 
+            *ngIf="appointment.status !== 'Cancelled' && appointment.status !== 'Completed'" 
             variant="ghost" 
             size="sm" 
             class="danger-text"
@@ -138,7 +138,7 @@
         </app-button>
 
         <app-button 
-            *ngIf="appointment.status === 'confirmed' || appointment.status === 'in_progress'" 
+            *ngIf="appointment.status === 'Confirmed' || appointment.status === 'InProgress'" 
             variant="primary" 
             size="sm" 
             (click)="accessConsultation(appointment)">

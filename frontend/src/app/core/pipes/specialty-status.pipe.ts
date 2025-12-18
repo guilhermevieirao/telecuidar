@@ -7,8 +7,8 @@ import { SpecialtyStatus } from '@app/core/services/specialties.service';
 export class SpecialtyStatusPipe implements PipeTransform {
   transform(status: SpecialtyStatus): string {
     const statusMap: Record<SpecialtyStatus, string> = {
-      active: 'Ativa',
-      inactive: 'Inativa'
+      Active: 'Ativa',
+      Inactive: 'Inativa'
     };
     return statusMap[status] || status;
   }

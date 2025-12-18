@@ -14,7 +14,7 @@ import { Subject, takeUntil, debounceTime } from 'rxjs';
 })
 export class BiometricsTabComponent implements OnInit, OnDestroy {
   @Input() appointmentId: string | null = null;
-  @Input() userRole: 'patient' | 'professional' | 'admin' = 'patient';
+  @Input() userrole: 'PATIENT' | 'PROFESSIONAL' | 'ADMIN' = 'PATIENT';
 
   biometricsForm: FormGroup;
   lastUpdated: Date | null = null;
@@ -43,7 +43,7 @@ export class BiometricsTabComponent implements OnInit, OnDestroy {
       this.loadData();
       
       // Auto-save for patient on value changes (debounced)
-      if (this.userRole === 'patient') {
+      if (this.userrole === 'PATIENT') {
         this.biometricsForm.valueChanges
           .pipe(
             takeUntil(this.destroy$),
@@ -96,6 +96,6 @@ export class BiometricsTabComponent implements OnInit, OnDestroy {
   }
 
   get isProfessional(): boolean {
-    return this.userRole === 'professional';
+    return this.userrole === 'PROFESSIONAL';
   }
 }

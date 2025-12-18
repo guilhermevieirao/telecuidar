@@ -71,7 +71,8 @@ export class LoginComponent implements OnInit {
 
     this.authService.login(this.loginForm.value).subscribe({
       next: () => {
-        this.router.navigate(['/dashboard']);
+        const dashboardUrl = this.authService.getDashboardUrl();
+        this.router.navigate([dashboardUrl]);
       },
       error: (error) => {
         this.errorMessage = error.error?.message || 'Email ou senha incorretos';

@@ -24,24 +24,26 @@ export const VALIDATION_MESSAGES = {
 } as const;
 
 // API endpoints
+const API_BASE_URL = 'http://localhost:5239/api';
+
 export const AUTH_ENDPOINTS = {
-  LOGIN: '/api/auth/login',
-  REGISTER: '/api/auth/register',
-  LOGOUT: '/api/auth/logout',
-  REFRESH_TOKEN: '/api/auth/refresh',
-  FORGOT_PASSWORD: '/api/auth/forgot-password',
-  RESET_PASSWORD: '/api/auth/reset-password',
-  VERIFY_EMAIL: '/api/auth/verify-email',
-  RESEND_VERIFICATION: '/api/auth/resend-verification',
-  GOOGLE_LOGIN: '/api/auth/google',
+  LOGIN: `${API_BASE_URL}/auth/login`,
+  REGISTER: `${API_BASE_URL}/auth/register`,
+  LOGOUT: `${API_BASE_URL}/auth/logout`,
+  REFRESH_TOKEN: `${API_BASE_URL}/auth/refresh-token`,
+  FORGOT_PASSWORD: `${API_BASE_URL}/auth/forgot-password`,
+  RESET_PASSWORD: `${API_BASE_URL}/auth/reset-password`,
+  VERIFY_EMAIL: `${API_BASE_URL}/auth/verify-email`,
+  RESEND_VERIFICATION: `${API_BASE_URL}/auth/resend-verification`,
+  GOOGLE_LOGIN: `${API_BASE_URL}/auth/google`,
 } as const;
 
 // Local storage keys
 export const STORAGE_KEYS = {
-  ACCESS_TOKEN: 'telecuidar_access_token',
-  REFRESH_TOKEN: 'telecuidar_refresh_token',
-  USER: 'telecuidar_user',
-  REMEMBER_ME: 'telecuidar_remember_me',
+  ACCESS_TOKEN: 'access_token',
+  REFRESH_TOKEN: 'refresh_token',
+  USER: 'user',
+  REMEMBER_ME: 'remember_me',
 } as const;
 
 // Form field lengths

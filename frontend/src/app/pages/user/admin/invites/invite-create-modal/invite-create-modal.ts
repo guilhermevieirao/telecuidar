@@ -19,13 +19,13 @@ export class InviteCreateModalComponent {
 
   inviteData = {
     email: '',
-    role: 'patient' as UserRole
+    role: 'PATIENT' as UserRole
   };
 
   roleOptions = [
-    { value: 'patient', label: 'Paciente' },
-    { value: 'professional', label: 'Profissional' },
-    { value: 'admin', label: 'Administrador' }
+    { value: 'PATIENT', label: 'Paciente' },
+    { value: 'PROFESSIONAL', label: 'Profissional' },
+    { value: 'ADMIN', label: 'Administrador' }
   ];
 
   onBackdropClick(): void {
@@ -58,7 +58,7 @@ export class InviteCreateModalComponent {
   private resetModal(): void {
     this.inviteData = {
       email: '',
-      role: 'patient'
+      role: 'PATIENT'
     };
   }
 }

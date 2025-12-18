@@ -32,21 +32,21 @@
     <div class="tab-content" *ngIf="activeTab === 'Biométricos'">
       <app-biometrics-tab 
         [appointmentId]="appointmentId" 
-        [userRole]="userRole">
+        [userrole]="userrole">
       </app-biometrics-tab>
     </div>
 
     <div class="tab-content" *ngIf="activeTab === 'Chat Anexos'" style="height: 100%">
       <app-attachments-chat-tab
         [appointmentId]="appointmentId"
-        [userRole]="userRole">
+        [userrole]="userrole">
       </app-attachments-chat-tab>
     </div>
 
     <div class="tab-content" *ngIf="activeTab === 'SOAP'">
       <app-soap-tab
         [appointmentId]="appointmentId"
-        [userRole]="userRole">
+        [userrole]="userrole">
       </app-soap-tab>
     </div>
 
@@ -59,7 +59,7 @@
 
     <div class="tab-content" *ngIf="activeTab !== 'Biométricos' && activeTab !== 'Chat Anexos' && activeTab !== 'SOAP' && activeTab !== 'Concluir'">
       <h3>Conteúdo da Aba {{ activeTab }}</h3>
-      <p>Aqui vai o conteúdo específico para {{ userRole === 'professional' ? 'o Profissional' : 'o Paciente' }}.</p>
+      <p>Aqui vai o conteúdo específico para {{ userrole === 'PROFESSIONAL' ? 'o Profissional' : 'o Paciente' }}.</p>
     </div>
   </div>
 </div>

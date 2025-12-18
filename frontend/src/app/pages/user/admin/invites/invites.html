@@ -118,7 +118,7 @@
               <td class="invites-table__cell">
                 <div class="invites-table__email">
                   <span class="invites-table__email-text">{{ invite.email }}</span>
-                  <span class="invites-table__created-by">por {{ invite.createdBy }}</span>
+                  <span class="invites-table__created-by">por {{ invite.createdByUserName || 'Sistema' }}</span>
                 </div>
               </td>
               <td class="invites-table__cell">
@@ -149,11 +149,11 @@
               </td>
               <td class="invites-table__cell invites-table__cell--actions">
                 <div class="invites-table__actions">
-                  @if (invite.status === 'pending') {
+                  @if (invite.status === 'Pending') {
                     <button
                       type="button"
                       class="invites-table__action-btn"
-                      (click)="copyInviteLink(invite)"
+                      (click)="getInviteByToken(invite)"
                       title="Copiar link do convite"
                     >
                       <app-icon name="file" [size]="18" />
@@ -178,7 +178,7 @@
                   <button
                     type="button"
                     class="invites-table__action-btn invites-table__action-btn--delete"
-                    (click)="deleteInvite(invite)"
+                    (click)="cancelInvite(invite)"
                     title="Excluir convite"
                   >
                     <app-icon name="trash" [size]="18" />

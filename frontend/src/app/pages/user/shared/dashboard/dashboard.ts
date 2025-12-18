@@ -34,7 +34,7 @@ interface ScheduleBlock {
   createdAt: string;
 }
 
-type ViewMode = 'admin' | 'patient' | 'professional';
+type ViewMode = 'ADMIN' | 'PATIENT' | 'PROFESSIONAL';
 
 @Component({
   selector: 'app-dashboard',
@@ -58,7 +58,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   nextAppointments: Appointment[] = [];
   notifications: Notification[] = [];
   scheduleBlocks: ScheduleBlock[] = [];
-  viewMode: ViewMode = 'patient'; // Default
+  viewMode: ViewMode = 'PATIENT'; // Default
   
   @ViewChild('appointmentsChart') appointmentsChartRef!: ElementRef;
   @ViewChild('usersChart') usersChartRef!: ElementRef;
@@ -105,11 +105,11 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   private determineViewMode(): void {
     const url = this.router.url;
     if (url.includes('/admin')) {
-      this.viewMode = 'admin';
+      this.viewMode = 'ADMIN';
     } else if (url.includes('/professional')) {
-      this.viewMode = 'professional';
+      this.viewMode = 'PROFESSIONAL';
     } else {
-      this.viewMode = 'patient';
+      this.viewMode = 'PATIENT';
     }
   }
 
@@ -142,18 +142,18 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   isAdmin(): boolean {
-    return this.viewMode === 'admin';
+    return this.viewMode === 'ADMIN';
   }
 
   isPatient(): boolean {
-    return this.viewMode === 'patient';
+    return this.viewMode === 'PATIENT';
   }
 
   isProfessional(): boolean {
-    return this.viewMode === 'professional';
+    return this.viewMode === 'PROFESSIONAL';
   }
 
-  getUserRolePath(): string {
+  getuserrolePath(): string {
     return this.viewMode;
   }
 
@@ -162,20 +162,20 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   private loadNextAppointments(): void {
-    this.appointmentsService.getAppointments({ status: 'upcoming' }).subscribe({
-      next: (appointments) => {
+    this.appointmentsService.getAppointments({}, 1, 3).subscribe({
+      next: (response) => {
         // Take top 3 upcoming
-        this.nextAppointments = appointments.slice(0, 3);
+        this.nextAppointments = response.data;
       },
       error: (err) => console.error('Erro ao carregar consultas', err)
     });
   }
 
   private loadNotifications(): void {
-    this.notificationsService.getNotifications().subscribe({
-      next: (notifications) => {
+    this.notificationsService.getNotifications({}, 1, 3).subscribe({
+      next: (response) => {
         // Take top 3
-        this.notifications = notifications.slice(0, 3);
+        this.notifications = response.data;
       },
       error: (err) => console.error('Erro ao carregar notificações', err)
     });

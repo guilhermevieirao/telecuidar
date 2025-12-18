@@ -20,7 +20,7 @@ export class SpecialtyCreateModalComponent {
   specialtyData = {
     name: '',
     description: '',
-    status: 'active' as SpecialtyStatus,
+    status: 'Active' as SpecialtyStatus,
     customFields: [] as CustomField[]
   };
 
@@ -92,7 +92,7 @@ export class SpecialtyCreateModalComponent {
     this.specialtyData = {
       name: '',
       description: '',
-      status: 'active',
+      status: 'Active',
       customFields: []
     };
   }

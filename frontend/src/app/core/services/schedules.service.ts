@@ -1,18 +1,20 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { delay, map } from 'rxjs/operators';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-export type ScheduleStatus = 'active' | 'inactive';
-export type DayOfWeek = 'segunda' | 'terca' | 'quarta' | 'quinta' | 'sexta' | 'sabado' | 'domingo';
+const API_BASE_URL = 'http://localhost:5239/api';
+
+export type ScheduleStatus = 'Active' | 'Inactive';
+export type DayOfWeek = 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday';
 
 export interface TimeRange {
-  startTime: string; // HH:mm
-  endTime: string;   // HH:mm
+  startTime: string;
+  endTime: string;
 }
 
 export interface BreakTime {
-  startTime: string; // HH:mm
-  endTime: string;   // HH:mm
+  startTime: string;
+  endTime: string;
 }
 
 export interface DayConfig {
@@ -20,36 +22,56 @@ export interface DayConfig {
   isWorking: boolean;
   timeRange?: TimeRange;
   breakTime?: BreakTime;
-  consultationDuration?: number; // in minutes
-  intervalBetweenConsultations?: number; // in minutes, 0 = no interval
-  customized?: boolean; // true if different from global config
+  consultationDuration?: number;
+  intervalBetweenConsultations?: number;
+  customized?: boolean;
 }
 
 export interface ScheduleGlobalConfig {
   timeRange: TimeRange;
   breakTime?: BreakTime;
-  consultationDuration: number; // in minutes
-  intervalBetweenConsultations: number; // in minutes
+  consultationDuration: number;
+  intervalBetweenConsultations: number;
 }
 
 export interface Schedule {
   id: string;
   professionalId: string;
-  professionalName: string;
-  professionalEmail: string;
+  professionalName?: string;
+  professionalEmail?: string;
   daysConfig: DayConfig[];
   globalConfig: ScheduleGlobalConfig;
-  validityStartDate: string; // YYYY-MM-DD
-  validityEndDate?: string; // YYYY-MM-DD or null for indefinite
+  validityStartDate: string;
+  validityEndDate?: string;
   status: ScheduleStatus;
   createdAt: string;
-  updatedAt: string;
+  updatedAt?: string;
+}
+
+export interface CreateScheduleDto {
+  professionalId: string;
+  daysConfig: DayConfig[];
+  globalConfig: ScheduleGlobalConfig;
+  validityStartDate: string;
+  validityEndDate?: string;
+  status: ScheduleStatus;
+}
+
+export interface UpdateScheduleDto {
+  daysConfig?: DayConfig[];
+  globalConfig?: ScheduleGlobalConfig;
+  validityStartDate?: string;
+  validityEndDate?: string;
+  status?: ScheduleStatus;
 }
 
 export interface SchedulesFilter {
   search?: string;
-  status?: ScheduleStatus | 'all';
+  status?: string;
+  professionalId?: string;
 }
+
+export type SchedulesSortOptions = 'professionalName' | 'createdAt' | 'status';
 
 export interface PaginatedResponse<T> {
   data: T[];
@@ -59,189 +81,79 @@ export interface PaginatedResponse<T> {
   totalPages: number;
 }
 
-export interface SchedulesSortOptions {
-  field: keyof Schedule;
-  direction: 'asc' | 'desc';
+export interface AvailableSlot {
+  date: string;
+  startTime: string;
+  endTime: string;
+  available: boolean;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class SchedulesService {
-  private mockSchedules: Schedule[] = [
-    {
-      id: '1',
-      professionalId: 'prof-1',
-      professionalName: 'Dr. João Silva',
-      professionalEmail: 'joao.silva@example.com',
-      daysConfig: [
-        { day: 'segunda', isWorking: true, timeRange: { startTime: '08:00', endTime: '12:00' }, breakTime: { startTime: '10:00', endTime: '10:15' }, consultationDuration: 30, intervalBetweenConsultations: 5 },
-        { day: 'terca', isWorking: true, timeRange: { startTime: '08:00', endTime: '17:00' }, breakTime: { startTime: '12:00', endTime: '13:00' }, consultationDuration: 30, intervalBetweenConsultations: 5 },
-        { day: 'quarta', isWorking: true, timeRange: { startTime: '08:00', endTime: '17:00' }, breakTime: { startTime: '12:00', endTime: '13:00' }, consultationDuration: 30, intervalBetweenConsultations: 5 },
-        { day: 'quinta', isWorking: true, timeRange: { startTime: '08:00', endTime: '17:00' }, breakTime: { startTime: '12:00', endTime: '13:00' }, consultationDuration: 30, intervalBetweenConsultations: 5 },
-        { day: 'sexta', isWorking: true, timeRange: { startTime: '08:00', endTime: '17:00' }, breakTime: { startTime: '12:00', endTime: '13:00' }, consultationDuration: 30, intervalBetweenConsultations: 5 },
-        { day: 'sabado', isWorking: false },
-        { day: 'domingo', isWorking: false }
-      ],
-      globalConfig: {
-        timeRange: { startTime: '08:00', endTime: '17:00' },
-        breakTime: { startTime: '12:00', endTime: '13:00' },
-        consultationDuration: 30,
-        intervalBetweenConsultations: 5
-      },
-      validityStartDate: '2024-01-01',
-      validityEndDate: '2025-12-31',
-      status: 'active',
-      createdAt: '2024-01-01T10:00:00',
-      updatedAt: '2024-01-01T10:00:00'
-    },
-    {
-      id: '2',
-      professionalId: 'prof-2',
-      professionalName: 'Dra. Maria Santos',
-      professionalEmail: 'maria.santos@example.com',
-      daysConfig: [
-        { day: 'segunda', isWorking: true, timeRange: { startTime: '09:00', endTime: '13:00' }, breakTime: { startTime: '11:00', endTime: '11:15' }, consultationDuration: 45, intervalBetweenConsultations: 10 },
-        { day: 'terca', isWorking: true, timeRange: { startTime: '14:00', endTime: '18:00' }, breakTime: undefined, consultationDuration: 45, intervalBetweenConsultations: 10 },
-        { day: 'quarta', isWorking: true, timeRange: { startTime: '09:00', endTime: '13:00' }, breakTime: { startTime: '11:00', endTime: '11:15' }, consultationDuration: 45, intervalBetweenConsultations: 10 },
-        { day: 'quinta', isWorking: false },
-        { day: 'sexta', isWorking: true, timeRange: { startTime: '14:00', endTime: '18:00' }, breakTime: undefined, consultationDuration: 45, intervalBetweenConsultations: 10 },
-        { day: 'sabado', isWorking: true, timeRange: { startTime: '09:00', endTime: '12:00' }, breakTime: undefined, consultationDuration: 45, intervalBetweenConsultations: 10 },
-        { day: 'domingo', isWorking: false }
-      ],
-      globalConfig: {
-        timeRange: { startTime: '09:00', endTime: '18:00' },
-        breakTime: { startTime: '12:00', endTime: '13:00' },
-        consultationDuration: 45,
-        intervalBetweenConsultations: 10
-      },
-      validityStartDate: '2024-06-01',
-      validityEndDate: undefined,
-      status: 'active',
-      createdAt: '2024-06-01T14:30:00',
-      updatedAt: '2024-06-01T14:30:00'
-    },
-    {
-      id: '3',
-      professionalId: 'prof-3',
-      professionalName: 'Dr. Carlos Oliveira',
-      professionalEmail: 'carlos.oliveira@example.com',
-      daysConfig: [
-        { day: 'segunda', isWorking: true, timeRange: { startTime: '08:00', endTime: '17:00' }, breakTime: { startTime: '12:00', endTime: '13:00' }, consultationDuration: 60, intervalBetweenConsultations: 0 },
-        { day: 'terca', isWorking: true, timeRange: { startTime: '08:00', endTime: '17:00' }, breakTime: { startTime: '12:00', endTime: '13:00' }, consultationDuration: 60, intervalBetweenConsultations: 0 },
-        { day: 'quarta', isWorking: false },
-        { day: 'quinta', isWorking: true, timeRange: { startTime: '08:00', endTime: '17:00' }, breakTime: { startTime: '12:00', endTime: '13:00' }, consultationDuration: 60, intervalBetweenConsultations: 0 },
-        { day: 'sexta', isWorking: true, timeRange: { startTime: '08:00', endTime: '17:00' }, breakTime: { startTime: '12:00', endTime: '13:00' }, consultationDuration: 60, intervalBetweenConsultations: 0 },
-        { day: 'sabado', isWorking: false },
-        { day: 'domingo', isWorking: false }
-      ],
-      globalConfig: {
-        timeRange: { startTime: '08:00', endTime: '17:00' },
-        breakTime: { startTime: '12:00', endTime: '13:00' },
-        consultationDuration: 60,
-        intervalBetweenConsultations: 0
-      },
-      validityStartDate: '2024-03-15',
-      validityEndDate: '2024-12-31',
-      status: 'inactive',
-      createdAt: '2024-03-15T09:00:00',
-      updatedAt: '2024-03-15T09:00:00'
-    }
-  ];
+  private apiUrl = `${API_BASE_URL}/schedules`;
+
+  constructor(private http: HttpClient) {}
 
   getSchedules(
-    filter: SchedulesFilter = {},
-    sort: SchedulesSortOptions = { field: 'professionalName', direction: 'asc' },
+    filter?: SchedulesFilter,
     page: number = 1,
     pageSize: number = 10
   ): Observable<PaginatedResponse<Schedule>> {
-    return of(this.mockSchedules).pipe(
-      delay(500),
-      map(schedules => {
-        let filtered = [...schedules];
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('pageSize', pageSize.toString());
 
-        if (filter.search) {
-          const searchLower = filter.search.toLowerCase();
-          filtered = filtered.filter(schedule =>
-            schedule.professionalName.toLowerCase().includes(searchLower) ||
-            schedule.professionalEmail.toLowerCase().includes(searchLower) ||
-            schedule.id.includes(searchLower)
-          );
-        }
+    if (filter?.search) {
+      params = params.set('search', filter.search);
+    }
+    if (filter?.status) {
+      params = params.set('status', filter.status);
+    }
+    if (filter?.professionalId) {
+      params = params.set('professionalId', filter.professionalId);
+    }
 
-        if (filter.status && filter.status !== 'all') {
-          filtered = filtered.filter(schedule => schedule.status === filter.status);
-        }
+    return this.http.get<PaginatedResponse<Schedule>>(this.apiUrl, { params });
+  }
 
-        const sorted = filtered.sort((a, b) => {
-          const aValue = a[sort.field] as any;
-          const bValue = b[sort.field] as any;
-          
-          if (aValue < bValue) return sort.direction === 'asc' ? -1 : 1;
-          if (aValue > bValue) return sort.direction === 'asc' ? 1 : -1;
-          return 0;
-        });
+  getScheduleById(id: string): Observable<Schedule> {
+    return this.http.get<Schedule>(`${this.apiUrl}/${id}`);
+  }
 
-        const startIndex = (page - 1) * pageSize;
-        const endIndex = startIndex + pageSize;
-        const paginatedData = sorted.slice(startIndex, endIndex);
+  getScheduleByProfessional(professionalId: string): Observable<Schedule[]> {
+    return this.http.get<Schedule[]>(`${this.apiUrl}/professional/${professionalId}`);
+  }
 
-        return {
-          data: paginatedData,
-          total: sorted.length,
-          page,
-          pageSize,
-          totalPages: Math.ceil(sorted.length / pageSize)
-        };
-      })
+  getAvailableSlots(
+    professionalId: string,
+    startDate: string,
+    endDate: string
+  ): Observable<AvailableSlot[]> {
+    const params = new HttpParams()
+      .set('startDate', startDate)
+      .set('endDate', endDate);
+
+    return this.http.get<AvailableSlot[]>(
+      `${this.apiUrl}/professional/${professionalId}/available-slots`,
+      { params }
     );
   }
 
-  getScheduleByProfessionalId(professionalId: string): Observable<Schedule | undefined> {
-    return of(this.mockSchedules.find(schedule => schedule.professionalId === professionalId)).pipe(delay(300));
+  createSchedule(schedule: CreateScheduleDto): Observable<Schedule> {
+    return this.http.post<Schedule>(this.apiUrl, schedule);
   }
 
-  getScheduleById(id: string): Observable<Schedule | undefined> {
-    return of(this.mockSchedules.find(schedule => schedule.id === id)).pipe(delay(300));
-  }
-
-  createSchedule(schedule: Omit<Schedule, 'id' | 'createdAt' | 'updatedAt'>): Observable<Schedule> {
-    const newSchedule: Schedule = {
-      ...schedule,
-      id: (this.mockSchedules.length + 1).toString(),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-    
-    this.mockSchedules = [newSchedule, ...this.mockSchedules];
-    return of(newSchedule).pipe(delay(500));
-  }
-
-  updateSchedule(id: string, updates: Partial<Schedule>): Observable<Schedule> {
-    const index = this.mockSchedules.findIndex(s => s.id === id);
-    if (index !== -1) {
-      this.mockSchedules[index] = { 
-        ...this.mockSchedules[index], 
-        ...updates,
-        updatedAt: new Date().toISOString()
-      };
-      return of(this.mockSchedules[index]).pipe(delay(500));
-    }
-    throw new Error('Agenda não encontrada');
+  updateSchedule(id: string, updates: UpdateScheduleDto): Observable<Schedule> {
+    return this.http.put<Schedule>(`${this.apiUrl}/${id}`, updates);
   }
 
   deleteSchedule(id: string): Observable<void> {
-    this.mockSchedules = this.mockSchedules.filter(s => s.id !== id);
-    return of(void 0).pipe(delay(500));
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
   toggleScheduleStatus(id: string): Observable<Schedule> {
-    const schedule = this.mockSchedules.find(s => s.id === id);
-    if (schedule) {
-      schedule.status = schedule.status === 'active' ? 'inactive' : 'active';
-      schedule.updatedAt = new Date().toISOString();
-      return of(schedule).pipe(delay(500));
-    }
-    throw new Error('Agenda não encontrada');
+    return this.http.patch<Schedule>(`${this.apiUrl}/${id}/toggle-status`, {});
   }
 }

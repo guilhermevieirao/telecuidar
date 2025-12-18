@@ -7,16 +7,16 @@ import { DayOfWeek } from '@app/core/services/schedules.service';
 })
 export class ScheduleDaysPipe implements PipeTransform {
   private dayLabels: Record<DayOfWeek, string> = {
-    'segunda': 'Segunda',
-    'terca': 'Terça',
-    'quarta': 'Quarta',
-    'quinta': 'Quinta',
-    'sexta': 'Sexta',
-    'sabado': 'Sábado',
-    'domingo': 'Domingo'
+    'Monday': 'Monday',
+    'Tuesday': 'Terça',
+    'Wednesday': 'Wednesday',
+    'Thursday': 'Thursday',
+    'Friday': 'Friday',
+    'Saturday': 'Sábado',
+    'Sunday': 'Sunday'
   };
 
-  private dayOrder: DayOfWeek[] = ['domingo', 'segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado'];
+  private dayOrder: DayOfWeek[] = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
   transform(daysConfig: any[]): string {
     if (!daysConfig || daysConfig.length === 0) {

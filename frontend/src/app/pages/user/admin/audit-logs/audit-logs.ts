@@ -58,7 +58,7 @@ export class AuditLogsComponent implements OnInit {
     { value: 'user', label: 'Usuário' },
     { value: 'specialty', label: 'Especialidade' },
     { value: 'appointment', label: 'Consulta' },
-    { value: 'patient', label: 'Paciente' },
+    { value: 'PATIENT', label: 'Paciente' },
     { value: 'report', label: 'Relatório' },
     { value: 'auth', label: 'Autenticação' }
   ];

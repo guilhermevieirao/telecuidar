@@ -22,7 +22,7 @@ export class TeleconsultationSidebarComponent implements OnInit, OnDestroy {
   @Input() isHeaderVisible = true;
   @Input() tabs: string[] = [];
   @Input() activeTab = '';
-  @Input() userRole: 'patient' | 'professional' | 'admin' = 'patient';
+  @Input() userrole: 'PATIENT' | 'PROFESSIONAL' | 'ADMIN' = 'PATIENT';
   @Input() appointmentId: string | null = null;
   @Input() appointment: Appointment | null = null;
 

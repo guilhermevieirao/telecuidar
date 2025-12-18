@@ -18,10 +18,10 @@
 
       <div class="modal__body">
         <div class="status-banner" [ngClass]="appointment.status">
-            {{ appointment.status === 'scheduled' ? 'Agendada' : 
-               appointment.status === 'confirmed' ? 'Confirmada' : 
-               appointment.status === 'completed' ? 'Realizada' : 
-               appointment.status === 'cancelled' ? 'Cancelada' : appointment.status }}
+            {{ appointment.status === 'Scheduled' ? 'Agendada' : 
+               appointment.status === 'Confirmed' ? 'Confirmada' : 
+               appointment.status === 'Completed' ? 'Realizada' : 
+               appointment.status === 'Cancelled' ? 'Cancelada' : appointment.status }}
         </div>
 
         <div class="info-group">
@@ -42,11 +42,11 @@
         <div class="info-row">
             <div class="info-group">
                 <label>Data</label>
-                <p>{{ appointment.date | date:'fullDate' }}</p>
+                <p>{{ appointment.scheduledDate | date:'fullDate' }}</p>
             </div>
             <div class="info-group">
                 <label>Horário</label>
-                <p>{{ appointment.time }}</p>
+                <p>{{ (appointment.scheduledDate | date:'HH:mm') }}</p>
             </div>
         </div>
 

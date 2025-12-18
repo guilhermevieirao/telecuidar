@@ -24,12 +24,12 @@
             size="2xl"
           />
           <div class="profile__avatar-info">
-            <h2 class="profile__name">{{ user.name }}</h2>
+            <h2 class="profile__name">{{ user.name }} {{ user.lastName }}</h2>
             <p class="profile__email">{{ user.email }}</p>
             <span 
               class="profile__badge"
-              [class.profile__badge--active]="user.status === 'active'"
-              [class.profile__badge--inactive]="user.status === 'inactive'"
+              [class.profile__badge--active]="user.status === 'Active'"
+              [class.profile__badge--inactive]="user.status === 'Inactive'"
             >
               {{ getStatusLabel(user.status) }}
             </span>

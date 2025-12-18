@@ -21,7 +21,7 @@
     <div class="modal__content">
       <form [formGroup]="form" class="schedule-form">
         <!-- Step 1: Professional Selection -->
-        @if (currentStep === 'professional') {
+        @if (currentStep === 'PROFESSIONAL') {
           <div class="schedule-form__step">
             <h3 class="schedule-form__step-title">Selecione o Profissional</h3>
             
@@ -348,14 +348,14 @@
 
     <div class="modal__footer">
       <div class="modal__step-indicator">
-        <span class="modal__step" [class.modal__step--active]="currentStep === 'professional'">1. Profissional</span>
+        <span class="modal__step" [class.modal__step--active]="currentStep === 'PROFESSIONAL'">1. Profissional</span>
         <span class="modal__step" [class.modal__step--active]="currentStep === 'global'">2. Global</span>
         <span class="modal__step" [class.modal__step--active]="currentStep === 'daily'">3. Dias</span>
         <span class="modal__step" [class.modal__step--active]="currentStep === 'validity'">4. Validade</span>
       </div>
 
       <div class="modal__actions">
-        @if (currentStep !== 'professional') {
+        @if (currentStep !== 'PROFESSIONAL') {
           <app-button
             [variant]="'outline'"
             (click)="previousStep()"

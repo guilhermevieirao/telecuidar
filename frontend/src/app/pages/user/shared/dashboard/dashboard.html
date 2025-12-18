@@ -154,11 +154,11 @@
               <div class="appointment-item appointment-item--with-actions">
                 <div class="appointment-item__main">
                   <div class="appointment-item__date">
-                    <span class="day">{{ appt.date | date:'dd' }}</span>
-                    <span class="month">{{ appt.date | date:'MMM' }}</span>
+                    <span class="day">{{ appt.scheduledDate | date:'dd' }}</span>
+                    <span class="month">{{ appt.scheduledDate | date:'MMM' }}</span>
                   </div>
                   <div class="appointment-item__info">
-                    <span class="time">{{ appt.time }}</span>
+                    <span class="time">{{ appt.scheduledDate | date:'HH:mm' }}</span>
                     <h4 class="name">{{ appt.patientName }}</h4>
                     <span class="specialty">{{ appt.specialtyName }}</span>
                   </div>
@@ -249,7 +249,7 @@
             @for (notification of notifications; track notification.id) {
               <div class="appointment-item">
                 <div class="appointment-item__date">
-                   <app-icon [name]="notification.type === 'error' ? 'alert-circle' : 'check-circle'" [size]="24" />
+                   <app-icon [name]="notification.type === 'Error' ? 'alert-circle' : 'check-circle'" [size]="24" />
                 </div>
                 <div class="appointment-item__info">
                   <h4 class="name">{{ notification.title }}</h4>
@@ -303,11 +303,11 @@
             @for (appt of nextAppointments; track appt.id) {
               <div class="appointment-item">
                 <div class="appointment-item__date">
-                  <span class="day">{{ appt.date | date:'dd' }}</span>
-                  <span class="month">{{ appt.date | date:'MMM' }}</span>
+                  <span class="day">{{ appt.scheduledDate | date:'dd' }}</span>
+                  <span class="month">{{ appt.scheduledDate | date:'MMM' }}</span>
                 </div>
                 <div class="appointment-item__info">
-                  <span class="time">{{ appt.time }}</span>
+                  <span class="time">{{ appt.scheduledDate | date:'HH:mm' }}</span>
                   <h4 class="name">
                     {{ isPatient() ? appt.professionalName : appt.patientName }}
                   </h4>
@@ -336,7 +336,7 @@
             @for (notification of notifications; track notification.id) {
               <div class="appointment-item">
                 <div class="appointment-item__date">
-                   <app-icon [name]="notification.type === 'error' ? 'alert-circle' : 'check-circle'" [size]="24" />
+                   <app-icon [name]="notification.type === 'Error' ? 'alert-circle' : 'check-circle'" [size]="24" />
                 </div>
                 <div class="appointment-item__info">
                   <h4 class="name">{{ notification.title }}</h4>
@@ -363,7 +363,7 @@
           <app-button 
             variant="primary" 
             [fullWidth]="true"
-            [routerLink]="['/', getUserRolePath(), 'appointments']">
+            [routerLink]="['/', getuserrolePath(), 'appointments']">
             Minhas Consultas
           </app-button>
           

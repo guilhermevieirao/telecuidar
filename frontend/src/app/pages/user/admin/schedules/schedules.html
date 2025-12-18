@@ -119,7 +119,7 @@
         </thead>
         <tbody>
           @for (schedule of schedules; track schedule.id) {
-            <tr class="schedules__table-row" [class.schedules__table-row--inactive]="schedule.status === 'inactive'">
+            <tr class="schedules__table-row" [class.schedules__table-row--inactive]="schedule.status === 'Inactive'">
               <td class="schedules__table-cell schedules__table-cell--professional">
                 <div class="schedules__professional-info">
                   <p class="schedules__professional-name">{{ schedule.professionalName }}</p>
@@ -167,8 +167,8 @@
               </td>
               <td class="schedules__table-cell">
                 <app-badge
-                  [variant]="schedule.status === 'active' ? 'success' : 'neutral'"
-                  [label]="schedule.status === 'active' ? 'Ativa' : 'Inativa'"
+                  [variant]="schedule.status === 'Active' ? 'success' : 'neutral'"
+                  [label]="schedule.status === 'Active' ? 'Ativa' : 'Inativa'"
                   size="sm"
                 />
               </td>
@@ -186,11 +186,11 @@
                   <button
                     type="button"
                     class="schedules__action-btn schedules__action-btn--toggle"
-                    [title]="schedule.status === 'active' ? 'Desativar' : 'Ativar'"
+                    [title]="schedule.status === 'Active' ? 'Desativar' : 'Ativar'"
                     (click)="toggleScheduleStatus(schedule)"
                     [disabled]="isLoading"
                   >
-                    <app-icon [name]="schedule.status === 'active' ? 'check-circle' : 'x-circle'" [size]="18" />
+                    <app-icon [name]="schedule.status === 'Active' ? 'check-circle' : 'x-circle'" [size]="18" />
                   </button>
                   <button
                     type="button"

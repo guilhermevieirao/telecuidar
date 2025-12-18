@@ -15,13 +15,13 @@ export class ScheduleViewModalComponent {
   @Output() close = new EventEmitter<void>();
 
   dayLabels: Record<DayOfWeek, string> = {
-    'segunda': 'Segunda-feira',
-    'terca': 'Terça-feira',
-    'quarta': 'Quarta-feira',
-    'quinta': 'Quinta-feira',
-    'sexta': 'Sexta-feira',
-    'sabado': 'Sábado',
-    'domingo': 'Domingo'
+    'Monday': 'Segunda-feira',
+    'Tuesday': 'Terça-feira',
+    'Wednesday': 'Quarta-feira',
+    'Thursday': 'Quinta-feira',
+    'Friday': 'Sexta-feira',
+    'Saturday': 'Sábado',
+    'Sunday': 'Sunday'
   };
 
   onClose(): void {

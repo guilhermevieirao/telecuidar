@@ -14,13 +14,13 @@ export class MyScheduleComponent implements OnInit {
   isLoading = true;
 
   dayLabels: Record<DayOfWeek, string> = {
-    'segunda': 'Segunda-feira',
-    'terca': 'Terça-feira',
-    'quarta': 'Quarta-feira',
-    'quinta': 'Quinta-feira',
-    'sexta': 'Sexta-feira',
-    'sabado': 'Sábado',
-    'domingo': 'Domingo'
+    'Monday': 'Segunda-feira',
+    'Tuesday': 'Terça-feira',
+    'Wednesday': 'Quarta-feira',
+    'Thursday': 'Quinta-feira',
+    'Friday': 'Sexta-feira',
+    'Saturday': 'Sábado',
+    'Sunday': 'Sunday'
   };
 
   constructor(private schedulesService: SchedulesService) {}
@@ -29,9 +29,9 @@ export class MyScheduleComponent implements OnInit {
     // Hardcoded ID for demo purposes, matching the mock data in SchedulesService
     const currentProfessionalId = 'prof-1'; 
     
-    this.schedulesService.getScheduleByProfessionalId(currentProfessionalId).subscribe({
-      next: (schedule) => {
-        this.schedule = schedule || null;
+    this.schedulesService.getScheduleByProfessional(currentProfessionalId).subscribe({
+      next: (schedules) => {
+        this.schedule = Array.isArray(schedules) && schedules.length > 0 ? schedules[0] : null;
         this.isLoading = false;
       },
       error: (err) => {

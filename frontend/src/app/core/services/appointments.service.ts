@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { delay, map } from 'rxjs/operators';
-import { User } from './users.service';
-import { Specialty } from './specialties.service';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-export type AppointmentStatus = 'scheduled' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled';
-export type AppointmentType = 'first_visit' | 'return' | 'routine' | 'emergency' | 'common';
+const API_BASE_URL = 'http://localhost:5239/api';
+
+export type AppointmentStatus = 'Scheduled' | 'Confirmed' | 'InProgress' | 'Completed' | 'Cancelled';
+export type AppointmentType = 'FirstVisit' | 'Return' | 'Routine' | 'Emergency' | 'Common';
 
 export interface PreConsultationForm {
   personalInfo: {
@@ -37,13 +37,13 @@ export interface PreConsultationForm {
   currentSymptoms: {
     mainSymptoms: string;
     symptomOnset: string;
-    painIntensity?: number; // 0-10
+    painIntensity?: number;
     generalObservations?: string;
   };
   additionalObservations?: string;
   attachments?: {
     title: string;
-    fileUrl: string; // Base64 or URL
+    fileUrl: string;
     type: string;
   }[];
 }
@@ -51,207 +51,127 @@ export interface PreConsultationForm {
 export interface Appointment {
   id: string;
   patientId: string;
-  patientName: string;
+  patientName?: string;
   professionalId: string;
-  professionalName: string;
+  professionalName?: string;
   specialtyId: string;
-  specialtyName: string;
-  date: string; // ISO Date
-  time: string; // HH:mm
-  endTime?: string; // HH:mm
+  specialtyName?: string;
+  scheduledDate: string;
   type?: AppointmentType;
   status: AppointmentStatus;
   observation?: string;
   meetLink?: string;
   createdAt: string;
-  updatedAt: string;
-  avatar?: string; // For display purposes (patient or professional avatar depending on context)
+  updatedAt?: string;
+  preConsultation?: PreConsultationForm;
+}
+
+export interface CreateAppointmentDto {
+  patientId: string;
+  scheduleId: string;
+  type?: AppointmentType;
+  observation?: string;
+  preConsultation?: PreConsultationForm;
+}
+
+export interface UpdateAppointmentDto {
+  scheduledDate?: string;
+  status?: AppointmentStatus;
+  type?: AppointmentType;
+  observation?: string;
+  meetLink?: string;
   preConsultation?: PreConsultationForm;
 }
 
 export interface AppointmentsFilter {
-  status?: AppointmentStatus | 'all' | 'upcoming' | 'past';
+  status?: string;
   search?: string;
   startDate?: string;
   endDate?: string;
+  patientId?: string;
+  professionalId?: string;
+  specialtyId?: string;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class AppointmentsService {
-  private mockAppointments: Appointment[] = [
-    {
-      id: '1',
-      patientId: '1',
-      patientName: 'João Silva',
-      professionalId: '2',
-      professionalName: 'Dr. Maria Santos',
-      specialtyId: '1',
-      specialtyName: 'Cardiologia',
-      date: new Date(new Date().setDate(new Date().getDate() + 2)).toISOString(), // 2 days from now
-      time: '14:00',
-      endTime: '15:00',
-      type: 'routine',
-      status: 'scheduled',
-      observation: 'Check-up de rotina',
-      meetLink: 'https://meet.google.com/abc-defg-hij',
-      createdAt: '2024-03-01T10:00:00',
-      updatedAt: '2024-03-01T10:00:00',
-      avatar: 'assets/avatars/maria.jpg',
-      preConsultation: {
-        personalInfo: {
-          fullName: 'João Silva',
-          birthDate: '1980-05-15',
-          weight: '75',
-          height: '1.75'
-        },
-        medicalHistory: {
-          chronicConditions: 'Hipertensão leve',
-          medications: 'Losartana 50mg',
-          allergies: 'Penicilina',
-          surgeries: 'Apendicectomia (2010)'
-        },
-        lifestyleHabits: {
-          smoker: 'nao',
-          alcoholConsumption: 'social',
-          physicalActivity: 'moderada'
-        },
-        vitalSigns: {
-          bloodPressure: '120/80',
-          heartRate: '72',
-          temperature: '36.5',
-          oxygenSaturation: '98'
-        },
-        currentSymptoms: {
-          mainSymptoms: 'Cansaço ocasional após exercícios intensos',
-          symptomOnset: '2 semanas atrás',
-          painIntensity: 2
-        }
-      }
-    },
-    {
-      id: '2',
-      patientId: '1',
-      patientName: 'João Silva',
-      professionalId: '5',
-      professionalName: 'Dr. Carlos Ferreira',
-      specialtyId: '2',
-      specialtyName: 'Dermatologia',
-      date: new Date(new Date().setDate(new Date().getDate() + 5)).toISOString(), // 5 days from now
-      time: '09:00',
-      endTime: '09:30',
-      type: 'first_visit',
-      status: 'confirmed',
-      createdAt: '2024-03-05T15:30:00',
-      updatedAt: '2024-03-06T09:00:00',
-      avatar: 'assets/avatars/carlos.jpg'
-    },
-    {
-      id: '3',
-      patientId: '1',
-      patientName: 'João Silva',
-      professionalId: '2',
-      professionalName: 'Dr. Maria Santos',
-      specialtyId: '1',
-      specialtyName: 'Cardiologia',
-      date: new Date(new Date().setDate(new Date().getDate() - 10)).toISOString(), // 10 days ago
-      time: '16:00',
-      endTime: '16:45',
-      type: 'return',
-      status: 'completed',
-      observation: 'Retorno',
-      createdAt: '2024-02-20T11:00:00',
-      updatedAt: '2024-02-20T11:00:00',
-      avatar: 'assets/avatars/maria.jpg'
-    },
-    {
-      id: '4',
-      patientId: '1',
-      patientName: 'João Silva',
-      professionalId: '5',
-      professionalName: 'Dr. Carlos Ferreira',
-      specialtyId: '2',
-      specialtyName: 'Dermatologia',
-      date: new Date(new Date().setDate(new Date().getDate() - 2)).toISOString(), // 2 days ago
-      time: '10:00',
-      endTime: '10:30',
-      type: 'common',
-      status: 'cancelled',
-      createdAt: '2024-03-10T08:00:00',
-      updatedAt: '2024-03-11T14:00:00',
-      avatar: 'assets/avatars/carlos.jpg'
+  private apiUrl = `${API_BASE_URL}/appointments`;
+
+  constructor(private http: HttpClient) {}
+
+  getAppointments(
+    filter?: AppointmentsFilter,
+    page: number = 1,
+    pageSize: number = 10
+  ): Observable<PaginatedResponse<Appointment>> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('pageSize', pageSize.toString());
+
+    if (filter?.status) {
+      params = params.set('status', filter.status);
     }
-  ];
+    if (filter?.search) {
+      params = params.set('search', filter.search);
+    }
+    if (filter?.startDate) {
+      params = params.set('startDate', filter.startDate);
+    }
+    if (filter?.endDate) {
+      params = params.set('endDate', filter.endDate);
+    }
+    if (filter?.patientId) {
+      params = params.set('patientId', filter.patientId);
+    }
+    if (filter?.professionalId) {
+      params = params.set('professionalId', filter.professionalId);
+    }
+    if (filter?.specialtyId) {
+      params = params.set('specialtyId', filter.specialtyId);
+    }
 
-  getAppointments(filter: AppointmentsFilter = {}): Observable<Appointment[]> {
-    return of(this.mockAppointments).pipe(
-      delay(500),
-      map(appointments => {
-        let filtered = [...appointments];
-
-        // Filter by status/time
-        if (filter.status) {
-            const now = new Date();
-            if (filter.status === 'upcoming') {
-                filtered = filtered.filter(a => new Date(a.date) >= now && a.status !== 'cancelled' && a.status !== 'completed');
-            } else if (filter.status === 'past') {
-                filtered = filtered.filter(a => new Date(a.date) < now || a.status === 'completed');
-            } else if (filter.status !== 'all') {
-                filtered = filtered.filter(a => a.status === filter.status);
-            }
-        }
-
-        // Search
-        if (filter.search) {
-          const searchLower = filter.search.toLowerCase();
-          filtered = filtered.filter(a => 
-            a.professionalName.toLowerCase().includes(searchLower) ||
-            a.specialtyName.toLowerCase().includes(searchLower) ||
-            a.patientName.toLowerCase().includes(searchLower)
-          );
-        }
-
-        // Sort by date (default desc)
-        filtered.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-
-        return filtered;
-      })
-    );
+    return this.http.get<PaginatedResponse<Appointment>>(this.apiUrl, { params });
   }
 
-  getAppointmentById(id: string): Observable<Appointment | undefined> {
-    return of(this.mockAppointments.find(a => a.id === id)).pipe(delay(300));
+  getAppointmentById(id: string): Observable<Appointment> {
+    return this.http.get<Appointment>(`${this.apiUrl}/${id}`);
   }
 
-  cancelAppointment(id: string): Observable<boolean> {
-    const index = this.mockAppointments.findIndex(a => a.id === id);
-    if (index !== -1) {
-      this.mockAppointments[index].status = 'cancelled';
-      this.mockAppointments[index].updatedAt = new Date().toISOString();
-      return of(true).pipe(delay(500));
-    }
-    return of(false);
+  createAppointment(appointment: CreateAppointmentDto): Observable<Appointment> {
+    return this.http.post<Appointment>(this.apiUrl, appointment);
   }
 
-  savePreConsultation(appointmentId: string, data: PreConsultationForm): Observable<boolean> {
-    const index = this.mockAppointments.findIndex(a => a.id === appointmentId);
-    if (index !== -1) {
-      this.mockAppointments[index].preConsultation = data;
-      this.mockAppointments[index].updatedAt = new Date().toISOString();
-      return of(true).pipe(delay(500));
-    }
-    return of(false);
+  updateAppointment(id: string, updates: UpdateAppointmentDto): Observable<Appointment> {
+    return this.http.put<Appointment>(`${this.apiUrl}/${id}`, updates);
   }
 
-  finishConsultation(id: string, observations: string): Observable<boolean> {
-    const index = this.mockAppointments.findIndex(a => a.id === id);
-    if (index !== -1) {
-      this.mockAppointments[index].status = 'completed';
-      this.mockAppointments[index].observation = observations;
-      this.mockAppointments[index].updatedAt = new Date().toISOString();
-      return of(true).pipe(delay(500));
-    }
-    return of(false);
+  cancelAppointment(id: string, reason?: string): Observable<Appointment> {
+    return this.http.patch<Appointment>(`${this.apiUrl}/${id}/cancel`, { reason });
+  }
+
+  confirmAppointment(id: string): Observable<Appointment> {
+    return this.http.patch<Appointment>(`${this.apiUrl}/${id}/confirm`, {});
+  }
+
+  startAppointment(id: string): Observable<Appointment> {
+    return this.http.patch<Appointment>(`${this.apiUrl}/${id}/start`, {});
+  }
+
+  completeAppointment(id: string, observation?: string): Observable<Appointment> {
+    return this.http.patch<Appointment>(`${this.apiUrl}/${id}/complete`, { observation });
+  }
+
+  deleteAppointment(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

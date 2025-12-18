@@ -5,14 +5,8 @@ import { LogoComponent } from '@app/shared/components/atoms/logo/logo';
 import { IconComponent } from '@app/shared/components/atoms/icon/icon';
 import { AvatarComponent } from '@app/shared/components/atoms/avatar/avatar';
 import { ThemeToggleComponent } from '@app/shared/components/atoms/theme-toggle/theme-toggle';
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  avatar?: string;
-  role: 'admin' | 'professional' | 'patient';
-}
+import { AuthService } from '@core/services/auth.service';
+import { User } from '@core/models/auth.model';
 
 interface Notification {
   id: string;
@@ -54,6 +48,7 @@ export class UserLayoutComponent implements OnInit {
 
   constructor(
     private router: Router,
+    private authService: AuthService,
     @Inject(PLATFORM_ID) private platformId: Object,
     @Inject(DOCUMENT) private document: Document
   ) {}
@@ -109,7 +104,7 @@ export class UserLayoutComponent implements OnInit {
   }
 
   logout(): void {
-    // TODO: Implementar logout com backend
+    this.authService.logout();
     this.router.navigate(['/auth/login']);
   }
 
@@ -118,18 +113,12 @@ export class UserLayoutComponent implements OnInit {
     if (urlSegments.length > 1) {
       return urlSegments[1];
     }
-    return 'admin'; // Fallback
+    return 'ADMIN'; // Fallback
   }
 
   private loadUserData(): void {
-    // TODO: Integrar com serviço de autenticação
-    const role = this.basePath as 'admin' | 'professional' | 'patient';
-    this.user = {
-      id: '1',
-      name: `${role.charAt(0).toUpperCase() + role.slice(1)} User`,
-      email: `${role}@telecuidar.com.br`,
-      role: role
-    };
+    // Get user from AuthService
+    this.user = this.authService.getCurrentUser();
   }
 
   private loadUnreadNotifications(): void {
@@ -145,7 +134,7 @@ export class UserLayoutComponent implements OnInit {
         id: '1',
         title: 'Nova mensagem',
         message: 'Você recebeu uma nova mensagem do paciente João Silva',
-        link: `/${basePath}/notifications`,
+        link: '/notificacoes',
         isRead: false,
         createdAt: new Date(Date.now() - 5 * 60000).toISOString()
       },
@@ -153,7 +142,7 @@ export class UserLayoutComponent implements OnInit {
         id: '2',
         title: 'Consulta confirmada',
         message: 'A consulta de Maria Santos foi confirmada para 15/12/2025',
-        link: `/${basePath}/notifications`,
+        link: '/notificacoes',
         isRead: false,
         createdAt: new Date(Date.now() - 15 * 60000).toISOString()
       },
@@ -161,7 +150,7 @@ export class UserLayoutComponent implements OnInit {
         id: '3',
         title: 'Aviso de sistema',
         message: 'Sistema será atualizado em 2 horas',
-        link: `/${basePath}/notifications`,
+        link: '/notificacoes',
         isRead: true,
         createdAt: new Date(Date.now() - 1 * 3600000).toISOString()
       },
@@ -169,7 +158,7 @@ export class UserLayoutComponent implements OnInit {
         id: '4',
         title: 'Novo usuário registrado',
         message: 'Um novo profissional se registrou no sistema',
-        link: `/${basePath}/notifications`,
+        link: '/notificacoes',
         isRead: true,
         createdAt: new Date(Date.now() - 2 * 3600000).toISOString()
       },
@@ -177,7 +166,7 @@ export class UserLayoutComponent implements OnInit {
         id: '5',
         title: 'Agendamento cancelado',
         message: 'Agendamento do paciente Pedro Santos foi cancelado',
-        link: `/${basePath}/notifications`,
+        link: '/notificacoes',
         isRead: true,
         createdAt: new Date(Date.now() - 6 * 3600000).toISOString()
       }

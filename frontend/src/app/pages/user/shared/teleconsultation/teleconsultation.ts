@@ -17,7 +17,7 @@ import { TeleconsultationSidebarComponent } from './sidebar/teleconsultation-sid
 export class TeleconsultationComponent implements OnInit {
   appointmentId: string | null = null;
   appointment: Appointment | null = null;
-  userRole: 'patient' | 'professional' | 'admin' = 'patient';
+  userrole: 'PATIENT' | 'PROFESSIONAL' | 'ADMIN' = 'PATIENT';
   
   // UI States
   isHeaderVisible = true;
@@ -41,7 +41,7 @@ export class TeleconsultationComponent implements OnInit {
   ngOnInit(): void {
     this.checkScreenSize();
     this.appointmentId = this.route.snapshot.paramMap.get('id');
-    this.determineUserRole();
+    this.determineuserrole();
     this.setupTabs();
     
     if (this.appointmentId) {
@@ -63,19 +63,19 @@ export class TeleconsultationComponent implements OnInit {
     }
   }
 
-  determineUserRole() {
+  determineuserrole() {
     const url = this.router.url;
     if (url.includes('/patient')) {
-      this.userRole = 'patient';
+      this.userrole = 'PATIENT';
     } else if (url.includes('/professional')) {
-      this.userRole = 'professional';
+      this.userrole = 'PROFESSIONAL';
     } else {
-      this.userRole = 'admin';
+      this.userrole = 'ADMIN';
     }
   }
 
   setupTabs() {
-    this.currentTabs = this.userRole === 'professional' ? this.professionalTabs : this.patientTabs;
+    this.currentTabs = this.userrole === 'PROFESSIONAL' ? this.professionalTabs : this.patientTabs;
     if (this.currentTabs.length > 0) {
       this.activeTab = this.currentTabs[0];
     }
@@ -117,11 +117,12 @@ export class TeleconsultationComponent implements OnInit {
 
   onFinishConsultation(observations: string) {
     if (this.appointmentId) {
-      this.appointmentsService.finishConsultation(this.appointmentId, observations).subscribe(success => {
-        if (success) {
+      this.appointmentsService.completeAppointment(this.appointmentId, observations).subscribe({
+        next: () => {
           alert('Consulta finalizada com sucesso!');
-          this.router.navigate(['/professional/dashboard']);
-        } else {
+          this.router.navigate(['/painel']);
+        },
+        error: () => {
           alert('Erro ao finalizar consulta.');
         }
       });
@@ -131,7 +132,7 @@ export class TeleconsultationComponent implements OnInit {
   exitCall() {
     // In a real app, we would clean up WebRTC connections here
     if (confirm('Tem certeza que deseja sair da consulta?')) {
-      const dashboardRoute = this.userRole === 'professional' ? '/professional/dashboard' : '/patient/dashboard';
+      const dashboardRoute = this.userrole === 'PROFESSIONAL' ? '/professional/dashboard' : '/patient/dashboard';
       this.router.navigate([dashboardRoute]);
     }
   }

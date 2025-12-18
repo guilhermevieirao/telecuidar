@@ -166,8 +166,8 @@
                 class="specialty-form__checkbox"
                 [(ngModel)]="specialtyData.status"
                 [ngModelOptions]="{standalone: true}"
-                [checked]="specialtyData.status === 'active'"
-                (change)="specialtyData.status = specialtyData.status === 'active' ? 'inactive' : 'active'"
+                [checked]="specialtyData.status === 'Active'"
+                (change)="specialtyData.status = specialtyData.status === 'Active' ? 'Inactive' : 'Active'"
               />
               <span class="specialty-form__checkbox-text">Especialidade ativa</span>
             </label>

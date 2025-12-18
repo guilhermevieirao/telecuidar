@@ -22,20 +22,20 @@ export class ScheduleCreateModalComponent implements OnInit {
 
   form!: FormGroup;
   professionals: User[] = [];
-  days: DayOfWeek[] = ['segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado', 'domingo'];
+  days: DayOfWeek[] = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   dayLabels: Record<DayOfWeek, string> = {
-    'segunda': 'Segunda-feira',
-    'terca': 'Terça-feira',
-    'quarta': 'Quarta-feira',
-    'quinta': 'Quinta-feira',
-    'sexta': 'Sexta-feira',
-    'sabado': 'Sábado',
-    'domingo': 'Domingo'
+    'Monday': 'Segunda-feira',
+    'Tuesday': 'Terça-feira',
+    'Wednesday': 'Quarta-feira',
+    'Thursday': 'Quinta-feira',
+    'Friday': 'Sexta-feira',
+    'Saturday': 'Sábado',
+    'Sunday': 'Sunday'
   };
 
   isLoading = false;
   isSaving = false;
-  currentStep: 'professional' | 'global' | 'daily' | 'validity' = 'professional';
+  currentStep: 'PROFESSIONAL' | 'global' | 'daily' | 'validity' = 'PROFESSIONAL';
   expandedDays: Set<DayOfWeek> = new Set();
   customDays: Set<DayOfWeek> = new Set();
   hasBreakTime = false;
@@ -57,7 +57,7 @@ export class ScheduleCreateModalComponent implements OnInit {
   ngOnChanges(): void {
     if (this.editingSchedule && this.isOpen) {
       this.populateForm();
-      this.currentStep = 'professional';
+      this.currentStep = 'PROFESSIONAL';
     }
   }
 
@@ -108,7 +108,7 @@ export class ScheduleCreateModalComponent implements OnInit {
       globalIntervalBetweenConsultations: this.editingSchedule.globalConfig.intervalBetweenConsultations,
       validityStartDate: this.editingSchedule.validityStartDate,
       validityEndDate: this.editingSchedule.validityEndDate || '',
-      isActive: this.editingSchedule.status === 'active'
+      isActive: this.editingSchedule.status === 'Active'
     });
 
     if (this.editingSchedule.globalConfig.breakTime) {
@@ -141,7 +141,7 @@ export class ScheduleCreateModalComponent implements OnInit {
     this.isLoading = true;
     this.usersService.getUsers({}).subscribe({
       next: (response) => {
-        this.professionals = response.data.filter(u => u.role === 'professional');
+        this.professionals = response.data.filter(u => u.role === 'PROFESSIONAL');
         this.isLoading = false;
       },
       error: (error) => {
@@ -162,7 +162,7 @@ export class ScheduleCreateModalComponent implements OnInit {
 
   nextStep(): void {
     switch (this.currentStep) {
-      case 'professional':
+      case 'PROFESSIONAL':
         if (this.form.get('professionalId')?.valid) {
           this.currentStep = 'global';
         }
@@ -179,7 +179,7 @@ export class ScheduleCreateModalComponent implements OnInit {
   previousStep(): void {
     switch (this.currentStep) {
       case 'global':
-        this.currentStep = 'professional';
+        this.currentStep = 'PROFESSIONAL';
         break;
       case 'daily':
         this.currentStep = 'global';
@@ -323,7 +323,7 @@ export class ScheduleCreateModalComponent implements OnInit {
       globalConfig,
       validityStartDate: formValue.validityStartDate,
       validityEndDate: formValue.validityEndDate || undefined,
-      status: formValue.isActive ? 'active' as const : 'inactive' as const
+      status: formValue.isActive ? 'Active' as const : 'Inactive' as const
     };
 
     if (this.editingSchedule) {
