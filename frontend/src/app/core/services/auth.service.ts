@@ -288,4 +288,21 @@ export class AuthService {
     }
     return this.currentUser();
   }
+
+  // Update current user in memory and storage
+  updateCurrentUser(user: User): void {
+    this.currentUser.set(user);
+    
+    if (isPlatformBrowser(this.platformId)) {
+      // Update in localStorage
+      if (localStorage.getItem(STORAGE_KEYS.USER)) {
+        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
+      }
+      
+      // Update in sessionStorage
+      if (sessionStorage.getItem(STORAGE_KEYS.USER)) {
+        sessionStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
+      }
+    }
+  }
 }

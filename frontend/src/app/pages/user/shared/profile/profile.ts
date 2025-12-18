@@ -1,13 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, effect, ChangeDetectorRef } from '@angular/core';
 import { IconComponent } from '@app/shared/components/atoms/icon/icon';
 import { AvatarComponent } from '@app/shared/components/atoms/avatar/avatar';
 import { ProfileEditModalComponent } from '@pages/user/shared/profile/profile-edit-modal/profile-edit-modal';
 import { ChangePasswordModalComponent } from '@pages/user/shared/profile/change-password-modal/change-password-modal';
-import { User } from '@app/core/services/users.service';
+import { User, UsersService, UpdateUserDto } from '@app/core/services/users.service';
 import { DatePipe } from '@angular/common';
 import { BadgeComponent } from '@app/shared/components/atoms/badge/badge';
 import { ButtonComponent } from '@app/shared/components/atoms/button/button';
 import { ModalService } from '@app/core/services/modal.service';
+import { AuthService } from '@app/core/services/auth.service';
 
 @Component({
   selector: 'app-profile',
@@ -21,25 +22,24 @@ export class ProfileComponent implements OnInit {
   isSendingVerification = false;
   isEditModalOpen = false;
   isChangePasswordModalOpen = false;
+  isUpdatingProfile = false;
 
-  constructor(private modalService: ModalService) {}
+  constructor(
+    private modalService: ModalService,
+    private authService: AuthService,
+    private usersService: UsersService,
+    private cdr: ChangeDetectorRef
+  ) {
+    // Sem effect() - atualização manual apenas quando necessário
+  }
 
   ngOnInit(): void {
-    // Mock do usuário logado - em produção virá do AuthService
-    this.user = {
-      id: '3',
-      name: 'Pedro',
-      lastName: 'Costa',
-      email: 'pedro.costa@email.com',
-      role: 'ADMIN',
-      cpf: '345.678.901-22',
-      phone: '(11) 98765-4323',
-      status: 'Active',
-      createdAt: '2024-03-10T09:15:00',
-      avatar: undefined,
-      emailVerified: false // mock
-    };
-    this.emailVerified = !!this.user?.emailVerified;
+    // Busca dados do usuário logado
+    const currentUser = this.authService.currentUser();
+    if (currentUser) {
+      this.user = currentUser;
+      this.emailVerified = !!currentUser.emailVerified;
+    }
   }
 
   openEditModal(): void {
@@ -51,11 +51,52 @@ export class ProfileComponent implements OnInit {
   }
 
   onProfileUpdated(updatedUser: Partial<User>): void {
-    if (this.user) {
-      this.user = { ...this.user, ...updatedUser };
-      this.emailVerified = !!this.user.emailVerified;
-      this.isEditModalOpen = false;
-    }
+    if (!this.user) return;
+
+    this.isUpdatingProfile = true;
+
+    const updateDto: UpdateUserDto = {
+      name: updatedUser.name,
+      lastName: updatedUser.lastName,
+      phone: updatedUser.phone,
+      avatar: updatedUser.avatar
+    };
+
+    this.usersService.updateUser(this.user.id, updateDto).subscribe({
+      next: (updatedUserResponse) => {
+        // Atualiza o usuário local
+        this.user = updatedUserResponse;
+        this.emailVerified = !!updatedUserResponse.emailVerified;
+        
+        // Atualiza o currentUser no AuthService e localStorage
+        this.authService.updateCurrentUser(updatedUserResponse);
+        
+        // Primeiro fecha o modal
+        this.onEditModalClose();
+        this.isUpdatingProfile = false;
+        
+        // Aguarda um ciclo antes de mostrar alerta
+        setTimeout(() => {
+          this.modalService.alert({
+            title: 'Sucesso',
+            message: 'Perfil atualizado com sucesso!',
+            variant: 'success'
+          });
+        });
+      },
+      error: (error) => {
+        console.error('Erro ao atualizar perfil:', error);
+        setTimeout(() => {
+          this.isUpdatingProfile = false;
+          
+          this.modalService.alert({
+            title: 'Erro',
+            message: 'Não foi possível atualizar o perfil. Tente novamente.',
+            variant: 'danger'
+          });
+        });
+      }
+    });
   }
 
   getEmailVerificationLabel(): string {

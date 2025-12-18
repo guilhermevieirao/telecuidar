@@ -7,16 +7,14 @@ export interface User {
   phone?: string;
   avatar?: string;
   role: userrole;
-  emailVerified: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  status: 'Active' | 'Inactive';
+  emailVerified?: boolean;
+  createdAt: string;
+  updatedAt?: string;
+  specialtyId?: string;
 }
 
-export enum userrole {
-  PATIENT = 'PATIENT',
-  PROFESSIONAL = 'PROFESSIONAL',
-  ADMIN = 'ADMIN'
-}
+export type userrole = 'PATIENT' | 'PROFESSIONAL' | 'ADMIN';
 
 export interface LoginRequest {
   email: string;
