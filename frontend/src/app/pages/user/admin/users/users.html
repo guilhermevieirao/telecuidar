@@ -113,11 +113,11 @@
               <td class="users-table__cell">
                 <div class="users-table__user">
                   <app-avatar 
-                    [name]="user.name" 
+                    [name]="user.name + ' ' + user.lastName" 
                     [imageUrl]="user.avatar"
                     size="sm"
                   />
-                  <span class="users-table__user-name">{{ user.name }}</span>
+                  <span class="users-table__user-name">{{ user.name }} {{ user.lastName }}</span>
                 </div>
               </td>
               <td class="users-table__cell">{{ user.email }}</td>

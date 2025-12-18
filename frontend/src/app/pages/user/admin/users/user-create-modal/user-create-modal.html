@@ -103,16 +103,30 @@
           </p>
 
           <form class="user-form">
-            <div class="user-form__field">
-              <label for="create-user-name" class="user-form__label">Nome Completo</label>
-              <input
-                id="create-user-name"
-                type="text"
-                class="user-form__input"
-                [(ngModel)]="userData.name"
-                name="name"
-                placeholder="Digite o nome completo"
-              />
+            <div class="user-form__row">
+              <div class="user-form__field">
+                <label for="create-user-name" class="user-form__label">Nome</label>
+                <input
+                  id="create-user-name"
+                  type="text"
+                  class="user-form__input"
+                  [(ngModel)]="userData.name"
+                  name="name"
+                  placeholder="Digite o nome"
+                />
+              </div>
+
+              <div class="user-form__field">
+                <label for="create-user-lastname" class="user-form__label">Sobrenome</label>
+                <input
+                  id="create-user-lastname"
+                  type="text"
+                  class="user-form__input"
+                  [(ngModel)]="userData.lastName"
+                  name="lastName"
+                  placeholder="Digite o sobrenome"
+                />
+              </div>
             </div>
 
             <div class="user-form__field">
@@ -163,15 +177,40 @@
 
             <div class="user-form__row">
               <div class="user-form__field">
-                <label for="create-user-password" class="user-form__label">Senha</label>
+                <label for="create-user-password" class="user-form__label">
+                  Senha
+                  @if (password && !isPasswordValid()) {
+                    <span class="user-form__label-error">Senha fraca</span>
+                  }
+                  @if (password && isPasswordValid()) {
+                    <span class="user-form__label-success">Senha forte ✓</span>
+                  }
+                </label>
                 <input
                   id="create-user-password"
                   type="password"
                   class="user-form__input"
+                  [class.user-form__input--error]="password && !isPasswordValid()"
+                  [class.user-form__input--success]="password && isPasswordValid()"
                   [(ngModel)]="password"
                   name="password"
                   placeholder="Digite a senha"
                 />
+                @if (password && password.length > 0) {
+                  <small class="user-form__hint">
+                    @if (!isPasswordValid()) {
+                      <span class="text-danger">{{ getPasswordMissingRequirements() }}</span>
+                    }
+                    @if (isPasswordValid()) {
+                      <span class="text-success">Senha válida! ✓</span>
+                    }
+                  </small>
+                }
+                @if (!password) {
+                  <small class="user-form__hint">
+                    Mínimo {{ fieldConstraints.PASSWORD.min }} caracteres: maiúsculas, minúsculas, números e caracteres especiais (@$!%*?&)
+                  </small>
+                }
               </div>
 
               <div class="user-form__field">
@@ -180,12 +219,16 @@
                   @if (confirmPassword && !passwordsMatch()) {
                     <span class="user-form__label-error">Senhas não coincidem</span>
                   }
+                  @if (confirmPassword && passwordsMatch()) {
+                    <span class="user-form__label-success">Senhas coincidem ✓</span>
+                  }
                 </label>
                 <input
                   id="create-user-confirm-password"
                   type="password"
                   class="user-form__input"
                   [class.user-form__input--error]="confirmPassword && !passwordsMatch()"
+                  [class.user-form__input--success]="confirmPassword && passwordsMatch()"
                   [(ngModel)]="confirmPassword"
                   name="confirmPassword"
                   placeholder="Confirme a senha"

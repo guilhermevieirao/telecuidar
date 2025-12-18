@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, inject, afterNextRender, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { IconComponent } from '@app/shared/components/atoms/icon/icon';
@@ -41,6 +41,8 @@ export class ScheduleCreateModalComponent implements OnInit {
   hasBreakTime = false;
   hasEndDate = false;
 
+  private cdr = inject(ChangeDetectorRef);
+
   constructor(
     private fb: FormBuilder,
     private schedulesService: SchedulesService,
@@ -48,10 +50,12 @@ export class ScheduleCreateModalComponent implements OnInit {
     private modalService: ModalService
   ) {
     this.initForm();
+    afterNextRender(() => {
+      this.loadProfessionals();
+    });
   }
 
   ngOnInit(): void {
-    this.loadProfessionals();
   }
 
   ngOnChanges(): void {
@@ -143,10 +147,12 @@ export class ScheduleCreateModalComponent implements OnInit {
       next: (response) => {
         this.professionals = response.data.filter(u => u.role === 'PROFESSIONAL');
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('Erro ao carregar profissionais:', error);
         this.isLoading = false;
+        this.cdr.detectChanges();
         this.modalService.alert({
           title: 'Erro',
           message: 'Não foi possível carregar os profissionais.',

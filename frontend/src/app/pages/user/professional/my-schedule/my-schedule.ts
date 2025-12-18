@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, afterNextRender, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { SchedulesService, Schedule, DayOfWeek } from '@app/core/services/schedules.service';
 
@@ -9,7 +9,7 @@ import { SchedulesService, Schedule, DayOfWeek } from '@app/core/services/schedu
   templateUrl: './my-schedule.html',
   styleUrl: './my-schedule.scss'
 })
-export class MyScheduleComponent implements OnInit {
+export class MyScheduleComponent {
   schedule: Schedule | null = null;
   isLoading = true;
 
@@ -23,21 +23,26 @@ export class MyScheduleComponent implements OnInit {
     'Sunday': 'Sunday'
   };
 
-  constructor(private schedulesService: SchedulesService) {}
+  private schedulesService = inject(SchedulesService);
+  private cdr = inject(ChangeDetectorRef);
 
-  ngOnInit(): void {
-    // Hardcoded ID for demo purposes, matching the mock data in SchedulesService
-    const currentProfessionalId = 'prof-1'; 
-    
-    this.schedulesService.getScheduleByProfessional(currentProfessionalId).subscribe({
-      next: (schedules) => {
-        this.schedule = Array.isArray(schedules) && schedules.length > 0 ? schedules[0] : null;
-        this.isLoading = false;
-      },
-      error: (err) => {
-        console.error('Error loading schedule', err);
-        this.isLoading = false;
-      }
+  constructor() {
+    afterNextRender(() => {
+      // Hardcoded ID for demo purposes, matching the mock data in SchedulesService
+      const currentProfessionalId = 'prof-1'; 
+      
+      this.schedulesService.getScheduleByProfessional(currentProfessionalId).subscribe({
+        next: (schedules) => {
+          this.schedule = Array.isArray(schedules) && schedules.length > 0 ? schedules[0] : null;
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Error loading schedule', err);
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        }
+      });
     });
   }
 

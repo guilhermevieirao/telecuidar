@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, afterNextRender, inject, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DatePipe, NgClass } from '@angular/common';
 import { IconComponent } from '@app/shared/components/atoms/icon/icon';
@@ -16,7 +16,7 @@ import { AuditActionPipe } from '@app/core/pipes/audit-action.pipe';
   templateUrl: './audit-logs.html',
   styleUrl: './audit-logs.scss'
 })
-export class AuditLogsComponent implements OnInit {
+export class AuditLogsComponent {
   logs: AuditLog[] = [];
   isLoading = false;
 
@@ -63,10 +63,13 @@ export class AuditLogsComponent implements OnInit {
     { value: 'auth', label: 'Autenticação' }
   ];
 
-  constructor(private auditLogsService: AuditLogsService) {}
+  private auditLogsService = inject(AuditLogsService);
+  private cdr = inject(ChangeDetectorRef);
 
-  ngOnInit(): void {
-    this.loadLogs();
+  constructor() {
+    afterNextRender(() => {
+      this.loadLogs();
+    });
   }
 
   onSearch(value?: string): void {
@@ -97,6 +100,7 @@ export class AuditLogsComponent implements OnInit {
           this.totalPages = response.totalPages;
           this.totalItems = response.total;
           this.isLoading = false;
+          this.cdr.detectChanges();
         },
         error: () => {
           this.isLoading = false;

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, afterNextRender, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -28,7 +28,7 @@ import { ModalService } from '@core/services/modal.service';
   templateUrl: './appointments.html',
   styleUrls: ['./appointments.scss']
 })
-export class AppointmentsComponent implements OnInit {
+export class AppointmentsComponent {
   appointments: Appointment[] = [];
   allAppointments: Appointment[] = []; // Store all to count
   loading = false;
@@ -52,16 +52,17 @@ export class AppointmentsComponent implements OnInit {
   isDetailsModalOpen = false;
   isPreConsultationModalOpen = false;
 
-  constructor(
-    private appointmentsService: AppointmentsService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private modalService: ModalService
-  ) {}
+  private appointmentsService = inject(AppointmentsService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private modalService = inject(ModalService);
+  private cdr = inject(ChangeDetectorRef);
 
-  ngOnInit(): void {
-    this.determineuserrole();
-    this.loadAppointments();
+  constructor() {
+    afterNextRender(() => {
+      this.determineuserrole();
+      this.loadAppointments();
+    });
   }
 
   determineuserrole() {
@@ -84,6 +85,7 @@ export class AppointmentsComponent implements OnInit {
         this.calculateCounts();
         this.filterAndSortAppointments();
         this.loading = false;
+        this.cdr.detectChanges();
     });
   }
 

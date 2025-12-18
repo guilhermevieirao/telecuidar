@@ -24,6 +24,7 @@ builder.Services.AddScoped<Application.Interfaces.IScheduleService, Infrastructu
 builder.Services.AddScoped<Application.Interfaces.IReportService, Infrastructure.Services.ReportService>();
 builder.Services.AddScoped<Application.Interfaces.IAuditLogService, Infrastructure.Services.AuditLogService>();
 builder.Services.AddScoped<Application.Interfaces.IAttachmentService, Infrastructure.Services.AttachmentService>();
+builder.Services.AddScoped<Application.Interfaces.IInviteService, Infrastructure.Services.InviteService>();
 
 // JWT Authentication
 builder.Services.AddAuthentication(options =>
@@ -75,8 +76,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+else
+{
+    // Only use HTTPS redirection in production
+    app.UseHttpsRedirection();
+}
 
-app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();

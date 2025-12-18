@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit, inject, afterNextRender, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IconComponent } from '@app/shared/components/atoms/icon/icon';
 import { ButtonComponent } from '@app/shared/components/atoms/button/button';
@@ -21,10 +21,15 @@ export class AssignSpecialtyModalComponent implements OnInit {
   selectedUserId = '';
   isLoading = false;
 
-  constructor(private usersService: UsersService) {}
+  private cdr = inject(ChangeDetectorRef);
+
+  constructor(private usersService: UsersService) {
+    afterNextRender(() => {
+      this.loadProfessionals();
+    });
+  }
 
   ngOnInit(): void {
-    this.loadProfessionals();
   }
 
   loadProfessionals(): void {
@@ -37,9 +42,11 @@ export class AssignSpecialtyModalComponent implements OnInit {
       next: (response) => {
         this.professionals = response.data;
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.isLoading = false;
+        this.cdr.detectChanges();
       }
     });
   }

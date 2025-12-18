@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject, afterNextRender, ChangeDetectorRef } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { IconComponent } from '@app/shared/components/atoms/icon/icon';
 import { FormsModule } from '@angular/forms';
@@ -48,15 +48,19 @@ export class SpecialtiesComponent implements OnInit {
 
   isLoading = false;
 
+  private cdr = inject(ChangeDetectorRef);
+
   constructor(
     private specialtiesService: SpecialtiesService,
     private usersService: UsersService,
     private modalService: ModalService
-  ) {}
-
-  ngOnInit(): void {
-    this.loadSpecialties();
+  ) {
+    afterNextRender(() => {
+      this.loadSpecialties();
+    });
   }
+
+  ngOnInit(): void {}
 
   onSearch(value: string): void {
     this.currentPage = 1;
@@ -87,9 +91,11 @@ export class SpecialtiesComponent implements OnInit {
         this.totalItems = response.total;
         this.totalPages = response.totalPages;
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
         error: () => {
           this.isLoading = false;
+          this.cdr.detectChanges();
         }
       });
   }

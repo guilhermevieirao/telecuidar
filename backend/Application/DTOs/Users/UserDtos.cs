@@ -36,6 +36,7 @@ public class UpdateUserDto
     public string? Phone { get; set; }
     public string? Avatar { get; set; }
     public string? Status { get; set; }
+    public string? Role { get; set; }
     public Guid? SpecialtyId { get; set; }
 }
 

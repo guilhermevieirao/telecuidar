@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, afterNextRender, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -38,7 +38,7 @@ interface TimeSlot {
   templateUrl: './scheduling.html',
   styleUrls: ['./scheduling.scss']
 })
-export class SchedulingComponent implements OnInit {
+export class SchedulingComponent {
   currentStep: Step = 'specialty';
   
   steps: { id: Step, label: string }[] = [
@@ -69,15 +69,16 @@ export class SchedulingComponent implements OnInit {
   observation: string = '';
   loading: boolean = false;
 
-  constructor(
-    private specialtiesService: SpecialtiesService,
-    private schedulesService: SchedulesService,
-    private usersService: UsersService,
-    private router: Router
-  ) {}
+  private specialtiesService = inject(SpecialtiesService);
+  private schedulesService = inject(SchedulesService);
+  private usersService = inject(UsersService);
+  private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
 
-  ngOnInit(): void {
-    this.loadSpecialties();
+  constructor() {
+    afterNextRender(() => {
+      this.loadSpecialties();
+    });
   }
 
   getStepIndex(stepId: Step): number {
@@ -89,6 +90,7 @@ export class SchedulingComponent implements OnInit {
     this.specialtiesService.getSpecialties({ status: 'Active' }).subscribe(response => {
       this.specialties = response.data;
       this.filteredSpecialties = response.data;
+      this.cdr.detectChanges();
     });
   }
 

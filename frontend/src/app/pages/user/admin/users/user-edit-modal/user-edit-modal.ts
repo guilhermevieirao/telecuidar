@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges, OnInit, inject, afterNextRender, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IconComponent } from '@app/shared/components/atoms/icon/icon';
 import { ButtonComponent } from '@app/shared/components/atoms/button/button';
@@ -23,17 +23,21 @@ export class UserEditModalComponent implements OnChanges, OnInit {
 
   editedUser: Partial<User> = {};
   specialties: Specialty[] = [];
+  private cdr = inject(ChangeDetectorRef);
 
-  constructor(private specialtiesService: SpecialtiesService) {}
-
-  ngOnInit(): void {
-    this.loadSpecialties();
+  constructor(private specialtiesService: SpecialtiesService) {
+    afterNextRender(() => {
+      this.loadSpecialties();
+    });
   }
+
+  ngOnInit(): void {}
 
   loadSpecialties(): void {
     this.specialtiesService.getSpecialties({ status: 'Active' }, { field: 'name', direction: 'asc' }, 1, 100).subscribe({
       next: (response) => {
         this.specialties = response.data;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -41,6 +45,8 @@ export class UserEditModalComponent implements OnChanges, OnInit {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['user'] && this.user) {
       this.editedUser = { ...this.user };
+      // Detectar mudanças após atualizar dados para evitar NG0100
+      setTimeout(() => this.cdr.detectChanges(), 0);
     }
   }
 

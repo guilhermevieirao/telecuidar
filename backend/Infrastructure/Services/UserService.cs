@@ -111,6 +111,37 @@ public class UserService : IUserService
 
     public async Task<UserDto> CreateUserAsync(CreateUserDto dto)
     {
+        // Validate required fields
+        if (string.IsNullOrWhiteSpace(dto.Name))
+            throw new InvalidOperationException("Name is required");
+
+        if (string.IsNullOrWhiteSpace(dto.LastName))
+            throw new InvalidOperationException("Last name is required");
+
+        if (string.IsNullOrWhiteSpace(dto.Email))
+            throw new InvalidOperationException("Email is required");
+
+        if (!Application.Validators.CustomValidators.IsValidEmail(dto.Email))
+            throw new InvalidOperationException("Invalid email format");
+
+        if (string.IsNullOrWhiteSpace(dto.Cpf))
+            throw new InvalidOperationException("CPF is required");
+
+        if (!Application.Validators.CustomValidators.IsValidCpf(dto.Cpf))
+            throw new InvalidOperationException("Invalid CPF");
+
+        if (string.IsNullOrWhiteSpace(dto.Password))
+            throw new InvalidOperationException("Password is required");
+
+        if (!Application.Validators.CustomValidators.IsValidPassword(dto.Password))
+        {
+            var missing = Application.Validators.CustomValidators.GetPasswordMissingRequirements(dto.Password);
+            throw new InvalidOperationException($"Password must have: {string.Join(", ", missing)}");
+        }
+
+        if (!string.IsNullOrWhiteSpace(dto.Phone) && !Application.Validators.CustomValidators.IsValidPhone(dto.Phone))
+            throw new InvalidOperationException("Invalid phone number");
+
         // Validate email doesn't exist
         if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
         {
@@ -182,6 +213,9 @@ public class UserService : IUserService
 
         if (!string.IsNullOrEmpty(dto.Status) && Enum.TryParse<UserStatus>(dto.Status, true, out var status))
             user.Status = status;
+
+        if (!string.IsNullOrEmpty(dto.Role) && Enum.TryParse<UserRole>(dto.Role, true, out var role))
+            user.Role = role;
 
         if (dto.SpecialtyId.HasValue)
             user.SpecialtyId = dto.SpecialtyId;

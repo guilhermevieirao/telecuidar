@@ -44,3 +44,12 @@ public class ProfessionalAvailabilityDto
     public string ProfessionalName { get; set; } = string.Empty;
     public List<AvailableSlotDto> Slots { get; set; } = new();
 }
+
+public class PaginatedSchedulesDto
+{
+    public List<ScheduleDto> Data { get; set; } = new();
+    public int Total { get; set; }
+    public int Page { get; set; }
+    public int PageSize { get; set; }
+    public int TotalPages { get; set; }
+}

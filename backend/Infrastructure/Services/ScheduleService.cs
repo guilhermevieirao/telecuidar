@@ -15,6 +15,60 @@ public class ScheduleService : IScheduleService
         _context = context;
     }
 
+    public async Task<PaginatedSchedulesDto> GetSchedulesAsync(int page, int pageSize, string? search, string? status)
+    {
+        var query = _context.Schedules
+            .Include(s => s.Professional)
+            .AsQueryable();
+
+        // Filter by status
+        if (!string.IsNullOrEmpty(status) && status.ToLower() != "all")
+        {
+            var isActive = status.ToLower() == "active";
+            query = query.Where(s => s.IsActive == isActive);
+        }
+
+        // Filter by search (professional name)
+        if (!string.IsNullOrEmpty(search))
+        {
+            var searchLower = search.ToLower();
+            query = query.Where(s => 
+                (s.Professional.Name + " " + s.Professional.LastName).ToLower().Contains(searchLower));
+        }
+
+        var total = await query.CountAsync();
+        var totalPages = (int)Math.Ceiling(total / (double)pageSize);
+
+        var schedules = await query
+            .OrderBy(s => s.Professional.Name)
+            .ThenBy(s => s.DayOfWeek)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(s => new ScheduleDto
+            {
+                Id = s.Id,
+                ProfessionalId = s.ProfessionalId,
+                ProfessionalName = s.Professional.Name + " " + s.Professional.LastName,
+                DayOfWeek = s.DayOfWeek,
+                DayOfWeekName = GetDayOfWeekName(s.DayOfWeek),
+                StartTime = s.StartTime.ToString(@"hh\:mm"),
+                EndTime = s.EndTime.ToString(@"hh\:mm"),
+                SlotDurationMinutes = s.SlotDurationMinutes,
+                IsActive = s.IsActive,
+                CreatedAt = s.CreatedAt
+            })
+            .ToListAsync();
+
+        return new PaginatedSchedulesDto
+        {
+            Data = schedules,
+            Total = total,
+            Page = page,
+            PageSize = pageSize,
+            TotalPages = totalPages
+        };
+    }
+
     public async Task<List<ScheduleDto>> GetSchedulesByProfessionalAsync(Guid professionalId)
     {
         var schedules = await _context.Schedules

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, afterNextRender, inject, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { IconComponent } from '@app/shared/components/atoms/icon/icon';
@@ -30,7 +30,7 @@ import { InviteCreateModalComponent } from './invite-create-modal/invite-create-
   templateUrl: './invites.html',
   styleUrl: './invites.scss'
 })
-export class InvitesComponent implements OnInit {
+export class InvitesComponent {
   invites: Invite[] = [];
   isLoading = false;
   isCreateModalOpen = false;
@@ -65,13 +65,14 @@ export class InvitesComponent implements OnInit {
   totalInvites = 0;
   totalPages = 0;
 
-  constructor(
-    private invitesService: InvitesService,
-    private modalService: ModalService
-  ) {}
+  private invitesService = inject(InvitesService);
+  private modalService = inject(ModalService);
+  private cdr = inject(ChangeDetectorRef);
 
-  ngOnInit(): void {
-    this.loadInvites();
+  constructor() {
+    afterNextRender(() => {
+      this.loadInvites();
+    });
   }
 
   loadInvites(): void {
@@ -95,9 +96,18 @@ export class InvitesComponent implements OnInit {
           this.totalInvites = response.total;
           this.totalPages = response.totalPages;
           this.isLoading = false;
+          this.cdr.detectChanges();
         },
-        error: () => {
+        error: (error) => {
+          console.error('Erro ao carregar convites:', error);
           this.isLoading = false;
+          this.cdr.detectChanges();
+          // Endpoint não implementado no backend ainda
+          if (error.status === 404) {
+            this.invites = [];
+            this.totalInvites = 0;
+            this.totalPages = 0;
+          }
         }
       });
   }

@@ -19,24 +19,39 @@
       <div class="modal__body">
         <div class="modal__avatar-section">
           <app-avatar-upload
-            [name]="editedUser.name || ''"
+            [name]="(editedUser.name || '') + ' ' + (editedUser.lastName || '')"
             [currentAvatar]="editedUser.avatar"
             (avatarChange)="onAvatarChange($event)"
           />
         </div>
 
         <form class="user-form">
-          <div class="user-form__field">
-            <label for="profile-name" class="user-form__label">Nome Completo</label>
-            <input
-              id="profile-name"
-              type="text"
-              class="user-form__input"
-              [(ngModel)]="editedUser.name"
-              name="name"
-              placeholder="Digite o nome completo"
-              required
-            />
+          <div class="user-form__row">
+            <div class="user-form__field">
+              <label for="profile-name" class="user-form__label">Nome</label>
+              <input
+                id="profile-name"
+                type="text"
+                class="user-form__input"
+                [(ngModel)]="editedUser.name"
+                name="name"
+                placeholder="Digite o nome"
+                required
+              />
+            </div>
+
+            <div class="user-form__field">
+              <label for="profile-lastname" class="user-form__label">Sobrenome</label>
+              <input
+                id="profile-lastname"
+                type="text"
+                class="user-form__input"
+                [(ngModel)]="editedUser.lastName"
+                name="lastName"
+                placeholder="Digite o sobrenome"
+                required
+              />
+            </div>
           </div>
 
           <div class="user-form__field">

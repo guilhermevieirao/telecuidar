@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject, afterNextRender, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { IconComponent } from '@app/shared/components/atoms/icon/icon';
 import { FormsModule } from '@angular/forms';
@@ -44,15 +44,18 @@ export class SchedulesComponent implements OnInit {
   selectedSchedule: Schedule | null = null;
 
   isLoading = false;
+  private cdr = inject(ChangeDetectorRef);
 
   constructor(
     private schedulesService: SchedulesService,
     private modalService: ModalService
-  ) {}
-
-  ngOnInit(): void {
-    this.loadSchedules();
+  ) {
+    afterNextRender(() => {
+      this.loadSchedules();
+    });
   }
+
+  ngOnInit(): void {}
 
   loadSchedules(): void {
     this.isLoading = true;
@@ -67,10 +70,12 @@ export class SchedulesComponent implements OnInit {
         this.totalItems = response.total;
         this.totalPages = response.totalPages;
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('Erro ao carregar agendas:', error);
         this.isLoading = false;
+        this.cdr.detectChanges();
         this.modalService.alert({
           title: 'Erro',
           message: 'Não foi possível carregar as agendas. Tente novamente.',

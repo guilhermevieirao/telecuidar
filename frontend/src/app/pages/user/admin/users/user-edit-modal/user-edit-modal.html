@@ -19,7 +19,7 @@
       <div class="modal__body">
         <div class="modal__avatar-section">
           <app-avatar 
-            [name]="editedUser.name || ''" 
+            [name]="(editedUser.name || '') + ' ' + (editedUser.lastName || '')" 
             [imageUrl]="editedUser.avatar"
             size="xl"
           />
@@ -28,14 +28,27 @@
         <form class="user-form">
           <div class="user-form__row">
             <div class="user-form__field">
-              <label for="user-name" class="user-form__label">Nome Completo</label>
+              <label for="user-name" class="user-form__label">Nome</label>
               <input
                 id="user-name"
                 type="text"
                 class="user-form__input"
                 [(ngModel)]="editedUser.name"
                 name="name"
-                placeholder="Digite o nome completo"
+                placeholder="Digite o nome"
+                required
+              />
+            </div>
+
+            <div class="user-form__field">
+              <label for="user-lastname" class="user-form__label">Sobrenome</label>
+              <input
+                id="user-lastname"
+                type="text"
+                class="user-form__input"
+                [(ngModel)]="editedUser.lastName"
+                name="lastName"
+                placeholder="Digite o sobrenome"
                 required
               />
             </div>

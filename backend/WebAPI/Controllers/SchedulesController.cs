@@ -17,6 +17,24 @@ public class SchedulesController : ControllerBase
         _scheduleService = scheduleService;
     }
 
+    [HttpGet]
+    public async Task<ActionResult<PaginatedSchedulesDto>> GetSchedules(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10,
+        [FromQuery] string? search = null,
+        [FromQuery] string? status = null)
+    {
+        try
+        {
+            var result = await _scheduleService.GetSchedulesAsync(page, pageSize, search, status);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "An error occurred", error = ex.Message });
+        }
+    }
+
     [HttpGet("professional/{professionalId}")]
     public async Task<ActionResult<List<ScheduleDto>>> GetSchedulesByProfessional(Guid professionalId)
     {

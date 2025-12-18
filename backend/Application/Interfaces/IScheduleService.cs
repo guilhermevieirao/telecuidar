@@ -4,6 +4,7 @@ namespace Application.Interfaces;
 
 public interface IScheduleService
 {
+    Task<PaginatedSchedulesDto> GetSchedulesAsync(int page, int pageSize, string? search, string? status);
     Task<List<ScheduleDto>> GetSchedulesByProfessionalAsync(Guid professionalId);
     Task<ScheduleDto?> GetScheduleByIdAsync(Guid id);
     Task<ScheduleDto> CreateScheduleAsync(CreateScheduleDto dto);

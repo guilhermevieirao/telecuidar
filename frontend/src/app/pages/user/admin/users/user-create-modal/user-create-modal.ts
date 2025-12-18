@@ -6,12 +6,23 @@ import { CpfMaskDirective } from '@app/core/directives/cpf-mask.directive';
 import { PhoneMaskDirective } from '@app/core/directives/phone-mask.directive';
 import { EmailValidatorDirective } from '@app/core/directives/email-validator.directive';
 import { UserRole } from '@app/core/services/users.service';
+import {
+  VALIDATION_MESSAGES,
+  FIELD_CONSTRAINTS,
+  validatePassword,
+  getPasswordMissingRequirements,
+  validateCPF,
+  validateEmail,
+  validatePhone
+} from '@app/core/constants/validation.constants';
 
 export interface CreateUserData {
   name?: string;
+  lastName?: string;
   email?: string;
   cpf?: string;
   phone?: string;
+  password?: string;
   role: UserRole;
 }
 
@@ -35,6 +46,7 @@ export class UserCreateModalComponent {
   
   userData: CreateUserData = {
     name: '',
+    lastName: '',
     email: '',
     cpf: '',
     phone: '',
@@ -43,6 +55,10 @@ export class UserCreateModalComponent {
 
   password = '';
   confirmPassword = '';
+
+  // Validation constants
+  validationMessages = VALIDATION_MESSAGES;
+  fieldConstraints = FIELD_CONSTRAINTS;
 
   onBackdropClick(): void {
     this.onCancel();
@@ -69,9 +85,12 @@ export class UserCreateModalComponent {
   }
 
   onCreate(): void {
-    if (this.selectedRole) {
+    if (this.selectedRole && this.isFormValid()) {
       this.create.emit({
-        data: { ...this.userData },
+        data: { 
+          ...this.userData,
+          password: this.password
+        },
         action: 'create'
       });
       this.resetModal();
@@ -105,17 +124,48 @@ export class UserCreateModalComponent {
   isFormValid(): boolean {
     return !!(
       this.userData.name?.trim() &&
-      this.userData.email?.trim() &&
-      this.userData.cpf?.trim() &&
-      this.userData.phone?.trim() &&
-      this.password.trim() &&
-      this.confirmPassword.trim() &&
-      this.password === this.confirmPassword
+      this.userData.lastName?.trim() &&
+      this.isEmailValid() &&
+      this.isCpfValid() &&
+      this.isPhoneValid() &&
+      this.isPasswordValid() &&
+      this.passwordsMatch()
     );
   }
 
   passwordsMatch(): boolean {
+    if (!this.password || !this.confirmPassword) return false;
     return this.password === this.confirmPassword;
+  }
+
+  isPasswordValid(): boolean {
+    return validatePassword(this.password);
+  }
+
+  getPasswordStrength(): 'weak' | 'medium' | 'strong' {
+    if (!this.password) return 'weak';
+    const missing = getPasswordMissingRequirements(this.password);
+    if (missing.length === 0) return 'strong';
+    if (missing.length <= 2) return 'medium';
+    return 'weak';
+  }
+
+  getPasswordMissingRequirements(): string {
+    const missing = getPasswordMissingRequirements(this.password);
+    if (missing.length === 0) return '';
+    return 'Faltam: ' + missing.join(', ');
+  }
+
+  isEmailValid(): boolean {
+    return !!this.userData.email?.trim() && validateEmail(this.userData.email);
+  }
+
+  isCpfValid(): boolean {
+    return !!this.userData.cpf?.trim() && validateCPF(this.userData.cpf);
+  }
+
+  isPhoneValid(): boolean {
+    return !!this.userData.phone?.trim() && validatePhone(this.userData.phone);
   }
 
   private resetModal(): void {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, afterNextRender, inject, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DecimalPipe, CurrencyPipe } from '@angular/common';
 import { IconComponent } from '@app/shared/components/atoms/icon/icon';
@@ -11,7 +11,7 @@ import { ReportsService, ReportFilter, ReportData, ExportFormat } from '@app/cor
   templateUrl: './reports.html',
   styleUrl: './reports.scss'
 })
-export class ReportsComponent implements OnInit {
+export class ReportsComponent {
   reportData: ReportData | null = null;
   isLoading = false;
   isExporting = false;
@@ -23,17 +23,20 @@ export class ReportsComponent implements OnInit {
   // Dropdowns
   isExportDropdownOpen = false;
 
-  constructor(private reportsService: ReportsService) {
+  private reportsService = inject(ReportsService);
+  private cdr = inject(ChangeDetectorRef);
+
+  constructor() {
     // Definir data padrão: último mês
     const today = new Date();
     const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
     
     this.endDate = this.formatDateForInput(today);
     this.startDate = this.formatDateForInput(lastMonth);
-  }
 
-  ngOnInit(): void {
-    this.loadReport();
+    afterNextRender(() => {
+      this.loadReport();
+    });
   }
 
   loadReport(): void {
@@ -52,6 +55,7 @@ export class ReportsComponent implements OnInit {
       next: (data) => {
         this.reportData = data;
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.isLoading = false;

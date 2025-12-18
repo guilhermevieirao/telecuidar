@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ModalService, ModalConfig } from '@app/core/services/modal.service';
 import { IconComponent, IconName } from '@app/shared/components/atoms/icon/icon';
@@ -15,6 +15,7 @@ import { ButtonComponent } from '@app/shared/components/atoms/button/button';
 })
 export class ModalComponent implements OnInit, OnDestroy {
   private modalService = inject(ModalService);
+  private cdr = inject(ChangeDetectorRef);
   
   isOpen = false;
   config: ModalConfig | null = null;
@@ -26,6 +27,8 @@ export class ModalComponent implements OnInit, OnDestroy {
       this.config = config;
       this.isOpen = true;
       this.promptValue = '';
+      // Detectar mudanças após atualizar estado do modal
+      setTimeout(() => this.cdr.detectChanges(), 0);
     });
   }
 

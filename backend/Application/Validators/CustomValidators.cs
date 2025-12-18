@@ -89,4 +89,61 @@ public static class CustomValidators
 
         return phone;
     }
+
+    /// <summary>
+    /// Validates if password meets security requirements:
+    /// - At least 8 characters
+    /// - At least one uppercase letter
+    /// - At least one lowercase letter
+    /// - At least one number
+    /// - At least one special character (@$!%*?&)
+    /// </summary>
+    public static bool IsValidPassword(string password)
+    {
+        if (string.IsNullOrWhiteSpace(password) || password.Length < 8)
+            return false;
+
+        // At least one uppercase letter
+        if (!Regex.IsMatch(password, @"[A-Z]"))
+            return false;
+
+        // At least one lowercase letter
+        if (!Regex.IsMatch(password, @"[a-z]"))
+            return false;
+
+        // At least one digit
+        if (!Regex.IsMatch(password, @"\d"))
+            return false;
+
+        // At least one special character
+        if (!Regex.IsMatch(password, @"[@$!%*?&]"))
+            return false;
+
+        return true;
+    }
+
+    /// <summary>
+    /// Gets missing password requirements
+    /// </summary>
+    public static List<string> GetPasswordMissingRequirements(string password)
+    {
+        var missing = new List<string>();
+
+        if (string.IsNullOrWhiteSpace(password) || password.Length < 8)
+            missing.Add("minimum 8 characters");
+
+        if (!Regex.IsMatch(password ?? "", @"[A-Z]"))
+            missing.Add("one uppercase letter");
+
+        if (!Regex.IsMatch(password ?? "", @"[a-z]"))
+            missing.Add("one lowercase letter");
+
+        if (!Regex.IsMatch(password ?? "", @"\d"))
+            missing.Add("one number");
+
+        if (!Regex.IsMatch(password ?? "", @"[@$!%*?&]"))
+            missing.Add("one special character (@$!%*?&)");
+
+        return missing;
+    }
 }

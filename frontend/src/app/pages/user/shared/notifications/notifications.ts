@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, afterNextRender, inject, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IconComponent } from '@app/shared/components/atoms/icon/icon';
 import { 
@@ -13,17 +13,20 @@ import {
   templateUrl: './notifications.html',
   styleUrl: './notifications.scss'
 })
-export class NotificationsComponent implements OnInit {
+export class NotificationsComponent {
   notifications: Notification[] = [];
   statusFilter: 'all' | boolean = 'all';
   typeFilter: 'all' | NotificationType = 'all';
   loading = false;
   unreadCount = 0;
 
-  constructor(private notificationsService: NotificationsService) {}
+  private notificationsService = inject(NotificationsService);
+  private cdr = inject(ChangeDetectorRef);
 
-  ngOnInit(): void {
-    this.loadNotifications();
+  constructor() {
+    afterNextRender(() => {
+      this.loadNotifications();
+    });
   }
 
   get hasUnreadNotifications(): boolean {
@@ -119,6 +122,7 @@ export class NotificationsComponent implements OnInit {
         this.notifications = response.data;
         this.updateUnreadCount();
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: (error: Error) => {
         console.error('Erro ao carregar notificações:', error);

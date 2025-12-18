@@ -19,7 +19,7 @@
       <div class="profile__card profile__card--main">
         <div class="profile__avatar-section">
           <app-avatar 
-            [name]="user.name" 
+            [name]="user.name + ' ' + user.lastName" 
             [imageUrl]="user.avatar"
             size="2xl"
           />

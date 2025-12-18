@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, afterNextRender, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IconComponent } from '@app/shared/components/atoms/icon/icon';
 import { AvatarComponent } from '@app/shared/components/atoms/avatar/avatar';
@@ -83,10 +83,15 @@ export class UsersComponent implements OnInit {
   totalPages = 0;
 
   private searchTimeout?: number;
+  private cdr = inject(ChangeDetectorRef);
 
-  ngOnInit(): void {
-    this.loadUsers();
+  constructor() {
+    afterNextRender(() => {
+      this.loadUsers();
+    });
   }
+
+  ngOnInit(): void {}
 
   loadUsers(): void {
     this.loading = true;
@@ -103,10 +108,12 @@ export class UsersComponent implements OnInit {
         this.totalUsers = response.total;
         this.totalPages = response.totalPages;
         this.loading = false;
+        this.cdr.markForCheck();
       },
       error: (error: Error) => {
         console.error('Erro ao carregar usuários:', error);
         this.loading = false;
+        this.cdr.markForCheck();
       }
     });
   }
@@ -188,16 +195,57 @@ export class UsersComponent implements OnInit {
   }
 
   private handleCreateUser(data: CreateUserData): void {
-    // TODO: Implementar criação de usuário no backend
-    console.log('Criar usuário:', data);
-    this.isCreateModalOpen = false;
-    this.modalService.alert({
-      title: 'Sucesso',
-      message: 'Usuário criado com sucesso.',
-      confirmText: 'OK',
-      variant: 'success'
-    }).subscribe(() => {
-      this.loadUsers();
+    if (!data.name || !data.lastName || !data.email || !data.cpf || !data.password) {
+      this.modalService.alert({
+        title: 'Erro',
+        message: 'Preencha todos os campos obrigatórios.',
+        confirmText: 'OK',
+        variant: 'danger'
+      }).subscribe();
+      return;
+    }
+
+    const createDto = {
+      name: data.name,
+      lastName: data.lastName,
+      email: data.email,
+      cpf: data.cpf,
+      phone: data.phone || '',
+      password: data.password,
+      role: data.role,
+      status: 'Active' as UserStatus
+    };
+
+    this.loading = true;
+    this.usersService.createUser(createDto).subscribe({
+      next: (user) => {
+        this.loading = false;
+        this.isCreateModalOpen = false;
+        this.cdr.markForCheck();
+        
+        // Aguarda o modal de criação fechar antes de recarregar e mostrar sucesso
+        setTimeout(() => {
+          this.loadUsers();
+          setTimeout(() => {
+            this.modalService.alert({
+              title: 'Sucesso',
+              message: `Usuário ${user.name} ${user.lastName} criado com sucesso!`,
+              confirmText: 'OK',
+              variant: 'success'
+            }).subscribe();
+          }, 100);
+        }, 300);
+      },
+      error: (error) => {
+        this.loading = false;
+        const errorMessage = error.error?.message || 'Erro ao criar usuário. Verifique os dados e tente novamente.';
+        this.modalService.alert({
+          title: 'Erro',
+          message: errorMessage,
+          confirmText: 'OK',
+          variant: 'danger'
+        }).subscribe();
+      }
     });
   }
 
@@ -244,17 +292,35 @@ export class UsersComponent implements OnInit {
   }
 
   onEditModalSave(updatedUser: User): void {
-    this.usersService.updateUser(updatedUser.id, updatedUser).subscribe({
+    // Criar DTO com apenas os campos editáveis
+    const updateDto = {
+      name: updatedUser.name,
+      lastName: updatedUser.lastName,
+      phone: updatedUser.phone,
+      avatar: updatedUser.avatar,
+      status: updatedUser.status,
+      role: updatedUser.role,
+      specialtyId: updatedUser.specialtyId
+    };
+
+    this.usersService.updateUser(updatedUser.id, updateDto).subscribe({
       next: () => {
-        this.loadUsers();
         this.isEditModalOpen = false;
         this.userToEdit = null;
-        this.modalService.alert({
-          title: 'Sucesso',
-          message: 'Usuário atualizado com sucesso.',
-          confirmText: 'OK',
-          variant: 'success'
-        }).subscribe();
+        this.cdr.markForCheck();
+        
+        // Recarrega dados e mostra mensagem após modal fechar
+        setTimeout(() => {
+          this.loadUsers();
+          setTimeout(() => {
+            this.modalService.alert({
+              title: 'Sucesso',
+              message: 'Usuário atualizado com sucesso.',
+              confirmText: 'OK',
+              variant: 'success'
+            }).subscribe();
+          }, 100);
+        }, 300);
       },
       error: (error: Error) => {
         console.error('Erro ao atualizar usuário:', error);
@@ -280,13 +346,18 @@ export class UsersComponent implements OnInit {
         if (result.confirmed) {
           this.usersService.deleteUser(id).subscribe({
             next: () => {
-              this.loadUsers();
-              this.modalService.alert({
-                title: 'Sucesso',
-                message: 'Usuário excluído com sucesso.',
-                confirmText: 'OK',
-                variant: 'success'
-              }).subscribe();
+              // Aguarda o modal de confirmação fechar antes de recarregar
+              setTimeout(() => {
+                this.loadUsers();
+                setTimeout(() => {
+                  this.modalService.alert({
+                    title: 'Sucesso',
+                    message: 'Usuário excluído com sucesso.',
+                    confirmText: 'OK',
+                    variant: 'success'
+                  }).subscribe();
+                }, 100);
+              }, 300);
             },
             error: (error: Error) => {
               console.error('Erro ao excluir usuário:', error);
