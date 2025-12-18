@@ -71,18 +71,20 @@ export class ProfileComponent implements OnInit {
         // Atualiza o currentUser no AuthService e localStorage
         this.authService.updateCurrentUser(updatedUserResponse);
         
-        // Primeiro fecha o modal
-        this.onEditModalClose();
         this.isUpdatingProfile = false;
+        this.onEditModalClose();
         
-        // Aguarda um ciclo antes de mostrar alerta
+        // Força detecção de mudanças após fechar o modal
+        this.cdr.detectChanges();
+        
+        // Aguarda um ciclo antes de mostrar alerta de sucesso
         setTimeout(() => {
           this.modalService.alert({
             title: 'Sucesso',
             message: 'Perfil atualizado com sucesso!',
             variant: 'success'
           });
-        });
+        }, 0);
       },
       error: (error) => {
         console.error('Erro ao atualizar perfil:', error);
