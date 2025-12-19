@@ -9,78 +9,93 @@
 
   <main class="content">
     <div class="upload-card">
+      <!-- Success Message -->
       <div class="status-message success" *ngIf="uploadSuccess">
         <app-icon name="check-circle" [size]="48" />
-        <h3>Arquivo enviado com sucesso!</h3>
-        <p>Você pode enviar outro arquivo ou fechar esta janela.</p>
-        <app-button (click)="cancelUpload()" variant="outline">Enviar outro arquivo</app-button>
+        <h3>Arquivos enviados com sucesso!</h3>
+        <p *ngIf="uploadCount === 1">1 arquivo enviado. Você pode enviar mais ou fechar esta janela.</p>
+        <p *ngIf="uploadCount > 1">{{ uploadCount }} arquivos enviados. Você pode enviar mais ou fechar esta janela.</p>
+        <app-button (click)="cancelUpload()" variant="primary">Enviar mais arquivos</app-button>
       </div>
 
       <div class="upload-form" *ngIf="!uploadSuccess">
-        <!-- Action Buttons (When no file selected) -->
-        <div class="action-buttons" *ngIf="!selectedFile">
+        <!-- Action Buttons (Always visible to add more files) -->
+        <div class="action-buttons">
           <div class="instruction-header">
-            <h2>Enviar Anexo</h2>
-            <p>Tire uma foto ou escolha um arquivo</p>
+            <h2>Enviar Anexos</h2>
+            <p *ngIf="selectedFiles.length === 0">Selecione um ou mais arquivos</p>
+            <p *ngIf="selectedFiles.length > 0">{{ selectedFiles.length }} arquivo(s) selecionado(s)</p>
           </div>
 
-          <button class="action-btn" (click)="triggerCamera()">
-            <div class="icon-circle camera">
-              <app-icon name="camera" [size]="32" />
-            </div>
-            <span>Tirar Foto/Vídeo</span>
-          </button>
+          <div class="action-buttons-row">
+            <button class="action-btn compact" (click)="triggerCamera()">
+              <div class="icon-circle camera">
+                <app-icon name="camera" [size]="24" />
+              </div>
+              <span>Câmera</span>
+            </button>
 
-          <button class="action-btn" (click)="triggerGallery()">
-            <div class="icon-circle gallery">
-              <app-icon name="image" [size]="32" />
-            </div>
-            <span>Galeria</span>
-          </button>
+            <button class="action-btn compact" (click)="triggerGallery()">
+              <div class="icon-circle gallery">
+                <app-icon name="image" [size]="24" />
+              </div>
+              <span>Galeria</span>
+            </button>
 
-          <button class="action-btn" (click)="triggerFiles()">
-            <div class="icon-circle files">
-              <app-icon name="file" [size]="32" />
-            </div>
-            <span>Arquivos</span>
-          </button>
-        </div>
-
-        <!-- Selected File Preview -->
-        <div class="selected-file" *ngIf="selectedFile">
-          <div class="file-info">
-            <app-icon name="file" [size]="32" />
-            <div class="details">
-              <span class="name">{{ selectedFile.name }}</span>
-              <span class="size">{{ formatBytes(selectedFile.size) }}</span>
-            </div>
-            <button class="remove-btn" (click)="cancelUpload()">
-              <app-icon name="close" [size]="20" />
+            <button class="action-btn compact" (click)="triggerFiles()">
+              <div class="icon-circle files">
+                <app-icon name="file" [size]="24" />
+              </div>
+              <span>Arquivos</span>
             </button>
           </div>
+        </div>
 
-          <div class="input-group">
-            <label>Título do Arquivo</label>
-            <input type="text" [(ngModel)]="attachmentTitle" placeholder="Ex: Exame de Sangue">
+        <!-- Selected Files List -->
+        <div class="selected-files-list" *ngIf="selectedFiles.length > 0">
+          <div class="file-item" *ngFor="let item of selectedFiles; let i = index">
+            <div class="file-preview">
+              <img *ngIf="item.previewUrl" [src]="item.previewUrl" alt="Preview">
+              <app-icon *ngIf="!item.previewUrl" name="file" [size]="24" />
+            </div>
+            <div class="file-details">
+              <input 
+                type="text" 
+                [(ngModel)]="item.title" 
+                class="title-input"
+                placeholder="Título do arquivo">
+              <span class="file-size">{{ formatBytes(item.file.size) }}</span>
+            </div>
+            <button class="remove-btn" (click)="removeFile(i)">
+              <app-icon name="close" [size]="18" />
+            </button>
           </div>
+        </div>
 
-          <app-button [fullWidth]="true" size="lg" (click)="sendAttachment()" [disabled]="isUploading">
-            {{ isUploading ? 'Enviando...' : 'Enviar Arquivo' }}
-            <app-icon name="arrow-right" [size]="20" />
+        <!-- Send Button -->
+        <div class="send-section" *ngIf="selectedFiles.length > 0">
+          <app-button [fullWidth]="true" size="lg" (click)="sendAllAttachments()" [disabled]="isUploading">
+            <ng-container *ngIf="!isUploading">
+              Enviar {{ selectedFiles.length }} arquivo(s)
+              <app-icon name="arrow-right" [size]="20" />
+            </ng-container>
+            <ng-container *ngIf="isUploading">
+              Enviando {{ currentUploadIndex }} de {{ selectedFiles.length }}...
+            </ng-container>
           </app-button>
+          <button class="cancel-link" (click)="cancelUpload()" *ngIf="!isUploading">Cancelar</button>
         </div>
       </div>
     </div>
 
-    <!-- Hidden Inputs -->
+    <!-- Hidden Inputs (with multiple support) -->
     <input 
       type="file" 
       #cameraInput
       accept="image/*,video/*"
       capture="environment"
       (change)="onFileSelected($event)" 
-      hidden 
-      multiple="false">
+      hidden>
 
     <input 
       type="file" 
@@ -88,13 +103,13 @@
       accept="image/*,video/*"
       (change)="onFileSelected($event)" 
       hidden 
-      multiple="false">
+      multiple>
 
     <input 
       type="file" 
       #fileInput 
       (change)="onFileSelected($event)" 
       hidden 
-      multiple="false">
+      multiple>
   </main>
 </div>

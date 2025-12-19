@@ -103,6 +103,66 @@
       }
     }
   }
+
+  .attachments-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: $spacing-md;
+
+    .attachment-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: $spacing-sm;
+      padding: $spacing-md;
+      border-radius: $radius-lg;
+      background: var(--background);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:hover {
+        border-color: var(--primary);
+        box-shadow: $shadow-md;
+        transform: translateY(-2px);
+      }
+
+      .attachment-preview {
+        width: 80px;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: $radius-md;
+        overflow: hidden;
+        background: var(--surface);
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .file-icon {
+          color: var(--text-secondary);
+        }
+      }
+
+      .attachment-title {
+        font-size: $font-size-sm;
+        color: var(--text-primary);
+        text-align: center;
+        word-break: break-word;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+      }
+    }
+  }
 }
 
 .modal-footer {

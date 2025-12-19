@@ -265,10 +265,19 @@
               <app-icon name="plus" [size]="20" />
               Adicionar Novo Anexo
             </button>
-            <button type="button" class="add-attachment-btn mobile-btn" (click)="openMobileUpload()">
-              <app-icon name="smartphone" [size]="20" />
-              Adicionar pelo Celular
-            </button>
+            @if (mobileUploadToken) {
+              <!-- Link ativo - mostrar indicador -->
+              <button type="button" class="add-attachment-btn mobile-btn active" (click)="openMobileUpload()">
+                <span class="pulse-indicator"></span>
+                <app-icon name="smartphone" [size]="20" />
+                Link Ativo - Ver QR Code
+              </button>
+            } @else {
+              <button type="button" class="add-attachment-btn mobile-btn" (click)="openMobileUpload()">
+                <app-icon name="smartphone" [size]="20" />
+                Adicionar pelo Celular
+              </button>
+            }
           }
         </div>
       }

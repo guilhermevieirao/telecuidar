@@ -265,6 +265,38 @@
     &:hover {
       background: var(--secondary-50);
     }
+
+    &.active {
+      border-style: solid;
+      border-color: var(--success);
+      color: var(--success);
+      background: rgba(var(--success-rgb), 0.1);
+      position: relative;
+
+      .pulse-indicator {
+        width: 8px;
+        height: 8px;
+        background: var(--success);
+        border-radius: 50%;
+        animation: pulse 1.5s infinite;
+      }
+
+      &:hover {
+        background: rgba(var(--success-rgb), 0.15);
+      }
+    }
+  }
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(var(--success-rgb), 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(var(--success-rgb), 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(var(--success-rgb), 0);
   }
 }
 

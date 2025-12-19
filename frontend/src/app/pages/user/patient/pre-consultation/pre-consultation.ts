@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, NgZone } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
@@ -8,6 +8,7 @@ import { QrCodeModalComponent } from './qrcode-modal/qrcode-modal';
 import { MediaPreviewModalComponent } from '@shared/components/molecules/media-preview-modal/media-preview-modal';
 import { AppointmentsService, Appointment } from '@core/services/appointments.service';
 import { ModalService } from '@core/services/modal.service';
+import { TemporaryUploadService } from '@core/services/temporary-upload.service';
 
 interface Attachment {
   title: string;
@@ -64,7 +65,7 @@ export class PreConsultationComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private appointmentsService: AppointmentsService,
     private modalService: ModalService,
-    private zone: NgZone
+    private temporaryUploadService: TemporaryUploadService
   ) {
     this.checkIfMobile();
     this.form = this.fb.group({
@@ -249,10 +250,13 @@ export class PreConsultationComponent implements OnInit, OnDestroy {
 
   // Mobile Upload Methods
   openMobileUpload() {
-    this.mobileUploadToken = Math.random().toString(36).substring(7); // Generate new token
-    this.mobileUploadUrl = `${window.location.origin}/mobile-upload?token=${this.mobileUploadToken}`;
+    // Only generate new token if we don't have one active
+    if (!this.mobileUploadToken) {
+      this.mobileUploadToken = Math.random().toString(36).substring(7);
+      this.mobileUploadUrl = `${window.location.origin}/mobile-upload?token=${this.mobileUploadToken}`;
+      this.startPolling(); // Start polling and keep it running
+    }
     this.isQrCodeModalOpen = true;
-    this.startPolling();
   }
 
   regenerateQrCode() {
@@ -264,19 +268,14 @@ export class PreConsultationComponent implements OnInit, OnDestroy {
 
   closeQrCodeModal() {
     this.isQrCodeModalOpen = false;
-    this.stopPolling();
+    // DON'T stop polling - keep listening for uploads even with modal closed
   }
 
   startPolling() {
-    // Poll every 1 second
+    // Poll every 2 seconds via API
     this.pollingInterval = setInterval(() => {
       this.checkMobileUpload();
-    }, 1000);
-    
-    // Also listen for storage events for instant updates
-    if (typeof window !== 'undefined') {
-      window.addEventListener('storage', this.storageListener);
-    }
+    }, 2000);
   }
 
   stopPolling() {
@@ -284,50 +283,83 @@ export class PreConsultationComponent implements OnInit, OnDestroy {
       clearInterval(this.pollingInterval);
       this.pollingInterval = null;
     }
-    if (typeof window !== 'undefined') {
-      window.removeEventListener('storage', this.storageListener);
-    }
   }
 
-  private storageListener = (event: StorageEvent) => {
-    if (event.key === `mobile_upload_${this.mobileUploadToken}` && event.newValue) {
-      this.zone.run(() => {
-        this.checkMobileUpload();
-      });
-    }
-  };
-
   checkMobileUpload() {
-    const key = `mobile_upload_${this.mobileUploadToken}`;
-    const data = localStorage.getItem(key);
+    if (!this.mobileUploadToken) return;
 
-    if (data) {
-      try {
-        const payload = JSON.parse(data);
-        
-        // Add to attachments
-        this.attachments.push({
-          title: payload.title,
-          file: new File([], payload.title), // Dummy file object since we only have base64
-          previewUrl: payload.fileUrl,
-          type: payload.type
-        });
-
-        // Clean up
-        localStorage.removeItem(key);
-        this.closeQrCodeModal();
-
-        // Notify user
-        this.modalService.alert({
-          title: 'Upload Recebido',
-          message: `Arquivo "${payload.title}" adicionado com sucesso!`,
-          variant: 'success'
-        });
-
-      } catch (e) {
-        console.error('Error parsing mobile upload data', e);
+    // First check if upload exists (HEAD request - doesn't log 404 errors)
+    this.temporaryUploadService.checkUpload(this.mobileUploadToken).subscribe({
+      next: (exists) => {
+        if (exists) {
+          // Fetch all available uploads in the queue
+          this.fetchAllPendingUploads();
+        }
       }
+    });
+  }
+
+  private fetchAllPendingUploads() {
+    const receivedFiles: string[] = [];
+    
+    const fetchNext = () => {
+      this.temporaryUploadService.getUpload(this.mobileUploadToken).subscribe({
+        next: (payload) => {
+          if (payload) {
+            // Add to attachments
+            this.attachments.push({
+              title: payload.title,
+              file: new File([], payload.title),
+              previewUrl: payload.fileUrl,
+              type: payload.type
+            });
+            receivedFiles.push(payload.title);
+            
+            // Check if there are more uploads
+            this.temporaryUploadService.checkUpload(this.mobileUploadToken).subscribe({
+              next: (moreExists) => {
+                if (moreExists) {
+                  fetchNext();
+                } else {
+                  // No more uploads, show single notification
+                  this.showUploadNotification(receivedFiles);
+                }
+              }
+            });
+          } else {
+            // No payload returned, show notification for what we have
+            if (receivedFiles.length > 0) {
+              this.showUploadNotification(receivedFiles);
+            }
+          }
+        },
+        error: () => {
+          // Error fetching, show notification for what we have
+          if (receivedFiles.length > 0) {
+            this.showUploadNotification(receivedFiles);
+          }
+        }
+      });
+    };
+    
+    fetchNext();
+  }
+
+  private showUploadNotification(files: string[]) {
+    const count = files.length;
+    let message: string;
+    
+    if (count === 1) {
+      message = `Arquivo "${files[0]}" adicionado! Você pode enviar mais arquivos.`;
+    } else {
+      message = `${count} arquivos adicionados! Você pode enviar mais arquivos.`;
     }
+    
+    this.modalService.alert({
+      title: 'Upload Recebido',
+      message: message,
+      variant: 'success'
+    });
   }
 
   removeAttachment(index: number) {

@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, NgZone, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -7,6 +7,13 @@ import { ButtonComponent } from '@shared/components/atoms/button/button';
 import { ThemeToggleComponent } from '@shared/components/atoms/theme-toggle/theme-toggle';
 import { AttachmentsChatService, AttachmentMessage } from '@core/services/attachments-chat.service';
 import { ModalService } from '@core/services/modal.service';
+import { TemporaryUploadService, TemporaryUploadDto } from '@core/services/temporary-upload.service';
+
+interface SelectedFileItem {
+  file: File;
+  title: string;
+  previewUrl: string;
+}
 
 @Component({
   selector: 'app-mobile-upload',
@@ -23,15 +30,20 @@ export class MobileUploadComponent implements OnInit {
   @ViewChild('galleryInput') galleryInput!: ElementRef<HTMLInputElement>;
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
   
-  selectedFile: File | null = null;
-  attachmentTitle = '';
+  // Multiple files support
+  selectedFiles: SelectedFileItem[] = [];
   isUploading = false;
   uploadSuccess = false;
+  uploadCount = 0;
+  currentUploadIndex = 0;
 
   constructor(
     private route: ActivatedRoute,
     private chatService: AttachmentsChatService,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private temporaryUploadService: TemporaryUploadService,
+    private ngZone: NgZone,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -53,27 +65,50 @@ export class MobileUploadComponent implements OnInit {
     this.fileInput.nativeElement.click();
   }
 
-  onFileSelected(event: Event) {
+  async onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
-      this.selectedFile = input.files[0];
-      this.attachmentTitle = this.selectedFile.name.replace(/\.[^/.]+$/, "");
+      for (let i = 0; i < input.files.length; i++) {
+        const file = input.files[i];
+        const previewUrl = await this.createPreview(file);
+        this.selectedFiles.push({
+          file,
+          title: file.name.replace(/\.[^/.]+$/, ""),
+          previewUrl
+        });
+      }
       this.uploadSuccess = false;
+      this.cdr.detectChanges();
     }
-    // Reset inputs to allow selecting same file again if needed
     input.value = '';
   }
 
-  cancelUpload() {
-    this.selectedFile = null;
-    this.attachmentTitle = '';
-    this.uploadSuccess = false;
+  private createPreview(file: File): Promise<string> {
+    return new Promise((resolve) => {
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (e: any) => resolve(e.target.result);
+        reader.readAsDataURL(file);
+      } else {
+        resolve('');
+      }
+    });
   }
 
-  async sendAttachment() {
-    if (!this.selectedFile) return;
+  removeFile(index: number) {
+    this.selectedFiles.splice(index, 1);
+    this.cdr.detectChanges();
+  }
+
+  cancelUpload() {
+    this.selectedFiles = [];
+    this.uploadSuccess = false;
+    this.cdr.detectChanges();
+  }
+
+  async sendAllAttachments() {
+    if (this.selectedFiles.length === 0) return;
     
-    // Check if we have required params for either mode
     if (!this.appointmentId && !this.token) {
         this.modalService.alert({
           title: 'Erro',
@@ -84,67 +119,72 @@ export class MobileUploadComponent implements OnInit {
     }
     
     this.isUploading = true;
+    this.currentUploadIndex = 0;
+    this.cdr.detectChanges();
 
     try {
-      let base64: string | ArrayBuffer | null;
-      
-      // Compress image if it's an image
-      if (this.selectedFile.type.startsWith('image/')) {
-        base64 = await this.compressImage(this.selectedFile);
-      } else {
-        base64 = await this.fileToBase64(this.selectedFile);
-      }
-      
-      if (this.appointmentId) {
-          // Mode 1: Chat Upload (Direct to Service)
+      for (let i = 0; i < this.selectedFiles.length; i++) {
+        this.currentUploadIndex = i + 1;
+        this.cdr.detectChanges();
+        
+        const item = this.selectedFiles[i];
+        let base64: string;
+        
+        if (item.file.type.startsWith('image/')) {
+          base64 = await this.compressImage(item.file);
+        } else {
+          base64 = await this.fileToBase64(item.file) as string;
+        }
+        
+        if (this.appointmentId) {
           const newMessage: AttachmentMessage = {
             id: crypto.randomUUID(),
             senderRole: 'PATIENT',
             senderName: 'Upload via Mobile',
             timestamp: new Date().toISOString(),
-            title: this.attachmentTitle || this.selectedFile.name,
-            fileName: this.selectedFile.name,
-            fileType: this.selectedFile.type,
-            fileSize: this.selectedFile.size,
-            fileUrl: base64 as string
+            title: item.title || item.file.name,
+            fileName: item.file.name,
+            fileType: item.file.type,
+            fileSize: item.file.size,
+            fileUrl: base64
           };
-    
           this.chatService.addMessage(this.appointmentId, newMessage);
-      } else if (this.token) {
-          // Mode 2: Pre-consultation Upload (LocalStorage Polling)
-          const payload = {
-            title: this.attachmentTitle || this.selectedFile.name,
+        } else if (this.token) {
+          const payload: TemporaryUploadDto = {
+            title: item.title || item.file.name,
             fileUrl: base64,
-            type: this.selectedFile.type.startsWith('image/') ? 'image' : 'document',
+            type: item.file.type.startsWith('image/') ? 'image' : 'document',
             timestamp: new Date().getTime()
           };
-    
-          try {
-            localStorage.setItem(`mobile_upload_${this.token}`, JSON.stringify(payload));
-          } catch (e: any) {
-            if (e.name === 'QuotaExceededError' || e.code === 22) {
-              throw new Error('Arquivo muito grande para transferência via QR Code. Tente um arquivo menor.');
-            }
-            throw e;
-          }
+          
+          await new Promise<void>((resolve, reject) => {
+            this.temporaryUploadService.storeUpload(this.token!, payload).subscribe({
+              next: () => resolve(),
+              error: (err) => reject(new Error(err.error?.message || 'Erro ao enviar arquivo.'))
+            });
+          });
+        }
       }
 
-      this.uploadSuccess = true;
-      
-      // Reset after success
-      setTimeout(() => {
-        this.cancelUpload();
-      }, 3000);
+      this.ngZone.run(() => {
+        this.uploadSuccess = true;
+        this.isUploading = false;
+        this.uploadCount += this.selectedFiles.length;
+        this.selectedFiles = [];
+        this.cdr.detectChanges();
+      });
 
     } catch (error: any) {
-      console.error('Error processing file', error);
-      this.modalService.alert({
-        title: 'Erro',
-        message: error.message || 'Erro ao processar arquivo.',
-        variant: 'danger'
-      }).subscribe();
-    } finally {
-      this.isUploading = false;
+      console.error('Error processing files', error);
+      this.ngZone.run(() => {
+        this.isUploading = false;
+        this.cdr.detectChanges();
+        this.modalService.alert({
+          title: 'Erro',
+          message: error.message || 'Erro ao processar arquivos.',
+          variant: 'danger'
+        }).subscribe();
+      });
     }
   }
 
@@ -157,7 +197,7 @@ export class MobileUploadComponent implements OnInit {
         img.src = event.target.result;
         img.onload = () => {
           const canvas = document.createElement('canvas');
-          const MAX_WIDTH = 800; // Resize to max 800px width
+          const MAX_WIDTH = 800;
           const MAX_HEIGHT = 800;
           let width = img.width;
           let height = img.height;
@@ -179,7 +219,6 @@ export class MobileUploadComponent implements OnInit {
           const ctx = canvas.getContext('2d');
           ctx?.drawImage(img, 0, 0, width, height);
           
-          // Compress to JPEG with 0.7 quality
           const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
           resolve(dataUrl);
         };

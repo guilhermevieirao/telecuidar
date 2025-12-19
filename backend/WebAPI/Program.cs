@@ -80,9 +80,12 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+// Memory Cache for temporary uploads
+builder.Services.AddMemoryCache();
+
 // CORS Configuration
 var corsOrigins = Environment.GetEnvironmentVariable("CORS_ALLOWED_ORIGINS")
-    ?? "http://localhost:4200";
+    ?? "http://localhost:4200,http://192.168.15.2:4200";
 var allowedOrigins = corsOrigins.Split(',', StringSplitOptions.RemoveEmptyEntries)
     .Select(o => o.Trim())
     .ToArray();

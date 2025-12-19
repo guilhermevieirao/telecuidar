@@ -131,6 +131,22 @@
           <h3>Observações Adicionais</h3>
           <p>{{ parsedPreConsultation.additionalObservations }}</p>
         </div>
+
+        <!-- Anexos -->
+        <div class="section" *ngIf="parsedPreConsultation.attachments && parsedPreConsultation.attachments.length > 0">
+          <h3>Anexos</h3>
+          <div class="attachments-grid">
+            <div class="attachment-item" *ngFor="let attachment of parsedPreConsultation.attachments" (click)="openAttachment(attachment)">
+              <div class="attachment-preview">
+                <img *ngIf="attachment.type === 'image'" [src]="attachment.fileUrl" [alt]="attachment.title">
+                <div *ngIf="attachment.type !== 'image'" class="file-icon">
+                  <app-icon name="file" [size]="32" />
+                </div>
+              </div>
+              <span class="attachment-title">{{ attachment.title }}</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="modal-footer">
@@ -139,3 +155,12 @@
     </div>
   </div>
 }
+
+<app-media-preview-modal
+  [isOpen]="isPreviewOpen"
+  [url]="previewUrl"
+  [title]="previewTitle"
+  [type]="previewType"
+  (close)="closePreview()"
+  (download)="downloadAttachment()">
+</app-media-preview-modal>
