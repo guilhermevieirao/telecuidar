@@ -17,6 +17,7 @@ import Chart from 'chart.js/auto';
 interface DashboardUser {
   id: string;
   name: string;
+  lastName: string;
   email: string;
   avatar?: string;
   role: string;
@@ -130,6 +131,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.user = {
       id: authUser.id,
       name: authUser.name,
+      lastName: authUser.lastName,
       email: authUser.email,
       avatar: authUser.avatar,
       role: authUser.role,
@@ -164,6 +166,28 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   isProfessional(): boolean {
     return this.viewMode === 'PROFESSIONAL';
+  }
+
+  getRoleLabel(): string {
+    const roleMap: { [key: string]: string } = {
+      'ADMIN': 'Administrador',
+      'PATIENT': 'Paciente',
+      'PROFESSIONAL': 'Profissional'
+    };
+    return roleMap[this.user?.role || 'PATIENT'] || 'Usuário';
+  }
+
+  getRoleBadgeVariant(): 'primary' | 'success' | 'warning' | 'error' | 'info' | 'neutral' {
+    const variantMap: { [key: string]: 'primary' | 'success' | 'warning' | 'error' | 'info' | 'neutral' } = {
+      'ADMIN': 'primary',
+      'PATIENT': 'success',
+      'PROFESSIONAL': 'info'
+    };
+    return variantMap[this.user?.role || 'PATIENT'] || 'neutral';
+  }
+
+  openProfileEdit(): void {
+    this.router.navigate(['/perfil/editar']);
   }
 
   getuserrolePath(): string {
@@ -270,6 +294,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
               data: data,
               options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 plugins: {
                   legend: { position: 'bottom' }
                 }
@@ -285,6 +310,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
               data: data,
               options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 scales: {
                   y: { beginAtZero: true }
                 },
@@ -303,6 +329,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
               data: data,
               options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 scales: {
                   y: { beginAtZero: true }
                 },

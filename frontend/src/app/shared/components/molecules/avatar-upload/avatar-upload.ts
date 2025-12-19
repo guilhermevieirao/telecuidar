@@ -3,6 +3,8 @@ import { AvatarComponent } from '@app/shared/components/atoms/avatar/avatar';
 import { IconComponent } from '@app/shared/components/atoms/icon/icon';
 import { ImageCropperComponent, CropperResult } from '@app/shared/components/molecules/image-cropper/image-cropper';
 import { ModalService } from '@app/core/services/modal.service';
+import { AvatarService } from '@app/core/services/avatar.service';
+import { AuthService } from '@app/core/services/auth.service';
 
 @Component({
   selector: 'app-avatar-upload',
@@ -13,12 +15,16 @@ import { ModalService } from '@app/core/services/modal.service';
 export class AvatarUploadComponent {
   @Input() name: string = '';
   @Input() currentAvatar?: string;
+  @Input() userId?: string;
   @Output() avatarChange = new EventEmitter<string>();
 
   showCropper = false;
   selectedImageUrl = '';
+  isUploading = false;
   
   private modalService = inject(ModalService);
+  private avatarService = inject(AvatarService);
+  private authService = inject(AuthService);
 
   onFileSelect(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -59,9 +65,59 @@ export class AvatarUploadComponent {
   }
 
   onCropComplete(result: CropperResult): void {
-    this.avatarChange.emit(result.imageUrl);
     this.showCropper = false;
     this.selectedImageUrl = '';
+    this.isUploading = true;
+
+    // Converter URL para File (suporta blob URL e data URL)
+    this.urlToFile(result.imageUrl, 'avatar.png', 'image/png').then((file) => {
+      // Obter userId do componente ou do auth service
+      const userId = this.userId || this.authService.currentUser()?.id;
+      if (!userId) {
+        this.modalService.alert({
+          title: 'Erro',
+          message: 'Usuário não identificado',
+          variant: 'danger'
+        }).subscribe();
+        this.isUploading = false;
+        return;
+      }
+
+      // Fazer upload para o servidor
+      this.avatarService.uploadAvatar(userId, file).subscribe({
+        next: (user) => {
+          this.isUploading = false;
+          const avatarUrl = this.avatarService.getAvatarUrl(user.avatar || '');
+          this.avatarChange.emit(avatarUrl);
+          
+          // Atualizar user no auth service
+          this.authService.updateCurrentUser(user);
+          
+          this.modalService.alert({
+            title: 'Sucesso',
+            message: 'Foto de perfil atualizada com sucesso',
+            variant: 'success'
+          }).subscribe();
+        },
+        error: (error) => {
+          this.isUploading = false;
+          console.error('Error uploading avatar:', error);
+          this.modalService.alert({
+            title: 'Erro',
+            message: 'Erro ao fazer upload da foto. Tente novamente.',
+            variant: 'danger'
+          }).subscribe();
+        }
+      });
+    }).catch((error) => {
+      this.isUploading = false;
+      console.error('Error converting image:', error);
+      this.modalService.alert({
+        title: 'Erro',
+        message: 'Erro ao processar a imagem. Tente novamente.',
+        variant: 'danger'
+      }).subscribe();
+    });
   }
 
   onCropCancel(): void {
@@ -77,5 +133,30 @@ export class AvatarUploadComponent {
   triggerFileInput(): void {
     const input = document.getElementById('avatar-file-input') as HTMLInputElement;
     input?.click();
+  }
+
+  private async urlToFile(url: string, filename: string, mimeType: string): Promise<File> {
+    // Se for blob URL, fazer fetch
+    if (url.startsWith('blob:')) {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      return new File([blob], filename, { type: mimeType });
+    }
+
+    // Se for data URL, converter base64
+    if (url.startsWith('data:')) {
+      const parts = url.split(',');
+      const base64String = parts[1];
+      const byteCharacters = atob(base64String);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: mimeType });
+      return new File([blob], filename, { type: mimeType });
+    }
+
+    throw new Error('URL format not supported');
   }
 }

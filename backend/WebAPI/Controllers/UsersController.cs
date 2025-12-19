@@ -1,5 +1,6 @@
 using Application.DTOs.Users;
 using Application.Interfaces;
+using WebAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -14,11 +15,13 @@ public class UsersController : ControllerBase
 {
     private readonly IUserService _userService;
     private readonly IAuditLogService _auditLogService;
+    private readonly IFileUploadService _fileUploadService;
 
-    public UsersController(IUserService userService, IAuditLogService auditLogService)
+    public UsersController(IUserService userService, IAuditLogService auditLogService, IFileUploadService fileUploadService)
     {
         _userService = userService;
         _auditLogService = auditLogService;
+        _fileUploadService = fileUploadService;
     }
     
     private Guid? GetCurrentUserId()
@@ -111,7 +114,7 @@ public class UsersController : ControllerBase
             
             // Audit log with differences
             var oldValues = oldUser != null ? HttpContextExtensions.SerializeToJson(new { oldUser.Name, oldUser.LastName, oldUser.Email, oldUser.Phone, oldUser.Role, oldUser.Status }) : null;
-            var newValues = HttpContextExtensions.SerializeToJson(new { user.Name, user.LastName, user.Email, user.Phone, user.Role, user.Status });
+            var newValues = HttpContextExtensions.SerializeToJson(new { user?.Name, user?.LastName, user?.Email, user?.Phone, user?.Role, user?.Status });
             
             await _auditLogService.CreateAuditLogAsync(
                 GetCurrentUserId(),
@@ -159,6 +162,77 @@ public class UsersController : ControllerBase
             );
             
             return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "An error occurred", error = ex.Message });
+        }
+    }
+
+    [HttpPost("{id}/avatar")]
+    public async Task<ActionResult<UserDto>> UploadAvatar(Guid id, IFormFile file)
+    {
+        try
+        {
+            // Validate file
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest(new { message = "No file provided" });
+            }
+
+            const long maxFileSize = 5 * 1024 * 1024; // 5 MB
+            if (file.Length > maxFileSize)
+            {
+                return BadRequest(new { message = "File size exceeds 5 MB limit" });
+            }
+
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+            var fileExtension = Path.GetExtension(file.FileName).ToLower();
+            if (!allowedExtensions.Contains(fileExtension))
+            {
+                return BadRequest(new { message = "Invalid file type. Only images are allowed" });
+            }
+
+            // Get user to delete old avatar if exists
+            var existingUser = await _userService.GetUserByIdAsync(id);
+            if (existingUser == null)
+            {
+                return NotFound(new { message = "User not found" });
+            }
+
+            // Delete old avatar if exists
+            if (!string.IsNullOrEmpty(existingUser.Avatar))
+            {
+                _fileUploadService.DeleteAvatar(existingUser.Avatar);
+            }
+
+            // Upload new avatar
+            using (var stream = file.OpenReadStream())
+            {
+                var avatarPath = await _fileUploadService.UploadAvatarAsync(stream, file.FileName, id);
+
+                // Update user with new avatar path
+                var updateDto = new UpdateUserDto { Avatar = avatarPath };
+                var updatedUser = await _userService.UpdateUserAsync(id, updateDto);
+
+                // Audit log
+                await _auditLogService.CreateAuditLogAsync(
+                    GetCurrentUserId(),
+                    "update",
+                    "User",
+                    id.ToString(),
+                    null,
+                    HttpContextExtensions.SerializeToJson(new { avatarPath }),
+                    HttpContext.GetIpAddress(),
+                    HttpContext.GetUserAgent()
+                );
+
+                return Ok(updatedUser);
+            }
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
         }
         catch (Exception ex)
         {

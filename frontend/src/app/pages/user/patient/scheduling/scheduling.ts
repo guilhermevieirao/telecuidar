@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { ButtonComponent } from '@shared/components/atoms/button/button';
 import { IconComponent } from '@shared/components/atoms/icon/icon';
+import { AvatarComponent } from '@shared/components/atoms/avatar/avatar';
 import { SearchInputComponent } from '@shared/components/atoms/search-input/search-input';
 import { SpecialtiesService, Specialty } from '@core/services/specialties.service';
 import { SchedulesService } from '@core/services/schedules.service';
@@ -40,6 +41,7 @@ interface TimeSlot {
     RouterModule,
     ButtonComponent,
     IconComponent,
+    AvatarComponent,
     SearchInputComponent
   ],
   providers: [

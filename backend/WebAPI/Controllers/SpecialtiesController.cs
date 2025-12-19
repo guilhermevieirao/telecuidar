@@ -107,7 +107,7 @@ public class SpecialtiesController : ControllerBase
             
             // Audit log with differences
             var oldValues = oldSpecialty != null ? HttpContextExtensions.SerializeToJson(new { oldSpecialty.Name, oldSpecialty.Description, oldSpecialty.Status }) : null;
-            var newValues = HttpContextExtensions.SerializeToJson(new { specialty.Name, specialty.Description, specialty.Status });
+            var newValues = HttpContextExtensions.SerializeToJson(new { specialty?.Name, specialty?.Description, specialty?.Status });
             
             await _auditLogService.CreateAuditLogAsync(
                 GetCurrentUserId(),

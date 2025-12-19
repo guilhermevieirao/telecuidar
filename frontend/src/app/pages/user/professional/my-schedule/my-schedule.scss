@@ -2,17 +2,25 @@
 @use 'mixins' as *;
 
 .my-schedule-container {
-  padding: 2rem;
   width: 100%;
   margin: 0;
 
   .header {
-    margin-bottom: 2rem;
+    margin-bottom: $spacing-2xl;
     
-    .title-section {
+    .header-content {
+      display: flex;
+      align-items: center;
+      gap: $spacing-md;
+
+      app-icon {
+        color: var(--primary-500);
+        flex-shrink: 0;
+      }
+
       h1 {
         @include heading-1;
-        margin: 0 0 0.5rem 0;
+        margin: 0 0 $spacing-xs 0;
         color: var(--text-primary);
       }
 

@@ -1,8 +1,11 @@
 <div class="appointments-container">
   <div class="header">
-    <div class="title-section">
-      <h1>Minhas Consultas</h1>
-      <p class="subtitle">Gerencie seus agendamentos e histórico de consultas</p>
+    <div class="header-content">
+      <app-icon name="calendar" [size]="32" />
+      <div>
+        <h1>Minhas Consultas</h1>
+        <p class="subtitle">Gerencie seus agendamentos e histórico de consultas</p>
+      </div>
     </div>
     <div class="actions-section" *ngIf="userrole === 'PATIENT'">
       <app-button (click)="scheduleNew()">

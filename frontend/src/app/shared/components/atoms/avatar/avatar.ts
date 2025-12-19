@@ -1,5 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { NgClass } from '@angular/common';
+import { AvatarService } from '@app/core/services/avatar.service';
 
 export type AvatarSize = 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 
@@ -11,8 +12,19 @@ export type AvatarSize = 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 })
 export class AvatarComponent {
   @Input() name: string = '';
-  @Input() imageUrl?: string;
+  @Input() set imageUrl(value: string | undefined) {
+    this._imageUrl = value ? this.avatarService.getAvatarUrl(value) : undefined;
+    this.imageLoadError = false;
+  }
   @Input() size: AvatarSize = 'md';
+  
+  private _imageUrl?: string;
+  private avatarService = inject(AvatarService);
+  imageLoadError = false;
+
+  get imageUrl(): string | undefined {
+    return this._imageUrl;
+  }
 
   get initials(): string {
     if (!this.name) return '';
@@ -27,5 +39,9 @@ export class AvatarComponent {
 
   get sizeClass(): string {
     return `avatar--${this.size}`;
+  }
+
+  onImageError(): void {
+    this.imageLoadError = true;
   }
 }

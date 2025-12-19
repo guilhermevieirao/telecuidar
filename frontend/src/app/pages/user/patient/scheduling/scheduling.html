@@ -1,11 +1,16 @@
 <div class="scheduling-container">
   <div class="header">
-    <app-button *ngIf="currentStep !== 'specialty'" variant="ghost" size="sm" (click)="goBack()">
-      <app-icon name="arrow-left" [size]="16"></app-icon>
-      Voltar
-    </app-button>
-    <h1>Agendar Consulta</h1>
-    <p class="subtitle">Siga os passos para marcar seu atendimento</p>
+    <div class="header-content">
+      <app-button *ngIf="currentStep !== 'specialty'" variant="ghost" size="sm" (click)="goBack()">
+        <app-icon name="arrow-left" [size]="16"></app-icon>
+        Voltar
+      </app-button>
+      <app-icon name="calendar" [size]="32" />
+      <div>
+        <h1>Agendar Consulta</h1>
+        <p class="subtitle">Siga os passos para marcar seu atendimento</p>
+      </div>
+    </div>
   </div>
 
   <div class="stepper">
@@ -123,8 +128,11 @@
            *ngFor="let pro of selectedSlot?.professionals"
            (click)="selectProfessional(pro)">
         <div class="pro-avatar">
-          <app-icon name="user" [size]="32"></app-icon> 
-          <!-- Use user avatar if available in real app -->
+          <app-avatar 
+            [name]="pro.name" 
+            [imageUrl]="pro.avatar"
+            size="md">
+          </app-avatar>
         </div>
         <div class="pro-info">
           <h3>{{ pro.name }}</h3>

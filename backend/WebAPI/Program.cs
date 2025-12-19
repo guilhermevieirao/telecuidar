@@ -43,6 +43,7 @@ builder.Services.AddScoped<Application.Interfaces.IReportService, Infrastructure
 builder.Services.AddScoped<Application.Interfaces.IAuditLogService, Infrastructure.Services.AuditLogService>();
 builder.Services.AddScoped<Application.Interfaces.IAttachmentService, Infrastructure.Services.AttachmentService>();
 builder.Services.AddScoped<Application.Interfaces.IInviteService, Infrastructure.Services.InviteService>();
+builder.Services.AddScoped<WebAPI.Services.IFileUploadService, WebAPI.Services.FileUploadService>();
 
 // JWT Authentication
 builder.Services.AddAuthentication(options =>
@@ -126,6 +127,10 @@ if (!app.Environment.IsDevelopment() && httpsRedirect)
 }
 
 app.UseCors("AllowFrontend");
+
+// Use static files for uploads
+app.UseStaticFiles();
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

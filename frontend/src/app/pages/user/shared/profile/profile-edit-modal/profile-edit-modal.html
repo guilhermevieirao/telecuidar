@@ -21,6 +21,7 @@
           <app-avatar-upload
             [name]="(editedUser.name || '') + ' ' + (editedUser.lastName || '')"
             [currentAvatar]="editedUser.avatar"
+            [userId]="user.id"
             (avatarChange)="onAvatarChange($event)"
           />
         </div>

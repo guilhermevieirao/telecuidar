@@ -10,8 +10,13 @@
         type="button"
         class="avatar-upload__button"
         (click)="triggerFileInput()"
+        [disabled]="isUploading"
       >
-        <app-icon name="camera" [size]="20" />
+        @if (isUploading) {
+          <app-icon name="refresh-cw" [size]="20" />
+        } @else {
+          <app-icon name="camera" [size]="20" />
+        }
       </button>
       <input
         id="avatar-file-input"
@@ -20,10 +25,11 @@
         (change)="onFileSelect($event)"
         class="avatar-upload__input"
         aria-label="Selecionar foto"
+        [disabled]="isUploading"
       />
     </div>
     <p class="avatar-upload__hint">
-      Clique no ícone para {{ currentAvatar ? 'alterar' : 'adicionar' }} sua foto
+      {{ isUploading ? 'Enviando foto...' : ('Clique no ícone para ' + (currentAvatar ? 'alterar' : 'adicionar') + ' sua foto') }}
     </p>
   }
 </div>

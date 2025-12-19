@@ -3,12 +3,13 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { SchedulesService, Schedule } from '@app/core/services/schedules.service';
 import { AuthService } from '@app/core/services/auth.service';
 import { ScheduleDaysPipe } from '@app/core/pipes/schedule-days.pipe';
+import { IconComponent } from '@app/shared/components/atoms/icon/icon';
 import { filter, take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-my-schedule',
   standalone: true,
-  imports: [CommonModule, DatePipe, ScheduleDaysPipe],
+  imports: [CommonModule, DatePipe, ScheduleDaysPipe, IconComponent],
   templateUrl: './my-schedule.html',
   styleUrl: './my-schedule.scss'
 })

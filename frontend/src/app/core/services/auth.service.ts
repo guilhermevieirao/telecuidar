@@ -1,7 +1,7 @@
 import { Injectable, signal, PLATFORM_ID, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { isPlatformBrowser } from '@angular/common';
-import { Observable, BehaviorSubject, tap, catchError, of } from 'rxjs';
+import { Observable, BehaviorSubject, tap, catchError, of, throwError } from 'rxjs';
 import {
   User,
   LoginRequest,
@@ -243,6 +243,11 @@ export class AuthService {
         });
         this.currentUser.set(user);
         this.isAuthenticated.set(true);
+        
+        // Refetch user data from server to get latest avatar and other info
+        this.refetchCurrentUser().subscribe({
+          error: (err) => console.warn('[AuthService] Failed to refetch user data:', err)
+        });
       } catch (error) {
         console.error('[AuthService] Error parsing user data from storage:', error);
         this.clearStorage();
@@ -304,6 +309,25 @@ export class AuthService {
         sessionStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
       }
     }
+  }
+
+  // Refetch user data from server
+  refetchCurrentUser(): Observable<User> {
+    const currentUserId = this.currentUser()?.id;
+    if (!currentUserId) {
+      console.warn('[AuthService] No user ID available for refetch');
+      return throwError(() => new Error('User ID not available'));
+    }
+    
+    return this.http.get<User>(`http://localhost:5239/api/users/${currentUserId}`).pipe(
+      tap(user => {
+        this.updateCurrentUser(user);
+      }),
+      catchError(error => {
+        console.error('[AuthService] Error refetching user:', error);
+        throw error;
+      })
+    );
   }
 
   // Change Password

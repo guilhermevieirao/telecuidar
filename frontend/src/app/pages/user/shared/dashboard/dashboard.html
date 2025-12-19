@@ -9,32 +9,33 @@
     </div>
   </div>
 
-  @if (isAdmin()) {
-    <div class="dashboard__user-card">
-      <div class="user-card">
+  <!-- Profile Card for All Users -->
+  <div class="dashboard__profile-card">
+    <div class="profile-card">
+      <div class="profile-card__content">
         <app-avatar 
           [name]="user?.name || ''" 
           [imageUrl]="user?.avatar"
           size="xl"
         />
-        <div class="user-card__info">
-          <h2 class="user-card__name">{{ user?.name }}</h2>
-          <p class="user-card__email">{{ user?.email }}</p>
-          <app-badge [variant]="'primary'" [label]="'Administrador'" size="sm" />
-        </div>
-        <div class="user-card__meta">
-          <div class="user-card__meta-item">
-            <span class="user-card__meta-label">Membro desde</span>
-            <span class="user-card__meta-value">{{ user?.memberSince }}</span>
+        <div class="profile-card__info">
+          <div>
+            <h2 class="profile-card__name">{{ user?.name }} {{ user?.lastName }}</h2>
+            <p class="profile-card__email">{{ user?.email }}</p>
           </div>
-          <div class="user-card__meta-item">
-            <span class="user-card__meta-label">Último acesso</span>
-            <span class="user-card__meta-value">{{ user?.lastAccess }}</span>
-          </div>
+          <app-badge [variant]="getRoleBadgeVariant()" [label]="getRoleLabel()" size="sm" />
         </div>
       </div>
+      <div class="profile-card__actions">
+        <button class="profile-card__button" (click)="openProfileEdit()">
+          <app-icon name="edit" [size]="18" />
+          <span>Editar Perfil</span>
+        </button>
+      </div>
     </div>
+  </div>
 
+  @if (isAdmin()) {
     <div class="dashboard__stats">
       <h2 class="dashboard__section-title">Estatísticas da Plataforma</h2>
       <div class="dashboard__stats-grid">
@@ -122,21 +123,21 @@
       <div class="dashboard__charts-grid">
         <div class="chart-card">
           <h3 class="chart-card__title">Status de Agendamentos</h3>
-          <div class="chart-container">
+          <div class="chart-container chart-container--doughnut">
             <canvas #appointmentsChart></canvas>
           </div>
         </div>
         
         <div class="chart-card">
           <h3 class="chart-card__title">Usuários por Perfil</h3>
-          <div class="chart-container">
+          <div class="chart-container chart-container--doughnut">
             <canvas #usersChart></canvas>
           </div>
         </div>
         
         <div class="chart-card chart-card--full">
           <h3 class="chart-card__title">Evolução de Consultas (Últimos 6 meses)</h3>
-          <div class="chart-container">
+          <div class="chart-container chart-container--line">
             <canvas #monthlyChart></canvas>
           </div>
         </div>
@@ -279,14 +280,14 @@
           <app-button 
             variant="primary" 
             [fullWidth]="true"
-            [routerLink]="['/professional/consultas']">
+            [routerLink]="['/consultas']">
             Minhas Consultas
           </app-button>
           
           <app-button 
             variant="outline" 
             [fullWidth]="true"
-            [routerLink]="['/professional/bloqueios-agenda']">
+            [routerLink]="['/bloqueios-agenda']">
             Minhas solicitações de bloqueio
           </app-button>
         </div>

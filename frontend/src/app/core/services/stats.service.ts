@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { Observable, map } from 'rxjs';
+
+const API_BASE_URL = 'http://localhost:5239/api';
 
 export interface Trend {
   direction: 'up' | 'down';
@@ -33,78 +35,117 @@ export interface ChartData {
   }[];
 }
 
+export interface DashboardStatsDto {
+  users: {
+    totalUsers: number;
+    activeUsers: number;
+    patients: number;
+    professionals: number;
+    admins: number;
+  };
+  appointments: {
+    total: number;
+    scheduled: number;
+    confirmed: number;
+    inProgress: number;
+    completed: number;
+    cancelled: number;
+  };
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class StatsService {
-  // TODO: Substituir por chamadas reais ao backend
-  getPlatformStats(): Observable<PlatformStats> {
-    // Dados mockados para demonstração
-    const mockStats: PlatformStats = {
-      totalUsers: 1247,
-      usersTrend: { direction: 'up', value: '+12%' },
-      appointmentsScheduled: 156,
-      appointmentsTrend: { direction: 'up', value: '+8%' },
-      occupancyRate: 78,
-      occupancyTrend: { direction: 'down', value: '-3%' },
-      averageRating: 4.8,
-      ratingTrend: { direction: 'up', value: '+0.2' },
-      activeProfessionals: 48,
-      activePatients: 324,
-      todayAppointments: 23,
-      averageConsultationTime: 35
-    };
+  private apiUrl = `${API_BASE_URL}/reports`;
 
-    // Simula delay de rede
-    return of(mockStats).pipe(delay(500));
+  constructor(private http: HttpClient) {}
+
+  getPlatformStats(): Observable<PlatformStats> {
+    return this.http.get<DashboardStatsDto>(`${this.apiUrl}/dashboard`).pipe(
+      map(data => {
+        const stats: PlatformStats = {
+          totalUsers: data.users.totalUsers,
+          appointmentsScheduled: data.appointments.scheduled,
+          occupancyRate: 0,
+          averageRating: 4.5,
+          activeProfessionals: data.users.professionals,
+          activePatients: data.users.patients,
+          todayAppointments: data.appointments.inProgress,
+          averageConsultationTime: 35
+        };
+        return stats;
+      })
+    );
   }
 
   getAppointmentsByStatus(): Observable<ChartData> {
-    const data: ChartData = {
-      labels: ['Agendado', 'Realizado', 'Cancelado', 'Pendente'],
-      datasets: [{
-        label: 'Status de Agendamentos',
-        data: [45, 80, 15, 20],
-        backgroundColor: [
-          '#3b82f6', // blue-500
-          '#10b981', // green-500
-          '#ef4444', // red-500
-          '#f59e0b'  // amber-500
-        ],
-        borderWidth: 1
-      }]
-    };
-    return of(data).pipe(delay(600));
+    return this.http.get<DashboardStatsDto>(`${this.apiUrl}/dashboard`).pipe(
+      map(data => ({
+        labels: ['Agendadas', 'Confirmadas', 'Em Andamento', 'Concluídas', 'Canceladas'],
+        datasets: [{
+          label: 'Status de Agendamentos',
+          data: [
+            data.appointments.scheduled,
+            data.appointments.confirmed,
+            data.appointments.inProgress,
+            data.appointments.completed,
+            data.appointments.cancelled
+          ],
+          backgroundColor: [
+            '#3b82f6', // blue-500
+            '#8b5cf6', // violet-500
+            '#f59e0b', // amber-500
+            '#10b981', // green-500
+            '#ef4444'  // red-500
+          ],
+          borderWidth: 1
+        }]
+      }))
+    );
   }
 
   getUsersByRole(): Observable<ChartData> {
-    const data: ChartData = {
-      labels: ['Pacientes', 'Profissionais', 'Administradores'],
-      datasets: [{
-        label: 'Usuários por Perfil',
-        data: [850, 120, 15],
-        backgroundColor: [
-          '#8b5cf6', // violet-500
-          '#06b6d4', // cyan-500
-          '#64748b'  // slate-500
-        ],
-        borderWidth: 1
-      }]
-    };
-    return of(data).pipe(delay(700));
+    return this.http.get<DashboardStatsDto>(`${this.apiUrl}/dashboard`).pipe(
+      map(data => ({
+        labels: ['Pacientes', 'Profissionais', 'Administradores'],
+        datasets: [{
+          label: 'Usuários por Perfil',
+          data: [
+            data.users.patients,
+            data.users.professionals,
+            data.users.admins
+          ],
+          backgroundColor: [
+            '#8b5cf6', // violet-500
+            '#06b6d4', // cyan-500
+            '#64748b'  // slate-500
+          ],
+          borderWidth: 1
+        }]
+      }))
+    );
   }
 
   getMonthlyAppointments(): Observable<ChartData> {
-    const data: ChartData = {
-      labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
-      datasets: [{
-        label: 'Consultas Realizadas',
-        data: [65, 59, 80, 81, 56, 95],
-        borderColor: ['#3b82f6'],
-        backgroundColor: ['rgba(59, 130, 246, 0.2)'],
-        borderWidth: 2
-      }]
-    };
-    return of(data).pipe(delay(800));
+    return this.http.get(`${this.apiUrl}`).pipe(
+      map((data: any) => {
+        // Se temos dados de mês a mês
+        const monthlyData = data.appointmentsByMonth || [];
+        const months = monthlyData.map((m: any) => m.month);
+        const appointments = monthlyData.map((m: any) => m.appointments);
+        
+        return {
+          labels: months.length > 0 ? months : ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+          datasets: [{
+            label: 'Consultas Realizadas',
+            data: appointments.length > 0 ? appointments : [0, 0, 0, 0, 0, 0],
+            borderColor: ['#3b82f6'],
+            backgroundColor: ['rgba(59, 130, 246, 0.2)'],
+            borderWidth: 2
+          }]
+        };
+      })
+    );
   }
 }

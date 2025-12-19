@@ -88,7 +88,7 @@ public class AppointmentsController : ControllerBase
         
         // Audit log with differences
         var oldValues = oldAppointment != null ? HttpContextExtensions.SerializeToJson(new { oldAppointment.Date, oldAppointment.Time, oldAppointment.Status, oldAppointment.Observation }) : null;
-        var newValues = HttpContextExtensions.SerializeToJson(new { appointment.Date, appointment.Time, appointment.Status, appointment.Observation });
+        var newValues = HttpContextExtensions.SerializeToJson(new { appointment?.Date, appointment?.Time, appointment?.Status, appointment?.Observation });
         
         await _auditLogService.CreateAuditLogAsync(
             GetCurrentUserId(),

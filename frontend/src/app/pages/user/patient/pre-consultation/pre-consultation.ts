@@ -140,10 +140,10 @@ export class PreConsultationComponent implements OnInit, OnDestroy {
              this.form.get('personalInfo.fullName')?.setValue(appt.patientName);
           }
         } else {
-          this.router.navigate(['/patient/appointments']);
+          this.router.navigate(['/consultas']);
         }
       },
-      error: () => this.router.navigate(['/patient/appointments'])
+      error: () => this.router.navigate(['/consultas'])
     });
   }
 
