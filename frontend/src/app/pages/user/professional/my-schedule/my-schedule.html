@@ -17,7 +17,7 @@
           <div class="schedule-header-section">
             <div>
               <h3 class="section-title">Configuração de Agenda</h3>
-              <p class="schedule-subtitle">Dias de trabalho: {{ getWorkingDays(schedule) }}</p>
+              <p class="schedule-subtitle">Dias de trabalho: {{ schedule.daysConfig | scheduleDays }}</p>
             </div>
             <span class="schedule-badge" [class.schedule-badge--active]="isScheduleActive(schedule)">
               {{ isScheduleActive(schedule) ? 'Ativa' : 'Inativa' }}

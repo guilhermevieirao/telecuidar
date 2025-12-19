@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, PLATFORM_ID, Inject, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, PLATFORM_ID, Inject, HostListener, ChangeDetectorRef } from '@angular/core';
 import { isPlatformBrowser, TitleCasePipe, DOCUMENT } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { LogoComponent } from '@app/shared/components/atoms/logo/logo';
@@ -43,6 +43,7 @@ export class UserLayoutComponent implements OnInit, OnDestroy {
     private router: Router,
     private authService: AuthService,
     private notificationsService: NotificationsService,
+    private cdr: ChangeDetectorRef,
     @Inject(PLATFORM_ID) private platformId: Object,
     @Inject(DOCUMENT) private document: Document
   ) {}
@@ -135,11 +136,17 @@ export class UserLayoutComponent implements OnInit, OnDestroy {
   private loadUnreadNotifications(): void {
     this.notificationsService.getUnreadCount().subscribe({
       next: (response) => {
-        this.unreadNotifications = response.count;
+        setTimeout(() => {
+          this.unreadNotifications = response.count;
+          this.cdr.detectChanges();
+        });
       },
       error: (error) => {
         console.error('Erro ao carregar contagem de notificações:', error);
-        this.unreadNotifications = 0;
+        setTimeout(() => {
+          this.unreadNotifications = 0;
+          this.cdr.detectChanges();
+        });
       }
     });
   }
@@ -147,11 +154,17 @@ export class UserLayoutComponent implements OnInit, OnDestroy {
   private loadNotifications(): void {
     this.notificationsService.getNotifications({}, 1, 5).subscribe({
       next: (response) => {
-        this.notifications = response.data;
+        setTimeout(() => {
+          this.notifications = response.data;
+          this.cdr.detectChanges();
+        });
       },
       error: (error) => {
         console.error('Erro ao carregar notificações:', error);
-        this.notifications = [];
+        setTimeout(() => {
+          this.notifications = [];
+          this.cdr.detectChanges();
+        });
       }
     });
   }
@@ -175,11 +188,14 @@ export class UserLayoutComponent implements OnInit, OnDestroy {
   markAllAsRead(): void {
     this.notificationsService.markAllAsRead().subscribe({
       next: () => {
-        this.notifications = this.notifications.map(notification => ({
-          ...notification,
-          isRead: true
-        }));
-        this.unreadNotifications = 0;
+        setTimeout(() => {
+          this.notifications = this.notifications.map(notification => ({
+            ...notification,
+            isRead: true
+          }));
+          this.unreadNotifications = 0;
+          this.cdr.detectChanges();
+        });
       },
       error: (error) => {
         console.error('Erro ao marcar notificações como lidas:', error);

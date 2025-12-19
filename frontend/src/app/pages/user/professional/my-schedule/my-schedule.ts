@@ -2,12 +2,13 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { SchedulesService, Schedule } from '@app/core/services/schedules.service';
 import { AuthService } from '@app/core/services/auth.service';
+import { ScheduleDaysPipe } from '@app/core/pipes/schedule-days.pipe';
 import { filter, take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-my-schedule',
   standalone: true,
-  imports: [CommonModule, DatePipe],
+  imports: [CommonModule, DatePipe, ScheduleDaysPipe],
   templateUrl: './my-schedule.html',
   styleUrl: './my-schedule.scss'
 })

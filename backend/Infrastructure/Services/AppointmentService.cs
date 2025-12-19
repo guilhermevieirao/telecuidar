@@ -10,10 +10,12 @@ namespace Infrastructure.Services;
 public class AppointmentService : IAppointmentService
 {
     private readonly ApplicationDbContext _context;
+    private readonly IScheduleBlockService _scheduleBlockService;
 
-    public AppointmentService(ApplicationDbContext context)
+    public AppointmentService(ApplicationDbContext context, IScheduleBlockService scheduleBlockService)
     {
         _context = context;
+        _scheduleBlockService = scheduleBlockService;
     }
 
     public async Task<PaginatedAppointmentsDto> GetAppointmentsAsync(int page, int pageSize, string? search, string? status, DateTime? startDate, DateTime? endDate)
@@ -126,6 +128,20 @@ public class AppointmentService : IAppointmentService
         if (!Enum.TryParse<AppointmentType>(dto.Type, true, out var type))
         {
             throw new InvalidOperationException("Invalid appointment type");
+        }
+
+        // Verificar se há bloqueio de agenda aprovado para esta data e profissional
+        var hasApprovedBlock = await _context.ScheduleBlocks
+            .AnyAsync(sb => sb.ProfessionalId == dto.ProfessionalId &&
+                           sb.Status == ScheduleBlockStatus.Approved &&
+                           ((sb.Type == ScheduleBlockType.Single && sb.Date == dto.Date) ||
+                            (sb.Type == ScheduleBlockType.Range && 
+                             sb.StartDate <= dto.Date && 
+                             sb.EndDate >= dto.Date)));
+
+        if (hasApprovedBlock)
+        {
+            throw new InvalidOperationException("Não é possível agendar consulta. O profissional possui bloqueio de agenda aprovado para esta data.");
         }
 
         var appointment = new Appointment

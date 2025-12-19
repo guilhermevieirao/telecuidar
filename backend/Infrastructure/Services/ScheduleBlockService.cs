@@ -295,7 +295,9 @@ public class ScheduleBlockService : IScheduleBlockService
 
     public async Task<ScheduleBlockDto?> ApproveScheduleBlockAsync(Guid id, ApproveScheduleBlockDto dto)
     {
-        var block = await _context.ScheduleBlocks.FindAsync(id);
+        var block = await _context.ScheduleBlocks
+            .Include(sb => sb.Professional)
+            .FirstOrDefaultAsync(sb => sb.Id == id);
         if (block == null) return null;
 
         if (block.Status != ScheduleBlockStatus.Pending)
@@ -308,13 +310,35 @@ public class ScheduleBlockService : IScheduleBlockService
         block.ApprovedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
+        
+        // Notificar o profissional sobre a aprovação
+        try
+        {
+            var dateInfo = block.Type == ScheduleBlockType.Single 
+                ? block.Date?.ToString("dd/MM/yyyy") 
+                : $"{block.StartDate?.ToString("dd/MM/yyyy")} a {block.EndDate?.ToString("dd/MM/yyyy")}";
+                
+            await _notificationService.CreateNotificationAsync(new CreateNotificationDto
+            {
+                UserId = block.ProfessionalId,
+                Title = "✅ Bloqueio de Agenda Aprovado",
+                Message = $"Sua solicitação de bloqueio para {dateInfo} foi aprovada.",
+                Type = "Success"
+            });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro ao criar notificação de aprovação de bloqueio: {ex.Message}");
+        }
 
         return await GetScheduleBlockByIdAsync(id);
     }
 
     public async Task<ScheduleBlockDto?> RejectScheduleBlockAsync(Guid id, RejectScheduleBlockDto dto)
     {
-        var block = await _context.ScheduleBlocks.FindAsync(id);
+        var block = await _context.ScheduleBlocks
+            .Include(sb => sb.Professional)
+            .FirstOrDefaultAsync(sb => sb.Id == id);
         if (block == null) return null;
 
         if (block.Status != ScheduleBlockStatus.Pending)
@@ -328,6 +352,32 @@ public class ScheduleBlockService : IScheduleBlockService
         block.RejectionReason = dto.RejectionReason;
 
         await _context.SaveChangesAsync();
+        
+        // Notificar o profissional sobre a rejeição com justificativa
+        try
+        {
+            var dateInfo = block.Type == ScheduleBlockType.Single 
+                ? block.Date?.ToString("dd/MM/yyyy") 
+                : $"{block.StartDate?.ToString("dd/MM/yyyy")} a {block.EndDate?.ToString("dd/MM/yyyy")}";
+            
+            var message = $"Sua solicitação de bloqueio para {dateInfo} foi negada.";
+            if (!string.IsNullOrWhiteSpace(dto.RejectionReason))
+            {
+                message += $" Motivo: {dto.RejectionReason}";
+            }
+                
+            await _notificationService.CreateNotificationAsync(new CreateNotificationDto
+            {
+                UserId = block.ProfessionalId,
+                Title = "❌ Bloqueio de Agenda Negado",
+                Message = message,
+                Type = "Error"
+            });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro ao criar notificação de rejeição de bloqueio: {ex.Message}");
+        }
 
         return await GetScheduleBlockByIdAsync(id);
     }

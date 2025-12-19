@@ -161,4 +161,34 @@ export class ScheduleBlocksService {
 
     return this.http.get<{ hasConflict: boolean }>(`${this.apiUrl}/check-conflict`, { params });
   }
+
+  // Verificar se uma data específica está bloqueada para um profissional
+  isDateBlocked(professionalId: string, date: Date): Observable<boolean> {
+    const dateStr = date.toISOString().split('T')[0];
+    let params = new HttpParams()
+      .set('professionalId', professionalId)
+      .set('status', 'Approved');
+
+    return new Observable(observer => {
+      this.getScheduleBlocks(professionalId, 'Approved', 1, 100).subscribe({
+        next: (response) => {
+          const isBlocked = response.data.some(block => {
+            if (block.type === 'Single') {
+              return block.date === dateStr;
+            } else if (block.type === 'Range') {
+              const blockStart = new Date(block.startDate!);
+              const blockEnd = new Date(block.endDate!);
+              return date >= blockStart && date <= blockEnd;
+            }
+            return false;
+          });
+          observer.next(isBlocked);
+          observer.complete();
+        },
+        error: (err) => {
+          observer.error(err);
+        }
+      });
+    });
+  }
 }

@@ -1,4 +1,4 @@
-import { Component, afterNextRender, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -10,6 +10,8 @@ import { AppointmentsService, Appointment, AppointmentsFilter, AppointmentStatus
 import { AppointmentDetailsModalComponent } from './appointment-details-modal/appointment-details-modal';
 import { PreConsultationDetailsModalComponent } from './pre-consultation-details-modal/pre-consultation-details-modal';
 import { ModalService } from '@core/services/modal.service';
+import { AuthService } from '@core/services/auth.service';
+import { filter, take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-appointments',
@@ -28,7 +30,7 @@ import { ModalService } from '@core/services/modal.service';
   templateUrl: './appointments.html',
   styleUrls: ['./appointments.scss']
 })
-export class AppointmentsComponent {
+export class AppointmentsComponent implements OnInit {
   appointments: Appointment[] = [];
   allAppointments: Appointment[] = []; // Store all to count
   loading = false;
@@ -53,16 +55,27 @@ export class AppointmentsComponent {
   isPreConsultationModalOpen = false;
 
   private appointmentsService = inject(AppointmentsService);
+  private authService = inject(AuthService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private modalService = inject(ModalService);
   private cdr = inject(ChangeDetectorRef);
 
-  constructor() {
-    afterNextRender(() => {
-      this.determineuserrole();
-      this.loadAppointments();
-    });
+  ngOnInit(): void {
+    this.determineuserrole();
+    
+    // Aguardar até que o usuário esteja autenticado
+    this.authService.authState$
+      .pipe(
+        filter(state => state.isAuthenticated && state.user !== null),
+        take(1)
+      )
+      .subscribe(() => {
+        console.log('[Appointments] Usuário autenticado, carregando consultas');
+        setTimeout(() => {
+          this.loadAppointments();
+        });
+      });
   }
 
   determineuserrole() {
@@ -84,8 +97,10 @@ export class AppointmentsComponent {
         this.allAppointments = response.data;
         this.calculateCounts();
         this.filterAndSortAppointments();
-        this.loading = false;
-        this.cdr.detectChanges();
+        setTimeout(() => {
+          this.loading = false;
+          this.cdr.detectChanges();
+        });
     });
   }
 
