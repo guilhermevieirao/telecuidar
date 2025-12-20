@@ -73,6 +73,12 @@ export interface Appointment {
   createdAt: string;
   updatedAt?: string;
   preConsultationJson?: string;
+  
+  // AI Generated Data
+  aiSummary?: string;
+  aiSummaryGeneratedAt?: string;
+  aiDiagnosticHypothesis?: string;
+  aiDiagnosisGeneratedAt?: string;
 }
 
 export interface CreateAppointmentDto {

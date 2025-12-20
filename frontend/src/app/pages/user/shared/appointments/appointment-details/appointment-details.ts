@@ -15,6 +15,7 @@ import { PreConsultationDataTabComponent } from '@pages/user/shared/teleconsulta
 import { AnamnesisTabComponent } from '@pages/user/shared/teleconsultation/tabs/anamnesis-tab/anamnesis-tab';
 import { SpecialtyFieldsTabComponent } from '@pages/user/shared/teleconsultation/tabs/specialty-fields-tab/specialty-fields-tab';
 import { IotTabComponent } from '@pages/user/shared/teleconsultation/tabs/iot-tab/iot-tab';
+import { AITabComponent } from '@pages/user/shared/teleconsultation/tabs/ai-tab/ai-tab';
 import type { IconName } from '@shared/components/atoms/icon/icon';
 
 @Component({
@@ -34,7 +35,8 @@ import type { IconName } from '@shared/components/atoms/icon/icon';
     PreConsultationDataTabComponent, // Used in @if blocks
     AnamnesisTabComponent, // Used in @if blocks
     SpecialtyFieldsTabComponent, // Used in @if blocks
-    IotTabComponent // Used in @if blocks
+    IotTabComponent, // Used in @if blocks
+    AITabComponent // Used in @if blocks
   ],
   templateUrl: './appointment-details.html',
   styleUrls: ['./appointment-details.scss']
@@ -46,7 +48,7 @@ export class AppointmentDetailsComponent implements OnInit {
   userrole: 'PATIENT' | 'PROFESSIONAL' | 'ADMIN' = 'PATIENT';
   
   // Tabs
-  activeTab: 'basic' | 'biometrics' | 'attachments' | 'soap' | 'conclusion' | 'patient-data' | 'pre-consultation' | 'anamnesis' | 'specialty' | 'iot' = 'basic';
+  activeTab: 'basic' | 'biometrics' | 'attachments' | 'soap' | 'conclusion' | 'patient-data' | 'pre-consultation' | 'anamnesis' | 'specialty' | 'iot' | 'ai' = 'basic';
   availableTabs: { id: string; label: string; icon: IconName; role?: 'PROFESSIONAL' }[] = [
     { id: 'basic', label: 'Informações Básicas', icon: 'file' },
     { id: 'patient-data', label: 'Dados do Paciente', icon: 'user', role: 'PROFESSIONAL' },
@@ -57,6 +59,7 @@ export class AppointmentDetailsComponent implements OnInit {
     { id: 'biometrics', label: 'Biométricos', icon: 'heart' },
     { id: 'attachments', label: 'Chat de Anexos', icon: 'camera' },
     { id: 'soap', label: 'SOAP', icon: 'book', role: 'PROFESSIONAL' },
+    { id: 'ai', label: 'IA', icon: 'activity', role: 'PROFESSIONAL' },
     { id: 'conclusion', label: 'Observações Finais', icon: 'check', role: 'PROFESSIONAL' }
   ];
 

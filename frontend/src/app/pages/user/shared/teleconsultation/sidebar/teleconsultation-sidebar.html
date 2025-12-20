@@ -93,6 +93,15 @@
       </app-soap-tab>
     </div>
 
+    <!-- IA -->
+    <div class="tab-content" *ngIf="activeTab === 'IA'" style="height: 100%">
+      <app-ai-tab
+        [appointmentId]="appointmentId"
+        [appointment]="appointment"
+        [userrole]="userrole">
+      </app-ai-tab>
+    </div>
+
     <!-- Concluir -->
     <div class="tab-content" *ngIf="activeTab === 'Concluir'" style="height: 100%">
       <app-conclusion-tab

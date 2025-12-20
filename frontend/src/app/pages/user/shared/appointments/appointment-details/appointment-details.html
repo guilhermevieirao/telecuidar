@@ -197,6 +197,18 @@
           </div>
         }
 
+        <!-- AI Tab -->
+        @if (activeTab === 'ai') {
+          <div class="tab-panel">
+            <app-ai-tab
+              [appointmentId]="appointmentId"
+              [appointment]="appointment"
+              [userrole]="userrole"
+              [readonly]="true"
+            />
+          </div>
+        }
+
         <!-- Conclusion Tab -->
         @if (activeTab === 'conclusion') {
           <div class="tab-panel">

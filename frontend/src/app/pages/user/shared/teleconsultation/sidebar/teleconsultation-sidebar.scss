@@ -124,8 +124,16 @@
 
   .sidebar-content {
     flex: 1;
-    padding: $spacing-lg;
-    overflow-y: auto;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+
+    .tab-content {
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
   }
 }
 

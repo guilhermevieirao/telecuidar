@@ -27,6 +27,13 @@ public class AppointmentDto
     public string? Observation { get; set; }
     public string? MeetLink { get; set; }
     public string? PreConsultationJson { get; set; }
+    
+    // AI Generated Data
+    public string? AISummary { get; set; }
+    public DateTime? AISummaryGeneratedAt { get; set; }
+    public string? AIDiagnosticHypothesis { get; set; }
+    public DateTime? AIDiagnosisGeneratedAt { get; set; }
+    
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 }

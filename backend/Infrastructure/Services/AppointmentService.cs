@@ -76,6 +76,10 @@ public class AppointmentService : IAppointmentService
                 Observation = a.Observation,
                 MeetLink = a.MeetLink,
                 PreConsultationJson = a.PreConsultationJson,
+                AISummary = a.AISummary,
+                AISummaryGeneratedAt = a.AISummaryGeneratedAt,
+                AIDiagnosticHypothesis = a.AIDiagnosticHypothesis,
+                AIDiagnosisGeneratedAt = a.AIDiagnosisGeneratedAt,
                 CreatedAt = a.CreatedAt,
                 UpdatedAt = a.UpdatedAt
             })
@@ -126,6 +130,10 @@ public class AppointmentService : IAppointmentService
             Observation = appointment.Observation,
             MeetLink = appointment.MeetLink,
             PreConsultationJson = appointment.PreConsultationJson,
+            AISummary = appointment.AISummary,
+            AISummaryGeneratedAt = appointment.AISummaryGeneratedAt,
+            AIDiagnosticHypothesis = appointment.AIDiagnosticHypothesis,
+            AIDiagnosisGeneratedAt = appointment.AIDiagnosisGeneratedAt,
             CreatedAt = appointment.CreatedAt,
             UpdatedAt = appointment.UpdatedAt
         };

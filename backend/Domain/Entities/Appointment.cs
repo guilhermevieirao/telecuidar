@@ -19,6 +19,12 @@ public class Appointment : BaseEntity
     public string? BiometricsJson { get; set; } // Store BiometricsData as JSON
     public string? AttachmentsChatJson { get; set; } // Store AttachmentMessage[] as JSON
     
+    // AI Generated Data
+    public string? AISummary { get; set; } // AI-generated summary of the consultation
+    public DateTime? AISummaryGeneratedAt { get; set; }
+    public string? AIDiagnosticHypothesis { get; set; } // AI-generated diagnostic hypothesis
+    public DateTime? AIDiagnosisGeneratedAt { get; set; }
+    
     // Navigation Properties
     public User Patient { get; set; } = null!;
     public User Professional { get; set; } = null!;
