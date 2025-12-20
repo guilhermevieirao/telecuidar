@@ -56,6 +56,13 @@ export interface Appointment {
   professionalName?: string;
   specialtyId: string;
   specialtyName?: string;
+  specialty?: {
+    id: string;
+    name: string;
+    description: string;
+    status: string;
+    customFieldsJson?: string;
+  };
   date: string;
   time: string;
   endTime?: string;

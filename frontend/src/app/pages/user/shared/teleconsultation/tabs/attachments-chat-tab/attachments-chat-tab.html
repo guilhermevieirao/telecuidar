@@ -29,7 +29,7 @@
           
           <div class="attachment-info">
             <!-- Editing title -->
-            <ng-container *ngIf="editingMessageId === msg.id; else showTitle">
+            <ng-container *ngIf="editingMessageId === msg.id && !readonly; else showTitle">
               <input 
                 type="text" 
                 [(ngModel)]="msg.title" 
@@ -51,10 +51,15 @@
             </ng-template>
           </div>
           
-          <div class="message-actions" *ngIf="editingMessageId !== msg.id">
+          <div class="message-actions" *ngIf="editingMessageId !== msg.id && !readonly">
             <button class="edit-btn" (click)="$event.stopPropagation(); editMessage(msg)" title="Editar">
               <app-icon name="edit" [size]="16" />
             </button>
+            <button class="download-btn" (click)="$event.stopPropagation(); downloadFile(msg)" title="Baixar">
+              <app-icon name="download" [size]="16" />
+            </button>
+          </div>
+          <div class="message-actions" *ngIf="editingMessageId !== msg.id && readonly">
             <button class="download-btn" (click)="$event.stopPropagation(); downloadFile(msg)" title="Baixar">
               <app-icon name="download" [size]="16" />
             </button>
@@ -74,7 +79,8 @@
   </app-media-preview-modal>
 
   <!-- Upload Area -->
-  <div class="upload-area" [class.drag-over]="isDragOver" [class.adding]="isAddingAttachment" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)" (drop)="onDrop($event)">
+  @if (!readonly) {
+    <div class="upload-area" [class.drag-over]="isDragOver" [class.adding]="isAddingAttachment" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)" (drop)="onDrop($event)">
     
     <!-- Adding Multiple Files -->
     <div class="add-attachment-container" *ngIf="isAddingAttachment">
@@ -180,7 +186,8 @@
         </div>
       </div>
     </div>
-  </div>
+    </div>
+  }
 </div>
 
 <!-- QR Code Modal -->

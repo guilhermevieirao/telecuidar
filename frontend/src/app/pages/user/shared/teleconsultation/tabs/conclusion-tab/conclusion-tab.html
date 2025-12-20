@@ -34,24 +34,31 @@
     </div>
   </div>
 
-  <div class="observations-section">
-    <label for="final-observations">Observações Finais</label>
-    <textarea 
-      id="final-observations"
-      [(ngModel)]="observations"
-      placeholder="Digite as observações finais da consulta..."
-      rows="6"
-    ></textarea>
-    <p class="hint">Estas observações ficarão visíveis no histórico para o profissional e o paciente.</p>
-  </div>
+  @if (!readonly) {
+    <div class="observations-section">
+      <label for="final-observations">Observações Finais</label>
+      <textarea 
+        id="final-observations"
+        [(ngModel)]="observations"
+        placeholder="Digite as observações finais da consulta..."
+        rows="6"
+      ></textarea>
+      <p class="hint">Estas observações ficarão visíveis no histórico para o profissional e o paciente.</p>
+    </div>
 
-  <div class="actions">
-    <app-button 
-      variant="danger" 
-      (click)="onFinish()"
-      [fullWidth]="true"
-    >
-      Concluir Consulta e Encerrar Chamada
-    </app-button>
-  </div>
+    <div class="actions">
+      <app-button 
+        variant="danger" 
+        (click)="onFinish()"
+        [fullWidth]="true"
+      >
+        Concluir Consulta e Encerrar Chamada
+      </app-button>
+    </div>
+  } @else {
+    <div class="observations-section">
+      <label>Observações Finais</label>
+      <p class="readonly-text">{{ appointment?.observation || 'Nenhuma observação registrada.' }}</p>
+    </div>
+  }
 </div>

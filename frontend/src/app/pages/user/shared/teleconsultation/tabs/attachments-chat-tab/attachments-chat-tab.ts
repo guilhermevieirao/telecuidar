@@ -27,6 +27,7 @@ interface PendingFile {
 export class AttachmentsChatTabComponent implements OnInit, OnDestroy {
   @Input() appointmentId: string | null = null;
   @Input() userrole: 'PATIENT' | 'PROFESSIONAL' | 'ADMIN' = 'PATIENT';
+  @Input() readonly = false;
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
   @ViewChild('chatContainer') chatContainer!: ElementRef<HTMLDivElement>;

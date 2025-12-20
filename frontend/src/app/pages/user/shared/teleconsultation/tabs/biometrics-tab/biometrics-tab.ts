@@ -15,6 +15,7 @@ import { Subject, takeUntil, debounceTime } from 'rxjs';
 export class BiometricsTabComponent implements OnInit, OnDestroy {
   @Input() appointmentId: string | null = null;
   @Input() userrole: 'PATIENT' | 'PROFESSIONAL' | 'ADMIN' = 'PATIENT';
+  @Input() readonly = false;
 
   biometricsForm: FormGroup;
   lastUpdated: Date | null = null;
@@ -41,6 +42,12 @@ export class BiometricsTabComponent implements OnInit, OnDestroy {
   ngOnInit() {
     if (this.appointmentId) {
       this.loadData();
+      
+      // Se readonly, sempre desabilitar
+      if (this.readonly) {
+        this.biometricsForm.disable();
+        return;
+      }
       
       // Auto-save for patient on value changes (debounced)
       if (this.userrole === 'PATIENT') {

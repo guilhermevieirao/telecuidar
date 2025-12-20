@@ -12,7 +12,14 @@ import { TeleconsultationSidebarComponent } from './sidebar/teleconsultation-sid
 @Component({
   selector: 'app-teleconsultation',
   standalone: true,
-  imports: [CommonModule, IconComponent, ButtonComponent, ThemeToggleComponent, RouterModule, TeleconsultationSidebarComponent],
+  imports: [
+    CommonModule,
+    IconComponent,
+    ButtonComponent,
+    ThemeToggleComponent,
+    RouterModule,
+    TeleconsultationSidebarComponent
+  ],
   templateUrl: './teleconsultation.html',
   styleUrls: ['./teleconsultation.scss']
 })
@@ -29,7 +36,7 @@ export class TeleconsultationComponent implements OnInit {
   isMobile = false;
 
   // Tabs configuration
-  professionalTabs = ['Biométricos', 'Chat Anexos', 'SOAP', 'Concluir'];
+  professionalTabs = ['Dados do Paciente', 'Dados da Pré Consulta', 'Anamnese', 'Campos da Especialidade', 'Biométricos', 'Chat Anexos', 'SOAP', 'Concluir'];
   patientTabs = ['Biométricos', 'Chat Anexos'];
   currentTabs: string[] = [];
 

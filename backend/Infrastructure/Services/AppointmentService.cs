@@ -110,6 +110,14 @@ public class AppointmentService : IAppointmentService
             ProfessionalName = appointment.Professional.Name + " " + appointment.Professional.LastName,
             SpecialtyId = appointment.SpecialtyId,
             SpecialtyName = appointment.Specialty.Name,
+            Specialty = new SpecialtyBasicDto
+            {
+                Id = appointment.Specialty.Id,
+                Name = appointment.Specialty.Name,
+                Description = appointment.Specialty.Description,
+                Status = appointment.Specialty.Status.ToString(),
+                CustomFieldsJson = appointment.Specialty.CustomFieldsJson
+            },
             Date = appointment.Date,
             Time = appointment.Time.ToString(@"hh\:mm"),
             EndTime = appointment.EndTime != null ? appointment.EndTime.Value.ToString(@"hh\:mm") : null,

@@ -13,6 +13,7 @@ import { NotificationsComponent } from '@pages/user/shared/notifications/notific
 import { ProfileComponent } from '@pages/user/shared/profile/profile';
 import { AppointmentsComponent } from '@pages/user/shared/appointments/appointments';
 import { AppointmentDetailsModalComponent } from '@pages/user/shared/appointments/appointment-details-modal/appointment-details-modal';
+import { AppointmentDetailsComponent } from '@pages/user/shared/appointments/appointment-details/appointment-details';
 import { ScheduleBlocksComponent } from '@pages/user/shared/schedule-blocks/schedule-blocks';
 import { MyScheduleComponent } from '@pages/user/professional/my-schedule/my-schedule';
 
@@ -67,6 +68,7 @@ export const routes: Routes = [
       { path: 'notificacoes', component: NotificationsComponent },
       { path: 'perfil', component: ProfileComponent },
       { path: 'consultas', component: AppointmentsComponent },
+      { path: 'consultas/:id/detalhes', component: AppointmentDetailsComponent },
       
       // Admin only
       { path: 'usuarios', component: UsersComponent, canActivate: [roleGuard(['ADMIN'])] },

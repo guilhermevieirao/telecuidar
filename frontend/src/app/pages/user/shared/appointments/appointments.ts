@@ -190,8 +190,8 @@ export class AppointmentsComponent implements OnInit {
 
   // Actions
   openDetails(appointment: Appointment) {
-    this.selectedAppointment = appointment;
-    this.isDetailsModalOpen = true;
+    // Navigate to the details page instead of opening a modal
+    this.router.navigate(['/consultas', appointment.id, 'detalhes']);
   }
 
   closeDetails() {

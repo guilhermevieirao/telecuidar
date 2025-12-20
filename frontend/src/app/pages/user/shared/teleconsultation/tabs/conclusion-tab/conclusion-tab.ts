@@ -13,6 +13,7 @@ import { ButtonComponent } from '@shared/components/atoms/button/button';
 })
 export class ConclusionTabComponent {
   @Input() appointment: Appointment | null = null;
+  @Input() readonly = false;
   @Output() finish = new EventEmitter<string>();
 
   observations = '';

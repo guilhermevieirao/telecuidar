@@ -1,5 +1,14 @@
 namespace Application.DTOs.Appointments;
 
+public class SpecialtyBasicDto
+{
+    public Guid Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public string Status { get; set; } = string.Empty;
+    public string? CustomFieldsJson { get; set; }
+}
+
 public class AppointmentDto
 {
     public Guid Id { get; set; }
@@ -9,6 +18,7 @@ public class AppointmentDto
     public string ProfessionalName { get; set; } = string.Empty;
     public Guid SpecialtyId { get; set; }
     public string SpecialtyName { get; set; } = string.Empty;
+    public SpecialtyBasicDto? Specialty { get; set; }
     public DateTime Date { get; set; }
     public string Time { get; set; } = string.Empty;
     public string? EndTime { get; set; }

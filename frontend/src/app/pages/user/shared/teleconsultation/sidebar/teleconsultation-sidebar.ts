@@ -5,6 +5,11 @@ import { BiometricsTabComponent } from '../tabs/biometrics-tab/biometrics-tab';
 import { AttachmentsChatTabComponent } from '../tabs/attachments-chat-tab/attachments-chat-tab';
 import { SoapTabComponent } from '../tabs/soap-tab/soap-tab';
 import { ConclusionTabComponent } from '../tabs/conclusion-tab/conclusion-tab';
+import { PatientDataTabComponent } from '../tabs/patient-data-tab/patient-data-tab';
+import { PreConsultationDataTabComponent } from '../tabs/pre-consultation-data-tab/pre-consultation-data-tab';
+import { AnamnesisTabComponent } from '../tabs/anamnesis-tab/anamnesis-tab';
+import { SpecialtyFieldsTabComponent } from '../tabs/specialty-fields-tab/specialty-fields-tab';
+import { IotTabComponent } from '../tabs/iot-tab/iot-tab';
 import { DictationService } from '@core/services/dictation.service';
 import { Appointment } from '@core/services/appointments.service';
 import { Subject, takeUntil } from 'rxjs';
@@ -12,7 +17,19 @@ import { Subject, takeUntil } from 'rxjs';
 @Component({
   selector: 'app-teleconsultation-sidebar',
   standalone: true,
-  imports: [CommonModule, IconComponent, BiometricsTabComponent, AttachmentsChatTabComponent, SoapTabComponent, ConclusionTabComponent],
+  imports: [
+    CommonModule,
+    IconComponent,
+    BiometricsTabComponent,
+    AttachmentsChatTabComponent,
+    SoapTabComponent,
+    ConclusionTabComponent,
+    PatientDataTabComponent,
+    PreConsultationDataTabComponent,
+    AnamnesisTabComponent,
+    SpecialtyFieldsTabComponent,
+    IotTabComponent
+  ],
   templateUrl: './teleconsultation-sidebar.html',
   styleUrls: ['./teleconsultation-sidebar.scss']
 })

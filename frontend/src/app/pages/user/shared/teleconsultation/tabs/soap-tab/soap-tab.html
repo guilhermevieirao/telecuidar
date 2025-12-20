@@ -55,13 +55,15 @@
       </textarea>
     </div>
 
-    <div class="form-actions">
-      <app-button 
-        variant="primary" 
-        (click)="saveSoap()" 
-        [disabled]="isSaving || soapForm.pristine">
-        {{ isSaving ? 'Salvando...' : 'Salvar Registro' }}
-      </app-button>
-    </div>
+    @if (!readonly) {
+      <div class="form-actions">
+        <app-button 
+          variant="primary" 
+          (click)="saveSoap()" 
+          [disabled]="isSaving || soapForm.pristine">
+          {{ isSaving ? 'Salvando...' : 'Salvar Registro' }}
+        </app-button>
+      </div>
+    }
   </form>
 </div>

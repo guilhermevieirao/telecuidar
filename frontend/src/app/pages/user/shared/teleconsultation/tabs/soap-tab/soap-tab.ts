@@ -13,6 +13,7 @@ import { ButtonComponent } from '@shared/components/atoms/button/button';
 export class SoapTabComponent implements OnInit {
   @Input() appointmentId: string | null = null;
   @Input() userrole: 'PATIENT' | 'PROFESSIONAL' | 'ADMIN' = 'PATIENT';
+  @Input() readonly = false;
 
   soapForm: FormGroup;
   isSaving = false;
@@ -29,6 +30,9 @@ export class SoapTabComponent implements OnInit {
 
   ngOnInit() {
     // Here we would load existing SOAP data if available
+    if (this.readonly) {
+      this.soapForm.disable();
+    }
   }
 
   saveSoap() {
