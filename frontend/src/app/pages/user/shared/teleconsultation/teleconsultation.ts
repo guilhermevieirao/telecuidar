@@ -46,7 +46,7 @@ export class TeleconsultationComponent implements OnInit, OnDestroy {
   isCallConnected = false;
 
   // Tabs configuration
-  professionalTabs = ['Dados do Paciente', 'Dados da Pré Consulta', 'Anamnese', 'Campos da Especialidade', 'Biométricos', 'Chat Anexos', 'SOAP', 'IA', 'CADSUS', 'Concluir'];
+  professionalTabs = ['Dados do Paciente', 'Dados da Pré Consulta', 'Anamnese', 'Campos da Especialidade', 'Biométricos', 'Chat Anexos', 'SOAP', 'Receita', 'IA', 'CADSUS', 'Concluir'];
   patientTabs = ['Biométricos', 'Chat Anexos'];
   currentTabs: string[] = [];
 

@@ -42,6 +42,8 @@ services:
       - jitsi-web-config:/config
       - jitsi-web-certs:/etc/letsencrypt
       - jitsi-transcripts:/usr/share/jitsi-meet/transcripts
+      # Arquivo customizado para remover branding do Jitsi (sobrescreve o gerado)
+      - ./jitsi-config/custom/custom-interface_config.js:/config/interface_config.js:ro
     networks:
       meet.jitsi:
         aliases:

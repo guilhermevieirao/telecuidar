@@ -69,6 +69,7 @@ builder.Services.AddScoped<Application.Interfaces.IAuditLogService, Infrastructu
 builder.Services.AddScoped<Application.Interfaces.IAttachmentService, Infrastructure.Services.AttachmentService>();
 builder.Services.AddScoped<Application.Interfaces.IInviteService, Infrastructure.Services.InviteService>();
 builder.Services.AddScoped<Application.Interfaces.IAIService, Infrastructure.Services.AIService>();
+builder.Services.AddScoped<Application.Interfaces.IPrescriptionService, Infrastructure.Services.PrescriptionService>();
 
 builder.Services.AddSingleton<Application.Interfaces.ICadsusService, Infrastructure.Services.CadsusService>();
 builder.Services.AddScoped<Application.Interfaces.IJitsiService, Infrastructure.Services.JitsiService>();

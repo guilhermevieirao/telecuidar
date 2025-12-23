@@ -21,6 +21,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Attachment> Attachments { get; set; }
     public DbSet<Invite> Invites { get; set; }
     public DbSet<ScheduleBlock> ScheduleBlocks { get; set; }
+    public DbSet<Prescription> Prescriptions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -211,6 +212,33 @@ public class ApplicationDbContext : DbContext
                 .WithMany()
                 .HasForeignKey(e => e.ApprovedBy)
                 .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        // Prescription Configuration
+        modelBuilder.Entity<Prescription>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.ItemsJson).IsRequired();
+            entity.Property(e => e.DigitalSignature).HasMaxLength(10000);
+            entity.Property(e => e.CertificateThumbprint).HasMaxLength(100);
+            entity.Property(e => e.CertificateSubject).HasMaxLength(500);
+            entity.Property(e => e.DocumentHash).HasMaxLength(100);
+            entity.HasIndex(e => e.DocumentHash);
+
+            entity.HasOne(e => e.Appointment)
+                .WithMany()
+                .HasForeignKey(e => e.AppointmentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Professional)
+                .WithMany()
+                .HasForeignKey(e => e.ProfessionalId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.Patient)
+                .WithMany()
+                .HasForeignKey(e => e.PatientId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
     }
 

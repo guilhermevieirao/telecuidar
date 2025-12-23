@@ -38,6 +38,10 @@ export interface JitsiInterfaceConfig {
   SHOW_WATERMARK_FOR_GUESTS: boolean;
   SHOW_BRAND_WATERMARK: boolean;
   BRAND_WATERMARK_LINK: string;
+  JITSI_WATERMARK_LINK: string;
+  DEFAULT_LOGO_URL: string;
+  DEFAULT_WELCOME_PAGE_LOGO_URL: string;
+  HIDE_DEEP_LINKING_LOGO: boolean;
   SHOW_POWERED_BY: boolean;
   SHOW_PROMOTIONAL_CLOSE_PAGE: boolean;
   DISABLE_JOIN_LEAVE_NOTIFICATIONS: boolean;
@@ -256,8 +260,12 @@ export class JitsiService {
         SHOW_WATERMARK_FOR_GUESTS: false,
         SHOW_BRAND_WATERMARK: false,
         BRAND_WATERMARK_LINK: '',
+        JITSI_WATERMARK_LINK: '',
         SHOW_POWERED_BY: false,
         SHOW_PROMOTIONAL_CLOSE_PAGE: false,
+        DEFAULT_LOGO_URL: '',
+        DEFAULT_WELCOME_PAGE_LOGO_URL: '',
+        HIDE_DEEP_LINKING_LOGO: true,
         DISABLE_JOIN_LEAVE_NOTIFICATIONS: false,
         DISABLE_PRESENCE_STATUS: false,
         DISABLE_FOCUS_INDICATOR: false,

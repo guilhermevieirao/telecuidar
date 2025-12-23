@@ -1,0 +1,458 @@
+<div class="receita-container">
+  <!-- Loading State -->
+  @if (isLoading) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Carregando receita...</p>
+    </div>
+  } @else {
+    <!-- Header -->
+    <div class="receita-header">
+      <div class="header-content">
+        <h3>
+          <app-icon name="file" [size]="20" />
+          Receituário Médico
+        </h3>
+        @if (prescription?.isSigned) {
+          <span class="signed-badge">
+            <app-icon name="check-circle" [size]="14" />
+            Assinado Digitalmente
+          </span>
+        }
+      </div>
+      
+      <!-- Input oculto para selecionar arquivo PFX -->
+      <input 
+        #pfxFileInput
+        type="file" 
+        accept=".pfx,.p12"
+        style="display: none;"
+        (change)="onPfxFileSelected($event)" />
+      
+      @if (prescription && isProfessional) {
+        <div class="header-actions">
+          <!-- Botão Excluir -->
+          <app-button 
+            variant="danger" 
+            size="sm"
+            (click)="deletePrescription()"
+            [disabled]="isSaving"
+            title="Excluir receita">
+            <app-icon name="trash" [size]="16" />
+            Excluir
+          </app-button>
+          
+          @if (hasItems) {
+            <!-- PDF sem assinatura -->
+            <app-button 
+              variant="secondary" 
+              size="sm"
+              (click)="generatePdf()"
+              [disabled]="isGeneratingPdf">
+              <app-icon name="download" [size]="16" />
+              {{ isGeneratingPdf ? 'Gerando...' : 'PDF' }}
+            </app-button>
+            
+            <!-- PDF assinado com certificado digital -->
+            <app-button 
+              variant="primary" 
+              size="sm"
+              (click)="openSignatureOptions()"
+              [disabled]="isSigning || isLoadingInstalledCerts">
+              <app-icon name="edit" [size]="16" />
+              @if (isLoadingInstalledCerts) {
+                Carregando...
+              } @else if (isSigning) {
+                Assinando...
+              } @else {
+                Assinar e Gerar PDF
+              }
+            </app-button>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Sem receita ainda -->
+    @if (!prescription) {
+      <div class="empty-state">
+        <app-icon name="plus" [size]="48" />
+        <h4>Nenhuma receita cadastrada</h4>
+        <p>Clique no botão abaixo para iniciar uma nova receita para esta consulta.</p>
+        @if (canEdit || userrole === 'PROFESSIONAL') {
+          <app-button 
+            variant="primary" 
+            (click)="createPrescription()"
+            [disabled]="isSaving">
+            {{ isSaving ? 'Criando...' : 'Criar Nova Receita' }}
+          </app-button>
+        }
+      </div>
+    } @else {
+      <!-- Lista de medicamentos -->
+      <div class="medications-list">
+        @if (prescription.items.length === 0) {
+          <div class="no-items">
+            <app-icon name="heart" [size]="32" />
+            <p>Nenhum medicamento adicionado ainda.</p>
+          </div>
+        } @else {
+          @for (item of prescription.items; track item.id; let i = $index) {
+            <div class="medication-card" [class.signed]="prescription.isSigned">
+              <div class="medication-header">
+                <div class="medication-number">{{ i + 1 }}</div>
+                <div class="medication-title">
+                  <h4>{{ item.medicamento }}</h4>
+                  @if (item.codigoAnvisa) {
+                    <span class="anvisa-code">ANVISA: {{ item.codigoAnvisa }}</span>
+                  }
+                </div>
+                @if (canEdit) {
+                  <button class="remove-btn" (click)="removeItem(item.id)" title="Remover">
+                    <app-icon name="trash" [size]="16" />
+                  </button>
+                }
+              </div>
+              
+              <div class="medication-details">
+                <div class="detail-item">
+                  <span class="label">Dosagem</span>
+                  <span class="value">{{ item.dosagem }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Frequência</span>
+                  <span class="value">{{ item.frequencia }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Período</span>
+                  <span class="value">{{ item.periodo }}</span>
+                </div>
+                <div class="detail-item full-width">
+                  <span class="label">Posologia</span>
+                  <span class="value">{{ item.posologia }}</span>
+                </div>
+                @if (item.observacoes) {
+                  <div class="detail-item full-width">
+                    <span class="label">Observações</span>
+                    <span class="value obs">{{ item.observacoes }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        }
+      </div>
+
+      <!-- Botão adicionar (quando não está mostrando form) -->
+      @if (canEdit && !showItemForm) {
+        <button class="add-medication-btn" (click)="showItemForm = true">
+          <app-icon name="plus" [size]="20" />
+          Adicionar Medicamento
+        </button>
+      }
+
+      <!-- Formulário de novo item -->
+      @if (showItemForm && canEdit) {
+        <div class="item-form">
+          <div class="form-header">
+            <h4>Novo Medicamento</h4>
+            <button class="close-btn" (click)="cancelItemForm()">
+              <app-icon name="close" [size]="18" />
+            </button>
+          </div>
+
+          <form [formGroup]="itemForm" (ngSubmit)="addItem()">
+            <!-- Campo Medicamento com Autocomplete -->
+            <div class="form-group">
+              <label for="medicamento">Medicamento *</label>
+              <div class="autocomplete-container">
+                <input 
+                  type="text" 
+                  id="medicamento"
+                  [value]="medicamentoSearch"
+                  (input)="onMedicamentoInput($event)"
+                  (blur)="hideDropdown()"
+                  placeholder="Digite o nome do medicamento..."
+                  autocomplete="off"
+                />
+                @if (isSearching) {
+                  <div class="search-spinner"></div>
+                }
+                
+                @if (showMedicamentoDropdown) {
+                  <div class="autocomplete-dropdown">
+                    @for (med of medicamentoResults; track med.codigo) {
+                      <div class="dropdown-item" (mousedown)="selectMedicamento(med)">
+                        <div class="med-name">{{ med.nome }}</div>
+                        <div class="med-info">
+                          <span class="principle">{{ med.principioAtivo }}</span>
+                          <span class="lab">{{ med.laboratorio }}</span>
+                        </div>
+                      </div>
+                    }
+                    <div class="dropdown-item free-text" (mousedown)="useFreeText()">
+                      <app-icon name="edit" [size]="14" />
+                      Usar "{{ medicamentoSearch }}" como texto livre
+                    </div>
+                  </div>
+                }
+              </div>
+              <small class="hint">Busca na base ANVISA ou digite livremente</small>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="dosagem">Dosagem *</label>
+                <input 
+                  type="text" 
+                  id="dosagem" 
+                  formControlName="dosagem"
+                  placeholder="Ex: 500mg, 1g, 10ml..."
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="frequencia">Frequência *</label>
+                <input 
+                  type="text" 
+                  id="frequencia" 
+                  formControlName="frequencia"
+                  placeholder="Ex: 8/8h, 12/12h, 1x ao dia..."
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="periodo">Período *</label>
+                <input 
+                  type="text" 
+                  id="periodo" 
+                  formControlName="periodo"
+                  placeholder="Ex: 7 dias, 14 dias, uso contínuo..."
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="posologia">Posologia *</label>
+                <input 
+                  type="text" 
+                  id="posologia" 
+                  formControlName="posologia"
+                  placeholder="Ex: Tomar 1 comprimido após refeições..."
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="observacoes">Observações</label>
+              <textarea 
+                id="observacoes" 
+                formControlName="observacoes"
+                placeholder="Observações adicionais sobre este medicamento..."
+                rows="2"
+              ></textarea>
+            </div>
+
+            <div class="form-actions">
+              <app-button 
+                variant="secondary" 
+                type="button"
+                (click)="cancelItemForm()">
+                Cancelar
+              </app-button>
+              <app-button 
+                variant="primary" 
+                type="submit"
+                [disabled]="itemForm.invalid || isSaving">
+                {{ isSaving ? 'Adicionando...' : 'Adicionar' }}
+              </app-button>
+            </div>
+          </form>
+        </div>
+      }
+
+      <!-- Info de assinatura -->
+      @if (prescription.isSigned) {
+        <div class="signature-info">
+          <app-icon name="shield" [size]="20" />
+          <div class="signature-details">
+            <strong>Documento Assinado Digitalmente</strong>
+            <p>Certificado: {{ prescription.certificateSubject }}</p>
+            <p>Data: {{ prescription.signedAt | date:'dd/MM/yyyy HH:mm':'':'pt-BR' }}</p>
+            <p class="hash">Hash: {{ prescription.documentHash }}</p>
+          </div>
+        </div>
+      }
+    }
+  }
+
+  <!-- Modal de seleção de certificado -->
+  @if (showCertificateModal) {
+    <div class="modal-overlay" (click)="closeCertificateModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Selecione o Certificado Digital</h3>
+          <button class="close-btn" (click)="closeCertificateModal()">
+            <app-icon name="close" [size]="20" />
+          </button>
+        </div>
+        
+        <div class="modal-body">
+          <p class="modal-description">
+            Foram encontrados múltiplos certificados digitais A1 (ICP-Brasil). 
+            Selecione qual deseja usar para assinar esta receita:
+          </p>
+          
+          <div class="certificates-list">
+            @for (cert of certificates; track cert.thumbprint) {
+              <div 
+                class="certificate-card" 
+                [class.selected]="selectedCertificate?.thumbprint === cert.thumbprint"
+                (click)="selectCertificate(cert)">
+                <div class="cert-icon">
+                  <app-icon name="settings" [size]="24" />
+                </div>
+                <div class="cert-info">
+                  <strong>{{ cert.subject }}</strong>
+                  <p>Emissor: {{ cert.issuer }}</p>
+                  <p>Válido: {{ cert.validFrom | date:'dd/MM/yyyy' }} - {{ cert.validTo | date:'dd/MM/yyyy' }}</p>
+                </div>
+                @if (cert.isValid) {
+                  <span class="valid-badge">Válido</span>
+                } @else {
+                  <span class="invalid-badge">Expirado</span>
+                }
+              </div>
+            }
+          </div>
+        </div>
+        
+        <div class="modal-footer">
+          <app-button variant="secondary" (click)="closeCertificateModal()">
+            Cancelar
+          </app-button>
+          <app-button 
+            variant="primary" 
+            (click)="confirmCertificateSelection()"
+            [disabled]="!selectedCertificate">
+            Assinar com este Certificado
+          </app-button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Modal de Senha do PFX -->
+  @if (showPfxPasswordModal) {
+    <div class="modal-overlay" (click)="closePfxPasswordModal()">
+      <div class="modal-content pfx-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Senha do Certificado</h3>
+          <button class="close-btn" (click)="closePfxPasswordModal()">
+            <app-icon name="close" [size]="20" />
+          </button>
+        </div>
+        
+        <div class="modal-body">
+          <p class="modal-description">
+            Informe a senha do certificado digital A1 (PFX) para assinar o documento.
+          </p>
+          
+          <div class="pfx-file-info">
+            <app-icon name="settings" [size]="24" />
+            <span>{{ pfxFile?.name }}</span>
+          </div>
+          
+          <div class="form-group">
+            <label for="pfxPassword">Senha do Certificado</label>
+            <input 
+              type="password" 
+              id="pfxPassword"
+              [(ngModel)]="pfxPassword"
+              placeholder="Digite a senha do certificado"
+              class="form-control"
+              (keyup.enter)="generateSignedPdf()" />
+          </div>
+        </div>
+        
+        <div class="modal-footer">
+          <app-button variant="secondary" (click)="closePfxPasswordModal()">
+            Cancelar
+          </app-button>
+          <app-button 
+            variant="primary" 
+            (click)="generateSignedPdf()"
+            [disabled]="!pfxPassword || isSigning">
+            {{ isSigning ? 'Assinando...' : 'Assinar e Gerar PDF' }}
+          </app-button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Modal de Seleção de Certificados Instalados -->
+  @if (showInstalledCertsModal) {
+    <div class="modal-overlay" (click)="closeInstalledCertsModal()">
+      <div class="modal-content installed-certs-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Selecionar Certificado Digital</h3>
+          <button class="close-btn" (click)="closeInstalledCertsModal()">
+            <app-icon name="close" [size]="20" />
+          </button>
+        </div>
+        
+        <div class="modal-body">
+          <p class="modal-description">
+            Selecione um dos certificados digitais instalados neste computador para assinar a receita:
+          </p>
+          
+          <div class="certificates-list">
+            @for (cert of installedCertificates; track cert.thumbprint) {
+              <div 
+                class="certificate-card" 
+                [class.selected]="selectedInstalledCert?.thumbprint === cert.thumbprint"
+                (click)="selectInstalledCertificate(cert)">
+                <div class="cert-icon">
+                  <app-icon name="settings" [size]="24" />
+                </div>
+                <div class="cert-info">
+                  <strong>{{ cert.subjectName }}</strong>
+                  <p>Emissor: {{ cert.issuerName }}</p>
+                  <p>Válido: {{ cert.validFrom | date:'dd/MM/yyyy' }} - {{ cert.validTo | date:'dd/MM/yyyy' }}</p>
+                  @if (cert.pkiBrazil?.cpf) {
+                    <p class="cpf-info">CPF: {{ cert.pkiBrazil?.cpf }}</p>
+                  }
+                </div>
+                <span class="valid-badge">Válido</span>
+              </div>
+            }
+          </div>
+          
+          <div class="modal-divider">
+            <span>ou</span>
+          </div>
+          
+          <div class="file-option">
+            <app-button variant="outline" size="sm" (click)="useFileCertificate()">
+              <app-icon name="plus" [size]="16" />
+              Usar arquivo de certificado (.pfx)
+            </app-button>
+          </div>
+        </div>
+        
+        <div class="modal-footer">
+          <app-button variant="secondary" (click)="closeInstalledCertsModal()">
+            Cancelar
+          </app-button>
+          <app-button 
+            variant="primary" 
+            (click)="confirmInstalledCertSignature()"
+            [disabled]="!selectedInstalledCert || isSigning">
+            {{ isSigning ? 'Assinando...' : 'Assinar com este Certificado' }}
+          </app-button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

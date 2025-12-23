@@ -110,6 +110,14 @@
       </app-cadsus-tab>
     </div>
 
+    <!-- Receita -->
+    <div class="tab-content" *ngIf="activeTab === 'Receita'" style="height: 100%">
+      <app-receita-tab
+        [appointmentId]="appointmentId"
+        [userrole]="userrole">
+      </app-receita-tab>
+    </div>
+
     <!-- Concluir -->
     <div class="tab-content" *ngIf="activeTab === 'Concluir'" style="height: 100%">
       <app-conclusion-tab

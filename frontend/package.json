@@ -47,6 +47,7 @@
     "qrcode": "^1.5.4",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
+    "web-pki": "^2.16.5",
     "zone.js": "^0.16.0"
   },
   "devDependencies": {

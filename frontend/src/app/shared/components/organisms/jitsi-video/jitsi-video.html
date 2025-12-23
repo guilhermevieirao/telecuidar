@@ -28,9 +28,8 @@
     [class.hidden]="isLoading || errorMessage">
   </div>
 
-  <!-- Custom Controls Overlay (opcional) -->
-  <div class="custom-controls" *ngIf="showControls && isConnected && !errorMessage">
-    <!-- Status Bar -->
+  <!-- Status Bar Only (controles usam a toolbar nativa do Jitsi) -->
+  <div class="status-overlay" *ngIf="showControls && isConnected && !errorMessage">
     <div class="status-bar">
       <div class="connection-status" [class.connected]="isConnected">
         <span class="status-dot"></span>
@@ -44,55 +43,6 @@
         <app-icon name="shield" [size]="14" />
         <span>Moderador</span>
       </div>
-    </div>
-
-    <!-- Quick Controls (complementar aos controles do Jitsi) -->
-    <div class="quick-controls">
-      <button 
-        class="control-btn" 
-        [class.active]="isMuted"
-        (click)="toggleMute()"
-        [title]="isMuted ? 'Ativar microfone' : 'Desativar microfone'">
-        <app-icon [name]="isMuted ? 'mic-off' : 'mic'" [size]="20" />
-      </button>
-      
-      <button 
-        class="control-btn" 
-        [class.active]="isVideoOff"
-        (click)="toggleVideo()"
-        [title]="isVideoOff ? 'Ativar câmera' : 'Desativar câmera'">
-        <app-icon [name]="isVideoOff ? 'video-off' : 'video'" [size]="20" />
-      </button>
-      
-      <button 
-        class="control-btn" 
-        [class.active]="isScreenSharing"
-        (click)="toggleScreenShare()"
-        title="Compartilhar tela">
-        <app-icon name="monitor" [size]="20" />
-      </button>
-      
-      <button 
-        class="control-btn"
-        (click)="openChat()"
-        title="Chat">
-        <app-icon name="message-circle" [size]="20" />
-      </button>
-
-      <button 
-        class="control-btn moderator-only" 
-        *ngIf="isModerator"
-        (click)="muteAll()"
-        title="Silenciar todos">
-        <app-icon name="volume-x" [size]="20" />
-      </button>
-      
-      <button 
-        class="control-btn danger"
-        (click)="hangup()"
-        title="Encerrar chamada">
-        <app-icon name="phone-off" [size]="20" />
-      </button>
     </div>
   </div>
 </div>

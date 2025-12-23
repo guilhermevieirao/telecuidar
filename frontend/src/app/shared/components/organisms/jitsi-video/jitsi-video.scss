@@ -101,31 +101,23 @@
     }
   }
 
-  // Custom controls overlay
-  .custom-controls {
+  // Status overlay (posicionado no topo para não conflitar com toolbar do Jitsi)
+  .status-overlay {
     position: absolute;
-    bottom: 0;
+    top: 0;
     left: 0;
     right: 0;
     padding: $spacing-md $spacing-lg;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), transparent);
     pointer-events: none;
     z-index: 50;
-    opacity: 0;
-    transition: opacity $transition-base;
-
-    &:hover,
-    .jitsi-video-wrapper:hover & {
-      opacity: 1;
-    }
 
     @include mobile {
       padding: $spacing-sm;
-      flex-direction: column;
-      gap: $spacing-sm;
+      justify-content: center;
     }
   }
 
@@ -139,6 +131,8 @@
     @include mobile {
       width: 100%;
       justify-content: center;
+      flex-wrap: wrap;
+      gap: $spacing-sm;
     }
 
     .connection-status {
@@ -184,68 +178,6 @@
       font-weight: $font-weight-medium;
     }
   }
-
-  // Quick controls
-  .quick-controls {
-    display: flex;
-    align-items: center;
-    gap: $spacing-sm;
-    pointer-events: auto;
-
-    @include mobile {
-      width: 100%;
-      justify-content: center;
-    }
-
-    .control-btn {
-      width: 44px;
-      height: 44px;
-      border-radius: $radius-full;
-      border: none;
-      background: rgba(255, 255, 255, 0.15);
-      color: var(--neutral-50);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all $transition-fast;
-      backdrop-filter: blur(4px);
-
-      @include mobile {
-        width: 40px;
-        height: 40px;
-      }
-
-      &:hover {
-        background: rgba(255, 255, 255, 0.25);
-        transform: scale(1.05);
-      }
-
-      &.active {
-        background: rgba(239, 68, 68, 0.6);
-        
-        &:hover {
-          background: rgba(239, 68, 68, 0.8);
-        }
-      }
-
-      &.danger {
-        background: var(--red-600);
-
-        &:hover {
-          background: var(--red-700);
-        }
-      }
-
-      &.moderator-only {
-        background: rgba(255, 193, 7, 0.3);
-        
-        &:hover {
-          background: rgba(255, 193, 7, 0.5);
-        }
-      }
-    }
-  }
 }
 
 // Animations
@@ -273,8 +205,29 @@
 
 // Override Jitsi's default styles
 :host ::ng-deep {
-  // Remove Jitsi watermark
-  .watermark {
+  // Remove ALL Jitsi watermarks and logos completely
+  .watermark,
+  .leftwatermark,
+  .rightwatermark,
+  .watermark-img,
+  .jitsi-watermark,
+  .powered-by,
+  .oknj-wrapper,
+  [class*="oknj"],
+  [class*="watermark"],
+  [class*="branding"],
+  .oknj7u,
+  .oknj7u-wrapper {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+    pointer-events: none !important;
+  }
+
+  // Hide logo in top left corner
+  .oknj7u {
     display: none !important;
   }
 
