@@ -30,11 +30,12 @@
   }
 
   &__header {
-    padding: $spacing-lg $spacing-xl;
-    height: 73px;
+    padding: clamp($spacing-md, 2vh, $spacing-lg) $spacing-xl;
+    height: clamp(50px, 8vh, 73px);
     border-bottom: 1px solid var(--border);
     @include flex-between;
     align-items: center;
+    flex-shrink: 0;
   }
 
   &__close {
@@ -57,22 +58,49 @@
 
   &__nav {
     flex: 1;
-    padding: $spacing-lg;
+    padding: clamp($spacing-sm, 2vh, $spacing-lg);
     @include flex-column;
-    gap: $spacing-xs;
+    gap: clamp(2px, 0.5vh, $spacing-xs);
+    overflow-y: auto;
+    min-height: 0; // Importante para permitir scroll no flexbox
+    
+    // Scrollbar sutil
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: var(--neutral-300);
+      border-radius: $radius-full;
+      
+      &:hover {
+        background: var(--neutral-400);
+      }
+    }
   }
 
   &__link {
     display: flex;
     align-items: center;
     gap: $spacing-md;
-    padding: $spacing-md $spacing-lg;
+    padding: clamp($spacing-xs, 1.2vh, $spacing-md) $spacing-lg;
     border-radius: $radius-lg;
     text-decoration: none;
     color: var(--text-secondary);
     font-weight: $font-weight-medium;
+    font-size: clamp($font-size-sm, 1.6vh, $font-size-base);
     @include transition(all);
     position: relative;
+    flex-shrink: 0;
+
+    // Ajusta o tamanho do ícone com base na viewport
+    app-icon {
+      flex-shrink: 0;
+    }
 
     &:hover {
       background: var(--neutral-100);
@@ -102,8 +130,9 @@
   }
 
   &__footer {
-    padding: $spacing-lg;
+    padding: clamp($spacing-sm, 1.5vh, $spacing-lg);
     border-top: 1px solid var(--border);
+    flex-shrink: 0;
   }
 
   &__logout {
@@ -111,18 +140,19 @@
     display: flex;
     align-items: center;
     gap: $spacing-md;
-    padding: $spacing-md $spacing-lg;
+    padding: clamp($spacing-xs, 1.2vh, $spacing-md) $spacing-lg;
     border-radius: $radius-lg;
-    background: none;
+    background: var(--red-50);
     border: none;
-    color: var(--text-secondary);
+    color: var(--red-700);
     font-weight: $font-weight-medium;
+    font-size: clamp($font-size-sm, 1.6vh, $font-size-base);
     cursor: pointer;
     @include transition(all);
 
     &:hover {
-      background: var(--red-50);
-      color: var(--red-700);
+      background: var(--red-100);
+      color: var(--red-800);
     }
   }
 }

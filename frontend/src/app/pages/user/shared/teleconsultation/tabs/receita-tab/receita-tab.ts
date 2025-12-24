@@ -688,11 +688,12 @@ export class ReceitaTabComponent implements OnInit, OnDestroy {
   }
 
   get isProfessional(): boolean {
-    return this.userrole === 'PROFESSIONAL';
+    return this.userrole === 'PROFESSIONAL' && !this.readonly;
   }
 
   get canSign(): boolean {
     return this.userrole === 'PROFESSIONAL' && 
+           !this.readonly &&
            this.prescription !== null && 
            this.prescription.items.length > 0 && 
            !this.prescription.isSigned;

@@ -60,13 +60,16 @@
 
     @include max-width($breakpoint-tablet) {
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
       gap: $spacing-md;
       width: 100%;
       margin-top: $spacing-md;
 
       app-button {
-        width: 100%;
+        flex: 0 1 auto;
+        min-width: 120px;
       }
     }
   }

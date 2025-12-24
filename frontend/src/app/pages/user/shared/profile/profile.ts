@@ -156,6 +156,8 @@ export class ProfileComponent implements OnInit {
 
   getStatusLabel(status: string): string {
     const labels: Record<string, string> = {
+      Active: 'Ativo',
+      Inactive: 'Inativo',
       active: 'Ativo',
       inactive: 'Inativo'
     };

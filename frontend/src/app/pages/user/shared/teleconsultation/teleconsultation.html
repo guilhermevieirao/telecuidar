@@ -2,7 +2,7 @@
   <!-- Main Content (Video + Header) -->
   <div class="main-content" [class.sidebar-open]="isSidebarOpen && !isSidebarFull" [class.full-screen]="isSidebarFull">
     <!-- Header -->
-    <div class="tele-header" [class.hidden]="!isHeaderVisible">
+    <div class="tele-header" [class.hidden]="!isHeaderVisible" [class.above-sidebar]="isSidebarFull && isHeaderVisible">
       <div class="header-content">
         <div class="info-section">
           <div class="main-info" *ngIf="appointment">
@@ -82,6 +82,7 @@
     [appointment]="appointment"
     (toggle)="toggleSidebar()"
     (toggleMode)="toggleSidebarMode()"
+    (toggleHeader)="toggleHeader()"
     (tabChange)="setActiveTab($event)"
     (finishConsultation)="onFinishConsultation($event)">
   </app-teleconsultation-sidebar>

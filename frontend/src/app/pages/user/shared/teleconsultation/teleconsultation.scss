@@ -110,6 +110,15 @@
     overflow: hidden;
     max-height: 80px;
 
+    // When sidebar is full-screen and header is visible, put header above sidebar
+    &.above-sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 70; // Above sidebar full-screen (z-index: 60)
+    }
+
     @include mobile {
       height: auto; // Auto height for mobile to fit content
       min-height: 80px;

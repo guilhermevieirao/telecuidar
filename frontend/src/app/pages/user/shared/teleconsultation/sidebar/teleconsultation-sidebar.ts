@@ -51,6 +51,7 @@ export class TeleconsultationSidebarComponent implements OnInit, OnDestroy {
 
   @Output() toggle = new EventEmitter<void>();
   @Output() toggleMode = new EventEmitter<void>();
+  @Output() toggleHeader = new EventEmitter<void>();
   @Output() tabChange = new EventEmitter<string>();
   @Output() finishConsultation = new EventEmitter<string>();
 
@@ -85,6 +86,10 @@ export class TeleconsultationSidebarComponent implements OnInit, OnDestroy {
 
   onToggleMode() {
     this.toggleMode.emit();
+  }
+
+  onToggleHeader() {
+    this.toggleHeader.emit();
   }
 
   onTabChange(tab: string) {

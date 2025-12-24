@@ -1,5 +1,19 @@
 <div class="tele-sidebar" [class.open]="isOpen" [class.full-screen]="isFullScreen" [class.header-hidden]="!isHeaderVisible">
   <div class="sidebar-header">
+    <div class="sidebar-actions-left">
+      <button class="icon-btn resize-btn" (click)="onToggleMode()" [title]="isFullScreen ? 'Modo Lateral' : 'Tela Cheia'">
+        <app-icon [name]="isFullScreen ? 'arrow-right' : 'arrow-left'" [size]="20" />
+      </button>
+    </div>
+    
+    @if (isFullScreen && !isHeaderVisible) {
+      <div class="sidebar-actions-center">
+        <button class="icon-btn show-header-btn" (click)="onToggleHeader()" title="Mostrar Cabeçalho">
+          <app-icon name="chevron-down" [size]="20" />
+        </button>
+      </div>
+    }
+    
     <div class="sidebar-actions">
       @if (userrole !== 'PATIENT') {
         <button 
@@ -11,9 +25,6 @@
           <app-icon [name]="isDictationActive ? 'mic' : 'mic-off'" [size]="20" />
         </button>
       }
-      <button class="icon-btn resize-btn" (click)="onToggleMode()" [title]="isFullScreen ? 'Modo Lateral' : 'Tela Cheia'">
-        <app-icon [name]="isFullScreen ? 'minus' : 'plus'" [size]="20" />
-      </button>
       <button class="icon-btn close-btn" (click)="onToggle()">
         <app-icon name="close" [size]="20" />
       </button>

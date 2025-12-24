@@ -16,7 +16,8 @@ import { AnamnesisTabComponent } from '@pages/user/shared/teleconsultation/tabs/
 import { SpecialtyFieldsTabComponent } from '@pages/user/shared/teleconsultation/tabs/specialty-fields-tab/specialty-fields-tab';
 import { IotTabComponent } from '@pages/user/shared/teleconsultation/tabs/iot-tab/iot-tab';
 import { AITabComponent } from '@pages/user/shared/teleconsultation/tabs/ai-tab/ai-tab';
-import type { IconName } from '@shared/components/atoms/icon/icon';
+import { ReceitaTabComponent } from '@pages/user/shared/teleconsultation/tabs/receita-tab/receita-tab';
+import { getAllDetailsTabs, TabConfig } from '@pages/user/shared/teleconsultation/tabs/tab-config';
 
 @Component({
   selector: 'app-appointment-details',
@@ -31,12 +32,13 @@ import type { IconName } from '@shared/components/atoms/icon/icon';
     AttachmentsChatTabComponent,
     SoapTabComponent,
     ConclusionTabComponent,
-    PatientDataTabComponent, // Used in @if blocks
-    PreConsultationDataTabComponent, // Used in @if blocks
-    AnamnesisTabComponent, // Used in @if blocks
-    SpecialtyFieldsTabComponent, // Used in @if blocks
-    IotTabComponent, // Used in @if blocks
-    AITabComponent // Used in @if blocks
+    PatientDataTabComponent,
+    PreConsultationDataTabComponent,
+    AnamnesisTabComponent,
+    SpecialtyFieldsTabComponent,
+    IotTabComponent,
+    AITabComponent,
+    ReceitaTabComponent
   ],
   templateUrl: './appointment-details.html',
   styleUrls: ['./appointment-details.scss']
@@ -47,21 +49,9 @@ export class AppointmentDetailsComponent implements OnInit {
   loading = false;
   userrole: 'PATIENT' | 'PROFESSIONAL' | 'ADMIN' = 'PATIENT';
   
-  // Tabs
-  activeTab: 'basic' | 'biometrics' | 'attachments' | 'soap' | 'conclusion' | 'patient-data' | 'pre-consultation' | 'anamnesis' | 'specialty' | 'iot' | 'ai' = 'basic';
-  availableTabs: { id: string; label: string; icon: IconName; role?: 'PROFESSIONAL' }[] = [
-    { id: 'basic', label: 'Informações Básicas', icon: 'file' },
-    { id: 'patient-data', label: 'Dados do Paciente', icon: 'user', role: 'PROFESSIONAL' },
-    { id: 'pre-consultation', label: 'Dados da Pré Consulta', icon: 'file', role: 'PROFESSIONAL' },
-    { id: 'anamnesis', label: 'Anamnese', icon: 'book', role: 'PROFESSIONAL' },
-    { id: 'specialty', label: 'Campos da Especialidade', icon: 'stethoscope', role: 'PROFESSIONAL' },
-    { id: 'iot', label: 'IOT', icon: 'activity', role: 'PROFESSIONAL' },
-    { id: 'biometrics', label: 'Biométricos', icon: 'heart' },
-    { id: 'attachments', label: 'Chat de Anexos', icon: 'camera' },
-    { id: 'soap', label: 'SOAP', icon: 'book', role: 'PROFESSIONAL' },
-    { id: 'ai', label: 'IA', icon: 'activity', role: 'PROFESSIONAL' },
-    { id: 'conclusion', label: 'Observações Finais', icon: 'check', role: 'PROFESSIONAL' }
-  ];
+  // Tabs - usando configuração centralizada
+  activeTab = 'basic';
+  availableTabs: TabConfig[] = getAllDetailsTabs();
 
   private appointmentsService = inject(AppointmentsService);
   private authService = inject(AuthService);
@@ -115,13 +105,13 @@ export class AppointmentDetailsComponent implements OnInit {
     });
   }
 
-  get visibleTabs() {
-    // Retornar todas as tabs, sem filtrar por role
+  get visibleTabs(): TabConfig[] {
+    // Retornar todas as tabs disponíveis para a página de detalhes
     return this.availableTabs;
   }
 
   changeTab(tabId: string) {
-    this.activeTab = tabId as any;
+    this.activeTab = tabId;
   }
 
   goBack() {

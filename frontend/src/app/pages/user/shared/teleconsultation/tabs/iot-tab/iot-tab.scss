@@ -98,6 +98,18 @@
         }
       }
     }
+
+    .readonly-badge {
+      display: flex;
+      align-items: center;
+      gap: $spacing-xs;
+      padding: $spacing-xs $spacing-md;
+      border-radius: $radius-full;
+      background: var(--neutral-100);
+      color: var(--text-secondary);
+      font-size: $font-size-sm;
+      font-weight: $font-weight-medium;
+    }
   }
 
   .device-info {

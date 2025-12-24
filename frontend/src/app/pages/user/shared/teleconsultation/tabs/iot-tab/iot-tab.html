@@ -6,24 +6,31 @@
       <h2>Monitoramento IoT em Tempo Real</h2>
     </div>
     
-    <div class="connection-controls">
-      @if (!isConnected) {
-        <button class="connect-btn" (click)="connect()">
-          <app-icon name="activity" [size]="18" />
-          Conectar Dispositivo
-        </button>
-      } @else {
-        <button class="disconnect-btn" (click)="disconnect()">
-          <app-icon name="slash" [size]="18" />
-          Desconectar
-        </button>
-      }
-      
-      <div class="status-badge" [class.connected]="isConnected">
-        <span class="status-dot"></span>
-        {{ connectionStatus }}
+    @if (!readonly) {
+      <div class="connection-controls">
+        @if (!isConnected) {
+          <button class="connect-btn" (click)="connect()">
+            <app-icon name="activity" [size]="18" />
+            Conectar Dispositivo
+          </button>
+        } @else {
+          <button class="disconnect-btn" (click)="disconnect()">
+            <app-icon name="slash" [size]="18" />
+            Desconectar
+          </button>
+        }
+        
+        <div class="status-badge" [class.connected]="isConnected">
+          <span class="status-dot"></span>
+          {{ connectionStatus }}
+        </div>
       </div>
-    </div>
+    } @else {
+      <div class="readonly-badge">
+        <app-icon name="eye" [size]="16" />
+        <span>Modo visualização</span>
+      </div>
+    }
   </div>
 
   <!-- Device Info -->
@@ -186,12 +193,17 @@
   @if (!isConnected) {
     <div class="empty-state">
       <app-icon name="slash" [size]="64" />
-      <h3>Dispositivo IoT Desconectado</h3>
-      <p>Conecte um dispositivo de monitoramento biométrico para visualizar os dados em tempo real.</p>
-      <button class="connect-btn-large" (click)="connect()">
-        <app-icon name="activity" [size]="20" />
-        Conectar Agora
-      </button>
+      @if (readonly) {
+        <h3>Sem dados de IOT registrados</h3>
+        <p>Não há dados de monitoramento biométrico disponíveis para esta consulta.</p>
+      } @else {
+        <h3>Dispositivo IoT Desconectado</h3>
+        <p>Conecte um dispositivo de monitoramento biométrico para visualizar os dados em tempo real.</p>
+        <button class="connect-btn-large" (click)="connect()">
+          <app-icon name="activity" [size]="20" />
+          Conectar Agora
+        </button>
+      }
     </div>
   }
 </div>

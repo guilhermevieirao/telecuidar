@@ -11,6 +11,7 @@ import { ModalService } from '@core/services/modal.service';
 import { AuthService } from '@core/services/auth.service';
 import { DeviceDetectorService } from '@core/services/device-detector.service';
 import { TeleconsultationSidebarComponent } from './sidebar/teleconsultation-sidebar';
+import { getTeleconsultationTabs, TAB_ID_TO_LEGACY_NAME, TabConfig } from './tabs/tab-config';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -45,10 +46,9 @@ export class TeleconsultationComponent implements OnInit, OnDestroy {
   jitsiError: string | null = null;
   isCallConnected = false;
 
-  // Tabs configuration
-  professionalTabs = ['Dados do Paciente', 'Dados da Pré Consulta', 'Anamnese', 'Campos da Especialidade', 'Biométricos', 'Chat Anexos', 'SOAP', 'Receita', 'IA', 'CADSUS', 'Concluir'];
-  patientTabs = ['Biométricos', 'Chat Anexos'];
+  // Tabs configuration - usando configuração centralizada
   currentTabs: string[] = [];
+  private tabConfigs: TabConfig[] = [];
 
   private subscriptions: Subscription[] = [];
 
@@ -105,7 +105,10 @@ export class TeleconsultationComponent implements OnInit, OnDestroy {
   }
 
   setupTabs() {
-    this.currentTabs = this.userrole === 'PROFESSIONAL' ? this.professionalTabs : this.patientTabs;
+    // Usar configuração centralizada de tabs
+    this.tabConfigs = getTeleconsultationTabs(this.userrole);
+    // Converter para nomes legados usados pelo sidebar
+    this.currentTabs = this.tabConfigs.map(tab => TAB_ID_TO_LEGACY_NAME[tab.id] || tab.label);
     if (this.currentTabs.length > 0) {
       this.activeTab = this.currentTabs[0];
     }

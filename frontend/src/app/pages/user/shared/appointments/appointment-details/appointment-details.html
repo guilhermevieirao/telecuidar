@@ -160,6 +160,7 @@
             <app-iot-tab
               [appointmentId]="appointmentId"
               [userrole]="userrole"
+              [readonly]="true"
             />
           </div>
         }
@@ -190,6 +191,17 @@
         @if (activeTab === 'soap') {
           <div class="tab-panel">
             <app-soap-tab 
+              [appointmentId]="appointmentId"
+              [userrole]="userrole"
+              [readonly]="true"
+            />
+          </div>
+        }
+
+        <!-- Receita Tab -->
+        @if (activeTab === 'receita') {
+          <div class="tab-panel">
+            <app-receita-tab
               [appointmentId]="appointmentId"
               [userrole]="userrole"
               [readonly]="true"
