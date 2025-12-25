@@ -119,8 +119,8 @@ export const TELECONSULTATION_TABS: TabConfig[] = [
     order: 10
   },
   {
-    id: 'cadsus',
-    label: 'CADSUS',
+    id: 'cns',
+    label: 'CNS',
     icon: 'user',
     roles: ['PROFESSIONAL', 'ADMIN'],
     showInTeleconsultation: true,
@@ -196,7 +196,7 @@ export const TAB_ID_TO_LEGACY_NAME: Record<string, string> = {
   'soap': 'SOAP',
   'receita': 'Receita',
   'ai': 'IA',
-  'cadsus': 'CADSUS',
+  'cns': 'CNS',
   'return': 'Retorno',
   'referral': 'Encaminhamento',
   'conclusion': 'Concluir'

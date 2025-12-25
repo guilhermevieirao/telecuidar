@@ -1,17 +1,18 @@
-namespace Application.DTOs.Cadsus;
+namespace Application.DTOs.Cns;
 
 /// <summary>
-/// DTO para requisição de consulta CPF no CADSUS
+/// DTO para requisição de consulta CPF no CADSUS/CNS
 /// </summary>
-public class CadsusConsultaRequestDto
+public class CnsConsultaRequestDto
 {
     public string Cpf { get; set; } = string.Empty;
 }
 
 /// <summary>
-/// DTO com dados do cidadão retornados pelo CADSUS
+/// DTO com dados completos do cidadão retornados pelo CADSUS
+/// Mapeado a partir da resposta XML SOAP do DATASUS
 /// </summary>
-public class CadsusCidadaoDto
+public class CnsCidadaoDto
 {
     // Identificação Principal
     public string Cns { get; set; } = string.Empty;
@@ -24,7 +25,7 @@ public class CadsusCidadaoDto
     public string NomeMae { get; set; } = string.Empty;
     public string NomePai { get; set; } = string.Empty;
     
-    // Características
+    // Características Pessoais
     public string Sexo { get; set; } = string.Empty;
     public string RacaCor { get; set; } = string.Empty;
     
@@ -35,6 +36,7 @@ public class CadsusCidadaoDto
     public string Complemento { get; set; } = string.Empty;
     public string Cidade { get; set; } = string.Empty;
     public string CodigoCidade { get; set; } = string.Empty;
+    public string Uf { get; set; } = string.Empty;
     public string PaisEnderecoAtual { get; set; } = string.Empty;
     public string Cep { get; set; } = string.Empty;
     public string EnderecoCompleto { get; set; } = string.Empty;
@@ -51,22 +53,45 @@ public class CadsusCidadaoDto
 }
 
 /// <summary>
-/// DTO para status do token CADSUS
+/// DTO para status do token JWT do CADSUS
 /// </summary>
-public class CadsusTokenStatusDto
+public class CnsTokenStatusDto
 {
+    /// <summary>
+    /// Indica se existe um token em cache
+    /// </summary>
     public bool HasToken { get; set; }
+    
+    /// <summary>
+    /// Indica se o token ainda é válido
+    /// </summary>
     public bool IsValid { get; set; }
+    
+    /// <summary>
+    /// Data/hora de expiração do token (formato local)
+    /// </summary>
     public string? ExpiresAt { get; set; }
+    
+    /// <summary>
+    /// Tempo restante até expiração (formato legível)
+    /// </summary>
     public string? ExpiresIn { get; set; }
+    
+    /// <summary>
+    /// Tempo restante até expiração em milissegundos
+    /// </summary>
     public long ExpiresInMs { get; set; }
+    
+    /// <summary>
+    /// Mensagem adicional (para erros ou status especiais)
+    /// </summary>
     public string? Message { get; set; }
 }
 
 /// <summary>
 /// DTO para resposta de renovação de token
 /// </summary>
-public class CadsusTokenRenewResponseDto
+public class CnsTokenRenewResponseDto
 {
     public bool Success { get; set; }
     public string Message { get; set; } = string.Empty;

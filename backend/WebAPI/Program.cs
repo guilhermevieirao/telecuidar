@@ -74,7 +74,7 @@ builder.Services.AddScoped<Application.Interfaces.IAIService, Infrastructure.Ser
 builder.Services.AddScoped<Application.Interfaces.IPrescriptionService, Infrastructure.Services.PrescriptionService>();
 builder.Services.AddScoped<Application.Interfaces.ICertificateStorageService, Infrastructure.Services.CertificateStorageService>();
 
-builder.Services.AddSingleton<Application.Interfaces.ICadsusService, Infrastructure.Services.CadsusService>();
+builder.Services.AddSingleton<Application.Interfaces.ICnsService, Infrastructure.Services.CnsService>();
 builder.Services.AddScoped<Application.Interfaces.IJitsiService, Infrastructure.Services.JitsiService>();
 builder.Services.AddScoped<WebAPI.Services.IFileUploadService, WebAPI.Services.FileUploadService>();
 

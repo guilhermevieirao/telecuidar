@@ -11,7 +11,7 @@ import { AnamnesisTabComponent } from '../tabs/anamnesis-tab/anamnesis-tab';
 import { SpecialtyFieldsTabComponent } from '../tabs/specialty-fields-tab/specialty-fields-tab';
 import { IotTabComponent } from '../tabs/iot-tab/iot-tab';
 import { AITabComponent } from '../tabs/ai-tab/ai-tab';
-import { CadsusTabComponent } from '../tabs/cadsus-tab/cadsus-tab';
+import { CnsTabComponent } from '../tabs/cns-tab/cns-tab';
 import { ReceitaTabComponent } from '../tabs/receita-tab/receita-tab';
 import { ReturnTabComponent } from './../tabs/return-tab/return-tab';
 import { ReferralTabComponent } from './../tabs/referral-tab/referral-tab';
@@ -35,7 +35,7 @@ import { Subject, takeUntil } from 'rxjs';
     SpecialtyFieldsTabComponent,
     IotTabComponent,
     AITabComponent,
-    CadsusTabComponent,
+    CnsTabComponent,
     ReceitaTabComponent,
     ReturnTabComponent,
     ReferralTabComponent

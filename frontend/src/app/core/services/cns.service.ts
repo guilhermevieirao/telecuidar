@@ -6,9 +6,9 @@ import { environment } from '@env/environment';
 const API_BASE_URL = environment.apiUrl;
 
 /**
- * Interface para dados do cidadão retornados pelo CADSUS
+ * Interface para dados do cidadão retornados pelo CADSUS/CNS
  */
-export interface CadsusCidadao {
+export interface CnsCidadao {
   // Identificação Principal
   cns: string;
   cpf: string;
@@ -31,6 +31,7 @@ export interface CadsusCidadao {
   complemento: string;
   cidade: string;
   codigoCidade: string;
+  uf: string;
   paisEnderecoAtual: string;
   cep: string;
   enderecoCompleto: string;
@@ -47,9 +48,9 @@ export interface CadsusCidadao {
 }
 
 /**
- * Interface para status do token CADSUS
+ * Interface para status do token CNS
  */
-export interface CadsusTokenStatus {
+export interface CnsTokenStatus {
   hasToken: boolean;
   isValid: boolean;
   expiresAt?: string;
@@ -61,7 +62,7 @@ export interface CadsusTokenStatus {
 /**
  * Interface para resposta de renovação de token
  */
-export interface CadsusTokenRenewResponse {
+export interface CnsTokenRenewResponse {
   success: boolean;
   message: string;
   hasToken: boolean;
@@ -71,13 +72,22 @@ export interface CadsusTokenRenewResponse {
 }
 
 /**
- * Serviço de integração com CADSUS
+ * Interface para health check do serviço CNS
+ */
+export interface CnsHealthStatus {
+  status: 'configured' | 'not_configured';
+  message: string;
+}
+
+/**
+ * Serviço de integração com CADSUS/CNS
+ * Consulta dados de cidadãos no Cadastro Nacional de Usuários do SUS
  */
 @Injectable({
   providedIn: 'root'
 })
-export class CadsusService {
-  private readonly apiUrl = `${API_BASE_URL}/cadsus`;
+export class CnsService {
+  private readonly apiUrl = `${API_BASE_URL}/cns`;
 
   constructor(private http: HttpClient) {}
 
@@ -85,23 +95,30 @@ export class CadsusService {
    * Consulta dados de um cidadão no CADSUS pelo CPF
    * @param cpf CPF do cidadão (com ou sem formatação)
    */
-  consultarCpf(cpf: string): Observable<CadsusCidadao> {
+  consultarCpf(cpf: string): Observable<CnsCidadao> {
     const cleanCpf = cpf.replace(/\D/g, '');
-    return this.http.post<CadsusCidadao>(`${this.apiUrl}/consultar-cpf`, { cpf: cleanCpf });
+    return this.http.post<CnsCidadao>(`${this.apiUrl}/consultar-cpf`, { cpf: cleanCpf });
   }
 
   /**
    * Obtém o status do token de autenticação
    */
-  getTokenStatus(): Observable<CadsusTokenStatus> {
-    return this.http.get<CadsusTokenStatus>(`${this.apiUrl}/token/status`);
+  getTokenStatus(): Observable<CnsTokenStatus> {
+    return this.http.get<CnsTokenStatus>(`${this.apiUrl}/token/status`);
   }
 
   /**
    * Força a renovação do token de autenticação
    */
-  renewToken(): Observable<CadsusTokenRenewResponse> {
-    return this.http.post<CadsusTokenRenewResponse>(`${this.apiUrl}/token/renew`, {});
+  renewToken(): Observable<CnsTokenRenewResponse> {
+    return this.http.post<CnsTokenRenewResponse>(`${this.apiUrl}/token/renew`, {});
+  }
+
+  /**
+   * Verifica se o serviço CNS está configurado
+   */
+  getHealth(): Observable<CnsHealthStatus> {
+    return this.http.get<CnsHealthStatus>(`${this.apiUrl}/health`);
   }
 
   /**

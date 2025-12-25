@@ -116,12 +116,12 @@
       </app-ai-tab>
     </div>
 
-    <!-- CADSUS -->
-    <div class="tab-content" *ngIf="activeTab === 'CADSUS'" style="height: 100%">
-      <app-cadsus-tab
+    <!-- CNS / CADSUS -->
+    <div class="tab-content" *ngIf="activeTab === 'CNS'" style="height: 100%">
+      <app-cns-tab
         [appointmentId]="appointmentId"
         [appointment]="appointment">
-      </app-cadsus-tab>
+      </app-cns-tab>
     </div>
 
     <!-- Receita -->

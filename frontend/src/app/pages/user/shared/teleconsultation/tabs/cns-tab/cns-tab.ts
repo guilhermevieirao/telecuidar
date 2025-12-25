@@ -2,18 +2,19 @@ import { Component, Input, OnInit, OnDestroy, ChangeDetectorRef } from '@angular
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IconComponent } from '@shared/components/atoms/icon/icon';
-import { CadsusService, CadsusCidadao, CadsusTokenStatus } from '@core/services/cadsus.service';
+import { CnsService, CnsCidadao, CnsTokenStatus } from '@core/services/cns.service';
 import { Appointment } from '@core/services/appointments.service';
+import { UsersService } from '@core/services/users.service';
 import { Subject, takeUntil, interval } from 'rxjs';
 
 @Component({
-  selector: 'app-cadsus-tab',
+  selector: 'app-cns-tab',
   standalone: true,
   imports: [CommonModule, FormsModule, IconComponent],
-  templateUrl: './cadsus-tab.html',
-  styleUrls: ['./cadsus-tab.scss']
+  templateUrl: './cns-tab.html',
+  styleUrls: ['./cns-tab.scss']
 })
-export class CadsusTabComponent implements OnInit, OnDestroy {
+export class CnsTabComponent implements OnInit, OnDestroy {
   @Input() appointmentId: string | null = null;
   @Input() appointment: Appointment | null = null;
 
@@ -23,21 +24,27 @@ export class CadsusTabComponent implements OnInit, OnDestroy {
   error: string | null = null;
   
   // Dados do cidadão
-  cidadao: CadsusCidadao | null = null;
+  cidadao: CnsCidadao | null = null;
   
   // Status do token
-  tokenStatus: CadsusTokenStatus | null = null;
+  tokenStatus: CnsTokenStatus | null = null;
   tokenLoading = false;
   
+  // Status do serviço
+  serviceConfigured = true;
+  
   private destroy$ = new Subject<void>();
-  private tokenCheckInterval$ = new Subject<void>();
 
   constructor(
-    private cadsusService: CadsusService,
+    private cnsService: CnsService,
+    private usersService: UsersService,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
+    // Verificar se o serviço está configurado
+    this.checkServiceHealth();
+    
     // Carregar status do token ao iniciar
     this.checkTokenStatus();
     
@@ -45,11 +52,53 @@ export class CadsusTabComponent implements OnInit, OnDestroy {
     interval(60000)
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => this.checkTokenStatus());
+      
+    // Se temos um appointment com paciente, carregar o CPF do paciente
+    this.loadPatientCpf();
+  }
+
+  /**
+   * Carrega o CPF do paciente associado ao appointment
+   */
+  private loadPatientCpf() {
+    if (this.appointment?.patientId) {
+      this.usersService.getUserById(this.appointment.patientId)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (user) => {
+            if (user?.cpf) {
+              this.cpf = this.formatCpfInput(user.cpf);
+              this.cdr.detectChanges();
+            }
+          },
+          error: (err) => {
+            console.error('Erro ao carregar CPF do paciente:', err);
+          }
+        });
+    }
   }
 
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  /**
+   * Verifica se o serviço CNS está configurado
+   */
+  checkServiceHealth() {
+    this.cnsService.getHealth()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (health) => {
+          this.serviceConfigured = health.status === 'configured';
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.serviceConfigured = false;
+          this.cdr.detectChanges();
+        }
+      });
   }
 
   /**
@@ -82,7 +131,7 @@ export class CadsusTabComponent implements OnInit, OnDestroy {
    * Verifica se o CPF é válido para consulta
    */
   get isValidCpf(): boolean {
-    return this.cadsusService.isValidCpfFormat(this.cpf);
+    return this.cnsService.isValidCpfFormat(this.cpf);
   }
 
   /**
@@ -98,7 +147,7 @@ export class CadsusTabComponent implements OnInit, OnDestroy {
     this.error = null;
     this.cidadao = null;
 
-    this.cadsusService.consultarCpf(this.cpf)
+    this.cnsService.consultarCpf(this.cpf)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
@@ -107,7 +156,7 @@ export class CadsusTabComponent implements OnInit, OnDestroy {
           this.cdr.detectChanges();
         },
         error: (err) => {
-          console.error('Erro ao consultar CADSUS:', err);
+          console.error('Erro ao consultar CNS:', err);
           this.error = err.error?.message || err.error?.error || 'Erro ao consultar CADSUS. Verifique se o serviço está configurado.';
           this.loading = false;
           this.cdr.detectChanges();
@@ -119,7 +168,7 @@ export class CadsusTabComponent implements OnInit, OnDestroy {
    * Verifica status do token
    */
   checkTokenStatus() {
-    this.cadsusService.getTokenStatus()
+    this.cnsService.getTokenStatus()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (status) => {
@@ -138,7 +187,7 @@ export class CadsusTabComponent implements OnInit, OnDestroy {
   renewToken() {
     this.tokenLoading = true;
     
-    this.cadsusService.renewToken()
+    this.cnsService.renewToken()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
