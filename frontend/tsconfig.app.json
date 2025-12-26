@@ -4,15 +4,7 @@
     "outDir": "./out-tsc/app",
     "types": [
       "node"
-    ],
-    "baseUrl": "./src",
-    "paths": {
-      "@app/*": ["app/*"],
-      "@core/*": ["app/core/*"],
-      "@shared/*": ["app/shared/*"],
-      "@pages/*": ["app/pages/*"],
-      "@env/*": ["environments/*"]
-    }
+    ]
   },
   "include": [
     "src/**/*.ts"
