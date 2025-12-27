@@ -31,7 +31,14 @@ import { Subscription } from 'rxjs';
   templateUrl: './teleconsultation.html',
   styleUrls: ['./teleconsultation.scss']
 })
-export class TeleconsultationComponent implements OnInit, OnDestroy {
+export class TeleconsultationComponent implements OnInit, OnDestroy {  private mapTipoToUserRole(tipo: string): 'ADMIN' | 'PATIENT' | 'PROFESSIONAL' {
+    const map: Record<string, 'ADMIN' | 'PATIENT' | 'PROFESSIONAL'> = {
+      'Administrador': 'ADMIN',
+      'Paciente': 'PATIENT',
+      'Profissional': 'PROFESSIONAL'
+    };
+    return map[tipo] || 'PATIENT';
+  }
   appointmentId: string | null = null;
   appointment: Appointment | null = null;
   userrole: 'PATIENT' | 'PROFESSIONAL' | 'ADMIN' = 'PATIENT';
@@ -170,7 +177,7 @@ export class TeleconsultationComponent implements OnInit, OnDestroy {
   determineuserrole() {
     const currentUser = this.authService.currentUser();
     if (currentUser) {
-      this.userrole = currentUser.role;
+      this.userrole = this.mapTipoToUserRole(currentUser.tipo);
     } else {
       // Fallback to PATIENT if no user is found
       this.userrole = 'PATIENT';

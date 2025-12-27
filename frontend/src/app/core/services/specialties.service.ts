@@ -5,7 +5,7 @@ import { environment } from '@env/environment';
 
 const API_BASE_URL = environment.apiUrl;
 
-export type SpecialtyStatus = 'Active' | 'Inactive';
+export type SpecialtyStatus = 'Ativo' | 'Inativo';
 
 export interface CustomField {
   name: string;
@@ -19,39 +19,39 @@ export interface CustomField {
 
 export interface Specialty {
   id: string;
-  name: string;
-  description: string;
+  nome: string;
+  descricao: string;
   status: SpecialtyStatus;
-  createdAt: string;
-  updatedAt?: string;
-  customFields?: CustomField[];
+  criadoEm: string;
+  atualizadoEm?: string;
+  camposPersonalizados?: CustomField[];
 }
 
 export interface CreateSpecialtyDto {
-  name: string;
-  description: string;
+  nome: string;
+  descricao: string;
   status: SpecialtyStatus;
-  customFields?: CustomField[];
+  camposPersonalizados?: CustomField[];
 }
 
 export interface UpdateSpecialtyDto {
-  name?: string;
-  description?: string;
+  nome?: string;
+  descricao?: string;
   status?: SpecialtyStatus;
-  customFields?: CustomField[];
+  camposPersonalizados?: CustomField[];
 }
 
 export interface SpecialtiesFilter {
-  search?: string;
+  busca?: string;
   status?: string;
 }
 
 export interface PaginatedResponse<T> {
-  data: T[];
+  dados: T[];
   total: number;
-  page: number;
-  pageSize: number;
-  totalPages: number;
+  pagina: number;
+  tamanhoPagina: number;
+  totalPaginas: number;
 }
 
 export interface SpecialtiesSortOptions {
@@ -63,24 +63,24 @@ export interface SpecialtiesSortOptions {
   providedIn: 'root'
 })
 export class SpecialtiesService {
-  private apiUrl = `${API_BASE_URL}/specialties`;
+  private apiUrl = `${API_BASE_URL}/especialidades`;
 
   constructor(private http: HttpClient) {}
 
   getSpecialties(
     filter: SpecialtiesFilter = {},
-    sort: SpecialtiesSortOptions = { field: 'name', direction: 'asc' },
+    sort: SpecialtiesSortOptions = { field: 'nome', direction: 'asc' },
     page: number = 1,
     pageSize: number = 10
   ): Observable<PaginatedResponse<Specialty>> {
     let params = new HttpParams()
-      .set('page', page.toString())
-      .set('pageSize', pageSize.toString())
-      .set('sortBy', sort.field)
-      .set('sortDirection', sort.direction);
+      .set('pagina', page.toString())
+      .set('tamanhoPagina', pageSize.toString())
+      .set('ordenarPor', sort.field)
+      .set('direcaoOrdenacao', sort.direction);
 
-    if (filter.search) {
-      params = params.set('search', filter.search);
+    if (filter.busca) {
+      params = params.set('busca', filter.busca);
     }
     if (filter.status) {
       params = params.set('status', filter.status);
@@ -102,10 +102,10 @@ export class SpecialtiesService {
 
   createSpecialty(specialty: CreateSpecialtyDto): Observable<Specialty> {
     const payload = {
-      name: specialty.name,
-      description: specialty.description,
-      customFieldsJson: specialty.customFields && specialty.customFields.length > 0 
-        ? JSON.stringify(specialty.customFields) 
+      nome: specialty.nome,
+      descricao: specialty.descricao,
+      camposPersonalizadosJson: specialty.camposPersonalizados && specialty.camposPersonalizados.length > 0 
+        ? JSON.stringify(specialty.camposPersonalizados) 
         : null
     };
     return this.http.post<any>(this.apiUrl, payload).pipe(
@@ -115,12 +115,12 @@ export class SpecialtiesService {
 
   updateSpecialty(id: string, updates: UpdateSpecialtyDto): Observable<Specialty> {
     const payload: any = {};
-    if (updates.name !== undefined) payload.name = updates.name;
-    if (updates.description !== undefined) payload.description = updates.description;
+    if (updates.nome !== undefined) payload.nome = updates.nome;
+    if (updates.descricao !== undefined) payload.descricao = updates.descricao;
     if (updates.status !== undefined) payload.status = updates.status;
-    if (updates.customFields !== undefined) {
-      payload.customFieldsJson = updates.customFields && updates.customFields.length > 0
-        ? JSON.stringify(updates.customFields)
+    if (updates.camposPersonalizados !== undefined) {
+      payload.camposPersonalizadosJson = updates.camposPersonalizados && updates.camposPersonalizados.length > 0
+        ? JSON.stringify(updates.camposPersonalizados)
         : null;
     }
     return this.http.put<any>(`${this.apiUrl}/${id}`, payload).pipe(
@@ -133,7 +133,7 @@ export class SpecialtiesService {
   }
 
   toggleSpecialtyStatus(id: string, currentStatus: SpecialtyStatus): Observable<Specialty> {
-    const newStatus: SpecialtyStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
+    const newStatus: SpecialtyStatus = currentStatus === 'Ativo' ? 'Inativo' : 'Ativo';
     return this.http.put<any>(`${this.apiUrl}/${id}`, { status: newStatus }).pipe(
       map(s => this.mapSpecialtyFromApi(s))
     );
@@ -142,13 +142,13 @@ export class SpecialtiesService {
   private mapSpecialtyFromApi(apiSpecialty: any): Specialty {
     return {
       id: apiSpecialty.id,
-      name: apiSpecialty.name,
-      description: apiSpecialty.description,
+      nome: apiSpecialty.nome,
+      descricao: apiSpecialty.descricao,
       status: apiSpecialty.status,
-      createdAt: apiSpecialty.createdAt,
-      updatedAt: apiSpecialty.updatedAt,
-      customFields: apiSpecialty.customFieldsJson 
-        ? JSON.parse(apiSpecialty.customFieldsJson) 
+      criadoEm: apiSpecialty.criadoEm,
+      atualizadoEm: apiSpecialty.atualizadoEm,
+      camposPersonalizados: apiSpecialty.camposPersonalizadosJson 
+        ? JSON.parse(apiSpecialty.camposPersonalizadosJson) 
         : []
     };
   }

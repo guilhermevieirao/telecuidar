@@ -11,7 +11,7 @@ public static class DataSeeder
     public static async Task SeedAsync(ApplicationDbContext context)
     {
         // Verificar se já existem usuários
-        if (await context.Users.AnyAsync())
+        if (await context.Usuarios.AnyAsync())
         {
             Console.WriteLine("[SEEDER] Usuários já existem. Pulando seed.");
             return;
@@ -19,193 +19,190 @@ public static class DataSeeder
 
         Console.WriteLine("[SEEDER] Iniciando seed de dados...");
 
-        var passwordHasher = new PasswordHasher();
+        var hashSenha = new HashSenhaService();
         var adminEmail = Environment.GetEnvironmentVariable("SEED_ADMIN_EMAIL") ?? "adm@adm.com";
         var adminPassword = Environment.GetEnvironmentVariable("SEED_ADMIN_PASSWORD") ?? "zxcasd12";
         var adminName = Environment.GetEnvironmentVariable("SEED_ADMIN_NAME") ?? "Admin";
         var adminLastName = Environment.GetEnvironmentVariable("SEED_ADMIN_LASTNAME") ?? "Sistema";
         var adminCpf = Environment.GetEnvironmentVariable("SEED_ADMIN_CPF") ?? "11111111111";
-        const string defaultPassword = "zxcasd12";
+        const string senhaDefault = "zxcasd12";
 
         // Criar especialidade de Cardiologia com campos personalizados
-        var cardiologiaFieldsJson = @"[
-            {""name"":""Histórico de Infarto"",""type"":""checkbox"",""required"":true,""description"":""Paciente já teve infarto do miocárdio?"",""order"":1},
-            {""name"":""Pressão Arterial Sistólica"",""type"":""number"",""required"":true,""description"":""Pressão arterial sistólica em mmHg"",""defaultValue"":""120"",""order"":2},
-            {""name"":""Pressão Arterial Diastólica"",""type"":""number"",""required"":true,""description"":""Pressão arterial diastólica em mmHg"",""defaultValue"":""80"",""order"":3},
-            {""name"":""Frequência Cardíaca"",""type"":""number"",""required"":true,""description"":""Batimentos por minuto em repouso"",""order"":4},
-            {""name"":""Uso de Marca-passo"",""type"":""radio"",""required"":true,""description"":""Paciente faz uso de marca-passo?"",""options"":[""Sim"",""Não""],""order"":5},
-            {""name"":""Tipo de Dor Torácica"",""type"":""select"",""required"":false,""description"":""Caso apresente dor torácica, qual o tipo?"",""options"":[""Não apresenta"",""Dor em aperto"",""Dor em queimação"",""Dor em pontada"",""Dor irradiada""],""order"":6},
-            {""name"":""Medicamentos Cardiovasculares"",""type"":""textarea"",""required"":false,""description"":""Liste os medicamentos em uso para o coração"",""order"":7},
-            {""name"":""Data Último ECG"",""type"":""date"",""required"":false,""description"":""Data do último eletrocardiograma realizado"",""order"":8},
-            {""name"":""Histórico Familiar"",""type"":""textarea"",""required"":false,""description"":""Histórico familiar de doenças cardiovasculares"",""order"":9},
-            {""name"":""Nível de Colesterol"",""type"":""select"",""required"":false,""description"":""Último exame de colesterol"",""options"":[""Normal"",""Borderline"",""Alto"",""Não sabe""],""order"":10}
+        var camposPersonalizadosJson = @"[
+            {""nome"":""Histórico de Infarto"",""tipo"":""checkbox"",""obrigatorio"":true,""descricao"":""Paciente já teve infarto do miocárdio?"",""ordem"":1},
+            {""nome"":""Pressão Arterial Sistólica"",""tipo"":""number"",""obrigatorio"":true,""descricao"":""Pressão arterial sistólica em mmHg"",""valorPadrao"":""120"",""ordem"":2},
+            {""nome"":""Pressão Arterial Diastólica"",""tipo"":""number"",""obrigatorio"":true,""descricao"":""Pressão arterial diastólica em mmHg"",""valorPadrao"":""80"",""ordem"":3},
+            {""nome"":""Frequência Cardíaca"",""tipo"":""number"",""obrigatorio"":true,""descricao"":""Batimentos por minuto em repouso"",""ordem"":4},
+            {""nome"":""Uso de Marca-passo"",""tipo"":""radio"",""obrigatorio"":true,""descricao"":""Paciente faz uso de marca-passo?"",""opcoes"":[""Sim"",""Não""],""ordem"":5},
+            {""nome"":""Tipo de Dor Torácica"",""tipo"":""select"",""obrigatorio"":false,""descricao"":""Caso apresente dor torácica, qual o tipo?"",""opcoes"":[""Não apresenta"",""Dor em aperto"",""Dor em queimação"",""Dor em pontada"",""Dor irradiada""],""ordem"":6},
+            {""nome"":""Medicamentos Cardiovasculares"",""tipo"":""textarea"",""obrigatorio"":false,""descricao"":""Liste os medicamentos em uso para o coração"",""ordem"":7},
+            {""nome"":""Data Último ECG"",""tipo"":""date"",""obrigatorio"":false,""descricao"":""Data do último eletrocardiograma realizado"",""ordem"":8},
+            {""nome"":""Histórico Familiar"",""tipo"":""textarea"",""obrigatorio"":false,""descricao"":""Histórico familiar de doenças cardiovasculares"",""ordem"":9},
+            {""nome"":""Nível de Colesterol"",""tipo"":""select"",""obrigatorio"":false,""descricao"":""Último exame de colesterol"",""opcoes"":[""Normal"",""Borderline"",""Alto"",""Não sabe""],""ordem"":10}
         ]";
 
-        var cardiologiaSpecialty = new Specialty
+        var cardiologiaEspecialidade = new Especialidade
         {
-            Name = "Cardiologia",
-            Description = "Especialidade médica dedicada ao diagnóstico e tratamento de doenças do coração e do sistema circulatório, incluindo hipertensão, insuficiência cardíaca, arritmias e doenças coronarianas.",
-            Status = SpecialtyStatus.Active,
-            CustomFieldsJson = cardiologiaFieldsJson
+            Nome = "Cardiologia",
+            Descricao = "Especialidade médica dedicada ao diagnóstico e tratamento de doenças do coração e do sistema circulatório, incluindo hipertensão, insuficiência cardíaca, arritmias e doenças coronarianas.",
+            Status = StatusEspecialidade.Ativa,
+            CamposPersonalizadosJson = camposPersonalizadosJson
         };
 
-        context.Specialties.Add(cardiologiaSpecialty);
+        context.Especialidades.Add(cardiologiaEspecialidade);
         await context.SaveChangesAsync();
 
         Console.WriteLine("[SEEDER] Especialidade criada:");
         Console.WriteLine("  - Cardiologia (com 10 campos personalizados)");
 
-        var users = new List<User>
+        var usuarios = new List<Usuario>
         {
-            new User
+            new Usuario
             {
-                Name = adminName,
-                LastName = adminLastName,
+                Nome = adminName,
+                Sobrenome = adminLastName,
                 Email = adminEmail,
                 Cpf = adminCpf,
-                Phone = "11911111111",
-                PasswordHash = passwordHasher.HashPassword(adminPassword),
-                Role = UserRole.ADMIN,
-                Status = UserStatus.Active,
-                EmailVerified = true
+                Telefone = "11911111111",
+                SenhaHash = hashSenha.GerarHash(adminPassword),
+                Tipo = TipoUsuario.Administrador,
+                Status = StatusUsuario.Ativo,
+                EmailVerificado = true
             },
-            new User
+            new Usuario
             {
-                Name = "Médico",
-                LastName = "Profissional",
+                Nome = "Médico",
+                Sobrenome = "Profissional",
                 Email = "med@med.com",
                 Cpf = "22222222222",
-                Phone = "11922222222",
-                PasswordHash = passwordHasher.HashPassword(defaultPassword),
-                Role = UserRole.PROFESSIONAL,
-                Status = UserStatus.Active,
-                EmailVerified = true
+                Telefone = "11922222222",
+                SenhaHash = hashSenha.GerarHash(senhaDefault),
+                Tipo = TipoUsuario.Profissional,
+                Status = StatusUsuario.Ativo,
+                EmailVerificado = true
             },
-            new User
+            new Usuario
             {
-                Name = "Paciente",
-                LastName = "Dev",
+                Nome = "Paciente",
+                Sobrenome = "Dev",
                 Email = "pac@pac.com",
                 Cpf = "33333333333",
-                Phone = "11933333333",
-                PasswordHash = passwordHasher.HashPassword(defaultPassword),
-                Role = UserRole.PATIENT,
-                Status = UserStatus.Active,
-                EmailVerified = true
+                Telefone = "11933333333",
+                SenhaHash = hashSenha.GerarHash(senhaDefault),
+                Tipo = TipoUsuario.Paciente,
+                Status = StatusUsuario.Ativo,
+                EmailVerificado = true
             }
         };
 
-        context.Users.AddRange(users);
+        context.Usuarios.AddRange(usuarios);
         await context.SaveChangesAsync();
 
-        // Criar ProfessionalProfile para o médico com a especialidade
-        var professional = users.First(u => u.Role == UserRole.PROFESSIONAL);
-        var professionalProfile = new ProfessionalProfile
+        // Criar PerfilProfissional para o médico com a especialidade
+        var profissional = usuarios.First(u => u.Tipo == TipoUsuario.Profissional);
+        var perfilProfissional = new PerfilProfissional
         {
-            UserId = professional.Id,
-            SpecialtyId = cardiologiaSpecialty.Id,
+            UsuarioId = profissional.Id,
+            EspecialidadeId = cardiologiaEspecialidade.Id,
             Crm = "123456-SP"
         };
-        context.ProfessionalProfiles.Add(professionalProfile);
+        context.PerfisProfissional.Add(perfilProfissional);
         await context.SaveChangesAsync();
 
         // Criar agenda para o profissional
-        
-        var globalConfigJson = @"{
-            ""TimeRange"": {
-                ""StartTime"": ""00:00"",
-                ""EndTime"": ""23:00""
-            },
-            ""ConsultationDuration"": 30,
-            ""IntervalBetweenConsultations"": 0
+        var configuracaoGlobalJson = @"{
+            ""HorarioInicio"": ""00:00"",
+            ""HorarioFim"": ""23:00"",
+            ""DuracaoConsulta"": 30,
+            ""IntervaloEntreConsultas"": 0
         }";
 
-        var daysConfigJson = @"[
-            {""Day"": ""Monday"", ""IsWorking"": true, ""Customized"": false},
-            {""Day"": ""Tuesday"", ""IsWorking"": true, ""Customized"": false},
-            {""Day"": ""Wednesday"", ""IsWorking"": true, ""Customized"": false},
-            {""Day"": ""Thursday"", ""IsWorking"": true, ""Customized"": false},
-            {""Day"": ""Friday"", ""IsWorking"": true, ""Customized"": false},
-            {""Day"": ""Saturday"", ""IsWorking"": true, ""Customized"": false},
-            {""Day"": ""Sunday"", ""IsWorking"": true, ""Customized"": false}
+        var configuracaoDiasJson = @"[
+            {""DiaSemana"": ""Segunda"", ""Trabalha"": true, ""Personalizado"": false},
+            {""DiaSemana"": ""Terca"", ""Trabalha"": true, ""Personalizado"": false},
+            {""DiaSemana"": ""Quarta"", ""Trabalha"": true, ""Personalizado"": false},
+            {""DiaSemana"": ""Quinta"", ""Trabalha"": true, ""Personalizado"": false},
+            {""DiaSemana"": ""Sexta"", ""Trabalha"": true, ""Personalizado"": false},
+            {""DiaSemana"": ""Sabado"", ""Trabalha"": true, ""Personalizado"": false},
+            {""DiaSemana"": ""Domingo"", ""Trabalha"": true, ""Personalizado"": false}
         ]";
 
-        var schedule = new Schedule
+        var agenda = new Agenda
         {
-            ProfessionalId = professional.Id,
-            GlobalConfigJson = globalConfigJson,
-            DaysConfigJson = daysConfigJson,
-            ValidityStartDate = DateTime.Now.AddDays(-2).Date,
-            ValidityEndDate = null,
-            IsActive = true
+            ProfissionalId = profissional.Id,
+            ConfiguracaoGlobalJson = configuracaoGlobalJson,
+            ConfiguracaoDiasJson = configuracaoDiasJson,
+            DataInicioValidade = DateTime.Now.AddDays(-2).Date,
+            DataFimValidade = null,
+            Ativa = true
         };
 
-        context.Schedules.Add(schedule);
+        context.Agendas.Add(agenda);
         await context.SaveChangesAsync();
 
         // Criar consulta para o próximo horário disponível
-        var patient = users.First(u => u.Role == UserRole.PATIENT);
-        var now = DateTime.Now;
+        var paciente = usuarios.First(u => u.Tipo == TipoUsuario.Paciente);
+        var agora = DateTime.Now;
         
         // Calcular o próximo horário disponível (arredondar para a próxima meia hora)
-        var minutes = now.Minute;
-        var nextSlotMinutes = minutes < 30 ? 30 : 60;
-        var appointmentDateTime = now.AddMinutes(nextSlotMinutes - minutes);
-        if (nextSlotMinutes == 60)
+        var minutos = agora.Minute;
+        var proximoSlotMinutos = minutos < 30 ? 30 : 60;
+        var dataHoraConsulta = agora.AddMinutes(proximoSlotMinutos - minutos);
+        if (proximoSlotMinutos == 60)
         {
-            appointmentDateTime = appointmentDateTime.AddHours(1);
-            appointmentDateTime = new DateTime(
-                appointmentDateTime.Year,
-                appointmentDateTime.Month,
-                appointmentDateTime.Day,
-                appointmentDateTime.Hour,
+            dataHoraConsulta = dataHoraConsulta.AddHours(1);
+            dataHoraConsulta = new DateTime(
+                dataHoraConsulta.Year,
+                dataHoraConsulta.Month,
+                dataHoraConsulta.Day,
+                dataHoraConsulta.Hour,
                 0,
                 0
             );
         }
         else
         {
-            appointmentDateTime = new DateTime(
-                appointmentDateTime.Year,
-                appointmentDateTime.Month,
-                appointmentDateTime.Day,
-                appointmentDateTime.Hour,
+            dataHoraConsulta = new DateTime(
+                dataHoraConsulta.Year,
+                dataHoraConsulta.Month,
+                dataHoraConsulta.Day,
+                dataHoraConsulta.Hour,
                 30,
                 0
             );
         }
 
-        var appointment = new Appointment
+        var consulta = new Consulta
         {
-            PatientId = patient.Id,
-            ProfessionalId = professional.Id,
-            SpecialtyId = cardiologiaSpecialty.Id,
-            Date = appointmentDateTime.Date,
-            Time = appointmentDateTime.TimeOfDay,
-            EndTime = appointmentDateTime.AddMinutes(30).TimeOfDay,
-            Type = AppointmentType.Common,
-            Status = AppointmentStatus.Scheduled,
-            Observation = "Consulta de exemplo criada pelo seeder"
+            PacienteId = paciente.Id,
+            ProfissionalId = profissional.Id,
+            EspecialidadeId = cardiologiaEspecialidade.Id,
+            Data = dataHoraConsulta.Date,
+            HoraInicio = dataHoraConsulta.TimeOfDay,
+            HoraFim = dataHoraConsulta.AddMinutes(30).TimeOfDay,
+            Tipo = TipoConsulta.Comum,
+            Status = StatusConsulta.Agendada,
+            Observacao = "Consulta de exemplo criada pelo seeder"
         };
 
-        context.Appointments.Add(appointment);
+        context.Consultas.Add(consulta);
         await context.SaveChangesAsync();
 
         Console.WriteLine("[SEEDER] Seed concluído!");
         Console.WriteLine("[SEEDER] Usuários criados:");
         Console.WriteLine($"  - {adminEmail} (ADMIN) - senha: {adminPassword}");
-        Console.WriteLine("  - med@med.com (PROFESSIONAL) - senha: zxcasd12");
-        Console.WriteLine("  - pac@pac.com (PATIENT) - senha: zxcasd12");
+        Console.WriteLine("  - med@med.com (PROFISSIONAL) - senha: zxcasd12");
+        Console.WriteLine("  - pac@pac.com (PACIENTE) - senha: zxcasd12");
         Console.WriteLine("[SEEDER] Agenda criada:");
-        Console.WriteLine($"  - Profissional: {professional.Name} {professional.LastName}");
+        Console.WriteLine($"  - Profissional: {profissional.Nome} {profissional.Sobrenome}");
         Console.WriteLine("  - Horário: 00:00 - 23:00 (todos os dias)");
         Console.WriteLine("  - Consultas: 30min, sem intervalo, sem pausa");
-        Console.WriteLine($"  - Validade: {schedule.ValidityStartDate:dd/MM/yyyy} - indeterminado");
+        Console.WriteLine($"  - Validade: {agenda.DataInicioValidade:dd/MM/yyyy} - indeterminado");
         Console.WriteLine("[SEEDER] Consulta criada:");
-        Console.WriteLine($"  - Paciente: {patient.Name} {patient.LastName}");
-        Console.WriteLine($"  - Profissional: {professional.Name} {professional.LastName}");
-        Console.WriteLine($"  - Especialidade: {cardiologiaSpecialty.Name}");
-        Console.WriteLine($"  - Data/Hora: {appointmentDateTime:dd/MM/yyyy HH:mm}");
+        Console.WriteLine($"  - Paciente: {paciente.Nome} {paciente.Sobrenome}");
+        Console.WriteLine($"  - Profissional: {profissional.Nome} {profissional.Sobrenome}");
+        Console.WriteLine($"  - Especialidade: {cardiologiaEspecialidade.Nome}");
+        Console.WriteLine($"  - Data/Hora: {dataHoraConsulta:dd/MM/yyyy HH:mm}");
         Console.WriteLine($"  - Tipo: Videochamada");
         Console.WriteLine($"  - Status: Agendada");
     }

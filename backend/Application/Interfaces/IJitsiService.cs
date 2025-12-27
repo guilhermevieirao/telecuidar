@@ -3,31 +3,32 @@ using Application.DTOs.Jitsi;
 namespace Application.Interfaces;
 
 /// <summary>
-/// Serviço para gerenciamento de tokens e configurações do Jitsi Meet
+/// Serviço de integração com Jitsi Meet
 /// </summary>
 public interface IJitsiService
 {
     /// <summary>
-    /// Gera um token JWT para autenticação no Jitsi Meet
+    /// Cria uma nova sala de videoconferência
     /// </summary>
-    /// <param name="userId">ID do usuário</param>
-    /// <param name="appointmentId">ID da consulta</param>
-    /// <param name="requestHost">Host da requisição (para domínio dinâmico em dev)</param>
-    /// <returns>Token e configurações para acesso à sala</returns>
-    Task<JitsiTokenResponseDto?> GenerateTokenAsync(Guid userId, Guid appointmentId, string? requestHost = null);
-    
+    Task<SalaJitsiDto> CriarSalaAsync(CriarSalaJitsiDto dto);
+
     /// <summary>
-    /// Obtém as configurações do Jitsi
+    /// Gera token de acesso para uma sala
     /// </summary>
-    /// <param name="requestHost">Host da requisição (para domínio dinâmico em dev)</param>
-    /// <returns>Configurações do Jitsi</returns>
-    JitsiConfigDto GetConfig(string? requestHost = null);
-    
+    Task<TokenJitsiDto> GerarTokenAsync(GerarTokenJitsiDto dto);
+
     /// <summary>
-    /// Valida se um usuário tem acesso a uma sala específica
+    /// Gera token para moderador da sala
     /// </summary>
-    /// <param name="userId">ID do usuário</param>
-    /// <param name="appointmentId">ID da consulta</param>
-    /// <returns>True se tem acesso</returns>
-    Task<bool> ValidateAccessAsync(Guid userId, Guid appointmentId);
+    Task<TokenJitsiDto> GerarTokenModeradoAsync(string nomeSala, Guid usuarioId, string nomeUsuario, string emailUsuario);
+
+    /// <summary>
+    /// Gera token para participante da sala
+    /// </summary>
+    Task<TokenJitsiDto> GerarTokenParticipanteAsync(string nomeSala, Guid usuarioId, string nomeUsuario, string emailUsuario);
+
+    /// <summary>
+    /// Obtém configurações do Jitsi
+    /// </summary>
+    ConfiguracaoJitsiDto ObterConfiguracao();
 }

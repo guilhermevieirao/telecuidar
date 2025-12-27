@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { finalize } from 'rxjs/operators';
+import { finalize, filter, take } from 'rxjs/operators';
 import { AuthService } from '@app/core/services/auth.service';
 import { ButtonComponent } from '@app/shared/components/atoms/button/button';
 import { LogoComponent } from '@app/shared/components/atoms/logo/logo';
@@ -81,8 +81,21 @@ export class LoginComponent implements OnInit {
       )
       .subscribe({
         next: () => {
-          const dashboardUrl = this.authService.getDashboardUrl();
-          this.router.navigate([dashboardUrl]);
+          console.log('[LoginComponent] Login successful, aguardando authState$...');
+          // Aguardar explicitamente o authState$ confirmar autenticação
+          this.authService.authState$
+            .pipe(
+              filter(state => {
+                console.log('[LoginComponent] authState$ emitido:', { isAuthenticated: state.isAuthenticated, hasToken: !!state.accessToken });
+                return state.isAuthenticated && state.accessToken !== null;
+              }),
+              take(1)
+            )
+            .subscribe(() => {
+              console.log('[LoginComponent] authState$ confirmado, navegando para dashboard...');
+              const dashboardUrl = this.authService.getDashboardUrl();
+              this.router.navigate([dashboardUrl]);
+            });
         },
         error: (error) => {
           console.error('Erro no login:', error);

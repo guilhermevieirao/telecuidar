@@ -4,6 +4,8 @@ using Application.DTOs.Email;
 using DotNetEnv;
 using WebAPI.Hubs;
 using WebAPI.Services;
+using Application.Interfaces;
+using Infrastructure.Services;
 
 // Load .env file from project root (two levels up from WebAPI folder)
 var projectRoot = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "..", ".."));
@@ -54,33 +56,71 @@ var emailSettings = new EmailSettings
         || builder.Configuration.GetValue<bool>("EmailSettings:UseSsl", true)
 };
 builder.Services.AddSingleton(emailSettings);
-builder.Services.AddScoped<Application.Interfaces.IEmailService, Infrastructure.Services.EmailService>();
 
-// Services
-builder.Services.AddScoped<Application.Interfaces.IJwtService, Infrastructure.Services.JwtService>();
-builder.Services.AddScoped<Application.Interfaces.IPasswordHasher, Infrastructure.Services.PasswordHasher>();
-builder.Services.AddScoped<Application.Interfaces.IAuthService, Infrastructure.Services.AuthService>();
-builder.Services.AddScoped<Application.Interfaces.IUserService, Infrastructure.Services.UserService>();
-builder.Services.AddScoped<Application.Interfaces.ISpecialtyService, Infrastructure.Services.SpecialtyService>();
-builder.Services.AddScoped<Application.Interfaces.IAppointmentService, Infrastructure.Services.AppointmentService>();
-builder.Services.AddScoped<Application.Interfaces.INotificationService, Infrastructure.Services.NotificationService>();
-builder.Services.AddScoped<Application.Interfaces.IScheduleService, Infrastructure.Services.ScheduleService>();
-builder.Services.AddScoped<Application.Interfaces.IScheduleBlockService, Infrastructure.Services.ScheduleBlockService>();
-builder.Services.AddScoped<Application.Interfaces.IReportService, Infrastructure.Services.ReportService>();
-builder.Services.AddScoped<Application.Interfaces.IAuditLogService, Infrastructure.Services.AuditLogService>();
-builder.Services.AddScoped<Application.Interfaces.IAttachmentService, Infrastructure.Services.AttachmentService>();
-builder.Services.AddScoped<Application.Interfaces.IInviteService, Infrastructure.Services.InviteService>();
-builder.Services.AddScoped<Application.Interfaces.IAIService, Infrastructure.Services.AIService>();
-builder.Services.AddScoped<Application.Interfaces.IPrescriptionService, Infrastructure.Services.PrescriptionService>();
-builder.Services.AddScoped<Application.Interfaces.IMedicalCertificateService, Infrastructure.Services.MedicalCertificateService>();
-builder.Services.AddScoped<Application.Interfaces.ICertificateStorageService, Infrastructure.Services.CertificateStorageService>();
-builder.Services.AddSingleton<Application.Interfaces.IMedicamentoAnvisaService, Infrastructure.Services.MedicamentoAnvisaService>();
+// =============================================
+// SERVIÇOS DO DOMÍNIO EM PORTUGUÊS
+// =============================================
 
-// HttpClient for external API calls (OpenFDA, etc.)
+// Serviços de Segurança
+builder.Services.AddScoped<IHashSenhaService, HashSenhaService>();
+builder.Services.AddScoped<IJwtService, JwtService>();
+
+// Serviços de Email
+builder.Services.AddScoped<IEmailService, EmailService>();
+
+// Serviços de Autenticação e Usuários
+builder.Services.AddScoped<IAutenticacaoService, AutenticacaoService>();
+builder.Services.AddScoped<IUsuarioService, UsuarioService>();
+
+// Serviços de Especialidades
+builder.Services.AddScoped<IEspecialidadeService, EspecialidadeService>();
+
+// Serviços de Consultas
+builder.Services.AddScoped<IConsultaService, ConsultaService>();
+
+// Serviços de Agenda
+builder.Services.AddScoped<IAgendaService, AgendaService>();
+builder.Services.AddScoped<IBloqueioAgendaService, BloqueioAgendaService>();
+
+// Serviços de Notificações
+builder.Services.AddScoped<INotificacaoService, NotificacaoService>();
+
+// Serviços de Convites
+builder.Services.AddScoped<IConviteService, ConviteService>();
+
+// Serviços de Prescrições e Atestados
+builder.Services.AddScoped<IPrescricaoService, PrescricaoService>();
+builder.Services.AddScoped<IAtestadoMedicoService, AtestadoMedicoService>();
+
+// Serviços de Certificados Digitais
+builder.Services.AddScoped<ICertificadoService, CertificadoService>();
+
+// Serviços de Logs e Relatórios
+builder.Services.AddScoped<ILogAuditoriaService, LogAuditoriaService>();
+builder.Services.AddScoped<IRelatorioService, RelatorioService>();
+
+// Serviços de Anexos
+builder.Services.AddScoped<IAnexoService, AnexoService>();
+
+// Serviços de IA
+builder.Services.AddScoped<IIAService, IAService>();
+
+// Serviços de Jitsi (Videochamadas)
+builder.Services.AddScoped<IJitsiService, JitsiService>();
+
+// Serviços de Histórico Clínico
+builder.Services.AddScoped<IHistoricoClinicoService, HistoricoClinicoService>();
+
+// Serviços de Medicamentos ANVISA (Singleton por usar dados em memória)
+builder.Services.AddSingleton<IMedicamentoAnvisaService, MedicamentoAnvisaService>();
+
+// Serviços de CNS
+builder.Services.AddSingleton<ICnsService, CnsService>();
+
+// HttpClient for external API calls
 builder.Services.AddHttpClient();
 
-builder.Services.AddSingleton<Application.Interfaces.ICnsService, Infrastructure.Services.CnsService>();
-builder.Services.AddScoped<Application.Interfaces.IJitsiService, Infrastructure.Services.JitsiService>();
+// Serviços WebAPI (SignalR e Upload)
 builder.Services.AddScoped<WebAPI.Services.IFileUploadService, WebAPI.Services.FileUploadService>();
 
 // SignalR for real-time updates

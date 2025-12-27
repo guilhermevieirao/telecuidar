@@ -20,9 +20,9 @@
         <div class="modal__specialty-info">
           <div class="specialty-badge">
             <app-icon name="book" [size]="20" />
-            <span>{{ specialty.name }}</span>
+            <span>{{ specialty.nome }}</span>
           </div>
-          <p class="specialty-description">{{ specialty.description }}</p>
+          <p class="specialty-description">{{ specialty.descricao }}</p>
         </div>
 
         <form class="assign-form">
@@ -49,7 +49,7 @@
                 <option value="">Selecione um profissional</option>
                 @for (professional of professionals; track professional.id) {
                   <option [value]="professional.id">
-                    {{ professional.name }} - {{ professional.email }}
+                    {{ professional.nome }} {{ professional.sobrenome }} - {{ professional.email }}
                   </option>
                 }
               </select>

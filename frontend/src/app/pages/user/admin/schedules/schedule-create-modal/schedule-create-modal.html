@@ -34,7 +34,7 @@
                 <option value="">-- Selecione um profissional --</option>
                 @for (prof of professionals; track prof.id) {
                   <option [value]="prof.id">
-                    {{ prof.name }} ({{ prof.email }})
+                    {{ prof.nome }} {{ prof.sobrenome }} ({{ prof.email }})
                   </option>
                 }
               </select>

@@ -65,7 +65,7 @@ export interface PaginatedResponse<T> {
   providedIn: 'root'
 })
 export class ScheduleBlocksService {
-  private apiUrl = `${API_BASE_URL}/scheduleblocks`;
+  private apiUrl = `${API_BASE_URL}/bloqueios-agenda`;
   
   // Subject para notificar mudanças nos bloqueios
   private blocksChanged = new Subject<void>();

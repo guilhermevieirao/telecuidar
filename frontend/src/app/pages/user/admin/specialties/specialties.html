@@ -98,22 +98,22 @@
                 <span class="specialties-table__id">#{{ specialty.id }}</span>
               </td>
               <td class="specialties-table__cell">
-                <span class="specialties-table__name">{{ specialty.name }}</span>
+                <span class="specialties-table__name">{{ specialty.nome }}</span>
               </td>
               <td class="specialties-table__cell">
-                <span class="specialties-table__description">{{ specialty.description }}</span>
+                <span class="specialties-table__description">{{ specialty.descricao }}</span>
               </td>
               <td class="specialties-table__cell">
                 <span 
                   class="specialties-table__badge"
-                  [class.specialties-table__badge--active]="specialty.status === 'Active'"
-                  [class.specialties-table__badge--inactive]="specialty.status === 'Inactive'"
+                  [class.specialties-table__badge--active]="specialty.status === 'Ativo'"
+                  [class.specialties-table__badge--inactive]="specialty.status === 'Inativo'"
                 >
                   {{ specialty.status | specialtyStatus }}
                 </span>
               </td>
               <td class="specialties-table__cell">
-                <span class="specialties-table__date">{{ specialty.createdAt | date: 'dd/MM/yyyy' }}</span>
+                <span class="specialties-table__date">{{ specialty.criadoEm | date: 'dd/MM/yyyy' }}</span>
               </td>
               <td class="specialties-table__cell specialties-table__cell--actions">
                 <div class="specialties-table__actions">
@@ -136,12 +136,12 @@
                   <button
                     type="button"
                     class="specialties-table__action-btn"
-                    [class.specialties-table__action-btn--activate]="specialty.status === 'Inactive'"
-                    [class.specialties-table__action-btn--deactivate]="specialty.status === 'Active'"
+                    [class.specialties-table__action-btn--activate]="specialty.status === 'Inativo'"
+                    [class.specialties-table__action-btn--deactivate]="specialty.status === 'Ativo'"
                     (click)="toggleStatus(specialty)"
-                    [aria-label]="specialty.status === 'Active' ? 'Desativar especialidade' : 'Ativar especialidade'"
+                    [aria-label]="specialty.status === 'Ativo' ? 'Desativar especialidade' : 'Ativar especialidade'"
                   >
-                    <app-icon [name]="specialty.status === 'Active' ? 'x-circle' : 'check'" [size]="18" />
+                    <app-icon [name]="specialty.status === 'Ativo' ? 'x-circle' : 'check'" [size]="18" />
                   </button>
                   <button
                     type="button"

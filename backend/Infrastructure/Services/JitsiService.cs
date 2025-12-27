@@ -1,236 +1,181 @@
 using Application.DTOs.Jitsi;
 using Application.Interfaces;
-using Domain.Enums;
-using Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 
 namespace Infrastructure.Services;
 
 /// <summary>
-/// Serviço para gerenciamento de tokens JWT do Jitsi Meet
-/// Implementa autenticação segura para videochamadas self-hosted
+/// Serviço de integração com Jitsi Meet
 /// </summary>
 public class JitsiService : IJitsiService
 {
-    private readonly ApplicationDbContext _context;
     private readonly IConfiguration _configuration;
-    
-    // Configurações do Jitsi carregadas de variáveis de ambiente
-    private readonly bool _enabled;
     private readonly string _domain;
     private readonly string _appId;
     private readonly string _appSecret;
-    private readonly int _tokenExpirationMinutes;
-    private readonly bool _requiresAuth;
-    private readonly bool _dynamicDomain;
-    private readonly int _jitsiPort;
 
-    public JitsiService(ApplicationDbContext context, IConfiguration configuration)
+    public JitsiService(IConfiguration configuration)
     {
-        _context = context;
         _configuration = configuration;
-        
-        // Carregar configurações do Jitsi (prioridade: variáveis de ambiente > appsettings)
-        _enabled = GetConfigValue("JITSI_ENABLED", "JitsiSettings:Enabled", "true").ToLower() == "true";
-        _domain = GetConfigValue("JITSI_DOMAIN", "JitsiSettings:Domain", "meet.jit.si");
-        _appId = GetConfigValue("JITSI_APP_ID", "JitsiSettings:AppId", "telecuidar");
-        _appSecret = GetConfigValue("JITSI_APP_SECRET", "JitsiSettings:AppSecret", "");
-        _tokenExpirationMinutes = int.TryParse(
-            GetConfigValue("JITSI_TOKEN_EXPIRATION_MINUTES", "JitsiSettings:TokenExpirationMinutes", "120"),
-            out var expMin) ? expMin : 120;
-        _requiresAuth = GetConfigValue("JITSI_REQUIRES_AUTH", "JitsiSettings:RequiresAuth", "true").ToLower() == "true";
-        _dynamicDomain = GetConfigValue("JITSI_DYNAMIC_DOMAIN", "JitsiSettings:DynamicDomain", "false").ToLower() == "true";
-        
-        // Extrair porta do domínio configurado (ex: localhost:8443 -> 8443)
-        var domainParts = _domain.Split(':');
-        _jitsiPort = domainParts.Length > 1 && int.TryParse(domainParts[1], out var port) ? port : 8443;
+        _domain = _configuration["Jitsi:Domain"] ?? "meet.telecuidar.local";
+        _appId = _configuration["Jitsi:AppId"] ?? "telecuidar";
+        _appSecret = _configuration["Jitsi:AppSecret"] ?? "seu-app-secret-aqui";
     }
 
-    private string GetConfigValue(string envKey, string configKey, string defaultValue)
+    public Task<SalaJitsiDto> CriarSalaAsync(CriarSalaJitsiDto dto)
     {
-        return Environment.GetEnvironmentVariable(envKey)
-            ?? _configuration[configKey]
-            ?? defaultValue;
-    }
-
-    /// <summary>
-    /// Resolve o domínio do Jitsi baseado no host da requisição (para dev) ou configuração fixa (para prod)
-    /// </summary>
-    private string ResolveDomain(string? requestHost)
-    {
-        // Se domínio dinâmico está desabilitado ou não tem host, usa configuração fixa
-        if (!_dynamicDomain || string.IsNullOrEmpty(requestHost))
-            return _domain;
-
-        // Extrair apenas o hostname (sem porta) do request host
-        var hostOnly = requestHost.Split(':')[0];
+        var roomName = $"{dto.ConsultaId}_{Guid.NewGuid():N}";
         
-        // Retorna o host da requisição com a porta do Jitsi
-        return $"{hostOnly}:{_jitsiPort}";
-    }
-
-    /// <summary>
-    /// Gera um token JWT para autenticação no Jitsi Meet
-    /// O token inclui informações do usuário e permissões baseadas no papel
-    /// </summary>
-    public async Task<JitsiTokenResponseDto?> GenerateTokenAsync(Guid userId, Guid appointmentId, string? requestHost = null)
-    {
-        if (!_enabled)
-            return null;
-
-        // Buscar dados da consulta
-        var appointment = await _context.Appointments
-            .Include(a => a.Patient)
-            .Include(a => a.Professional)
-            .Include(a => a.Specialty)
-            .FirstOrDefaultAsync(a => a.Id == appointmentId);
-
-        if (appointment == null)
-            return null;
-
-        // Buscar dados do usuário
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-        if (user == null)
-            return null;
-
-        // Validar acesso: apenas paciente ou profissional da consulta
-        var isPatient = appointment.PatientId == userId;
-        var isProfessional = appointment.ProfessionalId == userId;
-        var isAdmin = user.Role == UserRole.ADMIN;
-        
-        if (!isPatient && !isProfessional && !isAdmin)
-            return null;
-
-        // Profissional e Admin são moderadores, paciente é convidado
-        var isModerator = isProfessional || isAdmin;
-
-        // Nome da sala: apenas o GUID sem prefixo (mais curto na URL)
-        var roomName = appointmentId.ToString("N");
-
-        // Nome de exibição (Nome + Sobrenome)
-        var displayName = $"{user.Name} {user.LastName}".Trim();
-        
-        // URL do avatar (se existir no usuário)
-        string? avatarUrl = user.Avatar;
-
-        // Gerar token JWT para o Jitsi
-        var token = GenerateJitsiJwt(
-            userId: userId.ToString(),
-            email: user.Email,
-            displayName: displayName,
-            avatarUrl: avatarUrl,
-            roomName: roomName,
-            isModerator: isModerator
-        );
-
-        var expiresAt = DateTimeOffset.UtcNow.AddMinutes(_tokenExpirationMinutes).ToUnixTimeSeconds();
-
-        // Resolver domínio dinamicamente baseado no host da requisição
-        var resolvedDomain = ResolveDomain(requestHost);
-
-        return new JitsiTokenResponseDto
+        var sala = new SalaJitsiDto
         {
-            Token = token,
-            RoomName = roomName,
-            Domain = resolvedDomain,
-            DisplayName = displayName,
-            Email = user.Email,
-            AvatarUrl = avatarUrl,
-            IsModerator = isModerator,
-            ExpiresAt = expiresAt
+            NomeSala = roomName,
+            UrlCompleta = $"https://{_domain}/{roomName}",
+            Domain = _domain,
+            ConsultaId = dto.ConsultaId
         };
+
+        return Task.FromResult(sala);
     }
 
-    /// <summary>
-    /// Obtém as configurações do Jitsi para o frontend
-    /// </summary>
-    public JitsiConfigDto GetConfig(string? requestHost = null)
+    public Task<TokenJitsiDto> GerarTokenAsync(GerarTokenJitsiDto dto)
     {
-        return new JitsiConfigDto
+        var now = DateTime.UtcNow;
+        var exp = now.AddHours(2); // Token válido por 2 horas
+
+        var claims = new List<Claim>
         {
-            Enabled = _enabled,
-            Domain = ResolveDomain(requestHost),
-            RequiresAuth = _requiresAuth
+            new("iss", _appId),
+            new("sub", _domain),
+            new("aud", "jitsi"),
+            new("room", dto.NomeSala),
+            new("iat", ((DateTimeOffset)now).ToUnixTimeSeconds().ToString()),
+            new("exp", ((DateTimeOffset)exp).ToUnixTimeSeconds().ToString()),
+            new("nbf", ((DateTimeOffset)now).ToUnixTimeSeconds().ToString())
         };
-    }
 
-    /// <summary>
-    /// Valida se um usuário tem acesso a uma sala de consulta
-    /// </summary>
-    public async Task<bool> ValidateAccessAsync(Guid userId, Guid appointmentId)
-    {
-        var appointment = await _context.Appointments
-            .FirstOrDefaultAsync(a => a.Id == appointmentId);
-
-        if (appointment == null)
-            return false;
-
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-        if (user == null)
-            return false;
-
-        // Verificar se é participante da consulta ou admin
-        return appointment.PatientId == userId 
-            || appointment.ProfessionalId == userId 
-            || user.Role == UserRole.ADMIN;
-    }
-
-    /// <summary>
-    /// Gera o token JWT no formato esperado pelo Jitsi Meet
-    /// Compatível com prosody-jwt-auth e jitsi-meet-web
-    /// 
-    /// OTIMIZAÇÃO MÁXIMA: Apenas claims obrigatórios do Prosody JWT:
-    /// - iss, aud: autenticação
-    /// - iat, exp: validade
-    /// - room: restrição de sala
-    /// - context.user.name: nome exibido
-    /// - moderator: permissões
-    /// </summary>
-    private string GenerateJitsiJwt(
-        string userId,
-        string email,
-        string displayName,
-        string? avatarUrl,
-        string roomName,
-        bool isModerator)
-    {
-        if (string.IsNullOrEmpty(_appSecret))
+        // Adicionar contexto do usuário
+        var context = new JitsiUserContext
         {
-            return "";
+            User = new JitsiUserInfo
+            {
+                Id = dto.UsuarioId.ToString(),
+                Name = dto.NomeUsuario,
+                Email = dto.EmailUsuario,
+                Avatar = dto.AvatarUrl,
+                Moderator = dto.Moderador
+            }
+        };
+
+        claims.Add(new Claim("context", System.Text.Json.JsonSerializer.Serialize(context)));
+
+        // Adicionar features se especificado
+        if (dto.Features != null && dto.Features.Any())
+        {
+            claims.Add(new Claim("features", System.Text.Json.JsonSerializer.Serialize(dto.Features)));
         }
 
-        var now = DateTimeOffset.UtcNow;
-        var exp = now.AddMinutes(_tokenExpirationMinutes);
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appSecret));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appSecret));
-        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+        var token = new JwtSecurityToken(
+            claims: claims,
+            signingCredentials: creds
+        );
 
-        // Payload mínimo do Jitsi JWT
-        var header = new JwtHeader(credentials);
-        var payload = new JwtPayload
+        var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+
+        return Task.FromResult(new TokenJitsiDto
         {
-            { "iss", _appId },
-            { "aud", _appId },
-            { "iat", now.ToUnixTimeSeconds() },
-            { "exp", exp.ToUnixTimeSeconds() },
-            { "room", roomName },
-            { "context", new Dictionary<string, object>
+            Token = tokenString,
+            ExpiraEm = exp,
+            NomeSala = dto.NomeSala,
+            UrlCompleta = $"https://{_domain}/{dto.NomeSala}?jwt={tokenString}"
+        });
+    }
+
+    public async Task<TokenJitsiDto> GerarTokenModeradoAsync(string nomeSala, Guid usuarioId, string nomeUsuario, string emailUsuario)
+    {
+        return await GerarTokenAsync(new GerarTokenJitsiDto
+        {
+            NomeSala = nomeSala,
+            UsuarioId = usuarioId,
+            NomeUsuario = nomeUsuario,
+            EmailUsuario = emailUsuario,
+            Moderador = true,
+            Features = new Dictionary<string, bool>
+            {
+                ["lobby"] = true,
+                ["recording"] = true,
+                ["livestreaming"] = false,
+                ["transcription"] = false,
+                ["outbound-call"] = false
+            }
+        });
+    }
+
+    public async Task<TokenJitsiDto> GerarTokenParticipanteAsync(string nomeSala, Guid usuarioId, string nomeUsuario, string emailUsuario)
+    {
+        return await GerarTokenAsync(new GerarTokenJitsiDto
+        {
+            NomeSala = nomeSala,
+            UsuarioId = usuarioId,
+            NomeUsuario = nomeUsuario,
+            EmailUsuario = emailUsuario,
+            Moderador = false
+        });
+    }
+
+    public ConfiguracaoJitsiDto ObterConfiguracao()
+    {
+        return new ConfiguracaoJitsiDto
+        {
+            Domain = _domain,
+            InterfaceConfigOverwrite = new Dictionary<string, object>
+            {
+                ["SHOW_JITSI_WATERMARK"] = false,
+                ["SHOW_WATERMARK_FOR_GUESTS"] = false,
+                ["DEFAULT_BACKGROUND"] = "#474location-pin757",
+                ["DISABLE_JOIN_LEAVE_NOTIFICATIONS"] = true,
+                ["MOBILE_APP_PROMO"] = false,
+                ["HIDE_INVITE_MORE_HEADER"] = true,
+                ["TOOLBAR_BUTTONS"] = new[]
                 {
-                    { "user", new Dictionary<string, object>
-                        {
-                            { "name", displayName },
-                            { "moderator", isModerator }
-                        }
-                    }
+                    "camera", "chat", "desktop", "fullscreen",
+                    "hangup", "microphone", "participants-pane",
+                    "settings", "tileview", "toggle-camera",
+                    "videoquality", "filmstrip"
                 }
             },
-            { "moderator", isModerator }
+            ConfigOverwrite = new Dictionary<string, object>
+            {
+                ["startWithAudioMuted"] = true,
+                ["startWithVideoMuted"] = false,
+                ["enableWelcomePage"] = false,
+                ["prejoinPageEnabled"] = true,
+                ["disableDeepLinking"] = true,
+                ["enableClosePage"] = false,
+                ["disableInviteFunctions"] = true,
+                ["requireDisplayName"] = true,
+                ["enableEmailInStats"] = false
+            }
         };
+    }
 
-        return new JwtSecurityTokenHandler().WriteToken(new JwtSecurityToken(header, payload));
+    private class JitsiUserContext
+    {
+        public JitsiUserInfo? User { get; set; }
+    }
+
+    private class JitsiUserInfo
+    {
+        public string? Id { get; set; }
+        public string? Name { get; set; }
+        public string? Email { get; set; }
+        public string? Avatar { get; set; }
+        public bool Moderator { get; set; }
     }
 }

@@ -399,7 +399,7 @@ export class ReferralTabComponent implements OnDestroy, OnChanges {
         // Especialidade não tem mais vagas - remover da lista
         this.specialties.splice(specialtyIndex, 1);
         this.filteredSpecialties = this.specialties.filter(s => 
-          s.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+          s.nome.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
         
         // Se a especialidade selecionada perdeu disponibilidade, alertar o usuário
@@ -503,10 +503,10 @@ export class ReferralTabComponent implements OnDestroy, OnChanges {
 
   // --- Step 1: Specialties ---
   loadSpecialties() {
-    this.specialtiesService.getSpecialties({ status: 'Active' }).subscribe({
+    this.specialtiesService.getSpecialties({ status: 'Ativo' }).subscribe({
       next: (response) => {
-        this.specialties = response.data;
-        this.filteredSpecialties = response.data;
+        this.specialties = response.dados;
+        this.filteredSpecialties = response.dados;
         this.cdr.detectChanges();
       },
       error: (error) => {
@@ -519,7 +519,7 @@ export class ReferralTabComponent implements OnDestroy, OnChanges {
   onSearch(query: string) {
     this.searchQuery = query;
     this.filteredSpecialties = this.specialties.filter(s => 
-      s.name.toLowerCase().includes(query.toLowerCase())
+      s.nome.toLowerCase().includes(query.toLowerCase())
     );
   }
 
@@ -550,9 +550,9 @@ export class ReferralTabComponent implements OnDestroy, OnChanges {
     this.calendarDays = [];
     
     // Buscar profissionais da especialidade
-    this.usersService.getUsers({ role: 'PROFESSIONAL', specialtyId: this.selectedSpecialty?.id }, 1, 100).subscribe({
+    this.usersService.getUsers({ tipo: 'Profissional', especialidadeId: this.selectedSpecialty?.id }, 1, 100).subscribe({
       next: (response) => {
-        const professionals = response.data;
+        const professionals = response.dados;
         
         if (professionals.length === 0) {
           // Se não há profissionais, marcar todos os dias como indisponíveis
@@ -587,15 +587,15 @@ export class ReferralTabComponent implements OnDestroy, OnChanges {
           }
           
           // Verificar bloqueios para cada profissional neste dia
-          const blockChecks = professionals.map(pro => 
+          const blockChecks = professionals.map((pro: any) => 
             this.scheduleBlocksService.isDateBlocked(pro.id, date)
           );
           
           dayChecks.push(
             new Observable((observer: Observer<{ date: Date, availableProfessionals: number }>) => {
               forkJoin(blockChecks).subscribe({
-                next: (blockedStates) => {
-                  const availableCount = blockedStates.filter(blocked => !blocked).length;
+                next: (blockedStates: any) => {
+                  const availableCount = blockedStates.filter((blocked: any) => !blocked).length;
                   observer.next({ date, availableProfessionals: availableCount });
                   observer.complete();
                 },
@@ -627,12 +627,12 @@ export class ReferralTabComponent implements OnDestroy, OnChanges {
                   // Criar observable para buscar slots de todos os profissionais
                   availabilityChecks.push(
                     new Observable((observer: Observer<{ date: Date, totalSlots: number, professionalsCount: number }>) => {
-                      forkJoin(professionals.map(pro => 
+                      forkJoin(professionals.map((pro: any) => 
                         this.schedulesService.getAvailability(pro.id, dayStart, dayEnd)
                       )).subscribe({
-                        next: (availabilities) => {
-                          const totalSlots = availabilities.reduce((sum, avail) => {
-                            return sum + (avail.slots?.filter(s => s.isAvailable).length || 0);
+                        next: (availabilities: any) => {
+                          const totalSlots = availabilities.reduce((sum: any, avail: any) => {
+                            return sum + (avail.slots?.filter((s: any) => s.isAvailable).length || 0);
                           }, 0);
                           observer.next({ 
                             date: result.date, 
@@ -735,12 +735,12 @@ export class ReferralTabComponent implements OnDestroy, OnChanges {
     
     // Buscar profissionais da especialidade
     this.usersService.getUsers({ 
-      role: 'PROFESSIONAL', 
-      specialtyId: this.selectedSpecialty.id,
-      status: 'Active'
+      tipo: 'Profissional', 
+      especialidadeId: this.selectedSpecialty.id,
+      status: 'Ativo'
     }, 1, 100).subscribe({
       next: (response) => {
-        const professionals = response.data;
+        const professionals = response.dados;
         
         if (professionals.length === 0) {
           this.availableSlots = [];
@@ -750,7 +750,7 @@ export class ReferralTabComponent implements OnDestroy, OnChanges {
         }
 
         // Buscar disponibilidade de cada profissional para a data selecionada
-        const availabilityChecks = professionals.map(pro => 
+        const availabilityChecks = professionals.map((pro: any) => 
           this.schedulesService.getAvailability(
             pro.id,
             this.selectedDate!,
@@ -759,15 +759,15 @@ export class ReferralTabComponent implements OnDestroy, OnChanges {
         );
 
         forkJoin(availabilityChecks).subscribe({
-          next: (availabilities) => {
+          next: (availabilities: any) => {
             // Mapear horários disponíveis por profissional
-            const timeSlotMap = new Map<string, User[]>();
+            const timeSlotMap = new Map<string, any[]>();
 
-            availabilities.forEach((availability, index) => {
+            availabilities.forEach((availability: any, index: any) => {
               const professional = professionals[index];
               
               if (availability.slots && availability.slots.length > 0) {
-                availability.slots.forEach(slot => {
+                availability.slots.forEach((slot: any) => {
                   // Apenas adicionar slots disponíveis
                   if (slot.isAvailable) {
                     const time = slot.time;

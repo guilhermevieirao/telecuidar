@@ -66,7 +66,7 @@ export interface ReportData {
   providedIn: 'root'
 })
 export class ReportsService {
-  private apiUrl = `${API_BASE_URL}/reports`;
+  private apiUrl = `${API_BASE_URL}/relatorios`;
 
   constructor(private http: HttpClient) {}
 

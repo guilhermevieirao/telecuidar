@@ -15,7 +15,7 @@ export class TitleService {
     
     // Auth
     '/entrar': 'Login',
-    '/registrar': 'Cadastro',
+    '/cadastrar': 'Cadastro',
     '/auth/forgot-password': 'Recuperar Senha',
     '/auth/reset-password': 'Redefinir Senha',
     '/auth/verify-email': 'Verificar Email',

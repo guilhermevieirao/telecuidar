@@ -8,6 +8,9 @@ using System.Text;
 
 namespace Infrastructure.Services;
 
+/// <summary>
+/// Serviço para geração e validação de tokens JWT
+/// </summary>
 public class JwtService : IJwtService
 {
     private readonly IConfiguration _configuration;
@@ -15,36 +18,47 @@ public class JwtService : IJwtService
     private readonly string _issuer;
     private readonly string _audience;
     private readonly int _expirationMinutes;
+    
+    // Cache simples em memória para refresh tokens (em produção usar Redis ou banco)
+    private static readonly Dictionary<Guid, (string Token, DateTime Expiry)> _refreshTokens = new();
+    private static readonly object _lock = new();
 
     public JwtService(IConfiguration configuration)
     {
         _configuration = configuration;
-        _secretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY") 
+        
+        _secretKey = Environment.GetEnvironmentVariable("JWT_SECRET") 
             ?? _configuration["JwtSettings:SecretKey"] 
-            ?? throw new InvalidOperationException("JWT Secret Key not configured");
+            ?? throw new InvalidOperationException("JWT Secret não configurado");
+            
         _issuer = Environment.GetEnvironmentVariable("JWT_ISSUER") 
             ?? _configuration["JwtSettings:Issuer"] 
-            ?? "TelecuidarAPI";
+            ?? "TeleCuidar";
+            
         _audience = Environment.GetEnvironmentVariable("JWT_AUDIENCE") 
             ?? _configuration["JwtSettings:Audience"] 
-            ?? "TelecuidarClient";
+            ?? "TeleCuidarApp";
+
         var expirationStr = Environment.GetEnvironmentVariable("JWT_EXPIRATION_MINUTES") 
             ?? _configuration["JwtSettings:ExpirationMinutes"] 
             ?? "60";
         _expirationMinutes = int.Parse(expirationStr);
     }
 
-    public string GenerateAccessToken(Guid userId, string email, string role)
+    public string GerarAccessToken(Guid usuarioId, string email, string nome, string tipo)
     {
-        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
-        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
+        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var claims = new[]
         {
-            new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
+            new Claim(JwtRegisteredClaimNames.Sub, usuarioId.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, email),
-            new Claim(ClaimTypes.Role, role),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            new Claim(JwtRegisteredClaimNames.Name, nome),
+            new Claim(ClaimTypes.Role, tipo),
+            new Claim("tipo", tipo),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64)
         };
 
         var token = new JwtSecurityToken(
@@ -58,59 +72,94 @@ public class JwtService : IJwtService
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    public string GenerateRefreshToken()
+    public string GerarRefreshToken()
     {
-        var randomNumber = new byte[32];
+        var randomBytes = new byte[64];
         using var rng = RandomNumberGenerator.Create();
-        rng.GetBytes(randomNumber);
-        return Convert.ToBase64String(randomNumber);
+        rng.GetBytes(randomBytes);
+        return Convert.ToBase64String(randomBytes);
     }
 
-    public bool ValidateToken(string token)
+    public (bool Valido, Guid? UsuarioId, string? Email, string? Tipo) ValidarToken(string token)
     {
         try
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
-
-            tokenHandler.ValidateToken(token, new TokenValidationParameters
+            var key = Encoding.UTF8.GetBytes(_secretKey);
+            
+            var validationParameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = securityKey,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
                 ValidateIssuer = true,
                 ValidIssuer = _issuer,
                 ValidateAudience = true,
                 ValidAudience = _audience,
                 ValidateLifetime = true,
                 ClockSkew = TimeSpan.Zero
-            }, out _);
+            };
 
-            return true;
+            var principal = tokenHandler.ValidateToken(token, validationParameters, out var validatedToken);
+            
+            var userId = principal.FindFirst(JwtRegisteredClaimNames.Sub)?.Value 
+                ?? principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var email = principal.FindFirst(JwtRegisteredClaimNames.Email)?.Value 
+                ?? principal.FindFirst(ClaimTypes.Email)?.Value;
+            var tipo = principal.FindFirst("tipo")?.Value 
+                ?? principal.FindFirst(ClaimTypes.Role)?.Value;
+
+            if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var guidUserId))
+            {
+                return (false, null, null, null);
+            }
+
+            return (true, guidUserId, email, tipo);
         }
         catch
         {
+            return (false, null, null, null);
+        }
+    }
+
+    public bool ValidarRefreshToken(string refreshToken, Guid usuarioId)
+    {
+        lock (_lock)
+        {
+            if (_refreshTokens.TryGetValue(usuarioId, out var stored))
+            {
+                return stored.Token == refreshToken && stored.Expiry > DateTime.UtcNow;
+            }
             return false;
         }
     }
 
-    public Guid? GetUserIdFromToken(string token)
+    public Task SalvarRefreshTokenAsync(Guid usuarioId, string refreshToken, TimeSpan expiracao)
     {
-        try
+        lock (_lock)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var jwtToken = tokenHandler.ReadJwtToken(token);
-            var userIdClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub);
-            
-            if (userIdClaim != null && Guid.TryParse(userIdClaim.Value, out var userId))
-            {
-                return userId;
-            }
+            _refreshTokens[usuarioId] = (refreshToken, DateTime.UtcNow.Add(expiracao));
         }
-        catch
-        {
-            // Token inválido
-        }
+        return Task.CompletedTask;
+    }
 
-        return null;
+    public Task RevogarRefreshTokenAsync(Guid usuarioId)
+    {
+        lock (_lock)
+        {
+            _refreshTokens.Remove(usuarioId);
+        }
+        return Task.CompletedTask;
+    }
+
+    public Task<bool> RefreshTokenExisteAsync(Guid usuarioId, string refreshToken)
+    {
+        lock (_lock)
+        {
+            if (_refreshTokens.TryGetValue(usuarioId, out var stored))
+            {
+                return Task.FromResult(stored.Token == refreshToken && stored.Expiry > DateTime.UtcNow);
+            }
+            return Task.FromResult(false);
+        }
     }
 }

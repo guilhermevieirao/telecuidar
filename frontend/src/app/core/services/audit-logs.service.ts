@@ -48,7 +48,7 @@ export interface AuditLogsSortOptions {
   providedIn: 'root'
 })
 export class AuditLogsService {
-  private apiUrl = `${API_BASE_URL}/auditlogs`;
+  private apiUrl = `${API_BASE_URL}/logs-auditoria`;
 
   constructor(private http: HttpClient) {}
 

@@ -19,7 +19,7 @@
       <div class="modal__body">
         <div class="modal__avatar-section">
           <app-avatar-upload
-            [name]="(editedUser.name || '') + ' ' + (editedUser.lastName || '')"
+            [name]="(editedUser.nome || '') + ' ' + (editedUser.sobrenome || '')"
             [currentAvatar]="editedUser.avatar"
             [userId]="user.id"
             (avatarChange)="onAvatarChange($event)"
@@ -34,8 +34,8 @@
                 id="profile-name"
                 type="text"
                 class="user-form__input"
-                [(ngModel)]="editedUser.name"
-                name="name"
+                [(ngModel)]="editedUser.nome"
+                name="nome"
                 placeholder="Digite o nome"
                 required
               />
@@ -47,8 +47,8 @@
                 id="profile-lastname"
                 type="text"
                 class="user-form__input"
-                [(ngModel)]="editedUser.lastName"
-                name="lastName"
+                [(ngModel)]="editedUser.sobrenome"
+                name="sobrenome"
                 placeholder="Digite o sobrenome"
                 required
               />
@@ -105,8 +105,8 @@
                 id="profile-phone"
                 type="tel"
                 class="user-form__input"
-                [(ngModel)]="editedUser.phone"
-                name="phone"
+                [(ngModel)]="editedUser.telefone"
+                name="telefone"
                 placeholder="(00) 00000-0000"
                 appPhoneMask
                 required

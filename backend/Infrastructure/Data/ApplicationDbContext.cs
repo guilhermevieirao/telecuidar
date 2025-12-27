@@ -10,283 +10,520 @@ public class ApplicationDbContext : DbContext
     {
     }
 
-    public DbSet<User> Users { get; set; }
-    public DbSet<PatientProfile> PatientProfiles { get; set; }
-    public DbSet<ProfessionalProfile> ProfessionalProfiles { get; set; }
-    public DbSet<Specialty> Specialties { get; set; }
-    public DbSet<Appointment> Appointments { get; set; }
-    public DbSet<Notification> Notifications { get; set; }
-    public DbSet<Schedule> Schedules { get; set; }
-    public DbSet<AuditLog> AuditLogs { get; set; }
-    public DbSet<Attachment> Attachments { get; set; }
-    public DbSet<Invite> Invites { get; set; }
-    public DbSet<ScheduleBlock> ScheduleBlocks { get; set; }
-    public DbSet<Prescription> Prescriptions { get; set; }
-    public DbSet<SavedCertificate> SavedCertificates { get; set; }
-    public DbSet<MedicalCertificate> MedicalCertificates { get; set; }
+    // ============================================
+    // DbSets - Tabelas do Banco de Dados
+    // ============================================
+    public DbSet<Usuario> Usuarios { get; set; }
+    public DbSet<PerfilPaciente> PerfisPaciente { get; set; }
+    public DbSet<PerfilProfissional> PerfisProfissional { get; set; }
+    public DbSet<Especialidade> Especialidades { get; set; }
+    public DbSet<Consulta> Consultas { get; set; }
+    public DbSet<PreConsulta> PreConsultas { get; set; }
+    public DbSet<Anamnese> Anamneses { get; set; }
+    public DbSet<RegistroSoap> RegistrosSoap { get; set; }
+    public DbSet<DadosBiometricos> DadosBiometricos { get; set; }
+    public DbSet<Anexo> Anexos { get; set; }
+    public DbSet<AnexoChat> AnexosChat { get; set; }
+    public DbSet<Agenda> Agendas { get; set; }
+    public DbSet<BloqueioAgenda> BloqueiosAgenda { get; set; }
+    public DbSet<Notificacao> Notificacoes { get; set; }
+    public DbSet<Convite> Convites { get; set; }
+    public DbSet<LogAuditoria> LogsAuditoria { get; set; }
+    public DbSet<Prescricao> Prescricoes { get; set; }
+    public DbSet<AtestadoMedico> AtestadosMedicos { get; set; }
+    public DbSet<CertificadoSalvo> CertificadosSalvos { get; set; }
+    public DbSet<UploadMobile> UploadsMobile { get; set; }
+    public DbSet<VerificacaoEmail> VerificacoesEmail { get; set; }
+    public DbSet<HistoricoClinico> HistoricosClinicos { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        // User Configuration
-        modelBuilder.Entity<User>(entity =>
+        // ============================================
+        // USUARIO
+        // ============================================
+        modelBuilder.Entity<Usuario>(entity =>
         {
+            entity.ToTable("usuarios");
             entity.HasKey(e => e.Id);
             entity.HasIndex(e => e.Email).IsUnique();
             entity.HasIndex(e => e.Cpf).IsUnique();
-            entity.HasIndex(e => e.Phone).IsUnique();
+            entity.HasIndex(e => e.Telefone);
+            
             entity.Property(e => e.Email).IsRequired().HasMaxLength(255);
-            entity.Property(e => e.PasswordHash).IsRequired();
-            entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
-            entity.Property(e => e.LastName).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.SenhaHash).IsRequired();
+            entity.Property(e => e.Nome).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Sobrenome).IsRequired().HasMaxLength(100);
             entity.Property(e => e.Cpf).IsRequired().HasMaxLength(14);
-            entity.Property(e => e.Phone).HasMaxLength(20);
+            entity.Property(e => e.Telefone).HasMaxLength(20);
             entity.Property(e => e.Avatar).HasMaxLength(500);
 
-            entity.HasMany(e => e.AppointmentsAsPatient)
-                .WithOne(a => a.Patient)
-                .HasForeignKey(a => a.PatientId)
-                .OnDelete(DeleteBehavior.Restrict);
+            // Relacionamento 1:1 com PerfilPaciente
+            entity.HasOne(e => e.PerfilPaciente)
+                .WithOne(p => p.Usuario)
+                .HasForeignKey<PerfilPaciente>(p => p.UsuarioId)
+                .OnDelete(DeleteBehavior.Cascade);
+                
+            // Relacionamento 1:1 com PerfilProfissional
+            entity.HasOne(e => e.PerfilProfissional)
+                .WithOne(p => p.Usuario)
+                .HasForeignKey<PerfilProfissional>(p => p.UsuarioId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
 
-            entity.HasMany(e => e.AppointmentsAsProfessional)
-                .WithOne(a => a.Professional)
-                .HasForeignKey(a => a.ProfessionalId)
-                .OnDelete(DeleteBehavior.Restrict);
-                
-            // Relacionamento 1:1 com PatientProfile
-            entity.HasOne(e => e.PatientProfile)
-                .WithOne(p => p.User)
-                .HasForeignKey<PatientProfile>(p => p.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
-                
-            // Relacionamento 1:1 com ProfessionalProfile
-            entity.HasOne(e => e.ProfessionalProfile)
-                .WithOne(p => p.User)
-                .HasForeignKey<ProfessionalProfile>(p => p.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
-        });
-        
-        // PatientProfile Configuration
-        modelBuilder.Entity<PatientProfile>(entity =>
+        // ============================================
+        // PERFIL PACIENTE
+        // ============================================
+        modelBuilder.Entity<PerfilPaciente>(entity =>
         {
+            entity.ToTable("perfis_paciente");
             entity.HasKey(e => e.Id);
-            entity.HasIndex(e => e.UserId).IsUnique();
+            entity.HasIndex(e => e.UsuarioId).IsUnique();
             entity.HasIndex(e => e.Cns);
+            
             entity.Property(e => e.Cns).HasMaxLength(15);
-            entity.Property(e => e.SocialName).HasMaxLength(200);
-            entity.Property(e => e.Gender).HasMaxLength(20);
-            entity.Property(e => e.MotherName).HasMaxLength(200);
-            entity.Property(e => e.FatherName).HasMaxLength(200);
-            entity.Property(e => e.Nationality).HasMaxLength(100);
-            entity.Property(e => e.ZipCode).HasMaxLength(10);
-            entity.Property(e => e.Address).HasMaxLength(500);
-            entity.Property(e => e.City).HasMaxLength(100);
-            entity.Property(e => e.State).HasMaxLength(2);
+            entity.Property(e => e.NomeSocial).HasMaxLength(200);
+            entity.Property(e => e.Sexo).HasMaxLength(20);
+            entity.Property(e => e.NomeMae).HasMaxLength(200);
+            entity.Property(e => e.NomePai).HasMaxLength(200);
+            entity.Property(e => e.Nacionalidade).HasMaxLength(100);
+            entity.Property(e => e.Cep).HasMaxLength(10);
+            entity.Property(e => e.Endereco).HasMaxLength(500);
+            entity.Property(e => e.Cidade).HasMaxLength(100);
+            entity.Property(e => e.Estado).HasMaxLength(2);
         });
-        
-        // ProfessionalProfile Configuration
-        modelBuilder.Entity<ProfessionalProfile>(entity =>
+
+        // ============================================
+        // PERFIL PROFISSIONAL
+        // ============================================
+        modelBuilder.Entity<PerfilProfissional>(entity =>
         {
+            entity.ToTable("perfis_profissional");
             entity.HasKey(e => e.Id);
-            entity.HasIndex(e => e.UserId).IsUnique();
+            entity.HasIndex(e => e.UsuarioId).IsUnique();
             entity.HasIndex(e => e.Crm);
+            
             entity.Property(e => e.Crm).HasMaxLength(20);
             entity.Property(e => e.Cbo).HasMaxLength(10);
-            entity.Property(e => e.Gender).HasMaxLength(20);
-            entity.Property(e => e.Nationality).HasMaxLength(100);
-            entity.Property(e => e.ZipCode).HasMaxLength(10);
-            entity.Property(e => e.Address).HasMaxLength(500);
-            entity.Property(e => e.City).HasMaxLength(100);
-            entity.Property(e => e.State).HasMaxLength(2);
+            entity.Property(e => e.Sexo).HasMaxLength(20);
+            entity.Property(e => e.Nacionalidade).HasMaxLength(100);
+            entity.Property(e => e.Cep).HasMaxLength(10);
+            entity.Property(e => e.Endereco).HasMaxLength(500);
+            entity.Property(e => e.Cidade).HasMaxLength(100);
+            entity.Property(e => e.Estado).HasMaxLength(2);
             
-            // Relacionamento com Specialty
-            entity.HasOne(e => e.Specialty)
-                .WithMany(s => s.Professionals)
-                .HasForeignKey(e => e.SpecialtyId)
+            entity.HasOne(e => e.Especialidade)
+                .WithMany(s => s.Profissionais)
+                .HasForeignKey(e => e.EspecialidadeId)
                 .OnDelete(DeleteBehavior.SetNull);
         });
 
-        // Specialty Configuration
-        modelBuilder.Entity<Specialty>(entity =>
+        // ============================================
+        // ESPECIALIDADE
+        // ============================================
+        modelBuilder.Entity<Especialidade>(entity =>
         {
+            entity.ToTable("especialidades");
             entity.HasKey(e => e.Id);
-            entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
-            entity.Property(e => e.Description).IsRequired().HasMaxLength(1000);
+            entity.HasIndex(e => e.Nome);
+            
+            entity.Property(e => e.Nome).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.Descricao).HasMaxLength(1000);
         });
 
-        // Appointment Configuration
-        modelBuilder.Entity<Appointment>(entity =>
+        // ============================================
+        // CONSULTA
+        // ============================================
+        modelBuilder.Entity<Consulta>(entity =>
         {
+            entity.ToTable("consultas");
             entity.HasKey(e => e.Id);
-            entity.Property(e => e.Observation).HasMaxLength(2000);
-            entity.Property(e => e.MeetLink).HasMaxLength(500);
+            entity.HasIndex(e => e.Data);
+            entity.HasIndex(e => e.Status);
+            
+            entity.Property(e => e.Observacao).HasMaxLength(2000);
+            entity.Property(e => e.LinkVideo).HasMaxLength(500);
+            
+            // Ignorar propriedades alias
+            entity.Ignore(e => e.RegistroSoap);
+            entity.Ignore(e => e.HoraInicio);
+            entity.Ignore(e => e.HoraFim);
 
-            entity.HasOne(e => e.Specialty)
-                .WithMany(s => s.Appointments)
-                .HasForeignKey(e => e.SpecialtyId)
+            entity.HasOne(e => e.Paciente)
+                .WithMany(u => u.ConsultasComoPaciente)
+                .HasForeignKey(e => e.PacienteId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.Profissional)
+                .WithMany(u => u.ConsultasComoProfissional)
+                .HasForeignKey(e => e.ProfissionalId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.Especialidade)
+                .WithMany(s => s.Consultas)
+                .HasForeignKey(e => e.EspecialidadeId)
+                .OnDelete(DeleteBehavior.Restrict);
+                
+            // Relacionamento 1:1 com PreConsulta
+            entity.HasOne(e => e.PreConsulta)
+                .WithOne(p => p.Consulta)
+                .HasForeignKey<PreConsulta>(p => p.ConsultaId)
+                .OnDelete(DeleteBehavior.Cascade);
+                
+            // Relacionamento 1:1 com Anamnese
+            entity.HasOne(e => e.Anamnese)
+                .WithOne(a => a.Consulta)
+                .HasForeignKey<Anamnese>(a => a.ConsultaId)
+                .OnDelete(DeleteBehavior.Cascade);
+                
+            // Relacionamento 1:1 com Soap
+            entity.HasOne(e => e.Soap)
+                .WithOne(s => s.Consulta)
+                .HasForeignKey<RegistroSoap>(s => s.ConsultaId)
+                .OnDelete(DeleteBehavior.Cascade);
+                
+            // Relacionamento 1:1 com DadosBiometricos
+            entity.HasOne(e => e.DadosBiometricos)
+                .WithOne(d => d.Consulta)
+                .HasForeignKey<DadosBiometricos>(d => d.ConsultaId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // ============================================
+        // PRE-CONSULTA
+        // ============================================
+        modelBuilder.Entity<PreConsulta>(entity =>
+        {
+            entity.ToTable("pre_consultas");
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.ConsultaId).IsUnique();
+        });
+
+        // ============================================
+        // ANAMNESE
+        // ============================================
+        modelBuilder.Entity<Anamnese>(entity =>
+        {
+            entity.ToTable("anamneses");
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.ConsultaId).IsUnique();
+        });
+
+        // ============================================
+        // REGISTRO SOAP
+        // ============================================
+        modelBuilder.Entity<RegistroSoap>(entity =>
+        {
+            entity.ToTable("registros_soap");
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.ConsultaId).IsUnique();
+        });
+
+        // ============================================
+        // DADOS BIOMETRICOS
+        // ============================================
+        modelBuilder.Entity<DadosBiometricos>(entity =>
+        {
+            entity.ToTable("dados_biometricos");
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.ConsultaId).IsUnique();
+        });
+
+        // ============================================
+        // ANEXO
+        // ============================================
+        modelBuilder.Entity<Anexo>(entity =>
+        {
+            entity.ToTable("anexos");
+            entity.HasKey(e => e.Id);
+            
+            entity.Property(e => e.Titulo).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.NomeArquivo).IsRequired().HasMaxLength(255);
+            entity.Property(e => e.CaminhoArquivo).IsRequired().HasMaxLength(1000);
+            entity.Property(e => e.TipoArquivo).IsRequired().HasMaxLength(100);
+
+            entity.HasOne(e => e.Consulta)
+                .WithMany(c => c.Anexos)
+                .HasForeignKey(e => e.ConsultaId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // ============================================
+        // ANEXO CHAT
+        // ============================================
+        modelBuilder.Entity<AnexoChat>(entity =>
+        {
+            entity.ToTable("anexos_chat");
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.ConsultaId);
+            
+            entity.Property(e => e.NomeArquivo).HasMaxLength(255);
+            entity.Property(e => e.CaminhoArquivo).HasMaxLength(1000);
+            entity.Property(e => e.TipoArquivo).HasMaxLength(100);
+
+            entity.HasOne(e => e.Consulta)
+                .WithMany(c => c.AnexosChat)
+                .HasForeignKey(e => e.ConsultaId)
+                .OnDelete(DeleteBehavior.Cascade);
+                
+            entity.HasOne(e => e.Remetente)
+                .WithMany()
+                .HasForeignKey(e => e.RemetenteId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
 
-        // Notification Configuration
-        modelBuilder.Entity<Notification>(entity =>
+        // ============================================
+        // AGENDA
+        // ============================================
+        modelBuilder.Entity<Agenda>(entity =>
         {
+            entity.ToTable("agendas");
             entity.HasKey(e => e.Id);
-            entity.Property(e => e.Title).IsRequired().HasMaxLength(200);
-            entity.Property(e => e.Message).IsRequired().HasMaxLength(1000);
-            entity.Property(e => e.Type).IsRequired().HasMaxLength(50);
-            entity.Property(e => e.Link).HasMaxLength(500);
+            entity.HasIndex(e => e.ProfissionalId);
 
-            entity.HasOne(e => e.User)
-                .WithMany(u => u.Notifications)
-                .HasForeignKey(e => e.UserId)
+            entity.HasOne(e => e.Profissional)
+                .WithMany(u => u.Agendas)
+                .HasForeignKey(e => e.ProfissionalId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        // Schedule Configuration
-        modelBuilder.Entity<Schedule>(entity =>
+        // ============================================
+        // BLOQUEIO AGENDA
+        // ============================================
+        modelBuilder.Entity<BloqueioAgenda>(entity =>
         {
+            entity.ToTable("bloqueios_agenda");
             entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.ProfissionalId);
+            entity.HasIndex(e => e.Status);
+            
+            entity.Property(e => e.Motivo).IsRequired().HasMaxLength(500);
+            entity.Property(e => e.MotivoRejeicao).HasMaxLength(500);
 
-            entity.HasOne(e => e.Professional)
-                .WithMany(u => u.Schedules)
-                .HasForeignKey(e => e.ProfessionalId)
+            entity.HasOne(e => e.Profissional)
+                .WithMany(u => u.BloqueiosAgenda)
+                .HasForeignKey(e => e.ProfissionalId)
                 .OnDelete(DeleteBehavior.Cascade);
-        });
-
-        // AuditLog Configuration
-        modelBuilder.Entity<AuditLog>(entity =>
-        {
-            entity.HasKey(e => e.Id);
-            entity.Property(e => e.Action).IsRequired().HasMaxLength(100);
-            entity.Property(e => e.EntityType).IsRequired().HasMaxLength(100);
-            entity.Property(e => e.IpAddress).HasMaxLength(45);
-
-            entity.HasOne(e => e.User)
-                .WithMany(u => u.AuditLogs)
-                .HasForeignKey(e => e.UserId)
+                
+            entity.HasOne(e => e.AprovadoPor)
+                .WithMany()
+                .HasForeignKey(e => e.AprovadoPorId)
                 .OnDelete(DeleteBehavior.SetNull);
         });
 
-        // Attachment Configuration
-        modelBuilder.Entity<Attachment>(entity =>
+        // ============================================
+        // NOTIFICACAO
+        // ============================================
+        modelBuilder.Entity<Notificacao>(entity =>
         {
+            entity.ToTable("notificacoes");
             entity.HasKey(e => e.Id);
-            entity.Property(e => e.Title).IsRequired().HasMaxLength(200);
-            entity.Property(e => e.FileName).IsRequired().HasMaxLength(255);
-            entity.Property(e => e.FilePath).IsRequired().HasMaxLength(1000);
-            entity.Property(e => e.FileType).IsRequired().HasMaxLength(100);
+            entity.HasIndex(e => e.UsuarioId);
+            entity.HasIndex(e => e.Lida);
+            
+            entity.Property(e => e.Titulo).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.Mensagem).IsRequired().HasMaxLength(1000);
+            entity.Property(e => e.Tipo).HasMaxLength(50);
+            entity.Property(e => e.Link).HasMaxLength(500);
 
-            entity.HasOne(e => e.Appointment)
-                .WithMany(a => a.Attachments)
-                .HasForeignKey(e => e.AppointmentId)
+            entity.HasOne(e => e.Usuario)
+                .WithMany(u => u.Notificacoes)
+                .HasForeignKey(e => e.UsuarioId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        // Invite Configuration
-        modelBuilder.Entity<Invite>(entity =>
+        // ============================================
+        // CONVITE
+        // ============================================
+        modelBuilder.Entity<Convite>(entity =>
         {
+            entity.ToTable("convites");
             entity.HasKey(e => e.Id);
             entity.HasIndex(e => e.Token).IsUnique();
             entity.HasIndex(e => e.Email);
-            entity.Property(e => e.Email).HasMaxLength(255); // Email não é mais obrigatório para links genéricos
-            entity.Property(e => e.Token).IsRequired().HasMaxLength(50);
             
-            entity.HasOne(e => e.CreatedByUser)
+            entity.Property(e => e.Email).HasMaxLength(255);
+            entity.Property(e => e.Token).IsRequired().HasMaxLength(50);
+
+            entity.HasOne(e => e.CriadoPor)
                 .WithMany()
-                .HasForeignKey(e => e.CreatedBy)
+                .HasForeignKey(e => e.CriadoPorId)
                 .OnDelete(DeleteBehavior.Restrict);
-        });
-
-        // ScheduleBlock Configuration
-        modelBuilder.Entity<ScheduleBlock>(entity =>
-        {
-            entity.HasKey(e => e.Id);
-            entity.Property(e => e.Reason).IsRequired().HasMaxLength(500);
-            entity.Property(e => e.RejectionReason).HasMaxLength(500);
-
-            entity.HasOne(e => e.Professional)
-                .WithMany(u => u.ScheduleBlocks)
-                .HasForeignKey(e => e.ProfessionalId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            entity.HasOne(e => e.Approver)
+                
+            entity.HasOne(e => e.Especialidade)
                 .WithMany()
-                .HasForeignKey(e => e.ApprovedBy)
+                .HasForeignKey(e => e.EspecialidadeId)
                 .OnDelete(DeleteBehavior.SetNull);
         });
 
-        // Prescription Configuration
-        modelBuilder.Entity<Prescription>(entity =>
+        // ============================================
+        // LOG AUDITORIA
+        // ============================================
+        modelBuilder.Entity<LogAuditoria>(entity =>
         {
+            entity.ToTable("logs_auditoria");
             entity.HasKey(e => e.Id);
-            entity.Property(e => e.ItemsJson).IsRequired();
-            entity.Property(e => e.DigitalSignature).HasMaxLength(10000);
-            entity.Property(e => e.CertificateThumbprint).HasMaxLength(100);
-            entity.Property(e => e.CertificateSubject).HasMaxLength(500);
-            entity.Property(e => e.DocumentHash).HasMaxLength(100);
-            entity.HasIndex(e => e.DocumentHash);
+            entity.HasIndex(e => e.UsuarioId);
+            entity.HasIndex(e => e.CriadoEm);
+            entity.HasIndex(e => e.Acao);
+            
+            entity.Property(e => e.Acao).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.TipoEntidade).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.EnderecoIp).HasMaxLength(45);
 
-            entity.HasOne(e => e.Appointment)
-                .WithMany()
-                .HasForeignKey(e => e.AppointmentId)
+            entity.HasOne(e => e.Usuario)
+                .WithMany(u => u.LogsAuditoria)
+                .HasForeignKey(e => e.UsuarioId)
+                .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        // ============================================
+        // PRESCRICAO
+        // ============================================
+        modelBuilder.Entity<Prescricao>(entity =>
+        {
+            entity.ToTable("prescricoes");
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.ConsultaId);
+            entity.HasIndex(e => e.HashDocumento);
+            
+            entity.Property(e => e.AssinaturaDigital).HasMaxLength(10000);
+            entity.Property(e => e.ImpressaoDigitalCertificado).HasMaxLength(100);
+            entity.Property(e => e.SubjetoCertificado).HasMaxLength(500);
+            entity.Property(e => e.HashDocumento).HasMaxLength(100);
+
+            entity.HasOne(e => e.Consulta)
+                .WithMany(c => c.Prescricoes)
+                .HasForeignKey(e => e.ConsultaId)
                 .OnDelete(DeleteBehavior.Cascade);
-
-            entity.HasOne(e => e.Professional)
+                
+            entity.HasOne(e => e.Profissional)
                 .WithMany()
-                .HasForeignKey(e => e.ProfessionalId)
+                .HasForeignKey(e => e.ProfissionalId)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            entity.HasOne(e => e.Patient)
+                
+            entity.HasOne(e => e.Paciente)
                 .WithMany()
-                .HasForeignKey(e => e.PatientId)
+                .HasForeignKey(e => e.PacienteId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
 
-        // MedicalCertificate Configuration
-        modelBuilder.Entity<MedicalCertificate>(entity =>
+        // ============================================
+        // ATESTADO MEDICO
+        // ============================================
+        modelBuilder.Entity<AtestadoMedico>(entity =>
         {
+            entity.ToTable("atestados_medicos");
             entity.HasKey(e => e.Id);
-            entity.Property(e => e.Tipo).IsRequired();
-            entity.Property(e => e.Conteudo).IsRequired();
+            entity.HasIndex(e => e.ConsultaId);
+            entity.HasIndex(e => e.HashDocumento);
+            
             entity.Property(e => e.Cid).HasMaxLength(20);
-            entity.Property(e => e.DigitalSignature).HasMaxLength(10000);
-            entity.Property(e => e.CertificateThumbprint).HasMaxLength(100);
-            entity.Property(e => e.CertificateSubject).HasMaxLength(500);
-            entity.Property(e => e.DocumentHash).HasMaxLength(100);
-            entity.HasIndex(e => e.DocumentHash);
-            entity.HasIndex(e => e.AppointmentId);
+            entity.Property(e => e.Conteudo).IsRequired();
+            entity.Property(e => e.AssinaturaDigital).HasMaxLength(10000);
+            entity.Property(e => e.ImpressaoDigitalCertificado).HasMaxLength(100);
+            entity.Property(e => e.SubjetoCertificado).HasMaxLength(500);
+            entity.Property(e => e.HashDocumento).HasMaxLength(100);
 
-            entity.HasOne(e => e.Appointment)
-                .WithMany()
-                .HasForeignKey(e => e.AppointmentId)
+            entity.HasOne(e => e.Consulta)
+                .WithMany(c => c.Atestados)
+                .HasForeignKey(e => e.ConsultaId)
                 .OnDelete(DeleteBehavior.Cascade);
-
-            entity.HasOne(e => e.Professional)
+                
+            entity.HasOne(e => e.Profissional)
                 .WithMany()
-                .HasForeignKey(e => e.ProfessionalId)
+                .HasForeignKey(e => e.ProfissionalId)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            entity.HasOne(e => e.Patient)
+                
+            entity.HasOne(e => e.Paciente)
                 .WithMany()
-                .HasForeignKey(e => e.PatientId)
+                .HasForeignKey(e => e.PacienteId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
-    }
 
-    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        var entries = ChangeTracker.Entries()
-            .Where(e => e.State == EntityState.Modified);
-
-        foreach (var entry in entries)
+        // ============================================
+        // CERTIFICADO SALVO
+        // ============================================
+        modelBuilder.Entity<CertificadoSalvo>(entity =>
         {
-            if (entry.Entity is Domain.Common.BaseEntity entity)
-            {
-                entity.UpdatedAt = DateTime.UtcNow;
-            }
-        }
+            entity.ToTable("certificados_salvos");
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.ProfissionalId);
+            entity.HasIndex(e => e.ImpressaoDigital);
+            
+            entity.Property(e => e.Nome).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.NomeSujeito).IsRequired().HasMaxLength(500);
+            entity.Property(e => e.NomeEmissor).IsRequired().HasMaxLength(500);
+            entity.Property(e => e.ImpressaoDigital).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.DadosPfxCriptografados).IsRequired();
 
-        return base.SaveChangesAsync(cancellationToken);
+            entity.HasOne(e => e.Profissional)
+                .WithMany()
+                .HasForeignKey(e => e.ProfissionalId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // ============================================
+        // UPLOAD MOBILE
+        // ============================================
+        modelBuilder.Entity<UploadMobile>(entity =>
+        {
+            entity.ToTable("uploads_mobile");
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.Token).IsUnique();
+            entity.HasIndex(e => e.ExpiraEm);
+            
+            entity.Property(e => e.Token).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Origem).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.NomeArquivo).IsRequired().HasMaxLength(255);
+            entity.Property(e => e.CaminhoArquivo).IsRequired().HasMaxLength(1000);
+            entity.Property(e => e.TipoArquivo).IsRequired().HasMaxLength(100);
+
+            entity.HasOne(e => e.Usuario)
+                .WithMany()
+                .HasForeignKey(e => e.UsuarioId)
+                .OnDelete(DeleteBehavior.SetNull);
+                
+            entity.HasOne(e => e.Consulta)
+                .WithMany()
+                .HasForeignKey(e => e.ConsultaId)
+                .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        // ============================================
+        // VERIFICACAO EMAIL
+        // ============================================
+        modelBuilder.Entity<VerificacaoEmail>(entity =>
+        {
+            entity.ToTable("verificacoes_email");
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.Token).IsUnique();
+            entity.HasIndex(e => e.UsuarioId);
+            
+            entity.Property(e => e.Email).IsRequired().HasMaxLength(255);
+            entity.Property(e => e.Token).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Tipo).IsRequired().HasMaxLength(50);
+
+            entity.HasOne(e => e.Usuario)
+                .WithMany()
+                .HasForeignKey(e => e.UsuarioId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // ============================================
+        // HISTORICO CLINICO
+        // ============================================
+        modelBuilder.Entity<HistoricoClinico>(entity =>
+        {
+            entity.ToTable("historicos_clinicos");
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.PacienteId).IsUnique();
+
+            entity.HasOne(e => e.Paciente)
+                .WithMany()
+                .HasForeignKey(e => e.PacienteId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
     }
 }

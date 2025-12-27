@@ -132,7 +132,7 @@ export interface PaginatedResponse<T> {
   providedIn: 'root'
 })
 export class AppointmentsService {
-  private apiUrl = `${API_BASE_URL}/appointments`;
+  private apiUrl = `${API_BASE_URL}/consultas`;
 
   constructor(private http: HttpClient) {}
 

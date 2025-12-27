@@ -48,8 +48,8 @@ export class ProfileEditModalComponent implements OnChanges {
 
   isFormValid(): boolean {
     return !!(
-      this.editedUser.name?.trim() &&
-      this.editedUser.phone?.trim()
+      this.editedUser.nome?.trim() &&
+      this.editedUser.telefone?.trim()
     );
   }
 

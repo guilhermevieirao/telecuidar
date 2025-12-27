@@ -10,13 +10,13 @@
       <div class="info-header">
         <div class="avatar">
           @if (patientData.avatar) {
-            <img [src]="patientData.avatar" [alt]="patientData.name" />
+            <img [src]="patientData.avatar" [alt]="patientData.nome" />
           } @else {
             <app-icon name="user" [size]="48" />
           }
         </div>
         <div class="header-text">
-          <h2>{{ patientData.name }} {{ patientData.lastName }}</h2>
+          <h2>{{ patientData.nome }} {{ patientData.sobrenome }}</h2>
           <span class="patient-id">ID: {{ patientData.id }}</span>
         </div>
       </div>
@@ -30,7 +30,7 @@
           <div class="info-grid">
             <div class="info-item">
               <label>Nome Completo</label>
-              <p>{{ patientData.name }} {{ patientData.lastName }}</p>
+              <p>{{ patientData.nome }} {{ patientData.sobrenome }}</p>
             </div>
             <div class="info-item">
               <label>CPF</label>
@@ -42,18 +42,18 @@
             </div>
             <div class="info-item">
               <label>Telefone</label>
-              <p>{{ formatPhone(patientData.phone) }}</p>
+              <p>{{ formatPhone(patientData.telefone) }}</p>
             </div>
             <div class="info-item">
               <label>Status</label>
-              <p class="status-badge" [class.active]="patientData.status === 'Active'">
-                {{ patientData.status === 'Active' ? 'Ativo' : 'Inativo' }}
+              <p class="status-badge" [class.active]="patientData.status === 'Ativo'">
+                {{ patientData.status === 'Ativo' ? 'Ativo' : 'Inativo' }}
               </p>
             </div>
             <div class="info-item">
               <label>E-mail Verificado</label>
               <p>
-                @if (patientData.emailVerified) {
+                @if (patientData.emailVerificado) {
                   <span class="verified">
                     <app-icon name="check-circle" [size]="16" />
                     Verificado
@@ -74,12 +74,12 @@
           <div class="info-grid">
             <div class="info-item">
               <label>Paciente desde</label>
-              <p>{{ patientData.createdAt | date:'dd/MM/yyyy':'':'pt-BR' }}</p>
+              <p>{{ patientData.criadoEm | date:'dd/MM/yyyy':'':'pt-BR' }}</p>
             </div>
-            @if (patientData.updatedAt) {
+            @if (patientData.atualizadoEm) {
               <div class="info-item">
                 <label>Última atualização</label>
-                <p>{{ patientData.updatedAt | date:'dd/MM/yyyy':'':'pt-BR' }}</p>
+                <p>{{ patientData.atualizadoEm | date:'dd/MM/yyyy':'':'pt-BR' }}</p>
               </div>
             }
           </div>

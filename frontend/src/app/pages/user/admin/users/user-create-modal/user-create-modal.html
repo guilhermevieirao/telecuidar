@@ -83,9 +83,9 @@
               <app-icon name="arrow-left" [size]="20" />
             </button>
             <div class="modal__header-icon" [class]="'modal__header-icon--' + selectedRole">
-              <app-icon [name]="getRoleIcon(selectedRole)" [size]="20" />
+              <app-icon [name]="getRoleIconForSelected()" [size]="20" />
             </div>
-            <h2 class="modal__title">Criar {{ getRoleLabel(selectedRole) }}</h2>
+            <h2 class="modal__title">Criar {{ getRoleLabelForSelected() }}</h2>
           </div>
           <button
             type="button"
@@ -110,8 +110,8 @@
                   id="create-user-name"
                   type="text"
                   class="user-form__input"
-                  [(ngModel)]="userData.name"
-                  name="name"
+                  [(ngModel)]="userData.nome"
+                  name="nome"
                   placeholder="Digite o nome"
                 />
               </div>
@@ -122,8 +122,8 @@
                   id="create-user-lastname"
                   type="text"
                   class="user-form__input"
-                  [(ngModel)]="userData.lastName"
-                  name="lastName"
+                  [(ngModel)]="userData.sobrenome"
+                  name="sobrenome"
                   placeholder="Digite o sobrenome"
                 />
               </div>
@@ -167,8 +167,8 @@
                   id="create-user-phone"
                   type="tel"
                   class="user-form__input"
-                  [(ngModel)]="userData.phone"
-                  name="phone"
+                  [(ngModel)]="userData.telefone"
+                  name="telefone"
                   placeholder="(00) 00000-0000"
                   appPhoneMask
                 />

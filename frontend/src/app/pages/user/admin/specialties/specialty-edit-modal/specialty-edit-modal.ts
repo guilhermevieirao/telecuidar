@@ -19,9 +19,9 @@ export class SpecialtyEditModalComponent implements OnChanges {
   @Output() update = new EventEmitter<Partial<Specialty>>();
 
   specialtyData = {
-    name: '',
-    description: '',
-    status: 'Active' as SpecialtyStatus,
+    nome: '',
+    descricao: '',
+    status: 'Ativo' as SpecialtyStatus,
     customFields: [] as CustomField[]
   };
 
@@ -38,11 +38,11 @@ export class SpecialtyEditModalComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['specialty'] && this.specialty) {
       this.specialtyData = {
-        name: this.specialty.name,
-        description: this.specialty.description,
+        nome: this.specialty.nome,
+        descricao: this.specialty.descricao,
         status: this.specialty.status,
-        customFields: this.specialty.customFields 
-          ? this.specialty.customFields.map(f => ({
+        customFields: this.specialty.camposPersonalizados 
+          ? this.specialty.camposPersonalizados.map((f: any) => ({
               ...f, 
               options: f.options ? [...f.options] : []
             })) 
@@ -67,8 +67,8 @@ export class SpecialtyEditModalComponent implements OnChanges {
 
   isFormValid(): boolean {
     return !!(
-      this.specialtyData.name?.trim() &&
-      this.specialtyData.description?.trim()
+      this.specialtyData.nome?.trim() &&
+      this.specialtyData.descricao?.trim()
     );
   }
 

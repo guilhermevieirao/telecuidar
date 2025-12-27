@@ -24,8 +24,8 @@
               id="specialty-name"
               type="text"
               class="specialty-form__input"
-              [(ngModel)]="specialtyData.name"
-              name="name"
+              [(ngModel)]="specialtyData.nome"
+              name="nome"
               placeholder="Ex: Cardiologia"
             />
           </div>
@@ -35,8 +35,8 @@
             <textarea
               id="specialty-description"
               class="specialty-form__textarea"
-              [(ngModel)]="specialtyData.description"
-              name="description"
+              [(ngModel)]="specialtyData.descricao"
+              name="descricao"
               rows="4"
               placeholder="Descreva a especialidade..."
             ></textarea>
@@ -53,7 +53,7 @@
             </div>
 
             <div class="fields-list">
-              <div class="field-card" *ngFor="let field of specialtyData.customFields; let i = index">
+              <div class="field-card" *ngFor="let field of specialtyData.camposPersonalizados; let i = index">
                 <div class="field-card__header">
                   <div class="field-card__main-inputs">
                     <div class="specialty-form__field">
@@ -154,7 +154,7 @@
               </div>
             </div>
             
-            <div *ngIf="specialtyData.customFields.length === 0" class="empty-fields-state">
+            <div *ngIf="specialtyData.camposPersonalizados.length === 0" class="empty-fields-state">
               <p>Nenhum campo personalizado adicionado.</p>
             </div>
           </div>
@@ -166,8 +166,8 @@
                 class="specialty-form__checkbox"
                 [(ngModel)]="specialtyData.status"
                 [ngModelOptions]="{standalone: true}"
-                [checked]="specialtyData.status === 'Active'"
-                (change)="specialtyData.status = specialtyData.status === 'Active' ? 'Inactive' : 'Active'"
+                [checked]="specialtyData.status === 'Ativo'"
+                (change)="specialtyData.status = specialtyData.status === 'Ativo' ? 'Inativo' : 'Ativo'"
               />
               <span class="specialty-form__checkbox-text">Especialidade ativa</span>
             </label>

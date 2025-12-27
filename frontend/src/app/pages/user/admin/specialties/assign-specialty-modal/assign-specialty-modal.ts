@@ -35,12 +35,12 @@ export class AssignSpecialtyModalComponent implements OnInit {
   loadProfessionals(): void {
     this.isLoading = true;
     this.usersService.getUsers(
-      { role: 'PROFESSIONAL', status: 'Active' },
+      { tipo: 'Profissional', status: 'Ativo' },
       1,
       100
     ).subscribe({
       next: (response) => {
-        this.professionals = response.data;
+        this.professionals = response.dados;
         this.isLoading = false;
         this.cdr.detectChanges();
       },

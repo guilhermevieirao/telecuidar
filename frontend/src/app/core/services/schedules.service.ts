@@ -99,7 +99,7 @@ export interface ProfessionalAvailability {
   providedIn: 'root'
 })
 export class SchedulesService {
-  private apiUrl = `${API_BASE_URL}/schedules`;
+  private apiUrl = `${API_BASE_URL}/agendas`;
 
   constructor(private http: HttpClient) {}
 

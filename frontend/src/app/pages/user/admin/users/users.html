@@ -116,25 +116,25 @@
               <td class="users-table__cell">
                 <div class="users-table__user">
                   <app-avatar 
-                    [name]="user.name + ' ' + user.lastName" 
+                    [name]="user.nome + ' ' + user.sobrenome" 
                     [imageUrl]="user.avatar"
                     size="sm"
                   />
-                  <span class="users-table__user-name">{{ user.name }} {{ user.lastName }}</span>
+                  <span class="users-table__user-name">{{ user.nome }} {{ user.sobrenome }}</span>
                 </div>
               </td>
               <td class="users-table__cell">{{ user.email }}</td>
               <td class="users-table__cell">
                 <app-badge 
-                  [variant]="getRoleBadgeVariant(user.role)"
-                  [label]="user.role | userRole"
+                  [variant]="getRoleBadgeVariant(user.tipo)"
+                  [label]="user.tipo | userRole"
                   size="sm"
                 />
               </td>
               <td class="users-table__cell">{{ user.cpf }}</td>
               <td class="users-table__cell">
                 <app-badge 
-                  [variant]="user.status === 'Active' ? 'success' : 'neutral'"
+                  [variant]="user.status === 'Ativo' ? 'success' : 'neutral'"
                   [label]="user.status | userStatus"
                   size="sm"
                 />
@@ -167,7 +167,7 @@
 
     <app-pagination
       [currentPage]="currentPage"
-      [totalPages]="totalPages"
+      [totalPages]="totalPaginas"
       [pageSize]="pageSize"
       [total]="totalUsers"
       (pageChange)="onPageChange($event)"

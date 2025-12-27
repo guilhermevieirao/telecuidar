@@ -15,13 +15,13 @@ import { SpecialtyStatus, CustomField } from '@app/core/services/specialties.ser
 export class SpecialtyCreateModalComponent {
   @Input() isOpen = false;
   @Output() close = new EventEmitter<void>();
-  @Output() create = new EventEmitter<{ name: string; description: string; status: SpecialtyStatus; customFields: CustomField[] }>();
+  @Output() create = new EventEmitter<{ nome: string; descricao: string; status: SpecialtyStatus; camposPersonalizados: CustomField[] }>();
 
   specialtyData = {
-    name: '',
-    description: '',
-    status: 'Active' as SpecialtyStatus,
-    customFields: [] as CustomField[]
+    nome: '',
+    descricao: '',
+    status: 'Ativo' as SpecialtyStatus,
+    camposPersonalizados: [] as CustomField[]
   };
 
   fieldTypes = [
@@ -52,48 +52,48 @@ export class SpecialtyCreateModalComponent {
 
   isFormValid(): boolean {
     return !!(
-      this.specialtyData.name?.trim() &&
-      this.specialtyData.description?.trim()
+      this.specialtyData.nome?.trim() &&
+      this.specialtyData.descricao?.trim()
     );
   }
 
   addCustomField(): void {
-    this.specialtyData.customFields.push({
+    this.specialtyData.camposPersonalizados.push({
       name: '',
       type: 'text',
       required: false,
       description: '',
       defaultValue: '',
-      order: this.specialtyData.customFields.length + 1,
+      order: this.specialtyData.camposPersonalizados.length + 1,
       options: []
     });
   }
 
   removeCustomField(index: number): void {
-    this.specialtyData.customFields.splice(index, 1);
+    this.specialtyData.camposPersonalizados.splice(index, 1);
   }
 
   addOption(fieldIndex: number, optionInput: HTMLInputElement): void {
     const value = optionInput.value.trim();
     if (value) {
-      if (!this.specialtyData.customFields[fieldIndex].options) {
-        this.specialtyData.customFields[fieldIndex].options = [];
+      if (!this.specialtyData.camposPersonalizados[fieldIndex].options) {
+        this.specialtyData.camposPersonalizados[fieldIndex].options = [];
       }
-      this.specialtyData.customFields[fieldIndex].options?.push(value);
+      this.specialtyData.camposPersonalizados[fieldIndex].options?.push(value);
       optionInput.value = '';
     }
   }
 
   removeOption(fieldIndex: number, optionIndex: number): void {
-    this.specialtyData.customFields[fieldIndex].options?.splice(optionIndex, 1);
+    this.specialtyData.camposPersonalizados[fieldIndex].options?.splice(optionIndex, 1);
   }
 
   private resetModal(): void {
     this.specialtyData = {
-      name: '',
-      description: '',
-      status: 'Active',
-      customFields: []
+      nome: '',
+      descricao: '',
+      status: 'Ativo',
+      camposPersonalizados: []
     };
   }
 }

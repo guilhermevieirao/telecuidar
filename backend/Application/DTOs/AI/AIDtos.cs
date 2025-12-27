@@ -1,183 +1,120 @@
 namespace Application.DTOs.AI;
 
-public class GenerateSummaryRequestDto
+/// <summary>
+/// DTO para gerar resumo IA
+/// </summary>
+public class GerarResumoIADto
 {
-    public Guid AppointmentId { get; set; }
-    public PatientDataDto? PatientData { get; set; }
-    public PreConsultationDataDto? PreConsultationData { get; set; }
-    public AnamnesisDataDto? AnamnesisData { get; set; }
-    public BiometricsDataDto? BiometricsData { get; set; }
-    public SoapDataDto? SoapData { get; set; }
-    public SpecialtyFieldsDataDto? SpecialtyFieldsData { get; set; }
+    public Guid ConsultaId { get; set; }
 }
 
-public class GenerateDiagnosisRequestDto
+/// <summary>
+/// DTO para resposta de resumo IA
+/// </summary>
+public class ResumoIAResponseDto
 {
-    public Guid AppointmentId { get; set; }
-    public string AdditionalContext { get; set; } = string.Empty;
-    public PatientDataDto? PatientData { get; set; }
-    public PreConsultationDataDto? PreConsultationData { get; set; }
-    public AnamnesisDataDto? AnamnesisData { get; set; }
-    public BiometricsDataDto? BiometricsData { get; set; }
-    public SoapDataDto? SoapData { get; set; }
-    public SpecialtyFieldsDataDto? SpecialtyFieldsData { get; set; }
+    public string Resumo { get; set; } = string.Empty;
+    public DateTime GeradoEm { get; set; }
 }
 
-public class PatientDataDto
+/// <summary>
+/// DTO para gerar hipótese diagnóstica IA
+/// </summary>
+public class GerarHipoteseDiagnosticaIADto
 {
-    public string? Name { get; set; }
-    public string? BirthDate { get; set; }
-    public string? Gender { get; set; }
-    public string? BloodType { get; set; }
-    public string? Email { get; set; }
-    public string? Phone { get; set; }
+    public Guid ConsultaId { get; set; }
 }
 
-public class PreConsultationDataDto
+/// <summary>
+/// DTO para resposta de hipótese diagnóstica IA
+/// </summary>
+public class HipoteseDiagnosticaIAResponseDto
 {
-    public PersonalInfoDto? PersonalInfo { get; set; }
-    public MedicalHistoryDto? MedicalHistory { get; set; }
-    public LifestyleHabitsDto? LifestyleHabits { get; set; }
-    public VitalSignsDto? VitalSigns { get; set; }
-    public CurrentSymptomsDto? CurrentSymptoms { get; set; }
-    public string? AdditionalObservations { get; set; }
+    public string HipoteseDiagnostica { get; set; } = string.Empty;
+    public DateTime GeradoEm { get; set; }
 }
 
-public class PersonalInfoDto
+/// <summary>
+/// DTO para transcrição de áudio
+/// </summary>
+public class TranscreverAudioDto
 {
-    public string? FullName { get; set; }
-    public string? BirthDate { get; set; }
-    public string? Weight { get; set; }
-    public string? Height { get; set; }
+    public string AudioBase64 { get; set; } = string.Empty;
+    public string Formato { get; set; } = "mp3";
 }
 
-public class MedicalHistoryDto
+/// <summary>
+/// DTO para resposta de transcrição
+/// </summary>
+public class TranscricaoResponseDto
 {
-    public string? ChronicConditions { get; set; }
-    public string? Medications { get; set; }
-    public string? Allergies { get; set; }
-    public string? Surgeries { get; set; }
-    public string? GeneralObservations { get; set; }
+    public string Texto { get; set; } = string.Empty;
+    public double Duracao { get; set; }
 }
 
-public class LifestyleHabitsDto
+/// <summary>
+/// DTO para análise de texto
+/// </summary>
+public class AnalisarTextoDto
 {
-    public string? Smoker { get; set; }
-    public string? AlcoholConsumption { get; set; }
-    public string? PhysicalActivity { get; set; }
-    public string? GeneralObservations { get; set; }
+    public string Texto { get; set; } = string.Empty;
+    public string TipoAnalise { get; set; } = string.Empty;
 }
 
-public class VitalSignsDto
+/// <summary>
+/// DTO para resposta de análise
+/// </summary>
+public class AnaliseTextoResponseDto
 {
-    public string? BloodPressure { get; set; }
-    public string? HeartRate { get; set; }
-    public string? Temperature { get; set; }
-    public string? OxygenSaturation { get; set; }
-    public string? GeneralObservations { get; set; }
+    public string Resultado { get; set; } = string.Empty;
+    public Dictionary<string, string>? MetaDados { get; set; }
 }
 
-public class CurrentSymptomsDto
+/// <summary>
+/// DTO para resposta de IA
+/// </summary>
+public class RespostaIADto
 {
-    public string? MainSymptoms { get; set; }
-    public string? SymptomOnset { get; set; }
-    public int? PainIntensity { get; set; }
-    public string? GeneralObservations { get; set; }
+    public bool Sucesso { get; set; }
+    public string? Conteudo { get; set; }
+    public string? Erro { get; set; }
+    public string? Tipo { get; set; }
+    public int TokensUtilizados { get; set; }
 }
 
-public class AnamnesisDataDto
+/// <summary>
+/// DTO para dados de consulta para IA
+/// </summary>
+public class DadosConsultaIADto
 {
-    public string? ChiefComplaint { get; set; }
-    public string? PresentIllnessHistory { get; set; }
-    public PersonalHistoryDto? PersonalHistory { get; set; }
-    public string? FamilyHistory { get; set; }
-    public LifestyleDto? Lifestyle { get; set; }
-    public SystemsReviewDto? SystemsReview { get; set; }
-    public string? AdditionalNotes { get; set; }
+    public string? QueixaPrincipal { get; set; }
+    public string? HistoriaDoencaAtual { get; set; }
+    public List<string>? Sintomas { get; set; }
+    public string? ExameFisico { get; set; }
+    public SoapIADto? Soap { get; set; }
+    public DadosBiometricosIADto? Biometricos { get; set; }
 }
 
-public class PersonalHistoryDto
+/// <summary>
+/// DTO para dados SOAP
+/// </summary>
+public class SoapIADto
 {
-    public string? PreviousDiseases { get; set; }
-    public string? Surgeries { get; set; }
-    public string? Hospitalizations { get; set; }
-    public string? Allergies { get; set; }
-    public string? CurrentMedications { get; set; }
-    public string? Vaccinations { get; set; }
+    public string? Subjetivo { get; set; }
+    public string? Objetivo { get; set; }
+    public string? Avaliacao { get; set; }
+    public string? Plano { get; set; }
 }
 
-public class LifestyleDto
+/// <summary>
+/// DTO para dados biométricos
+/// </summary>
+public class DadosBiometricosIADto
 {
-    public string? Diet { get; set; }
-    public string? PhysicalActivity { get; set; }
-    public string? Smoking { get; set; }
-    public string? Alcohol { get; set; }
-    public string? Drugs { get; set; }
-    public string? Sleep { get; set; }
-}
-
-public class SystemsReviewDto
-{
-    public string? Cardiovascular { get; set; }
-    public string? Respiratory { get; set; }
-    public string? Gastrointestinal { get; set; }
-    public string? Genitourinary { get; set; }
-    public string? Musculoskeletal { get; set; }
-    public string? Neurological { get; set; }
-    public string? Psychiatric { get; set; }
-    public string? Endocrine { get; set; }
-    public string? Hematologic { get; set; }
-}
-
-public class BiometricsDataDto
-{
-    public int? HeartRate { get; set; }
-    public int? BloodPressureSystolic { get; set; }
-    public int? BloodPressureDiastolic { get; set; }
-    public int? OxygenSaturation { get; set; }
-    public decimal? Temperature { get; set; }
-    public int? RespiratoryRate { get; set; }
-    public decimal? Weight { get; set; }
-    public decimal? Height { get; set; }
-    public int? Glucose { get; set; }
-}
-
-public class SoapDataDto
-{
-    public string? Subjective { get; set; }
-    public string? Objective { get; set; }
-    public string? Assessment { get; set; }
-    public string? Plan { get; set; }
-}
-
-public class SpecialtyFieldsDataDto
-{
-    public string? SpecialtyName { get; set; }
-    public Dictionary<string, string>? CustomFields { get; set; }
-}
-
-public class AISummaryResponseDto
-{
-    public string Summary { get; set; } = string.Empty;
-    public DateTime GeneratedAt { get; set; }
-}
-
-public class AIDiagnosisResponseDto
-{
-    public string DiagnosticHypothesis { get; set; } = string.Empty;
-    public DateTime GeneratedAt { get; set; }
-}
-
-public class AIDataDto
-{
-    public string? Summary { get; set; }
-    public DateTime? SummaryGeneratedAt { get; set; }
-    public string? DiagnosticHypothesis { get; set; }
-    public DateTime? DiagnosisGeneratedAt { get; set; }
-}
-
-public class SaveAIDataDto
-{
-    public string? Summary { get; set; }
-    public string? DiagnosticHypothesis { get; set; }
+    public int? PressaoSistolica { get; set; }
+    public int? PressaoDiastolica { get; set; }
+    public int? FrequenciaCardiaca { get; set; }
+    public decimal? Temperatura { get; set; }
+    public int? SaturacaoOxigenio { get; set; }
+    public int? GlicemiaCapilar { get; set; }
 }

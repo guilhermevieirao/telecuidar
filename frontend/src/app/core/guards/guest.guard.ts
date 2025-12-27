@@ -6,7 +6,7 @@ import { STORAGE_KEYS } from '@core/constants/auth.constants';
 
 /**
  * Guard que redireciona usuários autenticados para o painel.
- * Usado nas rotas de login/registro para evitar que usuários logados acessem essas páginas.
+ * Usado nas rotas de login/cadastro para evitar que usuários logados acessem essas páginas.
  */
 export const guestGuard: CanActivateFn = () => {
   const authService = inject(AuthService);

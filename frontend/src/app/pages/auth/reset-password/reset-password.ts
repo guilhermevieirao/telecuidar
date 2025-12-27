@@ -79,8 +79,8 @@ export class ResetPasswordComponent implements OnInit {
 
     const resetData = {
       token: this.resetToken,
-      password: this.resetPasswordForm.value.password,
-      confirmPassword: this.resetPasswordForm.value.confirmPassword
+      novaSenha: this.resetPasswordForm.value.password,
+      confirmarSenha: this.resetPasswordForm.value.confirmPassword
     };
 
     this.authService.resetPassword(resetData).subscribe({
@@ -91,7 +91,7 @@ export class ResetPasswordComponent implements OnInit {
         
         // Redirect to login after 3 seconds
         setTimeout(() => {
-          this.router.navigate(['/auth/login']);
+          this.router.navigate(['/entrar']);
         }, 3000);
       },
       error: (error) => {
@@ -129,7 +129,7 @@ export class ResetPasswordComponent implements OnInit {
   }
 
   goToLogin(): void {
-    this.router.navigate(['/auth/login']);
+    this.router.navigate(['/entrar']);
   }
 
   goToHome(): void {

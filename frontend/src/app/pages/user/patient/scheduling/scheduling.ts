@@ -318,7 +318,7 @@ export class SchedulingComponent implements OnDestroy {
     if (specialtyIndex !== -1) {
       if (!notification.hasAvailability) {
         // Especialidade ficou sem vagas - remover da lista
-        console.log(`[SignalR] Especialidade ${this.specialties[specialtyIndex].name} ficou sem vagas - removendo da lista`);
+        console.log(`[SignalR] Especialidade ${this.specialties[specialtyIndex].nome} ficou sem vagas - removendo da lista`);
         this.specialties = this.specialties.filter(s => s.id !== notification.specialtyId);
         this.filteredSpecialties = this.filteredSpecialties.filter(s => s.id !== notification.specialtyId);
         
@@ -494,10 +494,10 @@ export class SchedulingComponent implements OnDestroy {
 
   // --- Step 1: Specialties ---
   loadSpecialties() {
-    this.specialtiesService.getSpecialties({ status: 'Active' }).subscribe({
+    this.specialtiesService.getSpecialties({ status: 'Ativo' }).subscribe({
       next: (response) => {
-        this.specialties = response.data;
-        this.filteredSpecialties = response.data;
+        this.specialties = response.dados;
+        this.filteredSpecialties = response.dados;
         this.cdr.detectChanges();
       },
       error: (error) => {
@@ -510,7 +510,7 @@ export class SchedulingComponent implements OnDestroy {
   onSearch(query: string) {
     this.searchQuery = query;
     this.filteredSpecialties = this.specialties.filter(s => 
-      s.name.toLowerCase().includes(query.toLowerCase())
+      s.nome.toLowerCase().includes(query.toLowerCase())
     );
   }
 
@@ -541,9 +541,9 @@ export class SchedulingComponent implements OnDestroy {
     this.calendarDays = [];
     
     // Buscar profissionais da especialidade
-    this.usersService.getUsers({ role: 'PROFESSIONAL', specialtyId: this.selectedSpecialty?.id }, 1, 100).subscribe({
+    this.usersService.getUsers({ tipo: 'Profissional', especialidadeId: this.selectedSpecialty?.id, status: 'Ativo' }, 1, 100).subscribe({
       next: (response) => {
-        const professionals = response.data;
+        const professionals = response.dados;
         
         if (professionals.length === 0) {
           // Se não há profissionais, marcar todos os dias como indisponíveis
@@ -578,7 +578,7 @@ export class SchedulingComponent implements OnDestroy {
           }
           
           // Buscar disponibilidade real de cada profissional para este dia
-          const availabilityChecks = professionals.map(pro => 
+          const availabilityChecks = professionals.map((pro: any) => 
             this.schedulesService.getAvailability(pro.id, date, date)
           );
           
@@ -590,9 +590,9 @@ export class SchedulingComponent implements OnDestroy {
                   let availableProfessionalsCount = 0;
                   
                   // Contar slots disponíveis de todos os profissionais
-                  availabilities.forEach(availability => {
+                  availabilities.forEach((availability: any) => {
                     if (availability.slots && availability.slots.length > 0) {
-                      const availableSlots = availability.slots.filter(slot => slot.isAvailable);
+                      const availableSlots = availability.slots.filter((slot: any) => slot.isAvailable);
                       if (availableSlots.length > 0) {
                         totalAvailableSlots += availableSlots.length;
                         availableProfessionalsCount++;
@@ -677,12 +677,12 @@ export class SchedulingComponent implements OnDestroy {
     
     // Buscar profissionais da especialidade
     this.usersService.getUsers({ 
-      role: 'PROFESSIONAL', 
-      specialtyId: this.selectedSpecialty.id,
-      status: 'Active'
+      tipo: 'Profissional', 
+      especialidadeId: this.selectedSpecialty.id,
+      status: 'Ativo'
     }, 1, 100).subscribe({
       next: (response) => {
-        const professionals = response.data;
+        const professionals = response.dados;
         
         if (professionals.length === 0) {
           this.availableSlots = [];
@@ -692,7 +692,7 @@ export class SchedulingComponent implements OnDestroy {
         }
 
         // Buscar disponibilidade de cada profissional para a data selecionada
-        const availabilityChecks = professionals.map(pro => 
+        const availabilityChecks = professionals.map((pro: any) => 
           this.schedulesService.getAvailability(
             pro.id,
             this.selectedDate!,
@@ -705,12 +705,12 @@ export class SchedulingComponent implements OnDestroy {
             // Mapear horários disponíveis por profissional
             const timeSlotMap = new Map<string, User[]>();
 
-            availabilities.forEach((availability, index) => {
+            availabilities.forEach((availability: any, index: any) => {
               const professional = professionals[index];
               
               // A resposta da API tem a estrutura: { professionalId, professionalName, slots: [] }
               if (availability.slots && availability.slots.length > 0) {
-                availability.slots.forEach(slot => {
+                availability.slots.forEach((slot: any) => {
                   // Apenas adicionar slots disponíveis
                   if (slot.isAvailable) {
                     const time = slot.time;

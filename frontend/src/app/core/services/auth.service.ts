@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { isPlatformBrowser } from '@angular/common';
 import { Observable, BehaviorSubject, tap, catchError, of, throwError } from 'rxjs';
 import {
+  Usuario,
   User,
   LoginRequest,
   LoginResponse,
@@ -33,7 +34,7 @@ export class AuthService {
   });
 
   public authState$ = this.authState.asObservable();
-  public currentUser = signal<User | null>(null);
+  public currentUser = signal<Usuario | null>(null);
   public isAuthenticated = signal<boolean>(false);
   private storageLoaded = false;
 
@@ -48,16 +49,24 @@ export class AuthService {
   }
 
   // Login
-  login(request: LoginRequest): Observable<LoginResponse> {
+  login(request: { email: string; password: string; rememberMe?: boolean }): Observable<LoginResponse> {
     this.setLoading(true);
     
-    return this.http.post<LoginResponse>(AUTH_ENDPOINTS.LOGIN, request).pipe(
+    // Converter para o formato esperado pelo backend
+    const loginRequest: LoginRequest = {
+      email: request.email,
+      senha: request.password,
+      lembrarMe: request.rememberMe
+    };
+    
+    return this.http.post<LoginResponse>(AUTH_ENDPOINTS.LOGIN, loginRequest).pipe(
       tap(response => {
+        console.log('[AuthService] Login response recebida, salvando token...');
         this.handleAuthSuccess(response, request.rememberMe);
         this.setLoading(false);
       }),
       catchError(error => {
-        this.setError(error.error?.message || 'Erro ao fazer login');
+        this.setError(error.error?.mensagem || error.error?.message || 'Erro ao fazer login');
         this.setLoading(false);
         throw error;
       })
@@ -65,15 +74,27 @@ export class AuthService {
   }
 
   // Register
-  register(request: RegisterRequest): Observable<RegisterResponse> {
+  register(request: { name: string; lastName: string; email: string; cpf: string; phone?: string; password: string; confirmPassword: string; acceptTerms: boolean }): Observable<RegisterResponse> {
     this.setLoading(true);
     
-    return this.http.post<RegisterResponse>(AUTH_ENDPOINTS.REGISTER, request).pipe(
+    // Converter para o formato esperado pelo backend
+    const registerRequest: RegisterRequest = {
+      nome: request.name,
+      sobrenome: request.lastName,
+      email: request.email,
+      cpf: request.cpf,
+      telefone: request.phone,
+      senha: request.password,
+      confirmarSenha: request.confirmPassword,
+      aceitarTermos: request.acceptTerms
+    };
+    
+    return this.http.post<RegisterResponse>(AUTH_ENDPOINTS.REGISTER, registerRequest).pipe(
       tap(response => {
         this.setLoading(false);
       }),
       catchError(error => {
-        this.setError(error.error?.message || 'Erro ao criar conta');
+        this.setError(error.error?.mensagem || error.error?.message || 'Erro ao criar conta');
         this.setLoading(false);
         throw error;
       })
@@ -127,15 +148,15 @@ export class AuthService {
   verifyEmail(request: VerifyEmailRequest): Observable<VerifyEmailResponse> {
     this.setLoading(true);
     
-    return this.http.post<VerifyEmailResponse>(AUTH_ENDPOINTS.VERIFY_EMAIL, request).pipe(
+    return this.http.get<VerifyEmailResponse>(`${AUTH_ENDPOINTS.VERIFY_EMAIL}?token=${request.token}`).pipe(
       tap(response => {
-        if (response.user) {
-          this.currentUser.set(response.user);
+        if (response.usuario) {
+          this.currentUser.set(response.usuario);
         }
         this.setLoading(false);
       }),
       catchError(error => {
-        this.setError(error.error?.message || 'Erro ao verificar email');
+        this.setError(error.error?.mensagem || error.error?.message || 'Erro ao verificar email');
         this.setLoading(false);
         throw error;
       })
@@ -148,19 +169,19 @@ export class AuthService {
   }
 
   // Request Email Change
-  requestEmailChange(newEmail: string): Observable<{ message: string }> {
-    return this.http.post<{ message: string }>(AUTH_ENDPOINTS.REQUEST_EMAIL_CHANGE, { newEmail });
+  requestEmailChange(novoEmail: string): Observable<{ mensagem: string }> {
+    return this.http.post<{ mensagem: string }>(AUTH_ENDPOINTS.REQUEST_EMAIL_CHANGE, { novoEmail });
   }
 
   // Verify Email Change
-  verifyEmailChange(token: string): Observable<{ message: string; user: User }> {
-    return this.http.post<{ message: string; user: User }>(AUTH_ENDPOINTS.VERIFY_EMAIL_CHANGE, { token }).pipe(
+  verifyEmailChange(token: string): Observable<{ mensagem: string; usuario: Usuario }> {
+    return this.http.post<{ mensagem: string; usuario: Usuario }>(AUTH_ENDPOINTS.VERIFY_EMAIL_CHANGE, { token }).pipe(
       tap(response => {
-        if (response.user) {
-          this.currentUser.set(response.user);
+        if (response.usuario) {
+          this.currentUser.set(response.usuario);
           // Atualizar também no storage
           if (isPlatformBrowser(this.platformId)) {
-            localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(response.user));
+            localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(response.usuario));
           }
         }
       })
@@ -206,30 +227,50 @@ export class AuthService {
   // Private helper methods
   private handleAuthSuccess(response: LoginResponse, rememberMe?: boolean): void {
     
-    this.authState.next({
-      user: response.user,
-      accessToken: response.accessToken,
-      refreshToken: response.refreshToken,
-      isAuthenticated: true,
-      isLoading: false,
-      error: null
-    });
-    
-    this.currentUser.set(response.user);
-    this.isAuthenticated.set(true);
-    
+    // IMPORTANTE: Salvar token no storage PRIMEIRO
     if (isPlatformBrowser(this.platformId)) {
+      console.log('[AuthService] Salvando token no storage...');
       if (rememberMe) {
-
         localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, response.accessToken);
         localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, response.refreshToken);
-        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(response.user));
+        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(response.usuario));
         localStorage.setItem(STORAGE_KEYS.REMEMBER_ME, 'true');
       } else {
         sessionStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, response.accessToken);
         sessionStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, response.refreshToken);
-        sessionStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(response.user));
+        sessionStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(response.usuario));
       }
+      console.log('[AuthService] Token salvo! Verificando:', rememberMe ? localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN)?.substring(0, 20) : sessionStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN)?.substring(0, 20));
+      
+      // Usar queueMicrotask para garantir que o storage está sincronizado
+      // antes de emitir authState$ e disparar requisições HTTP
+      queueMicrotask(() => {
+        console.log('[AuthService] Emitindo authState$ com isAuthenticated=true');
+        this.authState.next({
+          user: response.usuario,
+          accessToken: response.accessToken,
+          refreshToken: response.refreshToken,
+          isAuthenticated: true,
+          isLoading: false,
+          error: null
+        });
+        
+        this.currentUser.set(response.usuario);
+        this.isAuthenticated.set(true);
+      });
+    } else {
+      // No SSR, emite imediatamente
+      this.authState.next({
+        user: response.usuario,
+        accessToken: response.accessToken,
+        refreshToken: response.refreshToken,
+        isAuthenticated: true,
+        isLoading: false,
+        error: null
+      });
+      
+      this.currentUser.set(response.usuario);
+      this.isAuthenticated.set(true);
     }
   }
 
@@ -249,16 +290,25 @@ export class AuthService {
     let refreshToken = localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
     let userStr = localStorage.getItem(STORAGE_KEYS.USER);
     
+    console.log('[AuthService] loadUserFromStorage - Verificando localStorage...');
+    console.log('[AuthService] localStorage TOKEN:', accessToken ? `${accessToken.substring(0, 20)}...` : 'NULL');
+    
     // If not in localStorage, try sessionStorage
     if (!accessToken) {
       accessToken = sessionStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
       refreshToken = sessionStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
       userStr = sessionStorage.getItem(STORAGE_KEYS.USER);
+      console.log('[AuthService] Token não encontrado em localStorage, tentando sessionStorage...');
+      console.log('[AuthService] sessionStorage TOKEN:', accessToken ? `${accessToken.substring(0, 20)}...` : 'NULL');
     }
     
     if (accessToken && refreshToken && userStr) {
       try {
         const user = JSON.parse(userStr);
+        console.log('[AuthService] Token restaurado do storage, emitindo authState$ imediatamente...');
+        
+        // IMPORTANTE: Emitir authState$ IMEDIATAMENTE com dados do cache
+        // Isso garante que componentes consigam usar o token antes de fazer refetch
         this.authState.next({
           user,
           accessToken,
@@ -270,14 +320,30 @@ export class AuthService {
         this.currentUser.set(user);
         this.isAuthenticated.set(true);
         
-        // Refetch user data from server to get latest avatar and other info
-        this.refetchCurrentUser().subscribe({
-          error: (err) => console.warn('[AuthService] Failed to refetch user data:', err)
-        });
+        console.log('[AuthService] authState$ emitido com sucesso! Iniciando refetch assíncrono...');
+        
+        // Fazer refetch de forma ASSÍNCRONA e opcional
+        // Se falhar, a sessão já está restaurada (não quebra)
+        setTimeout(() => {
+          console.log('[AuthService] Iniciando refetch de dados do usuário (async)...');
+          this.refetchCurrentUser().subscribe({
+            next: (user) => {
+              console.log('[AuthService] Dados do usuário refetch OK, usuário atualizado');
+            },
+            error: (err) => {
+              console.warn('[AuthService] Erro ao refetch user data:', err.status, err.message);
+              console.warn('[AuthService] Mas sessão permanece ativa com dados cached');
+              // Sessão permanece ativa mesmo que refetch falhe
+              // Não fazer nada aqui
+            }
+          });
+        }, 100); // Pequeno delay para permitir que authState$ seja processado primeiro
       } catch (error) {
-        console.error('[AuthService] Error parsing user data from storage:', error);
+        console.error('[AuthService] Erro ao fazer parse do user storage:', error);
         this.clearStorage();
       }
+    } else {
+      console.log('[AuthService] Nenhum token encontrado no storage');
     }
   }
 
@@ -312,7 +378,7 @@ export class AuthService {
   }
 
   // Get current user safely
-  getCurrentUser(): User | null {
+  getCurrentUser(): Usuario | null {
     // Ensure storage is loaded in browser
     if (isPlatformBrowser(this.platformId) && !this.storageLoaded) {
       this.loadUserFromStorage();
@@ -321,7 +387,7 @@ export class AuthService {
   }
 
   // Update current user in memory and storage
-  updateCurrentUser(user: User): void {
+  updateCurrentUser(user: Usuario): void {
     this.currentUser.set(user);
     
     if (isPlatformBrowser(this.platformId)) {
@@ -338,38 +404,47 @@ export class AuthService {
   }
 
   // Refetch user data from server
-  refetchCurrentUser(): Observable<User> {
+  refetchCurrentUser(): Observable<Usuario> {
     const currentUserId = this.currentUser()?.id;
     if (!currentUserId) {
       console.warn('[AuthService] No user ID available for refetch');
-      return throwError(() => new Error('User ID not available'));
+      return of(this.currentUser()!);
     }
     
-    return this.http.get<User>(`${environment.apiUrl}/users/${currentUserId}`).pipe(
+    console.log('[AuthService] refetchCurrentUser: Iniciando refetch para userId:', currentUserId);
+    
+    return this.http.get<Usuario>(`${environment.apiUrl}/usuarios/${currentUserId}`).pipe(
       tap(user => {
+        console.log('[AuthService] refetchCurrentUser: Dados atualizados recebidos com sucesso');
         this.updateCurrentUser(user);
       }),
       catchError(error => {
-        // Only log warning for 404 errors, as user may be recently deleted or data inconsistency
-        if (error.status === 404) {
-          console.warn('[AuthService] User not found on refetch, using cached data');
-        } else {
-          console.error('[AuthService] Error refetching user:', error);
+        // Se falhar o refetch (401, 404, timeout, etc), NÃO quebrar a sessão
+        // O token já está autenticado (foi restaurado do localStorage)
+        // Apenas falha ao buscar dados atualizados
+        console.warn('[AuthService] refetchCurrentUser: Erro ao buscar dados atualizados (status:', error.status, ')');
+        console.warn('[AuthService] refetchCurrentUser: Usando dados cached do localStorage/sessionStorage');
+        
+        // Return cached current user - sessão permanece ativa
+        const cachedUser = this.currentUser();
+        if (cachedUser) {
+          return of(cachedUser);
         }
-        // Don't throw error - user is already authenticated with cached data
-        return of(this.currentUser()!);
+        
+        // Se nem user em cache, retornar erro (bem raro)
+        return throwError(() => error);
       })
     );
   }
 
   // Change Password
-  changePassword(currentPassword: string, newPassword: string, confirmPassword: string): Observable<any> {
+  changePassword(senhaAtual: string, novaSenha: string, confirmarSenha: string): Observable<any> {
     this.setLoading(true);
     
     const request = {
-      currentPassword,
-      newPassword,
-      confirmPassword
+      senhaAtual,
+      novaSenha,
+      confirmarSenha
     };
 
     return this.http.post(AUTH_ENDPOINTS.CHANGE_PASSWORD, request).pipe(
@@ -377,7 +452,7 @@ export class AuthService {
         this.setLoading(false);
       }),
       catchError(error => {
-        this.setError(error.error?.message || 'Erro ao trocar senha');
+        this.setError(error.error?.mensagem || error.error?.message || 'Erro ao trocar senha');
         this.setLoading(false);
         throw error;
       })

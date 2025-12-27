@@ -79,7 +79,14 @@ import { Subject, takeUntil } from 'rxjs';
   templateUrl: './appointment-details.html',
   styleUrls: ['./appointment-details.scss']
 })
-export class AppointmentDetailsComponent implements OnInit, OnDestroy {
+export class AppointmentDetailsComponent implements OnInit, OnDestroy {  private mapTipoToUserRole(tipo: string): 'ADMIN' | 'PATIENT' | 'PROFESSIONAL' {
+    const map: Record<string, 'ADMIN' | 'PATIENT' | 'PROFESSIONAL'> = {
+      'Administrador': 'ADMIN',
+      'Paciente': 'PATIENT',
+      'Profissional': 'PROFESSIONAL'
+    };
+    return map[tipo] || 'PATIENT';
+  }
   appointment: Appointment | null = null;
   appointmentId: string | null = null;
   loading = false;
@@ -177,7 +184,7 @@ export class AppointmentDetailsComponent implements OnInit, OnDestroy {
   determineuserrole() {
     const currentUser = this.authService.currentUser();
     if (currentUser) {
-      this.userrole = currentUser.role;
+      this.userrole = this.mapTipoToUserRole(currentUser.tipo);
     } else {
       // Fallback based on URL
       const url = this.router.url;

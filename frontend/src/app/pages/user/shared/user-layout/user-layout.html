@@ -15,7 +15,7 @@
           <span class="admin-sidebar__badge">{{ unreadNotifications }}</span>
         }
       </a>
-      @if (user?.role === 'ADMIN') {
+      @if (user?.tipo === 'Administrador') {
         <a routerLink="/usuarios" routerLinkActive="admin-sidebar__link--active" class="admin-sidebar__link" (click)="closeSidebarOnMobile()">
           <app-icon name="users" [size]="20" />
           <span>Usuários</span>
@@ -45,13 +45,13 @@
           <span>Logs de Auditoria</span>
         </a>
       }
-      @if (user?.role === 'PATIENT' || user?.role === 'PROFESSIONAL') {
+      @if (user?.tipo === 'Paciente' || user?.tipo === 'Profissional') {
         <a routerLink="/consultas" routerLinkActive="admin-sidebar__link--active" class="admin-sidebar__link" (click)="closeSidebarOnMobile()">
           <app-icon name="calendar" [size]="20" />
           <span>Minhas Consultas</span>
         </a>
       }
-      @if (user?.role === 'PROFESSIONAL') {
+      @if (user?.tipo === 'Profissional') {
         <a routerLink="/minha-agenda" routerLinkActive="admin-sidebar__link--active" class="admin-sidebar__link" (click)="closeSidebarOnMobile()">
           <app-icon name="clock" [size]="20" />
           <span>Minha Agenda</span>
@@ -65,7 +65,7 @@
           <span>Certificados</span>
         </a>
       }
-      @if (user?.role === 'PATIENT') {
+      @if (user?.tipo === 'Paciente') {
         <a routerLink="/agendar" routerLinkActive="admin-sidebar__link--active" class="admin-sidebar__link" (click)="closeSidebarOnMobile()">
           <app-icon name="plus" [size]="20" />
           <span>Agendar Consulta</span>
@@ -108,13 +108,13 @@
           class="admin-header__user"
         >
           <app-avatar 
-            [name]="user?.name || 'User'" 
+            [name]="user?.nome || 'User'" 
             [imageUrl]="user?.avatar"
             size="md"
           />
           <div class="admin-header__user-info">
-            <span class="admin-header__user-name">{{ user?.name }}</span>
-            <span class="admin-header__user-role">{{ getRoleLabel(user?.role) }}</span>
+            <span class="admin-header__user-name">{{ user?.nome }}</span>
+            <span class="admin-header__user-role">{{ getRoleLabel(user?.tipo) }}</span>
           </div>
         </a>
       </div>

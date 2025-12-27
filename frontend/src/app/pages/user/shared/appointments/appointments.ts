@@ -32,7 +32,14 @@ import { Subscription } from 'rxjs';
   templateUrl: './appointments.html',
   styleUrls: ['./appointments.scss']
 })
-export class AppointmentsComponent implements OnInit, OnDestroy {
+export class AppointmentsComponent implements OnInit, OnDestroy {  private mapTipoToUserRole(tipo: string): 'ADMIN' | 'PATIENT' | 'PROFESSIONAL' {
+    const map: Record<string, 'ADMIN' | 'PATIENT' | 'PROFESSIONAL'> = {
+      'Administrador': 'ADMIN',
+      'Paciente': 'PATIENT',
+      'Profissional': 'PROFESSIONAL'
+    };
+    return map[tipo] || 'PATIENT';
+  }
   appointments: Appointment[] = [];
   allAppointments: Appointment[] = []; // Store all to count
   loading = false;
@@ -81,10 +88,10 @@ export class AppointmentsComponent implements OnInit, OnDestroy {
       )
       .subscribe((state) => {
         console.log('[Appointments] Usuário autenticado, carregando consultas');
-        console.log('[Appointments] User role:', state.user?.role);
+        console.log('[Appointments] User role:', state.user?.tipo);
         // Usar o role do usuário autenticado (prioridade)
-        if (state.user?.role) {
-          this.userrole = state.user.role;
+        if (state.user?.tipo) {
+          this.userrole = this.mapTipoToUserRole(state.user.tipo);
         } else {
           // Fallback para URL
           this.determineuserrole();

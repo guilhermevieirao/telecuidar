@@ -24,8 +24,8 @@
               id="edit-specialty-name"
               type="text"
               class="specialty-form__input"
-              [(ngModel)]="specialtyData.name"
-              name="name"
+              [(ngModel)]="specialtyData.nome"
+              name="nome"
               placeholder="Ex: Cardiologia"
             />
           </div>
@@ -35,8 +35,8 @@
             <textarea
               id="edit-description"
               class="specialty-form__textarea"
-              [(ngModel)]="specialtyData.description"
-              name="description"
+              [(ngModel)]="specialtyData.descricao"
+              name="descricao"
               rows="4"
               placeholder="Descreva a especialidade..."
             ></textarea>
@@ -166,8 +166,8 @@
                 class="specialty-form__checkbox"
                 [(ngModel)]="specialtyData.status"
                 [ngModelOptions]="{standalone: true}"
-                [checked]="specialtyData.status === 'Active'"
-                (change)="specialtyData.status = specialtyData.status === 'Active' ? 'Inactive' : 'Active'"
+                [checked]="specialtyData.status === 'Ativo'"
+                (change)="specialtyData.status = specialtyData.status === 'Ativo' ? 'Inativo' : 'Ativo'"
               />
               <span class="specialty-form__checkbox-text">Especialidade ativa</span>
             </label>

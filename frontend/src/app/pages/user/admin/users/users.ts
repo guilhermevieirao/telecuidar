@@ -14,9 +14,9 @@ import { UserEditModalComponent } from '@pages/user/admin/users/user-edit-modal/
 import { UserCreateModalComponent, CreateUserData, CreateUserAction } from '@pages/user/admin/users/user-create-modal/user-create-modal';
 import { 
   UsersService, 
-  User, 
-  UserRole, 
-  UserStatus,
+  Usuario, 
+  TipoUsuario, 
+  StatusUsuario,
   UsersSortOptions 
 } from '@app/core/services/users.service';
 import { ModalService } from '@app/core/services/modal.service';
@@ -50,43 +50,43 @@ export class UsersComponent implements OnInit, OnDestroy {
   private realTimeSubscriptions: Subscription[] = [];
   private isBrowser: boolean;
   
-  users: User[] = [];
+  users: Usuario[] = [];
   loading = false;
   
   // Modal de edição
   isEditModalOpen = false;
-  userToEdit: User | null = null;
+  userToEdit: Usuario | null = null;
   
   // Modal de criação
   isCreateModalOpen = false;
   
   // Filtros
   searchTerm = '';
-  roleFilter: UserRole | 'all' = 'all';
-  statusFilter: UserStatus | 'all' = 'all';
+  roleFilter: TipoUsuario | 'all' = 'all';
+  statusFilter: StatusUsuario | 'all' = 'all';
 
   roleOptions: FilterOption[] = [
     { value: 'all', label: 'Todos os perfis' },
-    { value: 'PATIENT', label: 'Pacientes' },
-    { value: 'PROFESSIONAL', label: 'Profissionais' },
-    { value: 'ADMIN', label: 'Administradores' }
+    { value: 'Paciente', label: 'Pacientes' },
+    { value: 'Profissional', label: 'Profissionais' },
+    { value: 'Administrador', label: 'Administradores' }
   ];
 
   statusOptions: FilterOption[] = [
     { value: 'all', label: 'Todos os status' },
-    { value: 'active', label: 'Ativos' },
-    { value: 'inactive', label: 'Inativos' }
+    { value: 'Ativo', label: 'Ativos' },
+    { value: 'Inativo', label: 'Inativos' }
   ];
   
   // Ordenação
-  sortField: keyof User = 'id';
+  sortField: keyof Usuario = 'id';
   sortDirection: 'asc' | 'desc' = 'asc';
   
   // Paginação
   currentPage = 1;
   pageSize = 10;
   totalUsers = 0;
-  totalPages = 0;
+  totalPaginas = 0;
 
   private searchTimeout?: number;
   private cdr = inject(ChangeDetectorRef);
@@ -152,16 +152,16 @@ export class UsersComponent implements OnInit, OnDestroy {
     this.loading = true;
     
     const filter = {
-      search: this.searchTerm || undefined,
-      role: this.roleFilter,
-      status: this.statusFilter
+      busca: this.searchTerm || undefined,
+      tipo: this.roleFilter !== 'all' ? this.roleFilter as TipoUsuario : undefined,
+      status: this.statusFilter !== 'all' ? this.statusFilter as StatusUsuario : undefined
     };
 
     this.usersService.getUsers(filter, this.currentPage, this.pageSize).subscribe({
       next: (response) => {
-        this.users = response.data;
+        this.users = response.dados;
         this.totalUsers = response.total;
-        this.totalPages = response.totalPages;
+        this.totalPaginas = response.totalPaginas;
         this.loading = false;
         this.cdr.markForCheck();
       },
@@ -195,7 +195,7 @@ export class UsersComponent implements OnInit, OnDestroy {
   }
 
   sort(field: string): void {
-    const typedField = field as keyof User;
+    const typedField = field as keyof Usuario;
     if (this.sortField === typedField) {
       this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
     } else {
@@ -216,13 +216,13 @@ export class UsersComponent implements OnInit, OnDestroy {
     this.loadUsers();
   }
 
-  getRoleBadgeVariant(role: UserRole): BadgeVariant {
-    const variantMap: Record<UserRole, BadgeVariant> = {
-      PATIENT: 'info',
-      PROFESSIONAL: 'primary',
-      ADMIN: 'warning'
+  getRoleBadgeVariant(tipo: TipoUsuario): BadgeVariant {
+    const variants: Record<TipoUsuario, BadgeVariant> = {
+      Paciente: 'info',
+      Profissional: 'primary',
+      Administrador: 'warning'
     };
-    return variantMap[role];
+    return variants[tipo];
   }
 
   createUser(): void {
@@ -250,7 +250,7 @@ export class UsersComponent implements OnInit, OnDestroy {
   }
 
   private handleCreateUser(data: CreateUserData): void {
-    if (!data.name || !data.lastName || !data.email || !data.cpf || !data.password) {
+    if (!data.nome || !data.sobrenome || !data.email || !data.cpf || !data.senha) {
       this.modalService.alert({
         title: 'Erro',
         message: 'Preencha todos os campos obrigatórios.',
@@ -261,14 +261,13 @@ export class UsersComponent implements OnInit, OnDestroy {
     }
 
     const createDto = {
-      name: data.name,
-      lastName: data.lastName,
+      nome: data.nome,
+      sobrenome: data.sobrenome,
       email: data.email,
       cpf: data.cpf,
-      phone: data.phone || '',
-      password: data.password,
-      role: data.role,
-      status: 'Active' as UserStatus
+      telefone: data.telefone || '',
+      senha: data.senha,
+      tipo: data.tipo
     };
 
     this.loading = true;
@@ -284,7 +283,7 @@ export class UsersComponent implements OnInit, OnDestroy {
           setTimeout(() => {
             this.modalService.alert({
               title: 'Sucesso',
-              message: `Usuário ${user.name} ${user.lastName} criado com sucesso!`,
+              message: `Usuário ${user.nome} ${user.sobrenome} criado com sucesso!`,
               confirmText: 'OK',
               variant: 'success'
             }).subscribe();
@@ -308,8 +307,8 @@ export class UsersComponent implements OnInit, OnDestroy {
     // Gerar link genérico sem email
     const inviteData = {
       email: data.email || '',
-      role: data.role,
-      specialtyId: data.specialtyId
+      tipo: data.tipo,
+      especialidadeId: data.especialidadeId
     };
 
     this.loading = true;
@@ -359,8 +358,8 @@ export class UsersComponent implements OnInit, OnDestroy {
     // Enviar convite por email
     const inviteData = {
       email: data.email || '',
-      role: data.role,
-      specialtyId: data.specialtyId
+      tipo: data.tipo,
+      especialidadeId: data.especialidadeId
     };
 
     this.loading = true;
@@ -417,16 +416,16 @@ export class UsersComponent implements OnInit, OnDestroy {
     this.userToEdit = null;
   }
 
-  onEditModalSave(updatedUser: User): void {
+  onEditModalSave(updatedUser: Usuario): void {
     // Criar DTO com apenas os campos editáveis
     const updateDto = {
-      name: updatedUser.name,
-      lastName: updatedUser.lastName,
-      phone: updatedUser.phone,
+      nome: updatedUser.nome,
+      sobrenome: updatedUser.sobrenome,
+      telefone: updatedUser.telefone,
       avatar: updatedUser.avatar,
       status: updatedUser.status,
-      role: updatedUser.role,
-      professionalProfile: updatedUser.professionalProfile
+      tipo: updatedUser.tipo,
+      perfilProfissional: updatedUser.perfilProfissional
     };
 
     this.usersService.updateUser(updatedUser.id, updateDto).subscribe({

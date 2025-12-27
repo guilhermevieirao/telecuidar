@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, FormControl, 
 import { IconComponent } from '@app/shared/components/atoms/icon/icon';
 import { ButtonComponent } from '@app/shared/components/atoms/button/button';
 import { SchedulesService, Schedule, DayOfWeek, ScheduleGlobalConfig, DayConfig } from '@app/core/services/schedules.service';
-import { UsersService, User } from '@app/core/services/users.service';
+import { UsersService, Usuario } from '@app/core/services/users.service';
 import { ModalService } from '@app/core/services/modal.service';
 
 @Component({
@@ -21,7 +21,7 @@ export class ScheduleCreateModalComponent implements OnInit {
   @Output() save = new EventEmitter<Schedule>();
 
   form!: FormGroup;
-  professionals: User[] = [];
+  professionals: Usuario[] = [];
   days: DayOfWeek[] = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   dayLabels: Record<DayOfWeek, string> = {
     'Monday': 'Segunda-feira',
@@ -167,7 +167,7 @@ export class ScheduleCreateModalComponent implements OnInit {
     this.isLoading = true;
     this.usersService.getUsers({}).subscribe({
       next: (response) => {
-        this.professionals = response.data.filter(u => u.role === 'PROFESSIONAL');
+        this.professionals = response.dados.filter((u: Usuario) => u.tipo === 'Profissional');
         this.isLoading = false;
         this.cdr.detectChanges();
       },
@@ -387,7 +387,7 @@ export class ScheduleCreateModalComponent implements OnInit {
 
     const scheduleData = {
       professionalId,
-      professionalName: professional.name,
+      professionalName: `${professional.nome} ${professional.sobrenome}`,
       professionalEmail: professional.email,
       daysConfig,
       globalConfig,

@@ -22,17 +22,17 @@
       <div class="profile__card profile__card--main">
         <div class="profile__avatar-section">
           <app-avatar 
-            [name]="user.name + ' ' + user.lastName" 
+            [name]="user.nome + ' ' + user.sobrenome" 
             [imageUrl]="user.avatar"
             size="2xl"
           />
           <div class="profile__avatar-info">
-            <h2 class="profile__name">{{ user.name }} {{ user.lastName }}</h2>
+            <h2 class="profile__name">{{ user.nome }} {{ user.sobrenome }}</h2>
             <p class="profile__email">{{ user.email }}</p>
             <span 
               class="profile__badge"
-              [class.profile__badge--active]="user.status === 'Active'"
-              [class.profile__badge--inactive]="user.status === 'Inactive'"
+              [class.profile__badge--active]="user.status === 'Ativo'"
+              [class.profile__badge--inactive]="user.status === 'Inativo'"
             >
               {{ getStatusLabel(user.status) }}
             </span>
@@ -49,7 +49,7 @@
           <div class="profile__card-content">
             <div class="profile__field">
               <span class="profile__field-label">Nome Completo</span>
-              <span class="profile__field-value">{{ user.name }}</span>
+              <span class="profile__field-value">{{ user.nome }} {{ user.sobrenome }}</span>
             </div>
             <div class="profile__field">
               <span class="profile__field-label">CPF</span>
@@ -57,7 +57,7 @@
             </div>
             <div class="profile__field">
               <span class="profile__field-label">Telefone</span>
-              <span class="profile__field-value">{{ user.phone }}</span>
+              <span class="profile__field-value">{{ user.telefone }}</span>
             </div>
           </div>
         </div>
@@ -95,14 +95,14 @@
             <div class="profile__field">
               <span class="profile__field-label">Perfil</span>
               <app-badge
-                [variant]="user.role === 'PROFESSIONAL' ? 'info' : user.role === 'PATIENT' ? 'success' : 'primary'"
-                [label]="getRoleLabel(user.role)"
+                [variant]="user.tipo === 'Profissional' ? 'info' : user.tipo === 'Paciente' ? 'success' : 'primary'"
+                [label]="getRoleLabel(user.tipo)"
                 size="sm"
               />
             </div>
             <div class="profile__field">
               <span class="profile__field-label">Membro desde</span>
-              <span class="profile__field-value">{{ user.createdAt | date: 'dd/MM/yyyy' }}</span>
+              <span class="profile__field-value">{{ user.criadoEm | date: 'dd/MM/yyyy' }}</span>
             </div>
           </div>
         </div>

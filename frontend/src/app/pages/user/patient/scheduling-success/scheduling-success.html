@@ -10,11 +10,11 @@
     <div class="details-section">
       <div class="detail-item" *ngIf="appointment.specialty">
         <span class="label">Especialidade</span>
-        <span class="value">{{ appointment.specialty.name }}</span>
+        <span class="value">{{ appointment.specialty.nome }}</span>
       </div>
       <div class="detail-item" *ngIf="appointment.professional">
         <span class="label">Profissional</span>
-        <span class="value">{{ appointment.professional.name }} {{ appointment.professional.lastName }}</span>
+        <span class="value">{{ appointment.professional.nome }} {{ appointment.professional.sobrenome }}</span>
       </div>
       <div class="detail-item" *ngIf="appointment.date">
         <span class="label">Data</span>

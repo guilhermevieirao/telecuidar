@@ -4,7 +4,7 @@ import { AvatarComponent } from '@app/shared/components/atoms/avatar/avatar';
 import { ProfileEditModalComponent } from '@pages/user/shared/profile/profile-edit-modal/profile-edit-modal';
 import { ChangePasswordModalComponent } from '@pages/user/shared/profile/change-password-modal/change-password-modal';
 import { ChangeEmailModalComponent } from '@pages/user/shared/profile/change-email-modal/change-email-modal';
-import { User, UsersService, UpdateUserDto } from '@app/core/services/users.service';
+import { Usuario, UsersService, AtualizarUsuarioDto } from '@app/core/services/users.service';
 import { DatePipe } from '@angular/common';
 import { BadgeComponent } from '@app/shared/components/atoms/badge/badge';
 import { ButtonComponent } from '@app/shared/components/atoms/button/button';
@@ -18,7 +18,7 @@ import { AuthService } from '@app/core/services/auth.service';
   styleUrl: './profile.scss'
 })
 export class ProfileComponent implements OnInit {
-  user: User | null = null;
+  user: Usuario | null = null;
   emailVerified: boolean = false;
   isSendingVerification = false;
   isEditModalOpen = false;
@@ -41,7 +41,7 @@ export class ProfileComponent implements OnInit {
     const currentUser = this.authService.currentUser();
     if (currentUser) {
       this.user = currentUser;
-      this.emailVerified = !!currentUser.emailVerified;
+      this.emailVerified = !!currentUser.emailVerificado;
     }
   }
 
@@ -53,15 +53,15 @@ export class ProfileComponent implements OnInit {
     this.isEditModalOpen = false;
   }
 
-  onProfileUpdated(updatedUser: Partial<User>): void {
+  onProfileUpdated(updatedUser: Partial<Usuario>): void {
     if (!this.user) return;
 
     this.isUpdatingProfile = true;
 
-    const updateDto: UpdateUserDto = {
-      name: updatedUser.name,
-      lastName: updatedUser.lastName,
-      phone: updatedUser.phone,
+    const updateDto: AtualizarUsuarioDto = {
+      nome: updatedUser.nome,
+      sobrenome: updatedUser.sobrenome,
+      telefone: updatedUser.telefone,
       avatar: updatedUser.avatar
     };
 
@@ -69,7 +69,7 @@ export class ProfileComponent implements OnInit {
       next: (updatedUserResponse) => {
         // Atualiza o usuário local
         this.user = updatedUserResponse;
-        this.emailVerified = !!updatedUserResponse.emailVerified;
+        this.emailVerified = !!updatedUserResponse.emailVerificado;
         
         // Atualiza o currentUser no AuthService e localStorage
         this.authService.updateCurrentUser(updatedUserResponse);
@@ -202,7 +202,7 @@ export class ProfileComponent implements OnInit {
         setTimeout(() => {
           this.modalService.alert({
             title: 'Confirmação Enviada',
-            message: response.message || `Um e-mail de confirmação foi enviado para ${newEmail}. Por favor, verifique sua caixa de entrada e clique no link para confirmar a alteração.`,
+            message: response.mensagem || `Um e-mail de confirmação foi enviado para ${newEmail}. Por favor, verifique sua caixa de entrada e clique no link para confirmar a alteração.`,
             variant: 'success'
           });
         }, 100);

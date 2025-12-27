@@ -241,7 +241,7 @@ export class InvitesComponent implements OnInit, OnDestroy {
   }
 
   getInviteByToken(invite: Invite): void {
-    const link = `${window.location.origin}/registrar?token=${invite.token}`;
+    const link = `${window.location.origin}/cadastrar?convite=${invite.token}`;
     navigator.clipboard.writeText(link).then(() => {
       this.modalService.alert({
         title: 'Link Copiado',
@@ -386,7 +386,7 @@ export class InvitesComponent implements OnInit, OnDestroy {
         this.isLoading = false;
         this.closeCreateModal();
         
-        const link = `${window.location.origin}/registrar?token=${newInvite.token}`;
+        const link = `${window.location.origin}/cadastrar?convite=${newInvite.token}`;
         
         navigator.clipboard.writeText(link).then(() => {
           setTimeout(() => {

@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '@env/environment';
 
-const API_BASE_URL = `${environment.apiUrl}/medical-certificates`;
+const API_BASE_URL = `${environment.apiUrl}/atestados`;
 
 export type CertificateType = 'comparecimento' | 'afastamento' | 'aptidao' | 'acompanhante' | 'outro';
 

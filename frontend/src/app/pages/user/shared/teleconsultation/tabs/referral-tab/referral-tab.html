@@ -157,8 +157,8 @@
           <div class="icon-wrapper">
             <app-icon name="activity" [size]="32"></app-icon>
           </div>
-          <h3>{{ specialty.name }}</h3>
-          <p *ngIf="specialty.description">{{ specialty.description }}</p>
+          <h3>{{ specialty.nome }}</h3>
+          <p *ngIf="specialty.descricao">{{ specialty.descricao }}</p>
           <div class="card-footer">
             <span class="availability-badge">Disponível</span>
             <app-icon name="arrow-right" [size]="16"></app-icon>
@@ -175,7 +175,7 @@
     <div class="step-content" *ngIf="currentStep === 'date'">
       <div class="step-header">
         <h3>Selecione uma data</h3>
-        <p>{{ selectedSpecialty?.name }}</p>
+        <p>{{ selectedSpecialty?.nome }}</p>
       </div>
 
       <div class="calendar-container">
@@ -250,13 +250,13 @@
              (click)="selectProfessional(pro)">
           <div class="pro-avatar">
             <app-avatar 
-              [name]="pro.name" 
+              [name]="pro.nome" 
               [imageUrl]="pro.avatar"
               size="md">
             </app-avatar>
           </div>
           <div class="pro-info">
-            <h3>{{ pro.name }}</h3>
+            <h3>{{ pro.nome }}</h3>
             <p>{{ pro.email }}</p>
           </div>
           <app-icon name="arrow-right" [size]="16"></app-icon>
@@ -290,11 +290,11 @@
           <h4>Encaminhamento</h4>
           <div class="info-row">
             <label>Especialidade</label>
-            <p>{{ selectedSpecialty?.name }}</p>
+            <p>{{ selectedSpecialty?.nome }}</p>
           </div>
           <div class="info-row">
             <label>Profissional</label>
-            <p>{{ selectedProfessional?.name }}</p>
+            <p>{{ selectedProfessional?.nome }}</p>
           </div>
           <div class="info-row">
             <label>Data</label>

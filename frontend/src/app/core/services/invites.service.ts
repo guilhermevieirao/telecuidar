@@ -51,7 +51,7 @@ export interface PaginatedResponse<T> {
   providedIn: 'root'
 })
 export class InvitesService {
-  private apiUrl = `${API_BASE_URL}/invites`;
+  private apiUrl = `${API_BASE_URL}/convites`;
 
   constructor(private http: HttpClient) {}
 

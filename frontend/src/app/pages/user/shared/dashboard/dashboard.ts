@@ -14,6 +14,7 @@ import { ScheduleBlocksService } from '@app/core/services/schedule-blocks.servic
 import { RealTimeService, DashboardUpdateNotification, AppointmentStatusUpdate, EntityNotification } from '@app/core/services/real-time.service';
 import { User as AuthUser } from '@app/core/models/auth.model';
 import { Subscription } from 'rxjs';
+import { filter, take } from 'rxjs/operators';
 import Chart from 'chart.js/auto';
 
 interface DashboardUser {
@@ -74,6 +75,15 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   usersChart: any;
   monthlyChart: any;
 
+  private mapTipoToViewMode(tipo: string): ViewMode {
+    const map: Record<string, ViewMode> = {
+      'Administrador': 'ADMIN',
+      'Paciente': 'PATIENT',
+      'Profissional': 'PROFESSIONAL'
+    };
+    return map[tipo] || 'PATIENT';
+  }
+
   constructor(
     private statsService: StatsService,
     private authService: AuthService,
@@ -91,7 +101,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       if (authUser) {
         // Use untracked to avoid re-triggering effect
         untracked(() => {
-          this.viewMode = authUser.role;
+          this.viewMode = this.mapTipoToViewMode(authUser.tipo);
           this.updateUser(authUser);
           // Use queueMicrotask to schedule after current change detection cycle
           queueMicrotask(() => {
@@ -104,17 +114,30 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Initial load attempt (in case signal is already set)
-    const authUser = this.authService.currentUser();
-    if (authUser) {
-      this.viewMode = authUser.role;
-      this.updateUser(authUser);
-    }
-    
-    // Initialize real-time updates
-    if (isPlatformBrowser(this.platformId)) {
-      this.initializeRealTimeUpdates();
-    }
+    console.log('[Dashboard] ngOnInit iniciado');
+    // Aguardar explicitamente o authState$ confirmar autenticação
+    this.authService.authState$
+      .pipe(
+        filter(state => {
+          console.log('[Dashboard] authState$ emitido:', { isAuthenticated: state.isAuthenticated, hasToken: !!state.accessToken });
+          return state.isAuthenticated && state.accessToken !== null;
+        }),
+        take(1)
+      )
+      .subscribe(() => {
+        console.log('[Dashboard] authState$ confirmado, inicializando dados...');
+        // Initial load attempt (in case signal is already set)
+        const authUser = this.authService.currentUser();
+        if (authUser) {
+          this.viewMode = this.mapTipoToViewMode(authUser.tipo);
+          this.updateUser(authUser);
+        }
+        
+        // Initialize real-time updates
+        if (isPlatformBrowser(this.platformId)) {
+          this.initializeRealTimeUpdates();
+        }
+      });
   }
   
   private initializeRealTimeUpdates(): void {
@@ -219,20 +242,20 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private determineViewMode(user: AuthUser): void {
-    this.viewMode = user.role;
+    this.viewMode = this.mapTipoToViewMode(user.tipo);
     this.loadDataForView();
   }
 
   private updateUser(authUser: AuthUser): void {
     this.user = {
       id: authUser.id,
-      name: authUser.name,
-      lastName: authUser.lastName,
+      name: authUser.nome,
+      lastName: authUser.sobrenome,
       email: authUser.email,
       avatar: authUser.avatar,
-      role: authUser.role,
-      memberSince: this.datePipe.transform(authUser.createdAt, 'MM/yyyy') || '',
-      lastLogin: this.datePipe.transform(authUser.updatedAt, 'dd/MM/yyyy HH:mm') || '' // Assuming last login is tracked in updatedAt
+      role: authUser.tipo,
+      memberSince: this.datePipe.transform(authUser.criadoEm, 'MM/yyyy') || '',
+      lastLogin: this.datePipe.transform(authUser.atualizadoEm, 'dd/MM/yyyy HH:mm') || '' // Assuming last login is tracked in atualizadoEm
     };
   }
 
@@ -356,18 +379,21 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private loadStats(): void {
+    console.log('[Dashboard] Carregando estatísticas...');
     this.statsService.getPlatformStats().subscribe({
       next: (stats) => {
+        console.log('[Dashboard] Estatísticas carregadas:', stats);
         this.stats = stats;
         this.cdr.detectChanges();
       },
       error: (error) => {
-        console.error('Erro ao carregar estatísticas:', error);
+        console.error('[Dashboard] Erro ao carregar estatísticas:', error);
       }
     });
   }
 
   private initializeCharts(): void {
+    console.log('[Dashboard] Inicializando gráficos, viewMode:', this.viewMode);
     if (this.viewMode !== 'ADMIN') return;
 
     // Only load charts in the browser, not during SSR

@@ -169,7 +169,7 @@ export interface SaveAIData {
   providedIn: 'root'
 })
 export class AIService {
-  private apiUrl = `${environment.apiUrl}/ai`;
+  private apiUrl = `${environment.apiUrl}/ia`;
 
   constructor(private http: HttpClient) {}
 

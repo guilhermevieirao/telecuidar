@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { AuthService } from './auth.service';
 import { environment } from '@env/environment';
 
@@ -17,6 +17,7 @@ export interface Notification {
   isRead: boolean;
   createdAt: string;
   readAt?: string;
+  link?: string;
 }
 
 export interface CreateNotificationDto {
@@ -43,10 +44,23 @@ export interface PaginatedResponse<T> {
   providedIn: 'root'
 })
 export class NotificationsService {
-  private apiUrl = `${API_BASE_URL}/notifications`;
+  private apiUrl = `${API_BASE_URL}/notificacoes`;
   private authService = inject(AuthService);
 
   constructor(private http: HttpClient) {}
+
+  private mapBackendNotification(backendNotif: any): Notification {
+    return {
+      id: backendNotif.id,
+      userId: backendNotif.usuarioId || '',
+      title: backendNotif.titulo || '',
+      message: backendNotif.mensagem || '',
+      type: backendNotif.tipo || 'Info',
+      isRead: backendNotif.lida || false,
+      createdAt: backendNotif.criadoEm || new Date().toISOString(),
+      link: backendNotif.link
+    };
+  }
 
   getNotifications(
     filter?: NotificationsFilter,
@@ -64,36 +78,48 @@ export class NotificationsService {
     }
 
     let params = new HttpParams()
-      .set('page', page.toString())
-      .set('pageSize', pageSize.toString());
+      .set('pagina', page.toString())
+      .set('tamanhoPagina', pageSize.toString());
 
     if (filter?.isRead !== undefined) {
-      params = params.set('isRead', filter.isRead.toString());
+      params = params.set('apenasNaoLidas', (!filter.isRead).toString());
     }
     if (filter?.type) {
       params = params.set('type', filter.type);
     }
 
-    return this.http.get<PaginatedResponse<Notification>>(`${this.apiUrl}/user/${userId}`, { params });
+    return this.http.get<any>(this.apiUrl, { params }).pipe(
+      map(response => ({
+        data: (response.dados || []).map((n: any) => this.mapBackendNotification(n)),
+        total: response.total || 0,
+        page: response.pagina || page,
+        pageSize: response.tamanhoPagina || pageSize,
+        totalPages: response.totalPaginas || 0
+      }))
+    );
   }
 
   getNotificationById(id: string): Observable<Notification> {
-    return this.http.get<Notification>(`${this.apiUrl}/${id}`);
+    return this.http.get<any>(`${this.apiUrl}/${id}`).pipe(
+      map(n => this.mapBackendNotification(n))
+    );
   }
 
-  getUnreadCount(): Observable<{ count: number }> {
+  getUnreadCount(): Observable<{ contagem: number }> {
     const userId = this.authService.currentUser()?.id;
+    console.log('[NotificationsService] getUnreadCount chamado, userId:', userId);
     if (!userId) {
       return new Observable(observer => {
-        observer.next({ count: 0 });
+        observer.next({ contagem: 0 });
         observer.complete();
       });
     }
-    return this.http.get<{ count: number }>(`${this.apiUrl}/user/${userId}/unread-count`);
+    console.log('[NotificationsService] Fazendo request GET /nao-lidas/contagem');
+    return this.http.get<{ contagem: number }>(`${this.apiUrl}/nao-lidas/contagem`);
   }
 
   markAsRead(notificationId: string): Observable<any> {
-    return this.http.patch<any>(`${this.apiUrl}/${notificationId}/read`, {});
+    return this.http.post<any>(`${this.apiUrl}/${notificationId}/marcar-lida`, {});
   }
 
   markAllAsRead(): Observable<any> {
@@ -104,7 +130,7 @@ export class NotificationsService {
         observer.complete();
       });
     }
-    return this.http.patch<any>(`${this.apiUrl}/user/${userId}/read-all`, {});
+    return this.http.post<any>(`${this.apiUrl}/marcar-todas-lidas`, {});
   }
 
   deleteNotification(id: string): Observable<void> {

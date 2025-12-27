@@ -101,69 +101,69 @@ export class PrescriptionService {
   constructor(private http: HttpClient) {}
 
   getPrescription(id: string): Observable<Prescription> {
-    return this.http.get<Prescription>(`${API_BASE_URL}/prescriptions/${id}`);
+    return this.http.get<Prescription>(`${API_BASE_URL}/prescricoes/${id}`);
   }
 
   getPrescriptionsByAppointment(appointmentId: string): Observable<Prescription[]> {
-    return this.http.get<Prescription[]>(`${API_BASE_URL}/prescriptions/appointment/${appointmentId}`);
+    return this.http.get<Prescription[]>(`${API_BASE_URL}/prescricoes/appointment/${appointmentId}`);
   }
 
   getPrescriptionsByPatient(patientId: string): Observable<Prescription[]> {
-    return this.http.get<Prescription[]>(`${API_BASE_URL}/prescriptions/patient/${patientId}`);
+    return this.http.get<Prescription[]>(`${API_BASE_URL}/prescricoes/patient/${patientId}`);
   }
 
   getPrescriptionsByProfessional(professionalId: string): Observable<Prescription[]> {
-    return this.http.get<Prescription[]>(`${API_BASE_URL}/prescriptions/professional/${professionalId}`);
+    return this.http.get<Prescription[]>(`${API_BASE_URL}/prescricoes/professional/${professionalId}`);
   }
 
   createPrescription(dto: CreatePrescriptionDto): Observable<Prescription> {
-    return this.http.post<Prescription>(`${API_BASE_URL}/prescriptions`, dto);
+    return this.http.post<Prescription>(`${API_BASE_URL}/prescricoes`, dto);
   }
 
   updatePrescription(id: string, dto: UpdatePrescriptionDto): Observable<Prescription> {
-    return this.http.patch<Prescription>(`${API_BASE_URL}/prescriptions/${id}`, dto);
+    return this.http.patch<Prescription>(`${API_BASE_URL}/prescricoes/${id}`, dto);
   }
 
   addItem(prescriptionId: string, item: AddPrescriptionItemDto): Observable<Prescription> {
-    return this.http.post<Prescription>(`${API_BASE_URL}/prescriptions/${prescriptionId}/items`, item);
+    return this.http.post<Prescription>(`${API_BASE_URL}/prescricoes/${prescriptionId}/items`, item);
   }
 
   removeItem(prescriptionId: string, itemId: string): Observable<Prescription> {
-    return this.http.delete<Prescription>(`${API_BASE_URL}/prescriptions/${prescriptionId}/items/${itemId}`);
+    return this.http.delete<Prescription>(`${API_BASE_URL}/prescricoes/${prescriptionId}/items/${itemId}`);
   }
 
   updateItem(prescriptionId: string, itemId: string, item: UpdatePrescriptionItemDto): Observable<Prescription> {
-    return this.http.put<Prescription>(`${API_BASE_URL}/prescriptions/${prescriptionId}/items/${itemId}`, item);
+    return this.http.put<Prescription>(`${API_BASE_URL}/prescricoes/${prescriptionId}/items/${itemId}`, item);
   }
 
   generatePdf(prescriptionId: string): Observable<PrescriptionPdf> {
-    return this.http.get<PrescriptionPdf>(`${API_BASE_URL}/prescriptions/${prescriptionId}/pdf`);
+    return this.http.get<PrescriptionPdf>(`${API_BASE_URL}/prescricoes/${prescriptionId}/pdf`);
   }
 
   generateSignedPdf(prescriptionId: string, pfxBase64: string, pfxPassword: string): Observable<PrescriptionPdf> {
-    return this.http.post<PrescriptionPdf>(`${API_BASE_URL}/prescriptions/${prescriptionId}/pdf/signed`, {
+    return this.http.post<PrescriptionPdf>(`${API_BASE_URL}/prescricoes/${prescriptionId}/pdf/signed`, {
       pfxBase64,
       pfxPassword
     });
   }
 
   signWithSavedCert(prescriptionId: string, certificateId: string, password?: string): Observable<PrescriptionPdf> {
-    return this.http.post<PrescriptionPdf>(`${API_BASE_URL}/prescriptions/${prescriptionId}/pdf/sign-saved`, {
+    return this.http.post<PrescriptionPdf>(`${API_BASE_URL}/prescricoes/${prescriptionId}/pdf/sign-saved`, {
       certificateId,
       password
     });
   }
 
   signPrescription(prescriptionId: string, dto: SignPrescriptionDto): Observable<Prescription> {
-    return this.http.post<Prescription>(`${API_BASE_URL}/prescriptions/${prescriptionId}/sign`, dto);
+    return this.http.post<Prescription>(`${API_BASE_URL}/prescricoes/${prescriptionId}/sign`, dto);
   }
 
   validateDocument(documentHash: string): Observable<{ isValid: boolean; documentHash: string }> {
-    return this.http.get<{ isValid: boolean; documentHash: string }>(`${API_BASE_URL}/prescriptions/validate/${documentHash}`);
+    return this.http.get<{ isValid: boolean; documentHash: string }>(`${API_BASE_URL}/prescricoes/validate/${documentHash}`);
   }
 
   deletePrescription(id: string): Observable<void> {
-    return this.http.delete<void>(`${API_BASE_URL}/prescriptions/${id}`);
+    return this.http.delete<void>(`${API_BASE_URL}/prescricoes/${id}`);
   }
 
   // Busca de medicamentos na base ANVISA via API backend

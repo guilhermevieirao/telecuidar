@@ -1,55 +1,57 @@
-import { PatientProfile, ProfessionalProfile } from '@core/services/users.service';
+import { PerfilPaciente, PerfilProfissional } from '@core/services/users.service';
 
-export interface User {
+export interface Usuario {
   id: string;
   email: string;
-  name: string;
-  lastName: string;
+  nome: string;
+  sobrenome: string;
   cpf: string;
-  phone?: string;
+  telefone?: string;
   avatar?: string;
-  role: userrole;
-  status: 'Active' | 'Inactive';
-  emailVerified?: boolean;
-  createdAt: string;
-  updatedAt?: string;
-  
-  // Campo legado mantido para compatibilidade
-  specialtyId?: string;
+  tipo: TipoUsuario;
+  status: 'Ativo' | 'Inativo';
+  emailVerificado?: boolean;
+  criadoEm: string;
+  atualizadoEm?: string;
   
   // Perfis específicos por tipo de usuário
-  patientProfile?: PatientProfile;
-  professionalProfile?: ProfessionalProfile;
+  perfilPaciente?: PerfilPaciente;
+  perfilProfissional?: PerfilProfissional;
 }
 
-export type userrole = 'PATIENT' | 'PROFESSIONAL' | 'ADMIN';
+// Alias para compatibilidade
+export type User = Usuario;
+
+export type TipoUsuario = 'Paciente' | 'Profissional' | 'Administrador';
+export type userrole = TipoUsuario; // Alias para compatibilidade
 
 export interface LoginRequest {
   email: string;
-  password: string;
-  rememberMe?: boolean;
+  senha: string;
+  lembrarMe?: boolean;
 }
 
 export interface LoginResponse {
-  user: User;
+  usuario: Usuario;
   accessToken: string;
   refreshToken: string;
 }
 
 export interface RegisterRequest {
-  name: string;
-  lastName: string;
+  nome: string;
+  sobrenome: string;
   email: string;
   cpf: string;
-  phone?: string;
-  password: string;
-  confirmPassword: string;
-  acceptTerms: boolean;
+  telefone?: string;
+  senha: string;
+  confirmarSenha: string;
+  aceitarTermos: boolean;
+  tokenConvite?: string;
 }
 
 export interface RegisterResponse {
-  user: User;
-  message: string;
+  usuario: Usuario;
+  mensagem: string;
 }
 
 export interface ForgotPasswordRequest {
@@ -57,18 +59,17 @@ export interface ForgotPasswordRequest {
 }
 
 export interface ForgotPasswordResponse {
-  message: string;
-  resetToken?: string;
+  mensagem: string;
 }
 
 export interface ResetPasswordRequest {
   token: string;
-  password: string;
-  confirmPassword: string;
+  novaSenha: string;
+  confirmarSenha: string;
 }
 
 export interface ResetPasswordResponse {
-  message: string;
+  mensagem: string;
 }
 
 export interface VerifyEmailRequest {
@@ -76,22 +77,22 @@ export interface VerifyEmailRequest {
 }
 
 export interface VerifyEmailResponse {
-  message: string;
-  user: User;
+  mensagem: string;
+  usuario?: Usuario;
 }
 
 export interface ChangePasswordRequest {
-  currentPassword: string;
-  newPassword: string;
-  confirmPassword: string;
+  senhaAtual: string;
+  novaSenha: string;
+  confirmarSenha: string;
 }
 
 export interface ChangePasswordResponse {
-  message: string;
+  mensagem: string;
 }
 
 export interface AuthState {
-  user: User | null;
+  user: Usuario | null;
   accessToken: string | null;
   refreshToken: string | null;
   isAuthenticated: boolean;

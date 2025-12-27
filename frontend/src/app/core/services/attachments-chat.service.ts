@@ -62,7 +62,7 @@ export class AttachmentsChatService implements OnDestroy {
    * Retorna Observable para permitir esperar conclusão
    */
   addMessage(appointmentId: string, message: AttachmentMessage): Observable<AttachmentMessage> {
-    const url = `${environment.apiUrl}/appointments/${appointmentId}/attachments-chat`;
+    const url = `${environment.apiUrl}/consultas/${appointmentId}/anexos-chat`;
     
     return new Observable(observer => {
       this.http.post<{ message: string; data: AttachmentMessage }>(url, message).subscribe({
@@ -90,7 +90,7 @@ export class AttachmentsChatService implements OnDestroy {
    * Busca mensagens do servidor
    */
   private fetchMessages(appointmentId: string): void {
-    const url = `${environment.apiUrl}/appointments/${appointmentId}/attachments-chat`;
+    const url = `${environment.apiUrl}/consultas/${appointmentId}/anexos-chat`;
     
     this.http.get<AttachmentMessage[]>(url).subscribe({
       next: (messages) => {

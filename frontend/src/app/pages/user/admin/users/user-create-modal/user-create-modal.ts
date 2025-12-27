@@ -6,7 +6,7 @@ import { CpfMaskDirective } from '@app/core/directives/cpf-mask.directive';
 import { PhoneMaskDirective } from '@app/core/directives/phone-mask.directive';
 import { EmailValidatorDirective } from '@app/core/directives/email-validator.directive';
 import { PasswordStrengthComponent } from '@app/shared/components/atoms/password-strength/password-strength';
-import { UserRole } from '@app/core/services/users.service';
+import { TipoUsuario } from '@app/core/services/users.service';
 import {
   VALIDATION_MESSAGES,
   FIELD_CONSTRAINTS,
@@ -17,15 +17,23 @@ import {
   validatePhone
 } from '@app/core/constants/validation.constants';
 
+// Mapeamento de roles legados para TipoUsuario
+type LegacyRole = 'PATIENT' | 'PROFESSIONAL' | 'ADMIN';
+const roleMapping: Record<LegacyRole, TipoUsuario> = {
+  'PATIENT': 'Paciente',
+  'PROFESSIONAL': 'Profissional',
+  'ADMIN': 'Administrador'
+};
+
 export interface CreateUserData {
-  name?: string;
-  lastName?: string;
+  nome?: string;
+  sobrenome?: string;
   email?: string;
   cpf?: string;
-  phone?: string;
-  password?: string;
-  role: UserRole;
-  specialtyId?: string;
+  telefone?: string;
+  senha?: string;
+  tipo: TipoUsuario;
+  especialidadeId?: string;
 }
 
 export type CreateUserAction = 'create' | 'generate-link' | 'send-email';
@@ -42,17 +50,17 @@ export class UserCreateModalComponent {
   @Output() create = new EventEmitter<{ data: CreateUserData; action: CreateUserAction }>();
 
   step: 1 | 2 = 1;
-  selectedRole: UserRole | null = null;
+  selectedRole: TipoUsuario | null = null;
   creationMode: 'manual' | 'link' = 'manual';
   linkValidity: number = 7;
   
   userData: CreateUserData = {
-    name: '',
-    lastName: '',
+    nome: '',
+    sobrenome: '',
     email: '',
     cpf: '',
-    phone: '',
-    role: 'PATIENT'
+    telefone: '',
+    tipo: 'Paciente'
   };
 
   password = '';
@@ -71,9 +79,10 @@ export class UserCreateModalComponent {
     this.close.emit();
   }
 
-  selectRole(role: UserRole): void {
-    this.selectedRole = role;
-    this.userData.role = role;
+  selectRole(legacyRole: LegacyRole): void {
+    const tipo = roleMapping[legacyRole];
+    this.selectedRole = tipo;
+    this.userData.tipo = tipo;
     this.step = 2;
   }
 
@@ -91,7 +100,7 @@ export class UserCreateModalComponent {
       this.create.emit({
         data: { 
           ...this.userData,
-          password: this.password
+          senha: this.password
         },
         action: 'create'
       });
@@ -125,8 +134,8 @@ export class UserCreateModalComponent {
 
   isFormValid(): boolean {
     return !!(
-      this.userData.name?.trim() &&
-      this.userData.lastName?.trim() &&
+      this.userData.nome?.trim() &&
+      this.userData.sobrenome?.trim() &&
       this.isEmailValid() &&
       this.isCpfValid() &&
       this.isPhoneValid() &&
@@ -167,7 +176,7 @@ export class UserCreateModalComponent {
   }
 
   isPhoneValid(): boolean {
-    return !!this.userData.phone?.trim() && validatePhone(this.userData.phone);
+    return !!this.userData.telefone?.trim() && validatePhone(this.userData.telefone);
   }
 
   private resetModal(): void {
@@ -176,40 +185,49 @@ export class UserCreateModalComponent {
     this.creationMode = 'manual';
     this.linkValidity = 7;
     this.userData = {
-      name: '',
+      nome: '',
+      sobrenome: '',
       email: '',
       cpf: '',
-      phone: '',
-      role: 'PATIENT'
+      telefone: '',
+      tipo: 'Paciente'
     };
     this.password = '';
     this.confirmPassword = '';
   }
 
-  getRoleIcon(role: UserRole): 'user' | 'users' | 'shield' {
-    const iconMap: Record<UserRole, 'user' | 'users' | 'shield'> = {
+  getRoleIconForSelected(): 'user' | 'users' | 'shield' {
+    const iconMap: Record<TipoUsuario, 'user' | 'users' | 'shield'> = {
+      'Paciente': 'user',
+      'Profissional': 'users',
+      'Administrador': 'shield'
+    };
+    return this.selectedRole ? iconMap[this.selectedRole] : 'user';
+  }
+
+  getRoleLabelForSelected(): string {
+    return this.selectedRole || 'Paciente';
+  }
+
+  getRoleIcon(legacyRole: LegacyRole): 'user' | 'users' | 'shield' {
+    const iconMap: Record<LegacyRole, 'user' | 'users' | 'shield'> = {
       PATIENT: 'user',
       PROFESSIONAL: 'users',
       ADMIN: 'shield'
     };
-    return iconMap[role];
+    return iconMap[legacyRole];
   }
 
-  getRoleLabel(role: UserRole): string {
-    const labels: Record<UserRole, string> = {
-      PATIENT: 'Paciente',
-      PROFESSIONAL: 'Profissional',
-      ADMIN: 'Administrador'
-    };
-    return labels[role];
+  getRoleLabel(legacyRole: LegacyRole): string {
+    return roleMapping[legacyRole];
   }
 
-  getRoleDescription(role: UserRole): string {
-    const descriptions: Record<UserRole, string> = {
+  getRoleDescription(legacyRole: LegacyRole): string {
+    const descriptions: Record<LegacyRole, string> = {
       PATIENT: 'Usuário que receberá atendimento médico',
       PROFESSIONAL: 'Profissional de saúde que realizará atendimentos',
       ADMIN: 'Administrador com acesso total ao sistema'
     };
-    return descriptions[role];
+    return descriptions[legacyRole];
   }
 }

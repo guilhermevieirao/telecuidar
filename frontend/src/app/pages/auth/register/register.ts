@@ -138,7 +138,7 @@ export class RegisterComponent implements OnInit {
 
     const formValue = this.registerForm.value;
 
-    // Se tiver token de convite, usar endpoint de registro via convite
+    // Se tiver token de convite, usar endpoint de cadastro via convite
     if (this.inviteToken) {
       const registerViaInviteData = {
         token: this.inviteToken,

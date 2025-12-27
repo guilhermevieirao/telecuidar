@@ -13,14 +13,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   let token: string | null = null;
   if (isBrowser) {
     token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
-    if (req.url.includes('slot-reservations')) {
+    
+    // Debug: Log em todas as requisições para API
+    if (req.url.includes('/api/')) {
       console.log('[authInterceptor] URL:', req.url);
-      console.log('[authInterceptor] Token existe?', !!token);
-      if (token) {
-        console.log('[authInterceptor] Token:', token.substring(0, 50) + '...');
-      } else {
-        console.warn('[authInterceptor] AVISO: Nenhum token encontrado! localStorage:', Object.keys(localStorage), 'sessionStorage:', Object.keys(sessionStorage));
-      }
+      console.log('[authInterceptor] Token:', token ? `${token.substring(0, 20)}...` : 'NULL');
     }
   }
   
@@ -46,13 +43,23 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       if (error.status === 401) {
         const currentUrl = router.url;
         const isAuthPage = currentUrl.includes('/entrar') || 
+                          currentUrl.includes('/cadastrar') || 
                           currentUrl.includes('/registrar') || 
                           currentUrl.includes('/esqueci-senha') ||
                           currentUrl.includes('/redefinir-senha') ||
                           currentUrl.includes('/verify-email');
         
-        // Só limpar storage e redirecionar se não estiver em página de autenticação
-        if (!isAuthPage) {
+        // Se a requisição é de refetch de usuário, não redirecionar (erro no refetch não deve deslogar)
+        const isRefetchRequest = req.url.includes('/usuarios/') || 
+                               req.url.includes('/me');
+        
+        console.log('[authInterceptor] 401 Error - URL:', req.url, '- isRefetch:', isRefetchRequest);
+        
+        // Só limpar storage e redirecionar se:
+        // 1. Não estiver em página de autenticação E
+        // 2. Não for uma requisição de refetch
+        if (!isAuthPage && !isRefetchRequest) {
+          console.log('[authInterceptor] Limpando storage e redirecionando para login');
           localStorage.removeItem('access_token');
           localStorage.removeItem('refresh_token');
           localStorage.removeItem('user');
@@ -66,6 +73,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
           
           // Retornar EMPTY para completar o observable sem erro
           return EMPTY;
+        } else {
+          console.log('[authInterceptor] NÃO limpando storage (isAuthPage:', isAuthPage, '| isRefetch:', isRefetchRequest, ')');
         }
       }
       

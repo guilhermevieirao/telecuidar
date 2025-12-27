@@ -17,259 +17,266 @@ namespace Infrastructure.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.1");
 
-            modelBuilder.Entity("Domain.Entities.Appointment", b =>
+            modelBuilder.Entity("Domain.Entities.Agenda", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime?>("AIDiagnosisGeneratedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("AIDiagnosticHypothesis")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("AISummary")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("AISummaryGeneratedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("AnamnesisJson")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("AttachmentsChatJson")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("BiometricsJson")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("TEXT");
-
-                    b.Property<TimeSpan?>("EndTime")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("MeetLink")
-                        .HasMaxLength(500)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Observation")
-                        .HasMaxLength(2000)
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("PatientId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("PreConsultationJson")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("ProfessionalId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("SoapJson")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("SpecialtyFieldsJson")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("SpecialtyId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Status")
+                    b.Property<bool>("Ativa")
                         .HasColumnType("INTEGER");
 
-                    b.Property<TimeSpan>("Time")
+                    b.Property<DateTime>("AtualizadoEm")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Type")
+                    b.Property<string>("ConfiguracaoDiasJson")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ConfiguracaoGlobalJson")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CriadoEm")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("DataFimValidade")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("DataFimVigencia")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("DataInicioValidade")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("DataInicioVigencia")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("ProfissionalId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("Status")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProfissionalId");
+
+                    b.ToTable("agendas", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.Anamnese", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Alergias")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("AtualizadoEm")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("ConsultaId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CriadoEm")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("HabitosVida")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("HistoriaDoencaAtual")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("HistoriaFamiliar")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("HistoriaPatologicaPregressa")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("MedicamentosEmUso")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Observacoes")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("QueixaPrincipal")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("RevisaoSistemas")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PatientId");
+                    b.HasIndex("ConsultaId")
+                        .IsUnique();
 
-                    b.HasIndex("ProfessionalId");
-
-                    b.HasIndex("SpecialtyId");
-
-                    b.ToTable("Appointments");
+                    b.ToTable("anamneses", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.Attachment", b =>
+            modelBuilder.Entity("Domain.Entities.Anexo", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("AppointmentId")
+                    b.Property<DateTime>("AtualizadoEm")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("FileName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("FilePath")
+                    b.Property<string>("CaminhoArquivo")
                         .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("TEXT");
 
-                    b.Property<long>("FileSize")
+                    b.Property<Guid>("ConsultaId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CriadoEm")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("EnviadoPorId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NomeArquivo")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NomeOriginal")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("TamanhoArquivo")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("FileType")
+                    b.Property<long>("TamanhoBytes")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("TipoArquivo")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Title")
+                    b.Property<string>("TipoMime")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Titulo")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("TEXT");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("AppointmentId");
+                    b.HasIndex("ConsultaId");
 
-                    b.ToTable("Attachments");
+                    b.HasIndex("EnviadoPorId");
+
+                    b.ToTable("anexos", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.AuditLog", b =>
+            modelBuilder.Entity("Domain.Entities.AnexoChat", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Action")
-                        .IsRequired()
-                        .HasMaxLength(100)
+                    b.Property<DateTime>("AtualizadoEm")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<string>("CaminhoArquivo")
+                        .HasMaxLength(1000)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("EntityId")
-                        .IsRequired()
+                    b.Property<Guid>("ConsultaId")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("EntityType")
-                        .IsRequired()
-                        .HasMaxLength(100)
+                    b.Property<DateTime>("CriadoEm")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("IpAddress")
-                        .HasMaxLength(45)
+                    b.Property<DateTime>("EnviadoEm")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("NewValues")
+                    b.Property<Guid>("EnviadoPorId")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("OldValues")
+                    b.Property<string>("Mensagem")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UserAgent")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("AuditLogs");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Invite", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("AcceptedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("CreatedBy")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Email")
+                    b.Property<string>("NomeArquivo")
                         .HasMaxLength(255)
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("ExpiresAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Role")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<Guid?>("SpecialtyId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Token")
+                    b.Property<string>("NomeOriginal")
                         .IsRequired()
-                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("RemetenteId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long?>("TamanhoArquivo")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("TamanhoBytes")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("TipoArquivo")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TipoMime")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedBy");
+                    b.HasIndex("ConsultaId");
 
-                    b.HasIndex("Email");
+                    b.HasIndex("EnviadoPorId");
 
-                    b.HasIndex("Token")
-                        .IsUnique();
+                    b.HasIndex("RemetenteId");
 
-                    b.ToTable("Invites");
+                    b.ToTable("anexos_chat", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.MedicalCertificate", b =>
+            modelBuilder.Entity("Domain.Entities.AtestadoMedico", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("AppointmentId")
+                    b.Property<bool>("AssinadoDigitalmente")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("AssinadoEm")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("CertificateSubject")
-                        .HasMaxLength(500)
+                    b.Property<string>("AssinaturaDigital")
+                        .HasMaxLength(10000)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("CertificateThumbprint")
-                        .HasMaxLength(100)
+                    b.Property<DateTime>("AtualizadoEm")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("CertificadoId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Cid")
                         .HasMaxLength(20)
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid>("ConsultaId")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Conteudo")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime>("CriadoEm")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("DataAssinatura")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("DataEmissao")
@@ -284,106 +291,598 @@ namespace Infrastructure.Migrations
                     b.Property<int?>("DiasAfastamento")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("DigitalSignature")
-                        .HasMaxLength(10000)
+                    b.Property<int>("DiasTotais")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("HashDocumento")
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("DocumentHash")
+                    b.Property<string>("ImpressaoDigitalCertificado")
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Observacoes")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("PatientId")
+                    b.Property<Guid>("PacienteId")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("ProfessionalId")
+                    b.Property<string>("PdfAssinadoBase64")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime?>("SignedAt")
+                    b.Property<Guid>("ProfissionalId")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("SignedPdfBase64")
+                    b.Property<string>("SubjetoCertificado")
+                        .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Tipo")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("TEXT");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("AppointmentId");
+                    b.HasIndex("ConsultaId");
 
-                    b.HasIndex("DocumentHash");
+                    b.HasIndex("HashDocumento");
 
-                    b.HasIndex("PatientId");
+                    b.HasIndex("PacienteId");
 
-                    b.HasIndex("ProfessionalId");
+                    b.HasIndex("ProfissionalId");
 
-                    b.ToTable("MedicalCertificates");
+                    b.ToTable("atestados_medicos", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.Notification", b =>
+            modelBuilder.Entity("Domain.Entities.BloqueioAgenda", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime?>("AprovadoEm")
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("IsRead")
+                    b.Property<Guid?>("AprovadoPorId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("AtualizadoEm")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CriadoEm")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("Data")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("DataFim")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("DataInicio")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Motivo")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("MotivoRejeicao")
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("ProfissionalId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Tipo")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AprovadoPorId");
+
+                    b.HasIndex("ProfissionalId");
+
+                    b.HasIndex("Status");
+
+                    b.ToTable("bloqueios_agenda", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.CertificadoSalvo", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Apelido")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("AtualizadoEm")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CaminhoArquivo")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CpfCnpj")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CriadoEm")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DadosPfxCriptografados")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("DataValidade")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("HashSenha")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ImpressaoDigital")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NomeEmissor")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NomeProprietario")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NomeSujeito")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("ProfissionalId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("RequerSenhaAoUsar")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("SenhaCriptografada")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Thumbprint")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("UsuarioId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ValidoAte")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ValidoDe")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ImpressaoDigital");
+
+                    b.HasIndex("ProfissionalId");
+
+                    b.ToTable("certificados_salvos", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.Consulta", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("AtualizadoEm")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CamposEspecialidadeJson")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CriadoEm")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("Data")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("EspecialidadeId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("HipoteseDiagnosticaIA")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("HipoteseDiagnosticaIAGeradaEm")
+                        .HasColumnType("TEXT");
+
+                    b.Property<TimeSpan>("Horario")
+                        .HasColumnType("TEXT");
+
+                    b.Property<TimeSpan?>("HorarioFim")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("LinkVideo")
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Observacao")
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("PacienteId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("ProfissionalId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ResumoIA")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ResumoIAGeradoEm")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Tipo")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Data");
+
+                    b.HasIndex("EspecialidadeId");
+
+                    b.HasIndex("PacienteId");
+
+                    b.HasIndex("ProfissionalId");
+
+                    b.HasIndex("Status");
+
+                    b.ToTable("consultas", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.Convite", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("AceitoEm")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("AtualizadoEm")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CriadoEm")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("CriadoPorId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("EspecialidadeId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ExpiraEm")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TipoUsuario")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CriadoPorId");
+
+                    b.HasIndex("Email");
+
+                    b.HasIndex("EspecialidadeId");
+
+                    b.HasIndex("Token")
+                        .IsUnique();
+
+                    b.ToTable("convites", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.DadosBiometricos", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Altura")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("AtualizadoEm")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CircunferenciaAbdominal")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("ConsultaId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CriadoEm")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FrequenciaCardiaca")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FrequenciaRespiratoria")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Glicemia")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Imc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Observacoes")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Peso")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PressaoArterial")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SaturacaoOxigenio")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Temperatura")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TipoGlicemia")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConsultaId")
+                        .IsUnique();
+
+                    b.ToTable("dados_biometricos", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.Especialidade", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("AtualizadoEm")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CamposPersonalizadosJson")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CriadoEm")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Nome");
+
+                    b.ToTable("especialidades", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.HistoricoClinico", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Alergias")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("AlergiasJson")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("AtualizadoEm")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CirurgiasAnteriores")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CirurgiasAnterioresJson")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CondicoesCronicas")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CriadoEm")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DoencasCronicasJson")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("HabitosSociaisJson")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("HistoricoFamiliar")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("HistoricoFamiliarJson")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("MedicamentosEmUsoJson")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("MedicamentosUsoContinuo")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Observacoes")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("PacienteId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TipoSanguineo")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("VacinacoesJson")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PacienteId")
+                        .IsUnique();
+
+                    b.ToTable("historicos_clinicos", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.LogAuditoria", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Acao")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("AtualizadoEm")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CriadoEm")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DadosAntigos")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DadosNovos")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("EnderecoIp")
+                        .HasMaxLength(45)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Entidade")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("EntidadeId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TipoEntidade")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserAgent")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("UsuarioId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ValoresAntigos")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ValoresNovos")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Acao");
+
+                    b.HasIndex("CriadoEm");
+
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("logs_auditoria", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.Notificacao", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("AtualizadoEm")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CriadoEm")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Lida")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Link")
                         .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Message")
+                    b.Property<string>("Mensagem")
                         .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Type")
+                    b.Property<string>("Tipo")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<string>("Titulo")
+                        .IsRequired()
+                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid>("UsuarioId")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("Lida");
 
-                    b.ToTable("Notifications");
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("notificacoes", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.PatientProfile", b =>
+            modelBuilder.Entity("Domain.Entities.PerfilPaciente", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Address")
-                        .HasMaxLength(500)
+                    b.Property<DateTime>("AtualizadoEm")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime?>("BirthDate")
+                    b.Property<string>("Cep")
+                        .HasMaxLength(10)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("City")
+                    b.Property<string>("Cidade")
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
@@ -391,362 +890,402 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(15)
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime>("CriadoEm")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("FatherName")
-                        .HasMaxLength(200)
+                    b.Property<DateTime?>("DataNascimento")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Gender")
-                        .HasMaxLength(20)
+                    b.Property<string>("Endereco")
+                        .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("MotherName")
-                        .HasMaxLength(200)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Nationality")
-                        .HasMaxLength(100)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("SocialName")
-                        .HasMaxLength(200)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("State")
+                    b.Property<string>("Estado")
                         .HasMaxLength(2)
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<string>("Nacionalidade")
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<string>("NomeMae")
+                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("ZipCode")
-                        .HasMaxLength(10)
+                    b.Property<string>("NomePai")
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NomeSocial")
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Sexo")
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("UsuarioId")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Cns");
 
-                    b.HasIndex("UserId")
+                    b.HasIndex("UsuarioId")
                         .IsUnique();
 
-                    b.ToTable("PatientProfiles");
+                    b.ToTable("perfis_paciente", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.Prescription", b =>
+            modelBuilder.Entity("Domain.Entities.PerfilProfissional", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("AppointmentId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CertificateSubject")
-                        .HasMaxLength(500)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CertificateThumbprint")
-                        .HasMaxLength(100)
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("DigitalSignature")
-                        .HasMaxLength(10000)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("DocumentHash")
-                        .HasMaxLength(100)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ItemsJson")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("PatientId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("ProfessionalId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("SignedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("SignedPdfBase64")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AppointmentId");
-
-                    b.HasIndex("DocumentHash");
-
-                    b.HasIndex("PatientId");
-
-                    b.HasIndex("ProfessionalId");
-
-                    b.ToTable("Prescriptions");
-                });
-
-            modelBuilder.Entity("Domain.Entities.ProfessionalProfile", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Address")
-                        .HasMaxLength(500)
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("BirthDate")
+                    b.Property<DateTime>("AtualizadoEm")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Cbo")
                         .HasMaxLength(10)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("City")
+                    b.Property<string>("Cep")
+                        .HasMaxLength(10)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Cidade")
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime>("CriadoEm")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Crm")
                         .HasMaxLength(20)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Gender")
-                        .HasMaxLength(20)
+                    b.Property<DateTime?>("DataNascimento")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Nationality")
-                        .HasMaxLength(100)
+                    b.Property<string>("Endereco")
+                        .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid?>("SpecialtyId")
+                    b.Property<Guid?>("EspecialidadeId")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("State")
+                    b.Property<string>("Estado")
                         .HasMaxLength(2)
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<string>("Nacionalidade")
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<string>("NumeroRegistro")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("ZipCode")
-                        .HasMaxLength(10)
+                    b.Property<string>("Sexo")
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TipoRegistro")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("UsuarioId")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Crm");
 
-                    b.HasIndex("SpecialtyId");
+                    b.HasIndex("EspecialidadeId");
 
-                    b.HasIndex("UserId")
+                    b.HasIndex("UsuarioId")
                         .IsUnique();
 
-                    b.ToTable("ProfessionalProfiles");
+                    b.ToTable("perfis_profissional", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.SavedCertificate", b =>
+            modelBuilder.Entity("Domain.Entities.PreConsulta", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<string>("Alergias")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("EncryptedPassword")
+                    b.Property<string>("Altura")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("EncryptedPfxData")
-                        .IsRequired()
+                    b.Property<string>("AtividadeFisica")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("IssuerName")
-                        .IsRequired()
+                    b.Property<DateTime>("AtualizadoEm")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
+                    b.Property<string>("Cirurgias")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("ProfessionalId")
+                    b.Property<string>("CondicoesCronicas")
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("RequirePasswordOnUse")
+                    b.Property<Guid>("ConsultaId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ConsumoAlcool")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CriadoEm")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DataNascimento")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FrequenciaCardiaca")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("InicioSintomas")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("IntensidadeDor")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("SubjectName")
-                        .IsRequired()
+                    b.Property<string>("Medicamentos")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Thumbprint")
-                        .IsRequired()
+                    b.Property<string>("NomeCompleto")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<string>("ObservacoesAdicionais")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("ValidFrom")
+                    b.Property<string>("ObservacoesHabitos")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("ValidTo")
+                    b.Property<string>("ObservacoesHistorico")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ObservacoesSinaisVitais")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ObservacoesSintomas")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Peso")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PressaoArterial")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SaturacaoOxigenio")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SintomasPrincipais")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Tabagismo")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Temperatura")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProfessionalId");
+                    b.HasIndex("ConsultaId")
+                        .IsUnique();
 
-                    b.ToTable("SavedCertificates");
+                    b.ToTable("pre_consultas", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.Schedule", b =>
+            modelBuilder.Entity("Domain.Entities.Prescricao", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("DaysConfigJson")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("GlobalConfigJson")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("IsActive")
+                    b.Property<bool>("AssinadoDigitalmente")
                         .HasColumnType("INTEGER");
 
-                    b.Property<Guid>("ProfessionalId")
+                    b.Property<DateTime?>("AssinadoEm")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<string>("AssinaturaDigital")
+                        .HasMaxLength(10000)
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime?>("ValidityEndDate")
+                    b.Property<DateTime>("AtualizadoEm")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("ValidityStartDate")
+                    b.Property<Guid?>("CertificadoId")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProfessionalId");
-
-                    b.ToTable("Schedules");
-                });
-
-            modelBuilder.Entity("Domain.Entities.ScheduleBlock", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("ConsultaId")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime?>("ApprovedAt")
+                    b.Property<DateTime>("CriadoEm")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid?>("ApprovedBy")
+                    b.Property<DateTime?>("DataAssinatura")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<string>("HashDocumento")
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime?>("Date")
+                    b.Property<string>("ImpressaoDigitalCertificado")
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("ProfessionalId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Reason")
+                    b.Property<string>("ItensJson")
                         .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Observacoes")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("PacienteId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PdfAssinadoBase64")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("ProfissionalId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SubjetoCertificado")
                         .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("RejectionReason")
-                        .HasMaxLength(500)
+                    b.Property<string>("Tipo")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Status")
+                    b.Property<int?>("ValidadeEmDias")
                         .HasColumnType("INTEGER");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApprovedBy");
+                    b.HasIndex("ConsultaId");
 
-                    b.HasIndex("ProfessionalId");
+                    b.HasIndex("HashDocumento");
 
-                    b.ToTable("ScheduleBlocks");
+                    b.HasIndex("PacienteId");
+
+                    b.HasIndex("ProfissionalId");
+
+                    b.ToTable("prescricoes", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.Specialty", b =>
+            modelBuilder.Entity("Domain.Entities.RegistroSoap", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime>("AtualizadoEm")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("CustomFieldsJson")
+                    b.Property<string>("Avaliacao")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Description")
+                    b.Property<Guid>("ConsultaId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CriadoEm")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Objetivo")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Plano")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Subjetivo")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConsultaId")
+                        .IsUnique();
+
+                    b.ToTable("registros_soap", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.UploadMobile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("AtualizadoEm")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CaminhoArquivo")
                         .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
+                    b.Property<Guid?>("ConsultaId")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Status")
+                    b.Property<DateTime>("CriadoEm")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ExpiraEm")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NomeArquivo")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Origem")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Processado")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<long>("TamanhoArquivo")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("TipoArquivo")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("UsuarioId")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Specialties");
+                    b.HasIndex("ConsultaId");
+
+                    b.HasIndex("ExpiraEm");
+
+                    b.HasIndex("Token")
+                        .IsUnique();
+
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("uploads_mobile", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.User", b =>
+            modelBuilder.Entity("Domain.Entities.Usuario", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("AtualizadoEm")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Avatar")
@@ -758,7 +1297,7 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(14)
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime>("CriadoEm")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
@@ -766,61 +1305,79 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("EmailVerificationToken")
+                    b.Property<string>("EmailPendente")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime?>("EmailVerificationTokenExpiry")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("EmailVerified")
+                    b.Property<bool>("EmailVerificado")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("LastName")
+                    b.Property<DateTime?>("ExpiracaoRefreshToken")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ExpiracaoTokenEmailPendente")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ExpiracaoTokenResetSenha")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ExpiracaoTokenVerificacaoEmail")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("PasswordResetToken")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("PasswordResetTokenExpiry")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("PendingEmail")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("PendingEmailToken")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("PendingEmailTokenExpiry")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Phone")
-                        .HasMaxLength(20)
+                    b.Property<string>("NovoEmailPendente")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("RefreshToken")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime?>("RefreshTokenExpiry")
+                    b.Property<DateTime?>("RefreshTokenExpira")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Role")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("SenhaHash")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Sobrenome")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Status")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<string>("Telefone")
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Tipo")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("TokenEmailPendente")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TokenRedefinicaoSenha")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("TokenRedefinicaoSenhaExpira")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TokenResetSenha")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TokenTrocaEmail")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("TokenTrocaEmailExpira")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TokenVerificacaoEmail")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("TokenVerificacaoEmailExpira")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -831,234 +1388,421 @@ namespace Infrastructure.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.HasIndex("Phone")
+                    b.HasIndex("Telefone");
+
+                    b.ToTable("usuarios", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.VerificacaoEmail", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("AtualizadoEm")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CriadoEm")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ExpiraEm")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Tipo")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("UsuarioId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Utilizado")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("UtilizadoEm")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Token")
                         .IsUnique();
 
-                    b.ToTable("Users");
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("verificacoes_email", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.Appointment", b =>
+            modelBuilder.Entity("Domain.Entities.Agenda", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "Patient")
-                        .WithMany("AppointmentsAsPatient")
-                        .HasForeignKey("PatientId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.User", "Professional")
-                        .WithMany("AppointmentsAsProfessional")
-                        .HasForeignKey("ProfessionalId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.Specialty", "Specialty")
-                        .WithMany("Appointments")
-                        .HasForeignKey("SpecialtyId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Patient");
-
-                    b.Navigation("Professional");
-
-                    b.Navigation("Specialty");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Attachment", b =>
-                {
-                    b.HasOne("Domain.Entities.Appointment", "Appointment")
-                        .WithMany("Attachments")
-                        .HasForeignKey("AppointmentId")
+                    b.HasOne("Domain.Entities.Usuario", "Profissional")
+                        .WithMany("Agendas")
+                        .HasForeignKey("ProfissionalId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Appointment");
+                    b.Navigation("Profissional");
                 });
 
-            modelBuilder.Entity("Domain.Entities.AuditLog", b =>
+            modelBuilder.Entity("Domain.Entities.Anamnese", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "User")
-                        .WithMany("AuditLogs")
-                        .HasForeignKey("UserId")
+                    b.HasOne("Domain.Entities.Consulta", "Consulta")
+                        .WithOne("Anamnese")
+                        .HasForeignKey("Domain.Entities.Anamnese", "ConsultaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Consulta");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Anexo", b =>
+                {
+                    b.HasOne("Domain.Entities.Consulta", "Consulta")
+                        .WithMany("Anexos")
+                        .HasForeignKey("ConsultaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Usuario", "EnviadoPor")
+                        .WithMany()
+                        .HasForeignKey("EnviadoPorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Consulta");
+
+                    b.Navigation("EnviadoPor");
+                });
+
+            modelBuilder.Entity("Domain.Entities.AnexoChat", b =>
+                {
+                    b.HasOne("Domain.Entities.Consulta", "Consulta")
+                        .WithMany("AnexosChat")
+                        .HasForeignKey("ConsultaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Usuario", "EnviadoPor")
+                        .WithMany()
+                        .HasForeignKey("EnviadoPorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Usuario", "Remetente")
+                        .WithMany()
+                        .HasForeignKey("RemetenteId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Consulta");
+
+                    b.Navigation("EnviadoPor");
+
+                    b.Navigation("Remetente");
+                });
+
+            modelBuilder.Entity("Domain.Entities.AtestadoMedico", b =>
+                {
+                    b.HasOne("Domain.Entities.Consulta", "Consulta")
+                        .WithMany("Atestados")
+                        .HasForeignKey("ConsultaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Usuario", "Paciente")
+                        .WithMany()
+                        .HasForeignKey("PacienteId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Usuario", "Profissional")
+                        .WithMany()
+                        .HasForeignKey("ProfissionalId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Consulta");
+
+                    b.Navigation("Paciente");
+
+                    b.Navigation("Profissional");
+                });
+
+            modelBuilder.Entity("Domain.Entities.BloqueioAgenda", b =>
+                {
+                    b.HasOne("Domain.Entities.Usuario", "AprovadoPor")
+                        .WithMany()
+                        .HasForeignKey("AprovadoPorId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Invite", b =>
-                {
-                    b.HasOne("Domain.Entities.User", "CreatedByUser")
-                        .WithMany()
-                        .HasForeignKey("CreatedBy")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("CreatedByUser");
-                });
-
-            modelBuilder.Entity("Domain.Entities.MedicalCertificate", b =>
-                {
-                    b.HasOne("Domain.Entities.Appointment", "Appointment")
-                        .WithMany()
-                        .HasForeignKey("AppointmentId")
+                    b.HasOne("Domain.Entities.Usuario", "Profissional")
+                        .WithMany("BloqueiosAgenda")
+                        .HasForeignKey("ProfissionalId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.User", "Patient")
-                        .WithMany()
-                        .HasForeignKey("PatientId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                    b.Navigation("AprovadoPor");
 
-                    b.HasOne("Domain.Entities.User", "Professional")
-                        .WithMany()
-                        .HasForeignKey("ProfessionalId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Appointment");
-
-                    b.Navigation("Patient");
-
-                    b.Navigation("Professional");
+                    b.Navigation("Profissional");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Notification", b =>
+            modelBuilder.Entity("Domain.Entities.CertificadoSalvo", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "User")
-                        .WithMany("Notifications")
-                        .HasForeignKey("UserId")
+                    b.HasOne("Domain.Entities.Usuario", "Profissional")
+                        .WithMany()
+                        .HasForeignKey("ProfissionalId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("Profissional");
                 });
 
-            modelBuilder.Entity("Domain.Entities.PatientProfile", b =>
+            modelBuilder.Entity("Domain.Entities.Consulta", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "User")
-                        .WithOne("PatientProfile")
-                        .HasForeignKey("Domain.Entities.PatientProfile", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Prescription", b =>
-                {
-                    b.HasOne("Domain.Entities.Appointment", "Appointment")
-                        .WithMany()
-                        .HasForeignKey("AppointmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.User", "Patient")
-                        .WithMany()
-                        .HasForeignKey("PatientId")
+                    b.HasOne("Domain.Entities.Especialidade", "Especialidade")
+                        .WithMany("Consultas")
+                        .HasForeignKey("EspecialidadeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.User", "Professional")
-                        .WithMany()
-                        .HasForeignKey("ProfessionalId")
+                    b.HasOne("Domain.Entities.Usuario", "Paciente")
+                        .WithMany("ConsultasComoPaciente")
+                        .HasForeignKey("PacienteId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Appointment");
+                    b.HasOne("Domain.Entities.Usuario", "Profissional")
+                        .WithMany("ConsultasComoProfissional")
+                        .HasForeignKey("ProfissionalId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.Navigation("Patient");
+                    b.Navigation("Especialidade");
 
-                    b.Navigation("Professional");
+                    b.Navigation("Paciente");
+
+                    b.Navigation("Profissional");
                 });
 
-            modelBuilder.Entity("Domain.Entities.ProfessionalProfile", b =>
+            modelBuilder.Entity("Domain.Entities.Convite", b =>
                 {
-                    b.HasOne("Domain.Entities.Specialty", "Specialty")
-                        .WithMany("Professionals")
-                        .HasForeignKey("SpecialtyId")
+                    b.HasOne("Domain.Entities.Usuario", "CriadoPor")
+                        .WithMany()
+                        .HasForeignKey("CriadoPorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Especialidade", "Especialidade")
+                        .WithMany()
+                        .HasForeignKey("EspecialidadeId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("Domain.Entities.User", "User")
-                        .WithOne("ProfessionalProfile")
-                        .HasForeignKey("Domain.Entities.ProfessionalProfile", "UserId")
+                    b.Navigation("CriadoPor");
+
+                    b.Navigation("Especialidade");
+                });
+
+            modelBuilder.Entity("Domain.Entities.DadosBiometricos", b =>
+                {
+                    b.HasOne("Domain.Entities.Consulta", "Consulta")
+                        .WithOne("DadosBiometricos")
+                        .HasForeignKey("Domain.Entities.DadosBiometricos", "ConsultaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Specialty");
-
-                    b.Navigation("User");
+                    b.Navigation("Consulta");
                 });
 
-            modelBuilder.Entity("Domain.Entities.SavedCertificate", b =>
+            modelBuilder.Entity("Domain.Entities.HistoricoClinico", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "Professional")
+                    b.HasOne("Domain.Entities.Usuario", "Paciente")
                         .WithMany()
-                        .HasForeignKey("ProfessionalId")
+                        .HasForeignKey("PacienteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Professional");
+                    b.Navigation("Paciente");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Schedule", b =>
+            modelBuilder.Entity("Domain.Entities.LogAuditoria", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "Professional")
-                        .WithMany("Schedules")
-                        .HasForeignKey("ProfessionalId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Professional");
-                });
-
-            modelBuilder.Entity("Domain.Entities.ScheduleBlock", b =>
-                {
-                    b.HasOne("Domain.Entities.User", "Approver")
-                        .WithMany()
-                        .HasForeignKey("ApprovedBy")
+                    b.HasOne("Domain.Entities.Usuario", "Usuario")
+                        .WithMany("LogsAuditoria")
+                        .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("Domain.Entities.User", "Professional")
-                        .WithMany("ScheduleBlocks")
-                        .HasForeignKey("ProfessionalId")
+                    b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Notificacao", b =>
+                {
+                    b.HasOne("Domain.Entities.Usuario", "Usuario")
+                        .WithMany("Notificacoes")
+                        .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Approver");
-
-                    b.Navigation("Professional");
+                    b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Appointment", b =>
+            modelBuilder.Entity("Domain.Entities.PerfilPaciente", b =>
                 {
-                    b.Navigation("Attachments");
+                    b.HasOne("Domain.Entities.Usuario", "Usuario")
+                        .WithOne("PerfilPaciente")
+                        .HasForeignKey("Domain.Entities.PerfilPaciente", "UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Specialty", b =>
+            modelBuilder.Entity("Domain.Entities.PerfilProfissional", b =>
                 {
-                    b.Navigation("Appointments");
+                    b.HasOne("Domain.Entities.Especialidade", "Especialidade")
+                        .WithMany("Profissionais")
+                        .HasForeignKey("EspecialidadeId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
-                    b.Navigation("Professionals");
+                    b.HasOne("Domain.Entities.Usuario", "Usuario")
+                        .WithOne("PerfilProfissional")
+                        .HasForeignKey("Domain.Entities.PerfilProfissional", "UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Especialidade");
+
+                    b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("Domain.Entities.User", b =>
+            modelBuilder.Entity("Domain.Entities.PreConsulta", b =>
                 {
-                    b.Navigation("AppointmentsAsPatient");
+                    b.HasOne("Domain.Entities.Consulta", "Consulta")
+                        .WithOne("PreConsulta")
+                        .HasForeignKey("Domain.Entities.PreConsulta", "ConsultaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("AppointmentsAsProfessional");
+                    b.Navigation("Consulta");
+                });
 
-                    b.Navigation("AuditLogs");
+            modelBuilder.Entity("Domain.Entities.Prescricao", b =>
+                {
+                    b.HasOne("Domain.Entities.Consulta", "Consulta")
+                        .WithMany("Prescricoes")
+                        .HasForeignKey("ConsultaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Notifications");
+                    b.HasOne("Domain.Entities.Usuario", "Paciente")
+                        .WithMany()
+                        .HasForeignKey("PacienteId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.Navigation("PatientProfile");
+                    b.HasOne("Domain.Entities.Usuario", "Profissional")
+                        .WithMany()
+                        .HasForeignKey("ProfissionalId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.Navigation("ProfessionalProfile");
+                    b.Navigation("Consulta");
 
-                    b.Navigation("ScheduleBlocks");
+                    b.Navigation("Paciente");
 
-                    b.Navigation("Schedules");
+                    b.Navigation("Profissional");
+                });
+
+            modelBuilder.Entity("Domain.Entities.RegistroSoap", b =>
+                {
+                    b.HasOne("Domain.Entities.Consulta", "Consulta")
+                        .WithOne("Soap")
+                        .HasForeignKey("Domain.Entities.RegistroSoap", "ConsultaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Consulta");
+                });
+
+            modelBuilder.Entity("Domain.Entities.UploadMobile", b =>
+                {
+                    b.HasOne("Domain.Entities.Consulta", "Consulta")
+                        .WithMany()
+                        .HasForeignKey("ConsultaId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Domain.Entities.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Consulta");
+
+                    b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("Domain.Entities.VerificacaoEmail", b =>
+                {
+                    b.HasOne("Domain.Entities.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Consulta", b =>
+                {
+                    b.Navigation("Anamnese");
+
+                    b.Navigation("Anexos");
+
+                    b.Navigation("AnexosChat");
+
+                    b.Navigation("Atestados");
+
+                    b.Navigation("DadosBiometricos");
+
+                    b.Navigation("PreConsulta");
+
+                    b.Navigation("Prescricoes");
+
+                    b.Navigation("Soap");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Especialidade", b =>
+                {
+                    b.Navigation("Consultas");
+
+                    b.Navigation("Profissionais");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Usuario", b =>
+                {
+                    b.Navigation("Agendas");
+
+                    b.Navigation("BloqueiosAgenda");
+
+                    b.Navigation("ConsultasComoPaciente");
+
+                    b.Navigation("ConsultasComoProfissional");
+
+                    b.Navigation("LogsAuditoria");
+
+                    b.Navigation("Notificacoes");
+
+                    b.Navigation("PerfilPaciente");
+
+                    b.Navigation("PerfilProfissional");
                 });
 #pragma warning restore 612, 618
         }

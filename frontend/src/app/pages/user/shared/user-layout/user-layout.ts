@@ -10,6 +10,7 @@ import { NotificationsService, Notification } from '@core/services/notifications
 import { RealTimeService, UserNotificationUpdate } from '@core/services/real-time.service';
 import { User } from '@core/models/auth.model';
 import { Subscription } from 'rxjs';
+import { filter, take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-user-layout',
@@ -52,14 +53,29 @@ export class UserLayoutComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    console.log('[UserLayout] ngOnInit iniciado');
     this.basePath = this.getBasePath();
     // Subscribe to auth state to get user updates
     this.authService.authState$.subscribe(state => {
       this.user = state.user;
     });
     this.loadUserData();
-    this.loadUnreadNotifications();
-    this.loadNotifications();
+    
+    // Aguardar explicitamente o authState$ confirmar autenticação
+    console.log('[UserLayout] Aguardando authState$ com token...');
+    this.authService.authState$
+      .pipe(
+        filter(state => {
+          console.log('[UserLayout] authState$ emitido:', { isAuthenticated: state.isAuthenticated, hasToken: !!state.accessToken });
+          return state.isAuthenticated && state.accessToken !== null;
+        }),
+        take(1)
+      )
+      .subscribe(() => {
+        console.log('[UserLayout] authState$ confirmado, carregando notificações...');
+        this.loadUnreadNotifications();
+        this.loadNotifications();
+      });
     
     // Initialize real-time connection for notifications
     if (isPlatformBrowser(this.platformId)) {
@@ -67,7 +83,9 @@ export class UserLayoutComponent implements OnInit, OnDestroy {
       
       // Fallback polling (reduced frequency since we have real-time now)
       this.notificationPollingInterval = setInterval(() => {
-        this.loadUnreadNotifications();
+        if (this.authService.isAuthenticated()) {
+          this.loadUnreadNotifications();
+        }
         if (this.isNotificationDropdownOpen) {
           this.loadNotifications();
         }
@@ -169,15 +187,17 @@ export class UserLayoutComponent implements OnInit, OnDestroy {
   }
 
   private loadUnreadNotifications(): void {
+    console.log('[UserLayout] Carregando contagem de notificações não lidas...');
     this.notificationsService.getUnreadCount().subscribe({
       next: (response) => {
+        console.log('[UserLayout] Contagem de notificações carregada:', response.contagem);
         setTimeout(() => {
-          this.unreadNotifications = response.count;
+          this.unreadNotifications = response.contagem;
           this.cdr.detectChanges();
         });
       },
       error: (error) => {
-        console.error('Erro ao carregar contagem de notificações:', error);
+        console.error('[UserLayout] Erro ao carregar contagem de notificações:', error);
         setTimeout(() => {
           this.unreadNotifications = 0;
           this.cdr.detectChanges();
@@ -187,8 +207,10 @@ export class UserLayoutComponent implements OnInit, OnDestroy {
   }
 
   private loadNotifications(): void {
+    console.log('[UserLayout] Carregando lista de notificações...');
     this.notificationsService.getNotifications({}, 1, 5).subscribe({
       next: (response) => {
+        console.log('[UserLayout] Lista de notificações carregada:', response.data.length);
         setTimeout(() => {
           this.notifications = response.data;
           this.cdr.detectChanges();

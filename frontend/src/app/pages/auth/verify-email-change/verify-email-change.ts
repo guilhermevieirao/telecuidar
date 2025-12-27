@@ -90,7 +90,7 @@ export class VerifyEmailChangeComponent {
             this.isLoading = false;
             this.verificationFailed = false;
             this.emailChanged = true;
-            this.newEmail = response.user?.email || '';
+            this.newEmail = response.usuario?.email || '';
             this.successMessage = 'E-mail alterado com sucesso!';
             this.cdr.detectChanges();
           });

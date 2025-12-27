@@ -47,21 +47,14 @@ export const routes: Routes = [
     component: LandingComponent
   },
   { path: 'entrar', component: LoginComponent, canActivate: [guestGuard] },
-  { path: 'registrar', component: RegisterComponent, canActivate: [guestGuard] },
+  { path: 'cadastrar', component: RegisterComponent, canActivate: [guestGuard] },
+  { path: 'registrar', redirectTo: 'cadastrar', pathMatch: 'full' },
   { path: 'esqueci-senha', component: ForgotPasswordComponent },
-  { path: 'reset-password', component: ResetPasswordComponent },
-  { path: 'verify-email', component: VerifyEmailComponent },
+  { path: 'redefinir-senha', component: ResetPasswordComponent },
+  { path: 'verificar-email', component: VerifyEmailComponent },
+  { path: 'verificar-troca-email', component: VerifyEmailChangeComponent },
   {
-    path: 'auth',
-    children: [
-      { path: 'forgot-password', component: ForgotPasswordComponent },
-      { path: 'reset-password', component: ResetPasswordComponent },
-      { path: 'verify-email', component: VerifyEmailComponent },
-      { path: 'verify-email-change', component: VerifyEmailChangeComponent },
-      { path: '', redirectTo: '/entrar', pathMatch: 'full' }
-    ]
-  },
-  {
+
     path: 'mobile-upload',
     component: MobileUploadComponent
   },

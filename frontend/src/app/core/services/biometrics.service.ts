@@ -63,7 +63,7 @@ export class BiometricsService implements OnDestroy {
    * Salva dados biométricos (usado pelo paciente)
    */
   saveBiometrics(appointmentId: string, data: BiometricsData): void {
-    const url = `${environment.apiUrl}/appointments/${appointmentId}/biometrics`;
+    const url = `${environment.apiUrl}/consultas/${appointmentId}/biometricos`;
     
     this.http.put<{ message: string; data: BiometricsData }>(url, data).subscribe({
       next: (response) => {
@@ -81,7 +81,7 @@ export class BiometricsService implements OnDestroy {
    * Busca dados biométricos do servidor
    */
   private fetchBiometrics(appointmentId: string): void {
-    const url = `${environment.apiUrl}/appointments/${appointmentId}/biometrics`;
+    const url = `${environment.apiUrl}/consultas/${appointmentId}/biometricos`;
     
     this.http.get<BiometricsData>(url).subscribe({
       next: (data) => {

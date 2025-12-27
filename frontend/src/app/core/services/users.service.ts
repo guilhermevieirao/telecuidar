@@ -5,143 +5,167 @@ import { environment } from '@env/environment';
 
 const API_BASE_URL = environment.apiUrl;
 
-export type UserRole = 'PATIENT' | 'PROFESSIONAL' | 'ADMIN';
-export type UserStatus = 'Active' | 'Inactive';
+export type TipoUsuario = 'Paciente' | 'Profissional' | 'Administrador';
+export type StatusUsuario = 'Ativo' | 'Inativo';
+
+// Aliases para compatibilidade
+export type UserRole = TipoUsuario;
+export type UserStatus = StatusUsuario;
 
 // ============================================
 // Interfaces de Perfis Específicos
 // ============================================
 
-export interface PatientProfile {
+export interface PerfilPaciente {
   id?: string;
   cns?: string;
-  socialName?: string;
-  gender?: string;
-  birthDate?: string;
-  motherName?: string;
-  fatherName?: string;
-  nationality?: string;
-  zipCode?: string;
-  address?: string;
-  city?: string;
-  state?: string;
+  nomeSocial?: string;
+  sexo?: string;
+  dataNascimento?: string;
+  nomeMae?: string;
+  nomePai?: string;
+  nacionalidade?: string;
+  cep?: string;
+  endereco?: string;
+  cidade?: string;
+  estado?: string;
 }
 
-export interface ProfessionalProfile {
+export interface PerfilProfissional {
   id?: string;
   crm?: string;
   cbo?: string;
-  specialtyId?: string;
-  specialtyName?: string;
-  gender?: string;
-  birthDate?: string;
-  nationality?: string;
-  zipCode?: string;
-  address?: string;
-  city?: string;
-  state?: string;
+  especialidadeId?: string;
+  nomeEspecialidade?: string;
+  sexo?: string;
+  dataNascimento?: string;
+  nacionalidade?: string;
+  cep?: string;
+  endereco?: string;
+  cidade?: string;
+  estado?: string;
 }
 
-export interface CreateUpdatePatientProfile {
+// Aliases para compatibilidade
+export type PatientProfile = PerfilPaciente;
+export type ProfessionalProfile = PerfilProfissional;
+
+export interface CriarAtualizarPerfilPaciente {
   cns?: string;
-  socialName?: string;
-  gender?: string;
-  birthDate?: string;
-  motherName?: string;
-  fatherName?: string;
-  nationality?: string;
-  zipCode?: string;
-  address?: string;
-  city?: string;
-  state?: string;
+  nomeSocial?: string;
+  sexo?: string;
+  dataNascimento?: string;
+  nomeMae?: string;
+  nomePai?: string;
+  nacionalidade?: string;
+  cep?: string;
+  endereco?: string;
+  cidade?: string;
+  estado?: string;
 }
 
-export interface CreateUpdateProfessionalProfile {
+export interface CriarAtualizarPerfilProfissional {
   crm?: string;
   cbo?: string;
-  specialtyId?: string;
-  gender?: string;
-  birthDate?: string;
-  nationality?: string;
-  zipCode?: string;
-  address?: string;
-  city?: string;
-  state?: string;
+  especialidadeId?: string;
+  sexo?: string;
+  dataNascimento?: string;
+  nacionalidade?: string;
+  cep?: string;
+  endereco?: string;
+  cidade?: string;
+  estado?: string;
 }
+
+// Aliases para compatibilidade
+export type CreateUpdatePatientProfile = CriarAtualizarPerfilPaciente;
+export type CreateUpdateProfessionalProfile = CriarAtualizarPerfilProfissional;
 
 // ============================================
 // Interface de Usuário com Perfis
 // ============================================
 
-export interface User {
+export interface Usuario {
   id: string;
-  name: string;
-  lastName: string;
+  nome: string;
+  sobrenome: string;
   email: string;
-  role: UserRole;
+  tipo: TipoUsuario;
   cpf: string;
-  phone?: string;
-  status: UserStatus;
-  createdAt: string;
-  updatedAt?: string;
+  telefone?: string;
+  status: StatusUsuario;
+  criadoEm: string;
+  atualizadoEm?: string;
   avatar?: string;
-  emailVerified?: boolean;
+  emailVerificado?: boolean;
   
   // Perfis específicos por tipo de usuário
-  patientProfile?: PatientProfile;
-  professionalProfile?: ProfessionalProfile;
+  perfilPaciente?: PerfilPaciente;
+  perfilProfissional?: PerfilProfissional;
 }
 
-export interface CreateUserDto {
-  name: string;
-  lastName: string;
+// Alias para compatibilidade
+export type User = Usuario;
+
+export interface CriarUsuarioDto {
+  nome: string;
+  sobrenome: string;
   email: string;
   cpf: string;
-  phone?: string;
-  password: string;
-  role: UserRole;
-  status: UserStatus;
+  telefone?: string;
+  senha: string;
+  tipo: TipoUsuario;
   
   // Perfis específicos por tipo de usuário
-  patientProfile?: CreateUpdatePatientProfile;
-  professionalProfile?: CreateUpdateProfessionalProfile;
+  perfilPaciente?: CriarAtualizarPerfilPaciente;
+  perfilProfissional?: CriarAtualizarPerfilProfissional;
 }
 
-export interface UpdateUserDto {
-  name?: string;
-  lastName?: string;
-  phone?: string;
+// Alias para compatibilidade
+export type CreateUserDto = CriarUsuarioDto;
+
+export interface AtualizarUsuarioDto {
+  nome?: string;
+  sobrenome?: string;
+  telefone?: string;
   avatar?: string;
-  status?: UserStatus;
-  role?: UserRole;
+  status?: StatusUsuario;
+  tipo?: TipoUsuario;
   
   // Perfis específicos por tipo de usuário
-  patientProfile?: CreateUpdatePatientProfile;
-  professionalProfile?: CreateUpdateProfessionalProfile;
+  perfilPaciente?: CriarAtualizarPerfilPaciente;
+  perfilProfissional?: CriarAtualizarPerfilProfissional;
 }
+
+// Alias para compatibilidade
+export type UpdateUserDto = AtualizarUsuarioDto;
 
 export interface UsersFilter {
-  search?: string;
-  role?: string;
+  busca?: string;
+  tipo?: string;
   status?: string;
-  specialtyId?: string;
+  especialidadeId?: string;
 }
 
-export type UsersSortOptions = 'name' | 'email' | 'createdAt' | 'role' | 'status';
+// Alias para compatibilidade
+export type UsersSortOptions = 'nome' | 'email' | 'criadoEm' | 'tipo' | 'status';
 
-export interface PaginatedResponse<T> {
-  data: T[];
+export interface RespostaPaginada<T> {
+  dados: T[];
   total: number;
-  page: number;
-  pageSize: number;
-  totalPages: number;
+  pagina: number;
+  tamanhoPagina: number;
+  totalPaginas: number;
 }
+
+// Alias para compatibilidade
+export type PaginatedResponse<T> = RespostaPaginada<T>;
 
 @Injectable({
   providedIn: 'root'
 })
 export class UsersService {
-  private apiUrl = `${API_BASE_URL}/users`;
+  private apiUrl = `${API_BASE_URL}/usuarios`;
 
   constructor(private http: HttpClient) {}
 
@@ -149,37 +173,37 @@ export class UsersService {
     filter?: UsersFilter,
     page: number = 1,
     pageSize: number = 10
-  ): Observable<PaginatedResponse<User>> {
+  ): Observable<RespostaPaginada<Usuario>> {
     let params = new HttpParams()
-      .set('page', page.toString())
-      .set('pageSize', pageSize.toString());
+      .set('pagina', page.toString())
+      .set('tamanhoPagina', pageSize.toString());
 
-    if (filter?.search) {
-      params = params.set('search', filter.search);
+    if (filter?.busca) {
+      params = params.set('busca', filter.busca);
     }
-    if (filter?.role) {
-      params = params.set('role', filter.role);
+    if (filter?.tipo) {
+      params = params.set('tipo', filter.tipo);
     }
     if (filter?.status) {
       params = params.set('status', filter.status);
     }
-    if (filter?.specialtyId) {
-      params = params.set('specialtyId', filter.specialtyId);
+    if (filter?.especialidadeId) {
+      params = params.set('especialidadeId', filter.especialidadeId);
     }
 
-    return this.http.get<PaginatedResponse<User>>(this.apiUrl, { params });
+    return this.http.get<RespostaPaginada<Usuario>>(this.apiUrl, { params });
   }
 
-  getUserById(id: string): Observable<User> {
-    return this.http.get<User>(`${this.apiUrl}/${id}`);
+  getUserById(id: string): Observable<Usuario> {
+    return this.http.get<Usuario>(`${this.apiUrl}/${id}`);
   }
 
-  createUser(user: CreateUserDto): Observable<User> {
-    return this.http.post<User>(this.apiUrl, user);
+  createUser(user: CriarUsuarioDto): Observable<Usuario> {
+    return this.http.post<Usuario>(this.apiUrl, user);
   }
 
-  updateUser(id: string, user: UpdateUserDto): Observable<User> {
-    return this.http.put<User>(`${this.apiUrl}/${id}`, user);
+  updateUser(id: string, user: AtualizarUsuarioDto): Observable<Usuario> {
+    return this.http.put<Usuario>(`${this.apiUrl}/${id}`, user);
   }
 
   deleteUser(id: string): Observable<void> {
@@ -187,38 +211,38 @@ export class UsersService {
   }
 
   getUserStats(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/stats`);
+    return this.http.get(`${this.apiUrl}/estatisticas`);
   }
 
-  generateInviteLink(data: { email: string; role: UserRole; specialtyId?: string }): Observable<any> {
-    return this.http.post(`${API_BASE_URL}/invites/generate-link`, data);
+  generateInviteLink(data: { email: string; tipo: TipoUsuario; especialidadeId?: string }): Observable<any> {
+    return this.http.post(`${API_BASE_URL}/convites/gerar-link`, data);
   }
 
-  sendInviteByEmail(data: { email: string; role: UserRole; specialtyId?: string }): Observable<any> {
-    return this.http.post(`${API_BASE_URL}/invites/send-email`, data);
+  sendInviteByEmail(data: { email: string; tipo: TipoUsuario; especialidadeId?: string }): Observable<any> {
+    return this.http.post(`${API_BASE_URL}/convites/enviar-email`, data);
   }
 
   // ============================================
   // Métodos de Perfil de Paciente
   // ============================================
 
-  getPatientProfile(userId: string): Observable<PatientProfile> {
-    return this.http.get<PatientProfile>(`${this.apiUrl}/${userId}/patient-profile`);
+  getPatientProfile(userId: string): Observable<PerfilPaciente> {
+    return this.http.get<PerfilPaciente>(`${this.apiUrl}/${userId}/perfil-paciente`);
   }
 
-  updatePatientProfile(userId: string, profile: CreateUpdatePatientProfile): Observable<PatientProfile> {
-    return this.http.put<PatientProfile>(`${this.apiUrl}/${userId}/patient-profile`, profile);
+  updatePatientProfile(userId: string, profile: CriarAtualizarPerfilPaciente): Observable<PerfilPaciente> {
+    return this.http.put<PerfilPaciente>(`${this.apiUrl}/${userId}/perfil-paciente`, profile);
   }
 
   // ============================================
   // Métodos de Perfil de Profissional
   // ============================================
 
-  getProfessionalProfile(userId: string): Observable<ProfessionalProfile> {
-    return this.http.get<ProfessionalProfile>(`${this.apiUrl}/${userId}/professional-profile`);
+  getProfessionalProfile(userId: string): Observable<PerfilProfissional> {
+    return this.http.get<PerfilProfissional>(`${this.apiUrl}/${userId}/perfil-profissional`);
   }
 
-  updateProfessionalProfile(userId: string, profile: CreateUpdateProfessionalProfile): Observable<ProfessionalProfile> {
-    return this.http.put<ProfessionalProfile>(`${this.apiUrl}/${userId}/professional-profile`, profile);
+  updateProfessionalProfile(userId: string, profile: CriarAtualizarPerfilProfissional): Observable<PerfilProfissional> {
+    return this.http.put<PerfilProfissional>(`${this.apiUrl}/${userId}/perfil-profissional`, profile);
   }
 }

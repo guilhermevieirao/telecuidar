@@ -287,8 +287,8 @@ export class RealTimeService implements OnDestroy {
 
       // Join grupo da role
       try {
-        await this.joinRoleGroup(user.role);
-        console.log('[RealTimeService] Joined role group:', user.role);
+        await this.joinRoleGroup(user.tipo);
+        console.log('[RealTimeService] Joined role group:', user.tipo);
       } catch (err) {
         console.warn('[RealTimeService] Failed to join role group:', err);
       }

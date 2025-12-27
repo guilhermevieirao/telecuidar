@@ -21,7 +21,7 @@ export const roleGuard = (allowedRoles: string[]): CanActivateFn => {
       return false;
     }
 
-    if (!allowedRoles.includes(user.role)) {
+    if (!allowedRoles.includes(user.tipo)) {
       router.navigate(['/painel']);
       return false;
     }

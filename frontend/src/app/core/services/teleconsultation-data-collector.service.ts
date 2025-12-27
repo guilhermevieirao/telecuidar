@@ -45,13 +45,13 @@ export class TeleconsultationDataCollectorService {
 
     return this.usersService.getUserById(appointment.patientId).pipe(
       map(user => {
-        const profile = user.patientProfile || {};
+        const profile = user.perfilPaciente || {};
         return {
-          name: user.name,
-          birthDate: profile.birthDate,
-          gender: profile.gender,
+          name: user.nome,
+          birthDate: profile.dataNascimento,
+          gender: profile.sexo,
           email: user.email,
-          phone: user.phone,
+          phone: user.telefone,
           cpf: user.cpf
         };
       }),

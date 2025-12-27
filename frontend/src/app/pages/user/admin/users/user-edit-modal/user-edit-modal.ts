@@ -6,7 +6,7 @@ import { AvatarComponent } from '@app/shared/components/atoms/avatar/avatar';
 import { CpfMaskDirective } from '@app/core/directives/cpf-mask.directive';
 import { PhoneMaskDirective } from '@app/core/directives/phone-mask.directive';
 import { EmailValidatorDirective } from '@app/core/directives/email-validator.directive';
-import { User, UserRole, UserStatus } from '@app/core/services/users.service';
+import { Usuario, TipoUsuario, StatusUsuario } from '@app/core/services/users.service';
 import { SpecialtiesService, Specialty } from '@app/core/services/specialties.service';
 
 @Component({
@@ -16,12 +16,12 @@ import { SpecialtiesService, Specialty } from '@app/core/services/specialties.se
   styleUrl: './user-edit-modal.scss'
 })
 export class UserEditModalComponent implements OnChanges, OnInit {
-  @Input() user: User | null = null;
+  @Input() user: Usuario | null = null;
   @Input() isOpen = false;
   @Output() close = new EventEmitter<void>();
-  @Output() save = new EventEmitter<User>();
+  @Output() save = new EventEmitter<Usuario>();
 
-  editedUser: Partial<User> = {};
+  editedUser: Partial<Usuario> = {};
   specialties: Specialty[] = [];
   private cdr = inject(ChangeDetectorRef);
 
@@ -34,9 +34,9 @@ export class UserEditModalComponent implements OnChanges, OnInit {
   ngOnInit(): void {}
 
   loadSpecialties(): void {
-    this.specialtiesService.getSpecialties({ status: 'Active' }, { field: 'name', direction: 'asc' }, 1, 100).subscribe({
+    this.specialtiesService.getSpecialties({ status: 'Ativo' }, { field: 'nome', direction: 'asc' }, 1, 100).subscribe({
       next: (response) => {
-        this.specialties = response.data;
+        this.specialties = response.dados;
         this.cdr.detectChanges();
       }
     });
@@ -59,42 +59,42 @@ export class UserEditModalComponent implements OnChanges, OnInit {
   }
 
   onSpecialtyChange(specialtyId: string): void {
-    if (!this.editedUser.professionalProfile) {
-      this.editedUser.professionalProfile = {};
+    if (!this.editedUser.perfilProfissional) {
+      this.editedUser.perfilProfissional = {};
     }
-    this.editedUser.professionalProfile.specialtyId = specialtyId || undefined;
+    this.editedUser.perfilProfissional.especialidadeId = specialtyId || undefined;
   }
 
   onSave(): void {
     if (this.editedUser && this.isFormValid()) {
-      this.save.emit(this.editedUser as User);
+      this.save.emit(this.editedUser as Usuario);
     }
   }
 
   isFormValid(): boolean {
     return !!(
-      this.editedUser.name?.trim() &&
+      this.editedUser.nome?.trim() &&
       this.editedUser.email?.trim() &&
       this.editedUser.cpf?.trim() &&
-      this.editedUser.phone?.trim() &&
-      this.editedUser.role &&
+      this.editedUser.telefone?.trim() &&
+      this.editedUser.tipo &&
       this.editedUser.status
     );
   }
 
-  getRoleLabel(role: UserRole): string {
-    const labels: Record<UserRole, string> = {
-      PATIENT: 'Paciente',
-      PROFESSIONAL: 'Profissional',
-      ADMIN: 'Administrador'
+  getRoleLabel(role: TipoUsuario): string {
+    const labels: Record<TipoUsuario, string> = {
+      Paciente: 'Paciente',
+      Profissional: 'Profissional',
+      Administrador: 'Administrador'
     };
     return labels[role];
   }
 
-  getStatusLabel(status: UserStatus): string {
-    const labels: Record<UserStatus, string> = {
-      Active: 'Ativo',
-      Inactive: 'Inativo'
+  getStatusLabel(status: StatusUsuario): string {
+    const labels: Record<StatusUsuario, string> = {
+      Ativo: 'Ativo',
+      Inativo: 'Inativo'
     };
     return labels[status];
   }

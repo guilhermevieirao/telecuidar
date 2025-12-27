@@ -32,11 +32,11 @@ export class SpecialtiesComponent implements OnInit, OnDestroy {
 
   statusOptions: FilterOption[] = [
     { value: 'all', label: 'Todos os status' },
-    { value: 'active', label: 'Ativas' },
-    { value: 'inactive', label: 'Inativas' }
+    { value: 'Ativo', label: 'Ativas' },
+    { value: 'Inativo', label: 'Inativas' }
   ];
   
-  sortField: keyof Specialty = 'name';
+  sortField: keyof Specialty = 'nome';
   sortDirection: 'asc' | 'desc' = 'asc';
   
   currentPage = 1;
@@ -126,7 +126,7 @@ export class SpecialtiesComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     
     const filter: SpecialtiesFilter = {
-      search: this.searchTerm,
+      busca: this.searchTerm,
       status: this.statusFilter
     };
 
@@ -137,9 +137,9 @@ export class SpecialtiesComponent implements OnInit, OnDestroy {
 
     this.specialtiesService.getSpecialties(filter, sort, this.currentPage, this.pageSize).subscribe({
       next: (response) => {
-        this.specialties = response.data;
+        this.specialties = response.dados;
         this.totalItems = response.total;
-        this.totalPages = response.totalPages;
+        this.totalPages = response.totalPaginas;
         this.isLoading = false;
         this.cdr.markForCheck();
       },
@@ -194,7 +194,7 @@ export class SpecialtiesComponent implements OnInit, OnDestroy {
   deleteSpecialty(specialty: Specialty): void {
     this.modalService.confirm({
       title: 'Excluir Especialidade',
-      message: `Tem certeza que deseja excluir a especialidade "${specialty.name}"?`,
+      message: `Tem certeza que deseja excluir a especialidade "${specialty.nome}"?`,
       confirmText: 'Excluir',
       cancelText: 'Cancelar',
       variant: 'danger'
@@ -225,13 +225,13 @@ export class SpecialtiesComponent implements OnInit, OnDestroy {
   }
 
   toggleStatus(specialty: Specialty): void {
-    const newStatus = specialty.status === 'Active' ? 'inativa' : 'ativa';
+    const newStatus = specialty.status === 'Ativo' ? 'inativa' : 'ativa';
     this.modalService.confirm({
-      title: `${specialty.status === 'Active' ? 'Desativar' : 'Ativar'} Especialidade`,
-      message: `Tem certeza que deseja ${specialty.status === 'Active' ? 'desativar' : 'ativar'} a especialidade "${specialty.name}"?`,
-      confirmText: specialty.status === 'Active' ? 'Desativar' : 'Ativar',
+      title: `${specialty.status === 'Ativo' ? 'Desativar' : 'Ativar'} Especialidade`,
+      message: `Tem certeza que deseja ${specialty.status === 'Ativo' ? 'desativar' : 'ativar'} a especialidade "${specialty.nome}"?`,
+      confirmText: specialty.status === 'Ativo' ? 'Desativar' : 'Ativar',
       cancelText: 'Cancelar',
-      variant: specialty.status === 'Active' ? 'warning' : 'success'
+      variant: specialty.status === 'Ativo' ? 'warning' : 'success'
     }).subscribe((result) => {
       if (result.confirmed) {
         this.specialtiesService.toggleSpecialtyStatus(specialty.id, specialty.status).subscribe({
@@ -279,7 +279,7 @@ export class SpecialtiesComponent implements OnInit, OnDestroy {
 
   onSpecialtyAssigned(data: { userId: string; specialtyId: string }): void {
     this.usersService.updateUser(data.userId, { 
-      professionalProfile: { specialtyId: data.specialtyId } 
+      perfilProfissional: { especialidadeId: data.specialtyId } 
     }).subscribe({
       next: () => {
         this.modalService.alert({
@@ -300,7 +300,7 @@ export class SpecialtiesComponent implements OnInit, OnDestroy {
     });
   }
 
-  onSpecialtyCreated(specialtyData: { name: string; description: string; status: SpecialtyStatus }): void {
+  onSpecialtyCreated(specialtyData: { nome: string; descricao: string; status: SpecialtyStatus }): void {
     this.specialtiesService.createSpecialty(specialtyData).subscribe({
       next: () => {
         this.modalService.alert({

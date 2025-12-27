@@ -45,7 +45,7 @@ export interface PfxCertificateInfo {
   providedIn: 'root'
 })
 export class CertificateService {
-  private readonly baseUrl = `${environment.apiUrl}/certificates`;
+  private readonly baseUrl = `${environment.apiUrl}/certificados`;
   
   private savedCertificates$ = new BehaviorSubject<SavedCertificate[]>([]);
   private isLoading$ = new BehaviorSubject<boolean>(false);

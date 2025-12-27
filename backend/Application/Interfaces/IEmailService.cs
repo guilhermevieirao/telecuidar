@@ -1,22 +1,17 @@
+using Application.DTOs.Email;
+
 namespace Application.Interfaces;
 
 /// <summary>
-/// Serviço para envio de e-mails
+/// Serviço de email
 /// </summary>
 public interface IEmailService
 {
-    /// <summary>
-    /// Envia um e-mail de forma assíncrona
-    /// </summary>
-    /// <param name="toEmail">E-mail do destinatário</param>
-    /// <param name="toName">Nome do destinatário</param>
-    /// <param name="subject">Assunto do e-mail</param>
-    /// <param name="htmlBody">Corpo do e-mail em HTML</param>
-    /// <param name="textBody">Corpo do e-mail em texto plano (opcional)</param>
-    Task<bool> SendEmailAsync(string toEmail, string toName, string subject, string htmlBody, string? textBody = null);
-
-    /// <summary>
-    /// Verifica se o serviço de e-mail está habilitado
-    /// </summary>
-    bool IsEnabled { get; }
+    Task<bool> EnviarEmailAsync(string destinatario, string assunto, string corpo, bool html = true);
+    Task<bool> EnviarEmailVerificacaoAsync(Guid usuarioId, string email, string nome, string token);
+    Task<bool> EnviarEmailRedefinicaoSenhaAsync(string email, string nome, string token);
+    Task<bool> EnviarEmailConviteAsync(string email, string tokenConvite, string tipoUsuario, string? nomeConvidador);
+    Task<bool> EnviarEmailConfirmacaoConsultaAsync(string emailPaciente, string nomePaciente, string nomeProfissional, string especialidade, DateTime dataConsulta, string horario);
+    Task<bool> EnviarEmailLembreteConsultaAsync(string email, string nome, string nomeProfissional, DateTime dataConsulta, string horario, string? linkConsulta);
+    Task<bool> EnviarEmailTrocaEmailAsync(string novoEmail, string nome, string token);
 }
