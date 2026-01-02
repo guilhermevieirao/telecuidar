@@ -22,7 +22,7 @@ export interface User {
   professionalProfile?: ProfessionalProfile;
 }
 
-export type userrole = 'PATIENT' | 'PROFESSIONAL' | 'ADMIN';
+export type userrole = 'PATIENT' | 'PROFESSIONAL' | 'ADMIN' | 'ASSISTANT';
 
 export interface LoginRequest {
   email: string;

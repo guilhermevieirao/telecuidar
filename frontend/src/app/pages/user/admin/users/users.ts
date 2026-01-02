@@ -73,7 +73,8 @@ export class UsersComponent implements OnInit, OnDestroy {
     { value: 'all', label: 'Todos os perfis' },
     { value: 'PATIENT', label: 'Pacientes' },
     { value: 'PROFESSIONAL', label: 'Profissionais' },
-    { value: 'ADMIN', label: 'Administradores' }
+    { value: 'ADMIN', label: 'Administradores' },
+    { value: 'ASSISTANT', label: 'Assistentes' }
   ];
 
   statusOptions: FilterOption[] = [
@@ -224,7 +225,8 @@ export class UsersComponent implements OnInit, OnDestroy {
     const variantMap: Record<UserRole, BadgeVariant> = {
       PATIENT: 'info',
       PROFESSIONAL: 'primary',
-      ADMIN: 'warning'
+      ADMIN: 'warning',
+      ASSISTANT: 'success'
     };
     return variantMap[role];
   }

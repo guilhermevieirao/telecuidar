@@ -15,7 +15,7 @@ import { Subject, takeUntil, debounceTime } from 'rxjs';
 })
 export class BiometricsTabComponent implements OnInit, OnDestroy {
   @Input() appointmentId: string | null = null;
-  @Input() userrole: 'PATIENT' | 'PROFESSIONAL' | 'ADMIN' = 'PATIENT';
+  @Input() userrole: 'PATIENT' | 'PROFESSIONAL' | 'ADMIN' | 'ASSISTANT' = 'PATIENT';
   @Input() readonly = false;
 
   biometricsForm: FormGroup;

@@ -45,6 +45,9 @@ namespace Infrastructure.Migrations
                     EmailVerified = table.Column<bool>(type: "INTEGER", nullable: false),
                     EmailVerificationToken = table.Column<string>(type: "TEXT", nullable: true),
                     EmailVerificationTokenExpiry = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    PendingEmail = table.Column<string>(type: "TEXT", nullable: true),
+                    PendingEmailToken = table.Column<string>(type: "TEXT", nullable: true),
+                    PendingEmailTokenExpiry = table.Column<DateTime>(type: "TEXT", nullable: true),
                     PasswordResetToken = table.Column<string>(type: "TEXT", nullable: true),
                     PasswordResetTokenExpiry = table.Column<DateTime>(type: "TEXT", nullable: true),
                     RefreshToken = table.Column<string>(type: "TEXT", nullable: true),
@@ -75,6 +78,9 @@ namespace Infrastructure.Migrations
                     PreConsultationJson = table.Column<string>(type: "TEXT", nullable: true),
                     BiometricsJson = table.Column<string>(type: "TEXT", nullable: true),
                     AttachmentsChatJson = table.Column<string>(type: "TEXT", nullable: true),
+                    AnamnesisJson = table.Column<string>(type: "TEXT", nullable: true),
+                    SoapJson = table.Column<string>(type: "TEXT", nullable: true),
+                    SpecialtyFieldsJson = table.Column<string>(type: "TEXT", nullable: true),
                     AISummary = table.Column<string>(type: "TEXT", nullable: true),
                     AISummaryGeneratedAt = table.Column<DateTime>(type: "TEXT", nullable: true),
                     AIDiagnosticHypothesis = table.Column<string>(type: "TEXT", nullable: true),
@@ -133,6 +139,40 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "DigitalCertificates",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    UserId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    DisplayName = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
+                    Subject = table.Column<string>(type: "TEXT", maxLength: 500, nullable: false),
+                    Issuer = table.Column<string>(type: "TEXT", maxLength: 500, nullable: false),
+                    Thumbprint = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    CpfFromCertificate = table.Column<string>(type: "TEXT", maxLength: 14, nullable: true),
+                    NameFromCertificate = table.Column<string>(type: "TEXT", maxLength: 300, nullable: true),
+                    ExpirationDate = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    IssuedDate = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    EncryptedPfxBase64 = table.Column<string>(type: "TEXT", nullable: false),
+                    QuickUseEnabled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    EncryptedPassword = table.Column<string>(type: "TEXT", nullable: true),
+                    EncryptionIV = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    IsActive = table.Column<bool>(type: "INTEGER", nullable: false),
+                    LastUsedAt = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DigitalCertificates", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DigitalCertificates_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Invites",
                 columns: table => new
                 {
@@ -145,7 +185,11 @@ namespace Infrastructure.Migrations
                     ExpiresAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "TEXT", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    AcceptedAt = table.Column<DateTime>(type: "TEXT", nullable: true)
+                    AcceptedAt = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    PrefilledName = table.Column<string>(type: "TEXT", nullable: true),
+                    PrefilledLastName = table.Column<string>(type: "TEXT", nullable: true),
+                    PrefilledCpf = table.Column<string>(type: "TEXT", nullable: true),
+                    PrefilledPhone = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -251,35 +295,6 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SavedCertificates",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
-                    ProfessionalId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    SubjectName = table.Column<string>(type: "TEXT", nullable: false),
-                    IssuerName = table.Column<string>(type: "TEXT", nullable: false),
-                    ValidFrom = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    ValidTo = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    Thumbprint = table.Column<string>(type: "TEXT", nullable: false),
-                    EncryptedPfxData = table.Column<string>(type: "TEXT", nullable: false),
-                    RequirePasswordOnUse = table.Column<bool>(type: "INTEGER", nullable: false),
-                    EncryptedPassword = table.Column<string>(type: "TEXT", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SavedCertificates", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_SavedCertificates_Users_ProfessionalId",
-                        column: x => x.ProfessionalId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "ScheduleBlocks",
                 columns: table => new
                 {
@@ -365,6 +380,156 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ExamRequests",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    AppointmentId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    ProfessionalId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    PatientId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    NomeExame = table.Column<string>(type: "TEXT", maxLength: 500, nullable: false),
+                    CodigoExame = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
+                    Categoria = table.Column<int>(type: "INTEGER", nullable: false),
+                    Prioridade = table.Column<int>(type: "INTEGER", nullable: false),
+                    DataEmissao = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    DataLimite = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    IndicacaoClinica = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: false),
+                    HipoteseDiagnostica = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
+                    Cid = table.Column<string>(type: "TEXT", maxLength: 20, nullable: true),
+                    Observacoes = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true),
+                    InstrucoesPreparo = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true),
+                    DigitalSignature = table.Column<string>(type: "TEXT", maxLength: 10000, nullable: true),
+                    CertificateThumbprint = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    CertificateSubject = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
+                    SignedAt = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    DocumentHash = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    SignedPdfBase64 = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ExamRequests", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ExamRequests_Appointments_AppointmentId",
+                        column: x => x.AppointmentId,
+                        principalTable: "Appointments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ExamRequests_Users_PatientId",
+                        column: x => x.PatientId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ExamRequests_Users_ProfessionalId",
+                        column: x => x.ProfessionalId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MedicalCertificates",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    AppointmentId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    ProfessionalId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    PatientId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Tipo = table.Column<int>(type: "INTEGER", nullable: false),
+                    DataEmissao = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    DataInicio = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    DataFim = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    DiasAfastamento = table.Column<int>(type: "INTEGER", nullable: true),
+                    Cid = table.Column<string>(type: "TEXT", maxLength: 20, nullable: true),
+                    Conteudo = table.Column<string>(type: "TEXT", nullable: false),
+                    Observacoes = table.Column<string>(type: "TEXT", nullable: true),
+                    DigitalSignature = table.Column<string>(type: "TEXT", maxLength: 10000, nullable: true),
+                    CertificateThumbprint = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    CertificateSubject = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
+                    SignedAt = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    DocumentHash = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    SignedPdfBase64 = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MedicalCertificates", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MedicalCertificates_Appointments_AppointmentId",
+                        column: x => x.AppointmentId,
+                        principalTable: "Appointments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MedicalCertificates_Users_PatientId",
+                        column: x => x.PatientId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_MedicalCertificates_Users_ProfessionalId",
+                        column: x => x.ProfessionalId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MedicalReports",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    AppointmentId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    ProfessionalId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    PatientId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Tipo = table.Column<int>(type: "INTEGER", nullable: false),
+                    Titulo = table.Column<string>(type: "TEXT", maxLength: 500, nullable: false),
+                    DataEmissao = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    HistoricoClinico = table.Column<string>(type: "TEXT", maxLength: 5000, nullable: true),
+                    ExameFisico = table.Column<string>(type: "TEXT", maxLength: 5000, nullable: true),
+                    ExamesComplementares = table.Column<string>(type: "TEXT", maxLength: 5000, nullable: true),
+                    HipoteseDiagnostica = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
+                    Cid = table.Column<string>(type: "TEXT", maxLength: 20, nullable: true),
+                    Conclusao = table.Column<string>(type: "TEXT", maxLength: 5000, nullable: false),
+                    Recomendacoes = table.Column<string>(type: "TEXT", maxLength: 3000, nullable: true),
+                    Observacoes = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true),
+                    DigitalSignature = table.Column<string>(type: "TEXT", maxLength: 10000, nullable: true),
+                    CertificateThumbprint = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    CertificateSubject = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
+                    SignedAt = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    DocumentHash = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    SignedPdfBase64 = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MedicalReports", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MedicalReports_Appointments_AppointmentId",
+                        column: x => x.AppointmentId,
+                        principalTable: "Appointments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MedicalReports_Users_PatientId",
+                        column: x => x.PatientId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_MedicalReports_Users_ProfessionalId",
+                        column: x => x.ProfessionalId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Prescriptions",
                 columns: table => new
                 {
@@ -431,6 +596,36 @@ namespace Infrastructure.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_DigitalCertificates_Thumbprint",
+                table: "DigitalCertificates",
+                column: "Thumbprint");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DigitalCertificates_UserId",
+                table: "DigitalCertificates",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExamRequests_AppointmentId",
+                table: "ExamRequests",
+                column: "AppointmentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExamRequests_DocumentHash",
+                table: "ExamRequests",
+                column: "DocumentHash");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExamRequests_PatientId",
+                table: "ExamRequests",
+                column: "PatientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExamRequests_ProfessionalId",
+                table: "ExamRequests",
+                column: "ProfessionalId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Invites_CreatedBy",
                 table: "Invites",
                 column: "CreatedBy");
@@ -445,6 +640,46 @@ namespace Infrastructure.Migrations
                 table: "Invites",
                 column: "Token",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalCertificates_AppointmentId",
+                table: "MedicalCertificates",
+                column: "AppointmentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalCertificates_DocumentHash",
+                table: "MedicalCertificates",
+                column: "DocumentHash");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalCertificates_PatientId",
+                table: "MedicalCertificates",
+                column: "PatientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalCertificates_ProfessionalId",
+                table: "MedicalCertificates",
+                column: "ProfessionalId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalReports_AppointmentId",
+                table: "MedicalReports",
+                column: "AppointmentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalReports_DocumentHash",
+                table: "MedicalReports",
+                column: "DocumentHash");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalReports_PatientId",
+                table: "MedicalReports",
+                column: "PatientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicalReports_ProfessionalId",
+                table: "MedicalReports",
+                column: "ProfessionalId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Notifications_UserId",
@@ -499,11 +734,6 @@ namespace Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_SavedCertificates_ProfessionalId",
-                table: "SavedCertificates",
-                column: "ProfessionalId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ScheduleBlocks_ApprovedBy",
                 table: "ScheduleBlocks",
                 column: "ApprovedBy");
@@ -547,7 +777,19 @@ namespace Infrastructure.Migrations
                 name: "AuditLogs");
 
             migrationBuilder.DropTable(
+                name: "DigitalCertificates");
+
+            migrationBuilder.DropTable(
+                name: "ExamRequests");
+
+            migrationBuilder.DropTable(
                 name: "Invites");
+
+            migrationBuilder.DropTable(
+                name: "MedicalCertificates");
+
+            migrationBuilder.DropTable(
+                name: "MedicalReports");
 
             migrationBuilder.DropTable(
                 name: "Notifications");
@@ -560,9 +802,6 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "ProfessionalProfiles");
-
-            migrationBuilder.DropTable(
-                name: "SavedCertificates");
 
             migrationBuilder.DropTable(
                 name: "ScheduleBlocks");

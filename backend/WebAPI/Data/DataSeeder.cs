@@ -92,6 +92,18 @@ public static class DataSeeder
                 Role = UserRole.PATIENT,
                 Status = UserStatus.Active,
                 EmailVerified = true
+            },
+            new User
+            {
+                Name = "Assistente",
+                LastName = "De Teste",
+                Email = "assist@assist.com",
+                Cpf = "44444444444",
+                Phone = "11944444444",
+                PasswordHash = passwordHasher.HashPassword(defaultPassword),
+                Role = UserRole.ASSISTANT,
+                Status = UserStatus.Active,
+                EmailVerified = true
             }
         };
 
@@ -196,6 +208,7 @@ public static class DataSeeder
         Console.WriteLine($"  - {adminEmail} (ADMIN) - senha: {adminPassword}");
         Console.WriteLine("  - med@med.com (PROFESSIONAL) - senha: zxcasd12");
         Console.WriteLine("  - pac@pac.com (PATIENT) - senha: zxcasd12");
+        Console.WriteLine("  - assist@assist.com (ASSISTANT) - senha: zxcasd12");
         Console.WriteLine("[SEEDER] Agenda criada:");
         Console.WriteLine($"  - Profissional: {professional.Name} {professional.LastName}");
         Console.WriteLine("  - Horário: 00:00 - 23:00 (todos os dias)");

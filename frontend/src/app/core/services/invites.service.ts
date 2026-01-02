@@ -6,7 +6,7 @@ import { environment } from '@env/environment';
 const API_BASE_URL = environment.apiUrl;
 
 export type InviteStatus = 'Pending' | 'Accepted' | 'Expired' | 'Cancelled';
-export type UserRole = 'PATIENT' | 'PROFESSIONAL' | 'ADMIN';
+export type UserRole = 'PATIENT' | 'PROFESSIONAL' | 'ADMIN' | 'ASSISTANT';
 
 export interface Invite {
   id: string;

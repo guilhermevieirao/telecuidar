@@ -53,7 +53,7 @@ export class TeleconsultationSidebarComponent implements OnInit, OnDestroy, OnCh
   @Input() isHeaderVisible = true;
   @Input() tabs: string[] = [];
   @Input() activeTab = '';
-  @Input() userrole: 'PATIENT' | 'PROFESSIONAL' | 'ADMIN' = 'PATIENT';
+  @Input() userrole: 'PATIENT' | 'PROFESSIONAL' | 'ADMIN' | 'ASSISTANT' = 'PATIENT';
   @Input() appointmentId: string | null = null;
   @Input() appointment: Appointment | null = null;
   

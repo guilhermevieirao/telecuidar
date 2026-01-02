@@ -38,7 +38,7 @@ interface ScheduleBlock {
   createdAt: string;
 }
 
-type ViewMode = 'ADMIN' | 'PATIENT' | 'PROFESSIONAL';
+type ViewMode = 'ADMIN' | 'PATIENT' | 'PROFESSIONAL' | 'ASSISTANT';
 
 @Component({
   selector: 'app-dashboard',
@@ -240,6 +240,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.viewMode === 'ADMIN') {
       this.loadStats();
       this.initializeCharts();
+    } else if (this.viewMode === 'ASSISTANT') {
+      this.loadNextAppointments();
+      this.loadNotifications();
     } else {
       this.loadNextAppointments();
       this.loadNotifications();
@@ -261,11 +264,16 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.viewMode === 'PROFESSIONAL';
   }
 
+  isAssistant(): boolean {
+    return this.viewMode === 'ASSISTANT';
+  }
+
   getRoleLabel(): string {
     const roleMap: { [key: string]: string } = {
       'ADMIN': 'Administrador',
       'PATIENT': 'Paciente',
-      'PROFESSIONAL': 'Profissional'
+      'PROFESSIONAL': 'Profissional',
+      'ASSISTANT': 'Assistente'
     };
     return roleMap[this.user?.role || 'PATIENT'] || 'Usuário';
   }
@@ -274,7 +282,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     const variantMap: { [key: string]: 'primary' | 'success' | 'warning' | 'error' | 'info' | 'neutral' } = {
       'ADMIN': 'primary',
       'PATIENT': 'success',
-      'PROFESSIONAL': 'info'
+      'PROFESSIONAL': 'info',
+      'ASSISTANT': 'warning'
     };
     return variantMap[this.user?.role || 'PATIENT'] || 'neutral';
   }
@@ -287,7 +296,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     const pathMap = {
       'ADMIN': 'admin',
       'PROFESSIONAL': 'professional',
-      'PATIENT': 'patient'
+      'PATIENT': 'patient',
+      'ASSISTANT': 'assistant'
     };
     return pathMap[this.viewMode as keyof typeof pathMap];
   }

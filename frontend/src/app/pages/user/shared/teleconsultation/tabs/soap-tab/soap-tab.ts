@@ -16,7 +16,7 @@ import { Subject, takeUntil, debounceTime } from 'rxjs';
 export class SoapTabComponent implements OnInit, OnDestroy, OnChanges {
   @Input() appointmentId: string | null = null;
   @Input() appointment: Appointment | null = null;
-  @Input() userrole: 'PATIENT' | 'PROFESSIONAL' | 'ADMIN' = 'PATIENT';
+  @Input() userrole: 'PATIENT' | 'PROFESSIONAL' | 'ADMIN' | 'ASSISTANT' = 'PATIENT';
   @Input() readonly = false;
 
   soapForm: FormGroup;

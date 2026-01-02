@@ -4,7 +4,8 @@ public enum UserRole
 {
     PATIENT,
     PROFESSIONAL,
-    ADMIN
+    ADMIN,
+    ASSISTANT
 }
 
 public enum UserStatus

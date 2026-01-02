@@ -85,7 +85,7 @@ export class AppointmentDetailsComponent implements OnInit, OnDestroy {
   appointment: Appointment | null = null;
   appointmentId: string | null = null;
   loading = false;
-  userrole: 'PATIENT' | 'PROFESSIONAL' | 'ADMIN' = 'PATIENT';
+  userrole: 'PATIENT' | 'PROFESSIONAL' | 'ADMIN' | 'ASSISTANT' = 'PATIENT';
   
   // Modo de visualização - todas as interações são bloqueadas
   readonly isDetailsView = true;
@@ -187,6 +187,8 @@ export class AppointmentDetailsComponent implements OnInit, OnDestroy {
         this.userrole = 'PATIENT';
       } else if (url.includes('/professional')) {
         this.userrole = 'PROFESSIONAL';
+      } else if (url.includes('/assistant')) {
+        this.userrole = 'ASSISTANT';
       } else {
         this.userrole = 'ADMIN';
       }

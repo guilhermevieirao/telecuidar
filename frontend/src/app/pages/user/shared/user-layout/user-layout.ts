@@ -252,7 +252,8 @@ export class UserLayoutComponent implements OnInit, OnDestroy {
     const roleMap: { [key: string]: string } = {
       'PATIENT': 'Paciente',
       'PROFESSIONAL': 'Profissional',
-      'ADMIN': 'Administrador'
+      'ADMIN': 'Administrador',
+      'ASSISTANT': 'Assistente'
     };
     return roleMap[role] || role;
   }

@@ -42,7 +42,8 @@ export class InviteCreateModalComponent {
   roleOptions = [
     { value: 'PATIENT', label: 'Paciente' },
     { value: 'PROFESSIONAL', label: 'Profissional' },
-    { value: 'ADMIN', label: 'Administrador' }
+    { value: 'ADMIN', label: 'Administrador' },
+    { value: 'ASSISTANT', label: 'Assistente' }
   ];
 
   onBackdropClick(): void {

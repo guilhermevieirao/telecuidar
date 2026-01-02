@@ -97,16 +97,17 @@ public class JitsiService : IJitsiService
         if (user == null)
             return null;
 
-        // Validar acesso: apenas paciente ou profissional da consulta
+        // Validar acesso: paciente, profissional da consulta, admin ou assistente
         var isPatient = appointment.PatientId == userId;
         var isProfessional = appointment.ProfessionalId == userId;
         var isAdmin = user.Role == UserRole.ADMIN;
+        var isAssistant = user.Role == UserRole.ASSISTANT;
         
-        if (!isPatient && !isProfessional && !isAdmin)
+        if (!isPatient && !isProfessional && !isAdmin && !isAssistant)
             return null;
 
-        // Profissional e Admin são moderadores, paciente é convidado
-        var isModerator = isProfessional || isAdmin;
+        // Profissional, Admin e Assistente são moderadores, paciente é convidado
+        var isModerator = isProfessional || isAdmin || isAssistant;
 
         // Nome da sala: apenas o GUID sem prefixo (mais curto na URL)
         var roomName = appointmentId.ToString("N");
@@ -173,10 +174,11 @@ public class JitsiService : IJitsiService
         if (user == null)
             return false;
 
-        // Verificar se é participante da consulta ou admin
+        // Verificar se é participante da consulta, admin ou assistente
         return appointment.PatientId == userId 
             || appointment.ProfessionalId == userId 
-            || user.Role == UserRole.ADMIN;
+            || user.Role == UserRole.ADMIN
+            || user.Role == UserRole.ASSISTANT;
     }
 
     /// <summary>

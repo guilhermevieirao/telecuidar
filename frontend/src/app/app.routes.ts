@@ -39,6 +39,9 @@ import { SchedulingSuccessComponent } from '@pages/user/patient/scheduling-succe
 import { PreConsultationComponent } from '@pages/user/patient/pre-consultation/pre-consultation';
 import { MobileUploadComponent } from '@pages/mobile-upload/mobile-upload';
 
+// Assistant-specific components
+import { DigitalOfficeComponent } from '@pages/user/assistant/digital-office/digital-office';
+
 import { TeleconsultationComponent } from '@pages/user/shared/teleconsultation/teleconsultation';
 
 // Guards
@@ -101,6 +104,9 @@ export const routes: Routes = [
       { path: 'agendar', component: SchedulingComponent, canActivate: [roleGuard(['PATIENT'])] },
       { path: 'agendamento-sucesso', component: SchedulingSuccessComponent, canActivate: [roleGuard(['PATIENT'])] },
       { path: 'consultas/:id/pre-consulta', component: PreConsultationComponent, canActivate: [roleGuard(['PATIENT'])] },
+      
+      // Assistant only
+      { path: 'consultorio-digital', component: DigitalOfficeComponent, canActivate: [roleGuard(['ASSISTANT'])] },
       
       // Teleconsultation (all authenticated users)
       { path: 'teleconsulta/:id', component: TeleconsultationComponent }

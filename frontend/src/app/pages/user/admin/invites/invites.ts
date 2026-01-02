@@ -46,7 +46,8 @@ export class InvitesComponent implements OnInit, OnDestroy {
     { value: 'all', label: 'Todos os perfis' },
     { value: 'PATIENT', label: 'Pacientes' },
     { value: 'PROFESSIONAL', label: 'Profissionais' },
-    { value: 'ADMIN', label: 'Administradores' }
+    { value: 'ADMIN', label: 'Administradores' },
+    { value: 'ASSISTANT', label: 'Assistentes' }
   ];
 
   statusOptions: FilterOption[] = [
@@ -201,7 +202,8 @@ export class InvitesComponent implements OnInit, OnDestroy {
     const variants: Record<UserRole, BadgeVariant> = {
       PATIENT: 'info',
       PROFESSIONAL: 'primary',
-      ADMIN: 'warning'
+      ADMIN: 'warning',
+      ASSISTANT: 'success'
     };
     return variants[role];
   }
@@ -230,7 +232,8 @@ export class InvitesComponent implements OnInit, OnDestroy {
     const labels: Record<UserRole, string> = {
       PATIENT: 'Paciente',
       PROFESSIONAL: 'Profissional',
-      ADMIN: 'Administrador'
+      ADMIN: 'Administrador',
+      ASSISTANT: 'Assistente'
     };
     return labels[role];
   }

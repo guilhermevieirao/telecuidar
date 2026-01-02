@@ -34,7 +34,7 @@ import { Subscription } from 'rxjs';
 export class TeleconsultationComponent implements OnInit, OnDestroy {
   appointmentId: string | null = null;
   appointment: Appointment | null = null;
-  userrole: 'PATIENT' | 'PROFESSIONAL' | 'ADMIN' = 'PATIENT';
+  userrole: 'PATIENT' | 'PROFESSIONAL' | 'ADMIN' | 'ASSISTANT' = 'PATIENT';
   
   // UI States
   isHeaderVisible = true;

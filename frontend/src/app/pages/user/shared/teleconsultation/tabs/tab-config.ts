@@ -1,10 +1,12 @@
 import type { IconName } from '@shared/components/atoms/icon/icon';
 
+export type UserRoleType = 'PATIENT' | 'PROFESSIONAL' | 'ADMIN' | 'ASSISTANT';
+
 export interface TabConfig {
   id: string;
   label: string;
   icon: IconName;
-  roles: ('PATIENT' | 'PROFESSIONAL' | 'ADMIN')[];
+  roles: UserRoleType[];
   /** Se a tab deve aparecer na teleconsulta (modo de atendimento) */
   showInTeleconsultation: boolean;
   /** Se a tab deve aparecer nos detalhes da consulta (modo de visualização) */
@@ -45,7 +47,7 @@ export const TELECONSULTATION_TABS: TabConfig[] = [
     id: 'basic',
     label: 'Informações Básicas',
     icon: 'file',
-    roles: ['PATIENT', 'PROFESSIONAL', 'ADMIN'],
+    roles: ['PATIENT', 'PROFESSIONAL', 'ADMIN', 'ASSISTANT'],
     showInTeleconsultation: false, // Não mostra na teleconsulta, apenas nos detalhes
     showInDetails: true,
     order: 0
@@ -99,7 +101,7 @@ export const TELECONSULTATION_TABS: TabConfig[] = [
     id: 'biometrics',
     label: 'Biométricos',
     icon: 'heart',
-    roles: ['PATIENT', 'PROFESSIONAL', 'ADMIN'],
+    roles: ['PATIENT', 'PROFESSIONAL', 'ADMIN', 'ASSISTANT'],
     showInTeleconsultation: true,
     showInDetails: true, // Aparece automaticamente nos detalhes
     order: 6
@@ -108,7 +110,7 @@ export const TELECONSULTATION_TABS: TabConfig[] = [
     id: 'attachments',
     label: 'Chat Anexos',
     icon: 'camera',
-    roles: ['PATIENT', 'PROFESSIONAL', 'ADMIN'],
+    roles: ['PATIENT', 'PROFESSIONAL', 'ADMIN', 'ASSISTANT'],
     showInTeleconsultation: true,
     showInDetails: true, // Aparece automaticamente nos detalhes
     order: 7
@@ -208,7 +210,7 @@ export const TELECONSULTATION_TABS: TabConfig[] = [
 /**
  * Retorna as tabs disponíveis para a teleconsulta, filtradas por role
  */
-export function getTeleconsultationTabs(role: 'PATIENT' | 'PROFESSIONAL' | 'ADMIN'): TabConfig[] {
+export function getTeleconsultationTabs(role: UserRoleType): TabConfig[] {
   return TELECONSULTATION_TABS
     .filter(tab => tab.showInTeleconsultation && tab.roles.includes(role))
     .sort((a, b) => a.order - b.order);
@@ -217,7 +219,7 @@ export function getTeleconsultationTabs(role: 'PATIENT' | 'PROFESSIONAL' | 'ADMI
 /**
  * Retorna as tabs disponíveis para a página de detalhes, filtradas por role
  */
-export function getDetailsTabs(role: 'PATIENT' | 'PROFESSIONAL' | 'ADMIN'): TabConfig[] {
+export function getDetailsTabs(role: UserRoleType): TabConfig[] {
   return TELECONSULTATION_TABS
     .filter(tab => tab.showInDetails && tab.roles.includes(role))
     .sort((a, b) => a.order - b.order);

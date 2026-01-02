@@ -223,11 +223,12 @@ export class UserCreateModalComponent {
     }
   }
 
-  getRoleIcon(role: UserRole): 'user' | 'users' | 'shield' {
-    const iconMap: Record<UserRole, 'user' | 'users' | 'shield'> = {
+  getRoleIcon(role: UserRole): 'user' | 'users' | 'shield' | 'phone' {
+    const iconMap: Record<UserRole, 'user' | 'users' | 'shield' | 'phone'> = {
       PATIENT: 'user',
       PROFESSIONAL: 'users',
-      ADMIN: 'shield'
+      ADMIN: 'shield',
+      ASSISTANT: 'phone'
     };
     return iconMap[role];
   }
@@ -236,7 +237,8 @@ export class UserCreateModalComponent {
     const labels: Record<UserRole, string> = {
       PATIENT: 'Paciente',
       PROFESSIONAL: 'Profissional',
-      ADMIN: 'Administrador'
+      ADMIN: 'Administrador',
+      ASSISTANT: 'Assistente'
     };
     return labels[role];
   }
@@ -245,7 +247,8 @@ export class UserCreateModalComponent {
     const descriptions: Record<UserRole, string> = {
       PATIENT: 'Usuário que receberá atendimento médico',
       PROFESSIONAL: 'Profissional de saúde que realizará atendimentos',
-      ADMIN: 'Administrador com acesso total ao sistema'
+      ADMIN: 'Administrador com acesso total ao sistema',
+      ASSISTANT: 'Assistente que auxilia pacientes no consultório digital'
     };
     return descriptions[role];
   }

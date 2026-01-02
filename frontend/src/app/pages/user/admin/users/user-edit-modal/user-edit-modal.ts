@@ -170,7 +170,8 @@ export class UserEditModalComponent implements OnChanges, OnInit {
     const labels: Record<UserRole, string> = {
       PATIENT: 'Paciente',
       PROFESSIONAL: 'Profissional',
-      ADMIN: 'Administrador'
+      ADMIN: 'Administrador',
+      ASSISTANT: 'Assistente'
     };
     return labels[role];
   }

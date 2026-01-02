@@ -50,10 +50,15 @@ public class AppointmentService : IAppointmentService
 
         if (!string.IsNullOrEmpty(search))
         {
+            // Remove non-numeric characters for CPF search
+            var searchCpf = new string(search.Where(char.IsDigit).ToArray());
+            
             query = query.Where(a =>
                 a.Patient.Name.Contains(search) ||
+                a.Patient.LastName.Contains(search) ||
                 a.Professional.Name.Contains(search) ||
-                a.Specialty.Name.Contains(search));
+                a.Specialty.Name.Contains(search) ||
+                (searchCpf.Length == 11 && a.Patient.Cpf == searchCpf));
         }
 
         if (!string.IsNullOrEmpty(status) && status.ToLower() != "all")

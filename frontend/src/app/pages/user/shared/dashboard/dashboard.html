@@ -301,6 +301,107 @@
         </div>
       </div>
     </div>
+  } @else if (isAssistant()) {
+    <div class="dashboard__content-grid">
+      <!-- Card: Próximas Consultas -->
+      <div class="content-card">
+        <div class="content-card__header">
+          <h3 class="content-card__title">Próximas Consultas</h3>
+          <app-icon name="calendar" [size]="20" />
+        </div>
+        
+        @if (nextAppointments.length > 0) {
+          <div class="appointment-list">
+            @for (appt of nextAppointments; track appt.id) {
+              <div class="appointment-item appointment-item--with-actions">
+                <div class="appointment-item__main">
+                  <div class="appointment-item__date">
+                    <span class="day">{{ appt.date | date:'dd' }}</span>
+                    <span class="month">{{ appt.date | date:'MMM':'':'pt-BR' }}</span>
+                  </div>
+                  <div class="appointment-card__time">
+                    <span class="time">{{ appt.time }}</span>
+                    <h4 class="name">{{ appt.patientName }}</h4>
+                    <span class="specialty">{{ appt.specialtyName }}</span>
+                  </div>
+                </div>
+                
+                <div class="appointment-item__actions">
+                  <app-button 
+                    variant="outline" 
+                    size="sm" 
+                    [fullWidth]="true"
+                    [routerLink]="['/consultorio-digital']" 
+                    [queryParams]="{id: appt.id}">
+                    Ver Detalhes
+                  </app-button>
+                  @if (appt.status === 'Scheduled' || appt.status === 'Confirmed' || appt.status === 'InProgress') {
+                    <app-button 
+                      variant="primary" 
+                      size="sm" 
+                      [fullWidth]="true"
+                      [routerLink]="['/teleconsulta', appt.id]">
+                      <app-icon name="video" [size]="16" />
+                      Entrar
+                    </app-button>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="empty-state">
+            <p>Nenhuma consulta agendada.</p>
+          </div>
+        }
+      </div>
+
+      <!-- Card: Notificações -->
+      <div class="content-card">
+        <div class="content-card__header">
+          <h3 class="content-card__title">Notificações</h3>
+          <app-icon name="bell" [size]="20" />
+        </div>
+        
+        @if (notifications.length > 0) {
+          <div class="appointment-list">
+            @for (notification of notifications; track notification.id) {
+              <div class="appointment-item">
+                <div class="appointment-item__date">
+                   <app-icon [name]="notification.type === 'Error' ? 'alert-circle' : 'check-circle'" [size]="24" />
+                </div>
+                <div class="appointment-item__info">
+                  <h4 class="name">{{ notification.title }}</h4>
+                  <span class="specialty">{{ notification.message }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="empty-state">
+            <p>Nenhuma notificação recente.</p>
+          </div>
+        }
+      </div>
+
+      <!-- Card: Acesso Rápido -->
+      <div class="content-card">
+        <div class="content-card__header">
+          <h3 class="content-card__title">Acesso Rápido</h3>
+          <app-icon name="activity" [size]="20" />
+        </div>
+        
+        <div class="shortcuts-grid">
+          <app-button 
+            variant="primary" 
+            [fullWidth]="true"
+            [routerLink]="['/consultorio-digital']">
+            <app-icon name="monitor" [size]="16" />
+            Consultório Digital
+          </app-button>
+        </div>
+      </div>
+    </div>
   } @else {
     <div class="dashboard__content-grid">
       <!-- Card: Próximas Consultas -->

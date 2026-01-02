@@ -61,7 +61,7 @@ public class AppointmentsController : ControllerBase
         {
             professionalId = currentUserId.Value;
         }
-        // ADMIN pode ver todas as consultas (não aplica filtro)
+        // ADMIN e ASSISTANT podem ver todas as consultas (não aplica filtro)
 
         var result = await _appointmentService.GetAppointmentsAsync(page, pageSize, search, status, startDate, endDate, patientId, professionalId);
         return Ok(result);
